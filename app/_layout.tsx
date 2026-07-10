@@ -5,7 +5,7 @@ import { Colors } from '../constants/Colors';
 export default function RootLayout() {
   return (
     <>
-      <StatusBar style="dark" backgroundColor={Colors.background} />
+      <StatusBar style="dark" />
       <Stack>
         <Stack.Screen name="tabs" options={{ headerShown: false }} />
       </Stack>

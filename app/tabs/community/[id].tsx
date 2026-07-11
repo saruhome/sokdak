@@ -3,21 +3,29 @@ import {
   TouchableOpacity, TextInput, KeyboardAvoidingView,
   Platform, Alert,
 } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { useState, useRef } from 'react';
+import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
+import { useCallback, useState, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { MOCK_POSTS, BOARD_COLORS, type Comment } from '../../../constants/mockPosts';
+import { authStore } from '../../../constants/authStore';
 
 export default function PostDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const post = MOCK_POSTS.find(p => p.id === id);
 
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(() => (post ? authStore.isPostLiked(post.id) : false));
   const [saved, setSaved] = useState(false);
   const [likeCount, setLikeCount] = useState(post?.likes ?? 0);
   const [commentText, setCommentText] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const inputRef = useRef<TextInput>(null);
+
+  /* 마이페이지 > 내 활동 게시물(좋아요)에서 해제된 경우 등 화면 재진입 시 동기화 */
+  useFocusEffect(
+    useCallback(() => {
+      if (post) setLiked(authStore.isPostLiked(post.id));
+    }, [post]),
+  );
 
   if (!post) {
     return (
@@ -33,6 +41,7 @@ export default function PostDetailScreen() {
   const boardColor = BOARD_COLORS[post.board];
 
   const handleLike = () => {
+    authStore.togglePostLiked(post.id);
     setLiked(p => !p);
     setLikeCount(p => liked ? p - 1 : p + 1);
   };

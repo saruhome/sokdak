@@ -7,18 +7,26 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { useState } from 'react';
+import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { MOCK_WORDS } from '../../../constants/mockWords';
+import { authStore } from '../../../constants/authStore';
 
 export default function WordDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const word = MOCK_WORDS.find((w) => w.id === id);
 
   const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(() => (word ? authStore.isWordSaved(word.id) : false));
   const [likeCount, setLikeCount] = useState(word?.likes ?? 0);
+
+  /* 마이페이지 > 저장한 단어에서 해제된 경우 등 화면 재진입 시 동기화 */
+  useFocusEffect(
+    useCallback(() => {
+      if (word) setSaved(authStore.isWordSaved(word.id));
+    }, [word]),
+  );
 
   if (!word) {
     return (
@@ -37,6 +45,7 @@ export default function WordDetailScreen() {
   };
 
   const handleSave = () => {
+    authStore.toggleWordSaved(word.id);
     setSaved((prev) => !prev);
     Alert.alert(
       saved ? '저장 취소' : '저장 완료',

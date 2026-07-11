@@ -6,17 +6,21 @@ import { router } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
-import { Colors } from '../../constants/Colors';
-import { authStore } from '../../constants/authStore';
+import { Colors } from '../../../constants/Colors';
+import { authStore } from '../../../constants/authStore';
 
 const ACTIVITY_MENU = [
-  { label: '저장한 단어',  emoji: '📌', route: '/tabs/dictionary' },
-  { label: '내 게시글',    emoji: '📝', route: '/tabs/community' },
-  { label: '댓글 단 글',   emoji: '💬', route: '/tabs/community' },
+  { label: '저장한 단어',    emoji: '📌', route: '/tabs/mypage/saved' },
+  { label: '내 활동 게시물', emoji: '📝', route: '/tabs/mypage/my-posts' },
+];
+
+const CONTRIBUTE_MENU = [
+  { label: '신조어 제안하기', emoji: '💡', route: '/tabs/mypage/suggest' },
 ];
 
 const SETTINGS_MENU = [
-  { label: '내 정보 관리', emoji: '⚙️', route: null },
+  { label: '내 정보 관리', emoji: '⚙️', route: '/tabs/mypage/profile' },
+  { label: '알림설정',     emoji: '🔔', route: '/tabs/mypage/notifications' },
   { label: '언어 설정',    emoji: '🌐', route: null },
 ];
 
@@ -118,6 +122,30 @@ export default function MyPageScreen() {
           </View>
         </View>
 
+        {/* ── 기여 섹션 ── 신조어 제안하기 */}
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>기여</Text>
+          <View style={styles.menuGroup}>
+            {CONTRIBUTE_MENU.map((item, i) => (
+              <TouchableOpacity
+                key={item.label}
+                style={[
+                  styles.menuItem,
+                  i < CONTRIBUTE_MENU.length - 1 && styles.menuItemBorder,
+                ]}
+                onPress={() => loggedIn
+                  ? item.route && router.push(item.route as any)
+                  : router.push('/auth/login')
+                }
+              >
+                <Text style={styles.menuEmoji}>{item.emoji}</Text>
+                <Text style={styles.menuLabel}>{item.label}</Text>
+                <Text style={styles.menuArrow}>›</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
         {/* ── 설정 섹션 ── Figma: Frame 536 */}
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>설정</Text>
@@ -129,6 +157,10 @@ export default function MyPageScreen() {
                   styles.menuItem,
                   i < SETTINGS_MENU.length - 1 && styles.menuItemBorder,
                 ]}
+                onPress={() => {
+                  if (!item.route) return;
+                  loggedIn ? router.push(item.route as any) : router.push('/auth/login');
+                }}
               >
                 <Text style={styles.menuEmoji}>{item.emoji}</Text>
                 <Text style={styles.menuLabel}>{item.label}</Text>
@@ -140,7 +172,7 @@ export default function MyPageScreen() {
 
         {/* 고객센터 – Figma: Frame 1049 */}
         <View style={styles.footerLinks}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/tabs/mypage/support')}>
             <Text style={styles.footerLink}>고객센터</Text>
           </TouchableOpacity>
           <Text style={styles.footerDot}>·</Text>

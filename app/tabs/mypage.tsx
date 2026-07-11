@@ -1,43 +1,115 @@
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet, Text, View, SafeAreaView,
+  ScrollView, TouchableOpacity,
+} from 'react-native';
+import { router } from 'expo-router';
+import { useState, useEffect } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 import { Colors } from '../../constants/Colors';
+import { authStore } from '../../constants/authStore';
 
 const ACTIVITY_MENU = [
-  { label: '저장한 단어', emoji: '📌' },
-  { label: '내 게시글', emoji: '📝' },
-  { label: '댓글 단 글', emoji: '💬' },
+  { label: '저장한 단어',  emoji: '📌', route: '/tabs/dictionary' },
+  { label: '내 게시글',    emoji: '📝', route: '/tabs/community' },
+  { label: '댓글 단 글',   emoji: '💬', route: '/tabs/community' },
 ];
 
 const SETTINGS_MENU = [
-  { label: '내 정보 관리', emoji: '⚙️' },
-  { label: '언어 설정', emoji: '🌐' },
+  { label: '내 정보 관리', emoji: '⚙️', route: null },
+  { label: '언어 설정',    emoji: '🌐', route: null },
 ];
 
 export default function MyPageScreen() {
+  const [loggedIn, setLoggedIn] = useState(authStore.isLoggedIn());
+  const user = authStore.getUser();
+
+  /* 화면 포커스 때마다 로그인 상태 갱신 */
+  useFocusEffect(
+    useCallback(() => {
+      setLoggedIn(authStore.isLoggedIn());
+    }, []),
+  );
+
+  /* 스토어 변경 구독 */
+  useEffect(() => {
+    const unsub = authStore.subscribe(setLoggedIn);
+    return () => { unsub(); };
+  }, []);
+
+  const handleLogout = () => {
+    authStore.logout();
+    setLoggedIn(false);
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* TopAppBar - Figma: Navigation/TopAppBar/Default/Default (375×44) */}
+      {/* TopAppBar */}
       <View style={styles.topBar}>
         <Text style={styles.topBarTitle}>마이페이지</Text>
       </View>
 
       <ScrollView style={styles.scroll}>
-        {/* Figma: Display/UserProfile (327×60) */}
-        <View style={styles.profileRow}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>👤</Text>
+        {/* ── Display/UserProfile (327×60) ── */}
+        <TouchableOpacity
+          style={styles.profileRow}
+          onPress={!loggedIn ? () => router.push('/auth/login') : undefined}
+          activeOpacity={loggedIn ? 1 : 0.75}
+        >
+          <View style={[styles.avatar, !loggedIn && styles.avatarGuest]}>
+            <Text style={styles.avatarText}>
+              {loggedIn && user ? user.emoji : '👤'}
+            </Text>
           </View>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>속닥 유저</Text>
-            <Text style={styles.profileEmail}>user@sokdak.com</Text>
+            {loggedIn && user ? (
+              <>
+                <Text style={styles.profileName}>{user.name}</Text>
+                <Text style={styles.profileEmail}>{user.email}</Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.profileName}>로그인이 필요해요</Text>
+                <Text style={styles.profileEmail}>탭하여 로그인 →</Text>
+              </>
+            )}
           </View>
-        </View>
+        </TouchableOpacity>
 
-        {/* Figma: Frame 535 - 활동 섹션 */}
+        {/* ── 비로그인 배너 ── Figma: 로그인 전 상태 */}
+        {!loggedIn && (
+          <TouchableOpacity
+            style={styles.loginBanner}
+            onPress={() => router.push('/auth/login')}
+            activeOpacity={0.85}
+          >
+            <View style={styles.loginBannerLeft}>
+              <Text style={styles.loginBannerEmoji}>🦊</Text>
+              <View>
+                <Text style={styles.loginBannerTitle}>속닥과 함께 시작해요!</Text>
+                <Text style={styles.loginBannerSub}>로그인하면 단어 저장·커뮤니티 이용 가능</Text>
+              </View>
+            </View>
+            <Text style={styles.loginBannerArrow}>›</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* ── 활동 섹션 ── Figma: Frame 535 */}
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>활동</Text>
           <View style={styles.menuGroup}>
-            {ACTIVITY_MENU.map((item) => (
-              <TouchableOpacity key={item.label} style={styles.menuItem}>
+            {ACTIVITY_MENU.map((item, i) => (
+              <TouchableOpacity
+                key={item.label}
+                style={[
+                  styles.menuItem,
+                  i < ACTIVITY_MENU.length - 1 && styles.menuItemBorder,
+                ]}
+                onPress={() => loggedIn
+                  ? item.route && router.push(item.route as any)
+                  : router.push('/auth/login')
+                }
+              >
                 <Text style={styles.menuEmoji}>{item.emoji}</Text>
                 <Text style={styles.menuLabel}>{item.label}</Text>
                 <Text style={styles.menuArrow}>›</Text>
@@ -46,12 +118,18 @@ export default function MyPageScreen() {
           </View>
         </View>
 
-        {/* Figma: Frame 536 - 설정 섹션 */}
+        {/* ── 설정 섹션 ── Figma: Frame 536 */}
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>설정</Text>
           <View style={styles.menuGroup}>
-            {SETTINGS_MENU.map((item) => (
-              <TouchableOpacity key={item.label} style={styles.menuItem}>
+            {SETTINGS_MENU.map((item, i) => (
+              <TouchableOpacity
+                key={item.label}
+                style={[
+                  styles.menuItem,
+                  i < SETTINGS_MENU.length - 1 && styles.menuItemBorder,
+                ]}
+              >
                 <Text style={styles.menuEmoji}>{item.emoji}</Text>
                 <Text style={styles.menuLabel}>{item.label}</Text>
                 <Text style={styles.menuArrow}>›</Text>
@@ -60,17 +138,37 @@ export default function MyPageScreen() {
           </View>
         </View>
 
-        {/* Figma: 고객센터 텍스트 */}
+        {/* 고객센터 – Figma: Frame 1049 */}
         <View style={styles.footerLinks}>
           <TouchableOpacity>
             <Text style={styles.footerLink}>고객센터</Text>
           </TouchableOpacity>
+          <Text style={styles.footerDot}>·</Text>
+          <TouchableOpacity>
+            <Text style={styles.footerLink}>이용약관</Text>
+          </TouchableOpacity>
+          <Text style={styles.footerDot}>·</Text>
+          <TouchableOpacity>
+            <Text style={styles.footerLink}>개인정보처리방침</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Figma: Controls/Buttons/Text Button_02 - 로그아웃 버튼 */}
-        <TouchableOpacity style={styles.logoutBtn}>
-          <Text style={styles.logoutText}>로그아웃</Text>
-        </TouchableOpacity>
+        {/* ── Controls/Buttons/Text Button_02 (320×52) ── 로그인/로그아웃 */}
+        {loggedIn ? (
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+            <Text style={styles.logoutText}>로그아웃</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={() => router.push('/auth/login')}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.loginBtnText}>로그인하기</Text>
+          </TouchableOpacity>
+        )}
+
+        <View style={{ height: 32 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -79,73 +177,72 @@ export default function MyPageScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
   topBar: {
-    height: 44,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
+    height: 44, justifyContent: 'center', paddingHorizontal: 20,
+    borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
   scroll: { flex: 1 },
-  // Display/UserProfile
+
+  /* Display/UserProfile */
   profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    height: 80,
+    flexDirection: 'row', alignItems: 'center',
+    paddingHorizontal: 24, paddingVertical: 20, gap: 14,
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 52, height: 52, borderRadius: 26,
     backgroundColor: Colors.navBar,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
+    alignItems: 'center', justifyContent: 'center',
   },
-  avatarText: { fontSize: 22 },
-  profileInfo: { gap: 2 },
-  profileName: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  profileEmail: { fontSize: 12, color: Colors.textTertiary },
-  // 섹션
-  section: { paddingHorizontal: 24, marginTop: 12 },
-  sectionLabel: { fontSize: 12, fontWeight: '600', color: Colors.textTertiary, marginBottom: 8 },
+  avatarGuest: { backgroundColor: Colors.border },
+  avatarText: { fontSize: 26 },
+  profileInfo: { gap: 3 },
+  profileName: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  profileEmail: { fontSize: 13, color: Colors.textTertiary },
+
+  /* 비로그인 배너 */
+  loginBanner: {
+    marginHorizontal: 16, marginBottom: 12, padding: 16,
+    backgroundColor: Colors.navBar, borderRadius: 14,
+    flexDirection: 'row', alignItems: 'center',
+  },
+  loginBannerLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  loginBannerEmoji: { fontSize: 32 },
+  loginBannerTitle: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
+  loginBannerSub: { fontSize: 12, color: Colors.navBarIconMuted, marginTop: 3 },
+  loginBannerArrow: { fontSize: 22, color: Colors.navBarIconMuted },
+
+  /* 메뉴 섹션 */
+  section: { paddingHorizontal: 16, marginTop: 8 },
+  sectionLabel: { fontSize: 11, fontWeight: '700', color: Colors.textTertiary, marginBottom: 6, paddingLeft: 4 },
   menuGroup: {
-    backgroundColor: Colors.surface,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    overflow: 'hidden',
+    backgroundColor: Colors.surface, borderRadius: 12,
+    borderWidth: 1, borderColor: Colors.border, overflow: 'hidden',
   },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 52,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-  },
-  menuEmoji: { fontSize: 18, marginRight: 12 },
+  menuItem: { flexDirection: 'row', alignItems: 'center', height: 52, paddingHorizontal: 16, gap: 12 },
+  menuItemBorder: { borderBottomWidth: 1, borderBottomColor: Colors.divider },
+  menuEmoji: { fontSize: 18, width: 26 },
   menuLabel: { flex: 1, fontSize: 14, color: Colors.textPrimary },
-  menuArrow: { fontSize: 18, color: Colors.textTertiary },
-  // 하단
+  menuArrow: { fontSize: 18, color: Colors.border },
+
+  /* 하단 링크 */
   footerLinks: {
-    alignItems: 'center',
-    marginTop: 24,
-    marginBottom: 12,
+    flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'center', gap: 6, marginTop: 20, marginBottom: 16,
   },
-  footerLink: { fontSize: 13, color: Colors.textTertiary },
+  footerLink: { fontSize: 12, color: Colors.textTertiary },
+  footerDot: { fontSize: 12, color: Colors.border },
+
+  /* Controls/Buttons/Text Button_02 (320×52) */
   logoutBtn: {
-    marginHorizontal: 24,
-    marginBottom: 32,
-    height: 52,
-    backgroundColor: Colors.surface,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginHorizontal: 24, height: 52, borderRadius: 12,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    alignItems: 'center', justifyContent: 'center',
   },
   logoutText: { fontSize: 15, color: Colors.error, fontWeight: '600' },
+  loginBtn: {
+    marginHorizontal: 24, height: 52, borderRadius: 12,
+    backgroundColor: Colors.navBar,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  loginBtnText: { fontSize: 15, color: Colors.navBarIconActive, fontWeight: '700' },
 });

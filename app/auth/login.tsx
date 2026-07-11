@@ -1,6 +1,6 @@
 import {
   StyleSheet, Text, View, SafeAreaView,
-  TouchableOpacity, ScrollView, Alert,
+  TouchableOpacity, ScrollView,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/Colors';
@@ -39,11 +39,7 @@ export default function LoginScreen() {
   };
 
   const handleEmailLogin = () => {
-    Alert.alert(
-      '이메일로 로그인',
-      '이메일 로그인 기능은 준비 중이에요.\n소셜 로그인을 이용해주세요.',
-      [{ text: '확인' }],
-    );
+    router.push('/auth/email-login');
   };
 
   return (

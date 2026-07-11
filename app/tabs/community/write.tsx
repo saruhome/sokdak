@@ -78,8 +78,8 @@ export default function WritePostScreen() {
             onPress={() => setAccordionOpen(p => !p)}
             activeOpacity={0.8}
           >
-            <View style={[styles.boardBadge, { borderColor: BOARD_COLORS[board] }]}>
-              <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[board] }]}>{board}</Text>
+            <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[board].bg }]}>
+              <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[board].fg }]}>{board}</Text>
             </View>
             <Text style={styles.accordionLabel}>게시판 선택</Text>
             <Text style={styles.accordionArrow}>{accordionOpen ? '▲' : '▼'}</Text>
@@ -92,19 +92,19 @@ export default function WritePostScreen() {
                   key={opt}
                   style={[
                     styles.boardOption,
-                    board === opt && { backgroundColor: BOARD_COLORS[opt] + '15' },
+                    board === opt && { backgroundColor: BOARD_COLORS[opt].bg + '15' },
                   ]}
                   onPress={() => { setBoard(opt); setAccordionOpen(false); }}
                 >
-                  <View style={[styles.boardBadge, { borderColor: BOARD_COLORS[opt] }]}>
-                    <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[opt] }]}>{opt}</Text>
+                  <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[opt].bg }]}>
+                    <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[opt].fg }]}>{opt}</Text>
                   </View>
                   <Text style={styles.boardOptionDesc}>
                     {opt === '궁금해요' && '한국어 신조어가 궁금할 때'}
                     {opt === 'Q&A'      && '질문과 답변을 주고받을 때'}
                     {opt === '질문하기' && '자유롭게 의견을 나눌 때'}
                   </Text>
-                  {board === opt && <Text style={{ fontSize: 14, color: BOARD_COLORS[opt] }}>✓</Text>}
+                  {board === opt && <Text style={{ fontSize: 14, color: BOARD_COLORS[opt].fg }}>✓</Text>}
                 </TouchableOpacity>
               ))}
             </View>
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.divider,
   },
-  boardBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, borderWidth: 1 },
+  boardBadge: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
   boardBadgeText: { fontSize: 11, fontWeight: '700' },
   accordionLabel: { flex: 1, fontSize: 14, color: Colors.textSecondary },
   accordionArrow: { fontSize: 12, color: Colors.textTertiary },

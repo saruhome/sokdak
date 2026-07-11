@@ -76,8 +76,8 @@ export default function PostDetailScreen() {
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
-          <View style={[styles.boardBadge, { borderColor: boardColor }]}>
-            <Text style={[styles.boardBadgeText, { color: boardColor }]}>{post.board}</Text>
+          <View style={[styles.boardBadge, { backgroundColor: boardColor.bg }]}>
+            <Text style={[styles.boardBadgeText, { color: boardColor.fg }]}>{post.board}</Text>
           </View>
           <TouchableOpacity style={styles.moreButton}>
             <Text style={styles.moreIcon}>⋯</Text>
@@ -259,8 +259,8 @@ const styles = StyleSheet.create({
   backButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34, marginTop: -2 },
   boardBadge: {
-    paddingHorizontal: 10, paddingVertical: 4,
-    borderRadius: 12, borderWidth: 1,
+    paddingHorizontal: 12, paddingVertical: 4,
+    borderRadius: 12,
   },
   boardBadgeText: { fontSize: 11, fontWeight: '700' },
   moreButton: { marginLeft: 'auto', width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },

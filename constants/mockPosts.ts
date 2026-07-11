@@ -24,10 +24,11 @@ export type Post = {
   isFeatured?: boolean;
 };
 
-export const BOARD_COLORS: Record<PostBoard, string> = {
-  '궁금해요': '#3A6B4A',
-  'Q&A':     '#E8943A',
-  '질문하기': '#1A73E8',
+/** Figma: Display/게시판 종류 배지 — bg(채움)+fg(글자) 페어 (Point 컬러 조합) */
+export const BOARD_COLORS: Record<PostBoard, { bg: string; fg: string }> = {
+  '궁금해요': { bg: '#A4484D', fg: '#F6F2EA' },
+  'Q&A':     { bg: '#E2B55D', fg: '#A4484D' },
+  '질문하기': { bg: '#BBCA9F', fg: '#526192' },
 };
 
 export const MOCK_POSTS: Post[] = [

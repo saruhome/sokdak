@@ -44,7 +44,7 @@ export default function CommunityScreen() {
                     activeOpacity={0.8}
                   >
                     {/* 게시판 색상 띠 */}
-                    <View style={[styles.featuredCardTop, { backgroundColor: BOARD_COLORS[post.board] }]}>
+                    <View style={[styles.featuredCardTop, { backgroundColor: BOARD_COLORS[post.board].bg }]}>
                       <Text style={styles.featuredCardBoard}>{post.board}</Text>
                     </View>
                     <View style={styles.featuredCardBody}>
@@ -71,7 +71,7 @@ export default function CommunityScreen() {
                   style={[
                     styles.boardTab,
                     activeTab === tab && {
-                      borderBottomColor: tab === '전체' ? Colors.navBar : BOARD_COLORS[tab as PostBoard],
+                      borderBottomColor: tab === '전체' ? Colors.navBar : BOARD_COLORS[tab as PostBoard].bg,
                       borderBottomWidth: 2,
                     },
                   ]}
@@ -79,7 +79,7 @@ export default function CommunityScreen() {
                   <Text style={[
                     styles.boardTabText,
                     activeTab === tab && {
-                      color: tab === '전체' ? Colors.navBar : BOARD_COLORS[tab as PostBoard],
+                      color: tab === '전체' ? Colors.navBar : BOARD_COLORS[tab as PostBoard].bg,
                       fontWeight: '700',
                     },
                   ]}>
@@ -93,8 +93,8 @@ export default function CommunityScreen() {
             <View style={styles.boardBadgeRow}>
               {(['궁금해요', 'Q&A', '질문하기'] as PostBoard[]).map(b => (
                 <TouchableOpacity key={b} onPress={() => setActiveTab(b)}>
-                  <View style={[styles.boardBadge, { borderColor: BOARD_COLORS[b] }]}>
-                    <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[b] }]}>{b}</Text>
+                  <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[b].bg }]}>
+                    <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[b].fg }]}>{b}</Text>
                   </View>
                 </TouchableOpacity>
               ))}
@@ -110,8 +110,8 @@ export default function CommunityScreen() {
           >
             <View style={styles.postItemInner}>
               <View style={styles.postTopRow}>
-                <View style={[styles.boardBadge, { borderColor: BOARD_COLORS[item.board] }]}>
-                  <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[item.board] }]}>
+                <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[item.board].bg }]}>
+                  <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[item.board].fg }]}>
                     {item.board}
                   </Text>
                 </View>
@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
   /* 게시판 뱃지 행 */
   boardBadgeRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingVertical: 10 },
   boardBadge: {
-    paddingHorizontal: 10, paddingVertical: 4,
-    borderRadius: 14, borderWidth: 1,
+    paddingHorizontal: 12, paddingVertical: 4,
+    borderRadius: 12,
   },
   boardBadgeText: { fontSize: 11, fontWeight: '600' },
 

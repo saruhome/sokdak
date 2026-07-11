@@ -1,50 +1,155 @@
-import { StyleSheet, View, SafeAreaView, ScrollView } from 'react-native';
+import {
+  StyleSheet, View, SafeAreaView, ScrollView,
+  TouchableOpacity, Dimensions,
+  type NativeSyntheticEvent, type NativeScrollEvent,
+} from 'react-native';
 import { AppText as Text } from '@/components/AppText';
+import { useState } from 'react';
+import { router } from 'expo-router';
 import { Colors } from '../../constants/Colors';
+import { MOCK_WORDS } from '../../constants/mockWords';
+import { MOCK_POSTS, BOARD_COLORS } from '../../constants/mockPosts';
+import { getCategoryBySlug } from '../../constants/categories';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
+/** Figma: Card/Recommend2 — 좋아요 상위 3개 단어로 구성된 캐러셀 */
+const HERO_WORDS = [...MOCK_WORDS].sort((a, b) => b.likes - a.likes).slice(0, 3);
+/** Figma: 새로운 신조어 섹션 — new-slang 카테고리 단어 미리보기 */
+const NEW_SLANG_WORDS = MOCK_WORDS.filter(w => w.category === 'new-slang');
+/** Figma: 커뮤니티(Recommended Section) — 게시글 미리보기 */
+const COMMUNITY_POSTS = MOCK_POSTS.slice(0, 3);
 
 export default function HomeScreen() {
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  const handleHeroScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH));
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* TopAppBar - Figma: Navigation/TopAppBar/Home (375×44) */}
+      {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Home (375×44, bg #52514e) */}
       <View style={styles.topBar}>
-        <Text style={styles.logo}>속닥</Text>
-        <Text style={styles.logoSub}>SOK-DAK</Text>
+        <Text style={styles.logo}>SOKDAK</Text>
+        <View style={styles.topBarIcons}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/search')}>
+            <Text style={styles.iconGlyph}>🔍</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconBtn}>
+            <Text style={styles.iconGlyph}>🔔</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-        {/* Figma: Card/Recommend2 섹션 */}
-        <View style={styles.heroBanner}>
-          <Text style={styles.heroTitle}>오늘의 추천 신조어</Text>
-          <Text style={styles.heroSub}>속닥속닥 배우는 교과서에는 없던 진짜 국어</Text>
-        </View>
-
-        {/* Figma: 새로운 신조어 섹션 */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>새로운 신조어</Text>
-            <Text style={styles.sectionMore}>더보기</Text>
-          </View>
-          <View style={styles.wordCardRow}>
-            {['요즘 뜨는', '핫한 말', 'K-신조어'].map((label) => (
-              <View key={label} style={styles.wordCard}>
-                <Text style={styles.wordCardText}>{label}</Text>
-              </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+        {/* ── 히어로 캐러셀 ── Figma: Card/Recommend2 (375×250) */}
+        <View>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={handleHeroScrollEnd}
+          >
+            {HERO_WORDS.map(word => {
+              const category = getCategoryBySlug(word.category);
+              return (
+                <TouchableOpacity
+                  key={word.id}
+                  style={[styles.heroCard, { backgroundColor: category?.colorBg ?? Colors.navBar }]}
+                  onPress={() => router.push(`/tabs/dictionary/${word.id}`)}
+                  activeOpacity={0.9}
+                >
+                  <View style={styles.heroScrim} />
+                  <View style={styles.heroContent}>
+                    {category && (
+                      <Text style={[styles.heroBadge, { color: category.colorFg }]}>{category.name}</Text>
+                    )}
+                    <Text style={styles.heroWord}>{word.word}</Text>
+                    <Text style={styles.heroDesc} numberOfLines={2}>{word.shortDesc}</Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+          <View style={styles.dotsRow}>
+            {HERO_WORDS.map((_, i) => (
+              <View key={i} style={[styles.dot, i === heroIndex && styles.dotActive]} />
             ))}
           </View>
         </View>
 
-        {/* Figma: Recommended Section (커뮤니티 추천 게시물) */}
+        {/* ── 새로운 신조어 ── */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>커뮤니티 추천</Text>
-            <Text style={styles.sectionMore}>더보기</Text>
-          </View>
-          {[1, 2, 3].map((i) => (
-            <View key={i} style={styles.postItem}>
-              <Text style={styles.postTag}>Q&amp;A</Text>
-              <Text style={styles.postTitle}>게시글 제목 예시 {i}</Text>
-              <Text style={styles.postMeta}>조회 120 · 좋아요 36 · 댓글 12</Text>
+            <Text style={styles.sectionTitle}>새로운 신조어</Text>
+            <View style={styles.sectionSubRow}>
+              <Text style={styles.sectionSub}>새롭게 등장한 신조어를 확인해보세요</Text>
+              <TouchableOpacity style={styles.moreLink} onPress={() => router.push('/tabs/dictionary')}>
+                <Text style={styles.moreLinkText}>더보기</Text>
+                <Text style={styles.moreLinkArrow}>›</Text>
+              </TouchableOpacity>
             </View>
+          </View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.wordCardRow}
+          >
+            {NEW_SLANG_WORDS.map(word => (
+              <TouchableOpacity
+                key={word.id}
+                style={styles.wordCard}
+                onPress={() => router.push(`/tabs/dictionary/${word.id}`)}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.wordCardTitle}>{word.word}</Text>
+                <Text style={styles.wordCardDesc} numberOfLines={2}>{word.shortDesc}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* ── 커뮤니티 ── */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>커뮤니티</Text>
+            <View style={styles.sectionSubRow}>
+              <Text style={styles.sectionSub}>새로운 게시글을 확인하세요</Text>
+              <TouchableOpacity style={styles.moreLink} onPress={() => router.push('/tabs/community')}>
+                <Text style={styles.moreLinkText}>더보기</Text>
+                <Text style={styles.moreLinkArrow}>›</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {COMMUNITY_POSTS.map((post, i) => (
+            <TouchableOpacity
+              key={post.id}
+              style={[styles.postItem, i > 0 && styles.postItemBorder]}
+              onPress={() => router.push(`/tabs/community/${post.id}`)}
+              activeOpacity={0.75}
+            >
+              <View style={styles.postItemLeft}>
+                <View style={[styles.postBadge, { backgroundColor: BOARD_COLORS[post.board].bg }]}>
+                  <Text style={[styles.postBadgeText, { color: BOARD_COLORS[post.board].fg }]}>
+                    {post.board}
+                  </Text>
+                </View>
+                <Text style={styles.postTitle} numberOfLines={1}>{post.title}</Text>
+                <View style={styles.postMetaRow}>
+                  <Text style={styles.postAuthor}>{post.author.name}</Text>
+                  <Text style={styles.postDate}>{post.createdAt}</Text>
+                  <View style={styles.postStats}>
+                    <Text style={styles.postStat}>👁 {post.views}</Text>
+                    <Text style={styles.postStat}>❤️ {post.likes}</Text>
+                    <Text style={styles.postStat}>💬 {post.comments.length}</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.postThumb} />
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
@@ -53,111 +158,94 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
+  safeArea: { flex: 1, backgroundColor: Colors.background },
+
+  /* TopAppBar */
   topBar: {
     height: 44,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: Colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
+    justifyContent: 'space-between',
+    paddingLeft: 24,
+    paddingRight: 6,
+    backgroundColor: Colors.navBar,
   },
   logo: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: Colors.textPrimary,
-    marginRight: 6,
+    fontSize: 16, fontWeight: '700', color: Colors.navBarIconActive,
+    letterSpacing: 1, fontFamily: undefined,
   },
-  logoSub: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-    letterSpacing: 2,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  content: {
-    paddingBottom: 24,
-  },
-  heroBanner: {
-    margin: 16,
-    padding: 20,
-    backgroundColor: Colors.navBar,
-    borderRadius: 12,
-    minHeight: 120,
+  topBarIcons: { flexDirection: 'row' },
+  iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  iconGlyph: { fontSize: 18 },
+
+  content: { paddingBottom: 24 },
+
+  /* 히어로 캐러셀 */
+  heroCard: {
+    width: SCREEN_WIDTH, height: 250,
+    paddingHorizontal: 24, paddingVertical: 10,
     justifyContent: 'flex-end',
+    borderBottomWidth: 1, borderBottomColor: Colors.border,
+    overflow: 'hidden',
   },
-  heroTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: Colors.navBarIconActive,
-    marginBottom: 4,
+  heroScrim: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: Colors.pageBackground,
+    opacity: 0.55,
   },
-  heroSub: {
-    fontSize: 12,
-    color: Colors.navBarIconMuted,
-  },
-  section: {
-    marginTop: 8,
-    paddingHorizontal: 16,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
+  heroContent: { gap: 24 },
+  heroBadge: { fontSize: 10, fontWeight: '600' },
+  heroWord: {
+    fontSize: 26, fontWeight: '700', color: '#000',
     marginTop: 8,
   },
-  sectionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.textPrimary,
+  heroDesc: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined, marginTop: 8 },
+
+  dotsRow: {
+    flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
+    gap: 6, paddingVertical: 12,
   },
-  sectionMore: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-  },
-  wordCardRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
+  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.border },
+  dotActive: { width: 13, backgroundColor: 'rgba(38,43,49,0.7)' },
+
+  /* 섹션 공통 */
+  section: { paddingHorizontal: 24, marginTop: 16, gap: 16 },
+  sectionHeader: { gap: 8 },
+  sectionTitle: { fontSize: 18, fontWeight: '600', color: Colors.textPrimary },
+  sectionSubRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  sectionSub: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined, flexShrink: 1 },
+  moreLink: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  moreLinkText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  moreLinkArrow: { fontSize: 14, color: Colors.textSecondary, fontFamily: undefined },
+
+  /* 새로운 신조어 카드 */
+  wordCardRow: { gap: 16, paddingRight: 24 },
   wordCard: {
-    width: 100,
-    height: 80,
-    backgroundColor: Colors.surface,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 255, height: 150,
+    backgroundColor: Colors.pageBackground,
+    borderWidth: 1, borderColor: Colors.border, borderRadius: 10,
+    padding: 16, justifyContent: 'flex-end', gap: 8,
+    shadowColor: '#8B8B8B', shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.15, shadowRadius: 2.5, elevation: 3,
   },
-  wordCardText: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-  },
-  postItem: {
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-    gap: 4,
-  },
-  postTag: {
-    fontSize: 11,
-    color: Colors.accent,
-    fontWeight: '600',
-  },
-  postTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: Colors.textPrimary,
-  },
-  postMeta: {
-    fontSize: 11,
-    color: Colors.textTertiary,
+  wordCardTitle: { fontSize: 18, fontWeight: '600', color: Colors.textPrimary },
+  wordCardDesc: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16, fontFamily: undefined },
+
+  /* 커뮤니티 리스트 */
+  postItem: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 16, gap: 12 },
+  postItemBorder: { borderTopWidth: 1, borderTopColor: Colors.divider },
+  postItemLeft: { flex: 1, gap: 8 },
+  postBadge: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
+  postBadgeText: { fontSize: 12, fontWeight: '600' },
+  postTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, lineHeight: 18 },
+  postMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  postAuthor: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  postDate: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  postStats: { flexDirection: 'row', gap: 8 },
+  postStat: { fontSize: 12, color: Colors.textTertiary },
+  postThumb: {
+    width: 72, height: 72, borderRadius: 8,
+    borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.pageBackground,
   },
 });

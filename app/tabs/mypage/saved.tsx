@@ -1,6 +1,7 @@
 import {
-  StyleSheet, Text, View, SafeAreaView, FlatList, TouchableOpacity,
+  StyleSheet, View, SafeAreaView, FlatList, TouchableOpacity,
 } from 'react-native';
+import { AppText as Text } from '@/components/AppText';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Colors } from '../../../constants/Colors';

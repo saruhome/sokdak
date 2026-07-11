@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  Text,
   View,
   SafeAreaView,
   TextInput,
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
   Animated,
 } from 'react-native';
+import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useState, useMemo, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
@@ -58,7 +58,7 @@ export default function CategoryDetailScreen() {
     );
   }
 
-  const accent = category.color;
+  const accent = category.colorFg;
 
   return (
     <SafeAreaView style={styles.safeArea}>

@@ -1,7 +1,8 @@
 import {
-  StyleSheet, Text, View, SafeAreaView,
+  StyleSheet, View, SafeAreaView,
   FlatList, TouchableOpacity,
 } from 'react-native';
+import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { Colors } from '../../../constants/Colors';
 import { CATEGORIES } from '../../../constants/categories';
@@ -53,7 +54,7 @@ export default function CategoryScreen() {
             onPress={() => router.push(`/tabs/category/${item.slug}`)}
             activeOpacity={0.75}
           >
-            <View style={[styles.categoryEmojiWrap, { backgroundColor: item.color + '18' }]}>
+            <View style={[styles.categoryEmojiWrap, { backgroundColor: item.colorBg + '18' }]}>
               <Text style={styles.categoryEmoji}>{item.emoji}</Text>
             </View>
             <Text style={styles.categoryName}>{item.name}</Text>

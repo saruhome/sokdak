@@ -1,8 +1,9 @@
 import {
-  StyleSheet, Text, View, SafeAreaView, ScrollView,
+  StyleSheet, View, SafeAreaView, ScrollView,
   TouchableOpacity, TextInput, KeyboardAvoidingView,
   Platform, Alert,
 } from 'react-native';
+import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';

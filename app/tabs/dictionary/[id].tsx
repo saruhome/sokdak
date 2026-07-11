@@ -1,12 +1,12 @@
 import {
   StyleSheet,
-  Text,
   View,
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
   Alert,
 } from 'react-native';
+import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Colors } from '../../../constants/Colors';

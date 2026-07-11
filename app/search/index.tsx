@@ -1,7 +1,8 @@
 import {
-  StyleSheet, Text, View, SafeAreaView,
+  StyleSheet, View, SafeAreaView,
   TextInput, FlatList, ScrollView, TouchableOpacity,
 } from 'react-native';
+import { AppText as Text } from '@/components/AppText';
 import { useMemo, useState } from 'react';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/Colors';

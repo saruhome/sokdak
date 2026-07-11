@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
+import { AppText as Text } from '@/components/AppText';
 import { Colors } from '../../constants/Colors';
 
 /** 탭 아이콘: 이모지 기반 플레이스홀더 (추후 SVG 아이콘으로 교체) */

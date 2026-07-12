@@ -2,7 +2,9 @@
 export type Word = {
   id: string;
   word: string;
-  category: string;   // Category slug
+  category: string;   // Category slug (주 카테고리)
+  /** Figma: 단어가 두 카테고리에 걸치는 경우(예: "오빠" = 감탄사+릴스) 상세 화면에 배지/탭 2개로 표시 */
+  secondaryCategory?: string;
   shortDesc: string;
   pronunciation?: string;
   meanings: Array<{
@@ -11,7 +13,9 @@ export type Word = {
     examples: Array<{ kor: string; eng: string }>;
   }>;
   origin?: string;
+  originEn?: string;
   usage: string;
+  usageEn?: string;
   relatedWords: string[];
   likes: number;
   saves: number;
@@ -282,5 +286,24 @@ export const MOCK_WORDS: Word[] = [
     usage: '현재는 사용 빈도가 많이 줄었으나 여전히 중장년층 직장인 사이에서 간간이 쓰임.',
     relatedWords: ['넵병', '직장인', '월급 루팡'], likes: 189, saves: 54,
     translations: [{ lang: '🇺🇸 EN', text: '"Sounds good (reluctantly)" / Forced positivity' }, { lang: '🇯🇵 JA', text: '「いいですね」（建前）' }, { lang: '🇨🇳 ZH', text: '好的好的（口是心非）' }],
+  },
+
+  // ── 감탄사 (+ 릴스, 다중 카테고리 예시) ──
+  {
+    id: '28', word: '오빠', category: 'exclamation', secondaryCategory: 'reels',
+    pronunciation: 'Oppa', shortDesc: '여성 팬이 좋아하는 남자 연예인을 애정을 담아 부르는 표현',
+    meanings: [{
+      type: '명사', definition: '여성 팬이 좋아하는 남자 연예인을 애정을 담아 부르는 표현',
+      examples: [
+        { kor: '우리 오빠 무대 너무 멋있다!', eng: "Our Oppa's performance is amazing!" },
+        { kor: '맞아! 역시 오빠가 최고야', eng: 'Right! As expected, Oppa is the best.' },
+      ],
+    }],
+    origin: '친하지 않은 지인이나 공적인 자리에서 함부로 사용하면 오해를 살 수 있으니 주의하세요.',
+    originEn: 'Be careful, as using it with strangers or in formal settings might cause misunderstandings.',
+    usage: '단순히 친오빠나 나이가 많은 남성을 부를때뿐만 아니라, 좋아하는 연예인을 애정을 담아 부를 때도 사용됩니다.',
+    usageEn: "Not only used for older males like one's own brother, but also commonly used by fans to affectionately refer to male celebrities.",
+    relatedWords: ['최애', '입덕'], likes: 289, saves: 97,
+    translations: [{ lang: '🇺🇸 EN', text: 'A term female fans use to affectionately refer to male celebrities they like.' }],
   },
 ];

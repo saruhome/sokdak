@@ -33,3 +33,17 @@ export const Colors = {
   warning:  '#C07A2A',
   success:  '#3A8C5C',
 } as const;
+
+/**
+ * 카테고리별 colorBg/colorFg 페어는 Figma 원본 자체가 항상 고대비 조합은
+ * 아니라서(예: 릴스는 두 톤 다 옅은 파랑), 채움 배지에 텍스트를 얹을 때는
+ * 배경색 밝기를 계산해 검정/흰 텍스트 중 읽기 쉬운 쪽을 고른다.
+ */
+export function getReadableTextColor(bgHex: string): string {
+  const hex = bgHex.replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.6 ? '#1A1A1A' : '#FFFFFF';
+}

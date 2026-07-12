@@ -4,22 +4,22 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
-  Alert,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { MOCK_WORDS } from '../../../constants/mockWords';
+import { getCategoryBySlug } from '../../../constants/categories';
 import { authStore } from '../../../constants/authStore';
+
+const CHAT_AVATARS = ['🐯', '🦊'] as const;
 
 export default function WordDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const word = MOCK_WORDS.find((w) => w.id === id);
 
-  const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(() => (word ? authStore.isWordSaved(word.id) : false));
-  const [likeCount, setLikeCount] = useState(word?.likes ?? 0);
 
   /* 마이페이지 > 저장한 단어에서 해제된 경우 등 화면 재진입 시 동기화 */
   useFocusEffect(
@@ -39,34 +39,26 @@ export default function WordDetailScreen() {
     );
   }
 
-  const handleLike = () => {
-    setLiked((prev) => !prev);
-    setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
-  };
+  const category = getCategoryBySlug(word.category);
+  const englishGloss = word.translations.find(t => t.lang.includes('EN'))?.text;
+  const examples = word.meanings.flatMap(m => m.examples);
+  const reading = word.pronunciation ? word.pronunciation.replace(/^\[|\]$/g, '') : null;
 
   const handleSave = () => {
     authStore.toggleWordSaved(word.id);
     setSaved((prev) => !prev);
-    Alert.alert(
-      saved ? '저장 취소' : '저장 완료',
-      saved ? `'${word.word}' 저장을 취소했어요.` : `'${word.word}'를 내 단어장에 저장했어요.`,
-      [{ text: '확인' }],
-    );
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Dictionary Back (375×44) */}
+      {/* ── TopAppBar ── Figma: 뒤로가기 + 단어명 + 즐겨찾기 */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => router.back()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle} numberOfLines={1}>{word.word}</Text>
-        <TouchableOpacity
-          style={styles.saveButton}
-          onPress={handleSave}
-        >
-          <Text style={styles.saveIcon}>{saved ? '🔖' : '📌'}</Text>
+        <TouchableOpacity style={styles.iconBtn} onPress={handleSave}>
+          <Text style={styles.starIcon}>{saved ? '⭐' : '☆'}</Text>
         </TouchableOpacity>
       </View>
 
@@ -75,106 +67,82 @@ export default function WordDetailScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* ── Section 1: 단어 헤더 ── Figma 최상단 단어 표시 영역 */}
+        {/* ── 단어 헤더 ── */}
         <View style={styles.wordHeader}>
-          <View style={styles.wordHeaderTop}>
+          <View style={styles.wordTitleRow}>
+            <Text style={styles.wordTitle}>{word.word}</Text>
+            {reading && <Text style={styles.reading}>{reading}</Text>}
+            <Text style={styles.soundIcon}>🔊</Text>
+          </View>
+          {category && (
             <View style={styles.categoryBadge}>
-              <Text style={styles.categoryBadgeText}>{word.category}</Text>
+              <Text style={[styles.categoryBadgeText, { color: category.colorFg }]}>{category.name}</Text>
             </View>
-          </View>
-          <Text style={styles.wordTitle}>{word.word}</Text>
-          {word.pronunciation && (
-            <Text style={styles.pronunciation}>{word.pronunciation}</Text>
           )}
-          <Text style={styles.shortDesc}>{word.shortDesc}</Text>
-
-          {/* 좋아요 · 저장 액션 */}
-          <View style={styles.actionRow}>
-            <TouchableOpacity
-              style={[styles.actionBtn, liked && styles.actionBtnActive]}
-              onPress={handleLike}
-            >
-              <Text style={styles.actionBtnIcon}>{liked ? '❤️' : '🤍'}</Text>
-              <Text style={[styles.actionBtnLabel, liked && styles.actionBtnLabelActive]}>
-                {likeCount}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.actionBtn, saved && styles.actionBtnActive]}
-              onPress={handleSave}
-            >
-              <Text style={styles.actionBtnIcon}>{saved ? '🔖' : '📌'}</Text>
-              <Text style={[styles.actionBtnLabel, saved && styles.actionBtnLabelActive]}>
-                {saved ? '저장됨' : '저장'}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.actionBtn}>
-              <Text style={styles.actionBtnIcon}>📤</Text>
-              <Text style={styles.actionBtnLabel}>공유</Text>
-            </TouchableOpacity>
-          </View>
         </View>
 
-        {/* ── Section 2: 뜻/정의 ── Figma: Definition 영역 */}
-        {word.meanings.map((meaning, idx) => (
-          <View key={idx} style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardLabel}>뜻</Text>
-              <View style={styles.posTag}>
-                <Text style={styles.posTagText}>{meaning.type}</Text>
-              </View>
-            </View>
-            <Text style={styles.definition}>{meaning.definition}</Text>
-          </View>
-        ))}
-
-        {/* ── Section 3: 예문 ── Figma: Example sentences */}
+        {/* ── 의미 Meaning ── */}
         <View style={styles.card}>
-          <Text style={styles.cardLabel}>예문</Text>
-          {word.meanings.flatMap((m) => m.examples).map((ex, idx) => (
-            <View key={idx} style={styles.exampleItem}>
-              <View style={styles.exampleKorRow}>
-                <Text style={styles.exampleBullet}>•</Text>
-                <Text style={styles.exampleKor}>{ex.kor}</Text>
-              </View>
-              <Text style={styles.exampleEng}>{ex.eng}</Text>
-            </View>
-          ))}
+          <View style={styles.cardHeaderRow}>
+            <Text style={styles.cardTitle}>의미</Text>
+            <Text style={styles.cardTitleEn}>Meaning</Text>
+          </View>
+          <Text style={styles.cardBody}>{word.meanings[0]?.definition}</Text>
+          {englishGloss && <Text style={styles.cardBodyEn}>{englishGloss}</Text>}
         </View>
 
-        {/* ── Section 4: 사용 맥락 ── Usage context */}
+        {/* ── 문화적 배경 Cultural Context ── */}
         {word.usage && (
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>사용 맥락</Text>
-            <Text style={styles.usageText}>{word.usage}</Text>
+          <View style={[styles.card, styles.cardMuted]}>
+            <View style={styles.cardHeaderRow}>
+              <Text style={styles.cardTitle}>문화적 배경</Text>
+              <Text style={styles.cardTitleEn}>Cultural Context</Text>
+            </View>
+            <Text style={styles.cardBody}>{word.usage}</Text>
           </View>
         )}
 
-        {/* ── Section 5: 어원/유래 ── Origin */}
+        {/* ── 대화 예시 Conversation ── */}
+        {examples.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.cardHeaderRow}>
+              <Text style={styles.cardTitle}>대화 예시</Text>
+              <Text style={styles.cardTitleEn}>Conversation</Text>
+            </View>
+            <View style={styles.chatWrap}>
+              {examples.map((ex, idx) => {
+                const fromRight = idx % 2 === 1;
+                return (
+                  <View key={idx} style={[styles.chatRow, fromRight && styles.chatRowRight]}>
+                    {!fromRight && <Text style={styles.chatAvatar}>{CHAT_AVATARS[0]}</Text>}
+                    <View style={[styles.chatBubble, fromRight ? styles.chatBubbleRight : styles.chatBubbleLeft]}>
+                      <Text style={[styles.chatKor, fromRight && styles.chatKorRight]}>{ex.kor}</Text>
+                      <Text style={[styles.chatEng, fromRight && styles.chatEngRight]}>{ex.eng}</Text>
+                    </View>
+                    {fromRight && <Text style={styles.chatAvatar}>{CHAT_AVATARS[1]}</Text>}
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        )}
+
+        {/* ── 추가 정보 Additional Tip ── */}
         {word.origin && (
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>어원/유래</Text>
-            <Text style={styles.originText}>{word.origin}</Text>
+          <View style={[styles.card, styles.cardMuted]}>
+            <View style={styles.cardHeaderRow}>
+              <Text style={styles.tipIcon}>💡</Text>
+              <Text style={styles.cardTitle}>추가 정보</Text>
+              <Text style={styles.cardTitleEn}>Additional Tip</Text>
+            </View>
+            <Text style={styles.cardBody}>{word.origin}</Text>
           </View>
         )}
 
-        {/* ── Section 6: 다국어 번역 ── Figma: 언어 설정 지원, 외국인 학습자 타깃 */}
-        {word.translations.length > 0 && (
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>다국어 번역</Text>
-            {word.translations.map((t, idx) => (
-              <View key={idx} style={styles.translationRow}>
-                <Text style={styles.translationLang}>{t.lang}</Text>
-                <Text style={styles.translationText}>{t.text}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* ── Section 7: 관련 단어 ── Related words */}
+        {/* ── 관련 단어 ── */}
         {word.relatedWords.length > 0 && (
           <View style={styles.card}>
-            <Text style={styles.cardLabel}>관련 단어</Text>
+            <Text style={styles.cardTitle}>관련 단어</Text>
             <View style={styles.relatedRow}>
               {word.relatedWords.map((rw) => {
                 const target = MOCK_WORDS.find((w) => w.word === rw);
@@ -195,8 +163,8 @@ export default function WordDetailScreen() {
           </View>
         )}
 
-        {/* ── Section 8: 커뮤니티 연결 ── Figma: 커뮤니티 게시글 연계 */}
-        <TouchableOpacity style={styles.communityBanner}>
+        {/* ── 커뮤니티 연결 ── */}
+        <TouchableOpacity style={styles.communityBanner} onPress={() => router.push('/tabs/community')}>
           <Text style={styles.communityBannerTitle}>💬 이 단어로 커뮤니티에 물어보기</Text>
           <Text style={styles.communityBannerSub}>
             {word.word}에 대해 더 궁금한 점이 있으신가요?
@@ -212,135 +180,61 @@ export default function WordDetailScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
 
-  /* ── TopAppBar ── */
+  /* TopAppBar */
   topBar: {
     height: 44,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-    backgroundColor: Colors.background,
+    justifyContent: 'space-between',
+    paddingHorizontal: 4,
+    backgroundColor: Colors.navBar,
   },
-  backButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34, marginTop: -2 },
-  topBarTitle: { flex: 1, fontSize: 16, fontWeight: '600', color: Colors.textPrimary, textAlign: 'center' },
-  saveButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  saveIcon: { fontSize: 20 },
+  iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  backIcon: { fontSize: 28, color: Colors.navBarIconActive, lineHeight: 34, marginTop: -2 },
+  topBarTitle: { flex: 1, fontSize: 18, fontWeight: '600', color: Colors.navBarIconActive, textAlign: 'center' },
+  starIcon: { fontSize: 20, color: Colors.navBarIconActive },
 
-  /* ── Scroll ── */
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 32 },
 
-  /* ── Word Header ── */
-  wordHeader: {
-    padding: 20,
-    paddingTop: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-    backgroundColor: Colors.background,
-  },
-  wordHeaderTop: { flexDirection: 'row', marginBottom: 8 },
-  categoryBadge: {
-    backgroundColor: Colors.navBar,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 12,
-  },
-  categoryBadgeText: { fontSize: 11, fontWeight: '600', color: Colors.navBarIconActive },
-  wordTitle: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-    marginBottom: 4,
-    letterSpacing: -0.5,
-  },
-  pronunciation: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    marginBottom: 8,
-  },
-  shortDesc: {
-    fontSize: 15,
-    color: Colors.textSecondary,
-    lineHeight: 22,
-    marginBottom: 16,
-  },
+  /* 단어 헤더 */
+  wordHeader: { padding: 24, gap: 12 },
+  wordTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  wordTitle: { fontSize: 32, fontWeight: '700', color: Colors.textPrimary },
+  reading: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
+  soundIcon: { fontSize: 16 },
+  categoryBadge: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
+  categoryBadgeText: { fontSize: 12, fontWeight: '600' },
 
-  /* Actions */
-  actionRow: { flexDirection: 'row', gap: 10 },
-  actionBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: Colors.surface,
-  },
-  actionBtnActive: { borderColor: Colors.accent, backgroundColor: Colors.accent + '15' },
-  actionBtnIcon: { fontSize: 15 },
-  actionBtnLabel: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500' },
-  actionBtnLabelActive: { color: Colors.accent },
-
-  /* ── Card (공통 섹션 컨테이너) ── */
+  /* 카드 공통 */
+  section: { marginHorizontal: 24, marginTop: 16, gap: 12 },
   card: {
-    marginHorizontal: 16,
-    marginTop: 12,
-    padding: 16,
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    gap: 10,
+    marginHorizontal: 24, marginTop: 16, padding: 16,
+    backgroundColor: Colors.surface, borderRadius: 12,
+    borderWidth: 1, borderColor: Colors.border, gap: 8,
   },
-  cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  cardLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: Colors.textTertiary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  posTag: {
-    backgroundColor: Colors.background,
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  posTagText: { fontSize: 10, color: Colors.textSecondary },
+  cardMuted: { backgroundColor: Colors.pageBackground },
+  cardHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  cardTitle: { fontSize: 15, fontWeight: '600', color: Colors.textPrimary },
+  cardTitleEn: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  tipIcon: { fontSize: 14 },
+  cardBody: { fontSize: 14, color: Colors.textPrimary, lineHeight: 22 },
+  cardBodyEn: { fontSize: 12, color: Colors.textTertiary, lineHeight: 18, fontFamily: undefined },
 
-  /* Definition */
-  definition: { fontSize: 15, color: Colors.textPrimary, lineHeight: 24 },
+  /* 대화 예시 (채팅 버블) */
+  chatWrap: { gap: 12 },
+  chatRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
+  chatRowRight: { justifyContent: 'flex-end' },
+  chatAvatar: { fontSize: 24 },
+  chatBubble: { maxWidth: '75%', borderRadius: 14, padding: 12, gap: 2 },
+  chatBubbleLeft: { backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, borderBottomLeftRadius: 2 },
+  chatBubbleRight: { backgroundColor: Colors.navBar, borderBottomRightRadius: 2 },
+  chatKor: { fontSize: 14, color: Colors.textPrimary, lineHeight: 20 },
+  chatKorRight: { color: Colors.navBarIconActive },
+  chatEng: { fontSize: 11, color: Colors.textTertiary, fontFamily: undefined },
+  chatEngRight: { color: Colors.navBarIconMuted },
 
-  /* Examples */
-  exampleItem: { gap: 3, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: Colors.divider },
-  exampleKorRow: { flexDirection: 'row', gap: 6 },
-  exampleBullet: { fontSize: 14, color: Colors.accent, marginTop: 1 },
-  exampleKor: { flex: 1, fontSize: 14, color: Colors.textPrimary, lineHeight: 21, fontWeight: '500' },
-  exampleEng: { fontSize: 12, color: Colors.textTertiary, lineHeight: 18, paddingLeft: 14, fontStyle: 'italic' },
-
-  /* Usage / Origin */
-  usageText: { fontSize: 14, color: Colors.textPrimary, lineHeight: 22 },
-  originText: { fontSize: 14, color: Colors.textPrimary, lineHeight: 22 },
-
-  /* Translations */
-  translationRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-    gap: 12,
-  },
-  translationLang: { fontSize: 12, color: Colors.textTertiary, width: 68, marginTop: 1 },
-  translationText: { flex: 1, fontSize: 13, color: Colors.textPrimary, lineHeight: 20 },
-
-  /* Related words */
+  /* 관련 단어 */
   relatedRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   relatedChip: {
     paddingHorizontal: 12,
@@ -350,19 +244,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
   },
-  relatedChipText: { fontSize: 13, color: Colors.accent, fontWeight: '500' },
+  relatedChipText: { fontSize: 13, color: Colors.textEmphasis, fontWeight: '500' },
 
-  /* Community banner */
+  /* 커뮤니티 배너 */
   communityBanner: {
-    marginHorizontal: 16,
-    marginTop: 12,
+    marginHorizontal: 24,
+    marginTop: 16,
     padding: 16,
     backgroundColor: Colors.navBar,
     borderRadius: 12,
     gap: 4,
   },
   communityBannerTitle: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
-  communityBannerSub: { fontSize: 12, color: Colors.navBarIconMuted },
+  communityBannerSub: { fontSize: 12, color: Colors.navBarIconMuted, fontFamily: undefined },
 
   /* Not found */
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },

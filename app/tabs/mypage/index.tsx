@@ -10,36 +10,37 @@ import { useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { authStore } from '../../../constants/authStore';
 
-const ACTIVITY_MENU = [
+/** Figma: 5-1.마이페이지 와이어프레임 — 내 정보 관리 / 저장한 단어 / 자주 묻는 질문 / 운영진에게 */
+const MAIN_MENU = [
+  { label: '내 정보 관리',   emoji: '⚙️', route: '/tabs/mypage/profile' },
   { label: '저장한 단어',    emoji: '📌', route: '/tabs/mypage/saved' },
-  { label: '내 활동 게시물', emoji: '📝', route: '/tabs/mypage/my-posts' },
-];
-
-const CONTRIBUTE_MENU = [
-  { label: '신조어 제안하기', emoji: '💡', route: '/tabs/mypage/suggest' },
-];
-
-const SETTINGS_MENU = [
-  { label: '내 정보 관리', emoji: '⚙️', route: '/tabs/mypage/profile' },
-  { label: '알림설정',     emoji: '🔔', route: '/tabs/mypage/notifications' },
-  { label: '언어 설정',    emoji: '🌐', route: null },
+  { label: '자주 묻는 질문', emoji: '❓', route: '/tabs/mypage/support' },
+  { label: '운영진에게',     emoji: '💡', route: '/tabs/mypage/suggest' },
 ];
 
 export default function MyPageScreen() {
   const [loggedIn, setLoggedIn] = useState(authStore.isLoggedIn());
+  const [savedCount, setSavedCount] = useState(authStore.getSavedWordIds().length);
+  const [likedCount, setLikedCount] = useState(authStore.getLikedPostIds().length);
   const user = authStore.getUser();
 
   /* 화면 포커스 때마다 로그인 상태 갱신 */
   useFocusEffect(
     useCallback(() => {
       setLoggedIn(authStore.isLoggedIn());
+      setSavedCount(authStore.getSavedWordIds().length);
+      setLikedCount(authStore.getLikedPostIds().length);
     }, []),
   );
 
   /* 스토어 변경 구독 */
   useEffect(() => {
     const unsub = authStore.subscribe(setLoggedIn);
-    return () => { unsub(); };
+    const unsubBookmarks = authStore.subscribeBookmarks(() => {
+      setSavedCount(authStore.getSavedWordIds().length);
+      setLikedCount(authStore.getLikedPostIds().length);
+    });
+    return () => { unsub(); unsubBookmarks(); };
   }, []);
 
   const handleLogout = () => {
@@ -51,11 +52,18 @@ export default function MyPageScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* TopAppBar */}
       <View style={styles.topBar}>
+        <View style={styles.backBtn} />
         <Text style={styles.topBarTitle}>마이페이지</Text>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => router.push('/tabs/mypage/settings')}
+        >
+          <Text style={styles.settingsIcon}>⚙️</Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.scroll}>
-        {/* ── Display/UserProfile (327×60) ── */}
+        {/* ── 프로필 + 통계 ── Figma: 5-1.마이페이지-2 와이어프레임 */}
         <TouchableOpacity
           style={styles.profileRow}
           onPress={!loggedIn ? () => router.push('/auth/login') : undefined}
@@ -66,20 +74,33 @@ export default function MyPageScreen() {
               {loggedIn && user ? user.emoji : '👤'}
             </Text>
           </View>
-          <View style={styles.profileInfo}>
-            {loggedIn && user ? (
-              <>
-                <Text style={styles.profileName}>{user.name}</Text>
-                <Text style={styles.profileEmail}>{user.email}</Text>
-              </>
-            ) : (
-              <>
-                <Text style={styles.profileName}>로그인이 필요해요</Text>
-                <Text style={styles.profileEmail}>탭하여 로그인 →</Text>
-              </>
-            )}
-          </View>
+          {loggedIn ? (
+            <View style={styles.statsRow}>
+              <TouchableOpacity
+                style={styles.statItem}
+                onPress={() => router.push('/tabs/mypage/saved')}
+              >
+                <Text style={styles.statValue}>{savedCount}</Text>
+                <Text style={styles.statLabel}>저장한 단어</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.statItem}
+                onPress={() => router.push('/tabs/mypage/my-posts')}
+              >
+                <Text style={styles.statValue}>{likedCount}</Text>
+                <Text style={styles.statLabel}>좋아요 한 글</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.profileInfo}>
+              <Text style={styles.profileName}>로그인이 필요해요</Text>
+              <Text style={styles.profileEmail}>탭하여 로그인 →</Text>
+            </View>
+          )}
         </TouchableOpacity>
+        {loggedIn && user && (
+          <Text style={styles.profileNameBar}>{user.name}</Text>
+        )}
 
         {/* ── 비로그인 배너 ── Figma: 로그인 전 상태 */}
         {!loggedIn && (
@@ -99,19 +120,18 @@ export default function MyPageScreen() {
           </TouchableOpacity>
         )}
 
-        {/* ── 활동 섹션 ── Figma: Frame 535 */}
+        {/* ── 메인 메뉴 (플랫 4항목) ── Figma: 5-1.마이페이지 와이어프레임 */}
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>활동</Text>
           <View style={styles.menuGroup}>
-            {ACTIVITY_MENU.map((item, i) => (
+            {MAIN_MENU.map((item, i) => (
               <TouchableOpacity
                 key={item.label}
                 style={[
                   styles.menuItem,
-                  i < ACTIVITY_MENU.length - 1 && styles.menuItemBorder,
+                  i < MAIN_MENU.length - 1 && styles.menuItemBorder,
                 ]}
                 onPress={() => loggedIn
-                  ? item.route && router.push(item.route as any)
+                  ? router.push(item.route as any)
                   : router.push('/auth/login')
                 }
               >
@@ -123,60 +143,7 @@ export default function MyPageScreen() {
           </View>
         </View>
 
-        {/* ── 기여 섹션 ── 신조어 제안하기 */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>기여</Text>
-          <View style={styles.menuGroup}>
-            {CONTRIBUTE_MENU.map((item, i) => (
-              <TouchableOpacity
-                key={item.label}
-                style={[
-                  styles.menuItem,
-                  i < CONTRIBUTE_MENU.length - 1 && styles.menuItemBorder,
-                ]}
-                onPress={() => loggedIn
-                  ? item.route && router.push(item.route as any)
-                  : router.push('/auth/login')
-                }
-              >
-                <Text style={styles.menuEmoji}>{item.emoji}</Text>
-                <Text style={styles.menuLabel}>{item.label}</Text>
-                <Text style={styles.menuArrow}>›</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* ── 설정 섹션 ── Figma: Frame 536 */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>설정</Text>
-          <View style={styles.menuGroup}>
-            {SETTINGS_MENU.map((item, i) => (
-              <TouchableOpacity
-                key={item.label}
-                style={[
-                  styles.menuItem,
-                  i < SETTINGS_MENU.length - 1 && styles.menuItemBorder,
-                ]}
-                onPress={() => {
-                  if (!item.route) return;
-                  loggedIn ? router.push(item.route as any) : router.push('/auth/login');
-                }}
-              >
-                <Text style={styles.menuEmoji}>{item.emoji}</Text>
-                <Text style={styles.menuLabel}>{item.label}</Text>
-                <Text style={styles.menuArrow}>›</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* 고객센터 – Figma: Frame 1049 */}
         <View style={styles.footerLinks}>
-          <TouchableOpacity onPress={() => router.push('/tabs/mypage/support')}>
-            <Text style={styles.footerLink}>고객센터</Text>
-          </TouchableOpacity>
-          <Text style={styles.footerDot}>·</Text>
           <TouchableOpacity>
             <Text style={styles.footerLink}>이용약관</Text>
           </TouchableOpacity>
@@ -210,27 +177,37 @@ export default function MyPageScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
   topBar: {
-    height: 44, justifyContent: 'center', paddingHorizontal: 20,
+    height: 44, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
+  backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  settingsIcon: { fontSize: 18 },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
   scroll: { flex: 1 },
 
-  /* Display/UserProfile */
+  /* Display/UserProfile — Figma: 5-1.마이페이지-2 와이어프레임 (아바타 + 통계) */
   profileRow: {
     flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 24, paddingVertical: 20, gap: 14,
+    paddingHorizontal: 24, paddingTop: 24, paddingBottom: 12, gap: 20,
   },
   avatar: {
-    width: 52, height: 52, borderRadius: 26,
+    width: 72, height: 72, borderRadius: 36,
     backgroundColor: Colors.navBar,
     alignItems: 'center', justifyContent: 'center',
   },
   avatarGuest: { backgroundColor: Colors.border },
-  avatarText: { fontSize: 26 },
+  avatarText: { fontSize: 34 },
   profileInfo: { gap: 3 },
   profileName: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
   profileEmail: { fontSize: 13, color: Colors.textTertiary },
+  statsRow: { flex: 1, flexDirection: 'row' },
+  statItem: { flex: 1, alignItems: 'center' },
+  statValue: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
+  statLabel: { fontSize: 12, color: Colors.textTertiary, marginTop: 2 },
+  profileNameBar: {
+    fontSize: 15, fontWeight: '700', color: Colors.textPrimary,
+    paddingHorizontal: 24, marginBottom: 12,
+  },
 
   /* 비로그인 배너 */
   loginBanner: {

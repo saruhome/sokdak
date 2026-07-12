@@ -1,32 +1,37 @@
 import {
-  StyleSheet, View, SafeAreaView,
+  StyleSheet, View, Image, SafeAreaView,
   TouchableOpacity, ScrollView,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { authStore } from '../../constants/authStore';
+import { BackIcon, FacebookLogo, GoogleLogo, AppleLogo } from '@/components/icons/SocialIcons';
+
+const AVATAR_JJAEKI = require('../../assets/characters/jjaeki-full.png');
+const AVATAR_HORANG = require('../../assets/characters/horang-full.png');
 
 /** Figma: Continue with Facebook/Google/Apple / Centre / Fixed */
 function SocialButton({
-  emoji, label, bg, border, textColor, onPress,
+  icon, label, bg, textColor, shadow, onPress,
 }: {
-  emoji: string; label: string;
-  bg: string; border: string; textColor: string;
+  icon: React.ReactNode; label: string;
+  bg: string; textColor: string; shadow?: boolean;
   onPress: () => void;
 }) {
   return (
     <TouchableOpacity
-      style={[styles.socialBtn, { backgroundColor: bg, borderColor: border }]}
+      style={[styles.socialBtn, { backgroundColor: bg }, shadow && styles.socialBtnShadow]}
       onPress={onPress}
       activeOpacity={0.85}
     >
-      <Text style={styles.socialBtnEmoji}>{emoji}</Text>
+      {icon}
       <Text style={[styles.socialBtnLabel, { color: textColor }]}>{label}</Text>
     </TouchableOpacity>
   );
 }
 
+/** Figma node 1288:16671(속닥 Sokdak) — 로그인 페이지 */
 export default function LoginScreen() {
   const handleSocialLogin = (provider: string) => {
     authStore.login({
@@ -48,7 +53,7 @@ export default function LoginScreen() {
       {/* ── Controls/Icon/Back ── */}
       <View style={styles.topRow}>
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Text style={styles.backIcon}>‹</Text>
+          <BackIcon size={24} color={Colors.navBar} />
         </TouchableOpacity>
       </View>
 
@@ -57,62 +62,41 @@ export default function LoginScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* ── 로고 섹션 ── Figma: "SOK-DAK" + 태그라인 */}
+        {/* ── 로고 섹션 ── */}
         <View style={styles.logoSection}>
           <Text style={styles.logoText}>SOK-DAK</Text>
-          <Text style={styles.logoTagline}>속닥속닥 배우는 교과서에는 없던 진짜 국어</Text>
+          <Text style={styles.logoTagline}>속닥속닥 배우는{'\n'}교과서에는 없던 진짜국어</Text>
         </View>
 
         {/* ── 캐릭터 일러스트 ── Figma: Character/짹이/Default + Character/호랭/Default */}
         <View style={styles.characterSection}>
-          {/* 짹이 (여우 캐릭터) */}
-          <View style={styles.charWrap}>
-            <View style={[styles.charCircle, { backgroundColor: '#F5A623' }]}>
-              <Text style={styles.charEmoji}>🦊</Text>
-            </View>
-            <View style={[styles.charBubble, { right: -8 }]}>
-              <Text style={styles.charBubbleText}>안녕!</Text>
-            </View>
-          </View>
-
-          {/* 중앙 간격 */}
-          <View style={styles.charGap} />
-
-          {/* 호랭 (호랑이 캐릭터) */}
-          <View style={styles.charWrap}>
-            <View style={[styles.charBubble, { left: -8 }]}>
-              <Text style={styles.charBubbleText}>반가워!</Text>
-            </View>
-            <View style={[styles.charCircle, { backgroundColor: '#52514E' }]}>
-              <Text style={styles.charEmoji}>🐯</Text>
-            </View>
-          </View>
+          <Image source={AVATAR_JJAEKI} style={styles.jjaekiImg} resizeMode="contain" />
+          <Image source={AVATAR_HORANG} style={styles.horangImg} resizeMode="contain" />
         </View>
 
         {/* ── 소셜 로그인 버튼 ── Figma: Continue with Facebook/Google/Apple */}
         <View style={styles.socialSection}>
           <SocialButton
-            emoji="f"
+            icon={<FacebookLogo size={20} />}
             label="Log In with Facebook"
             bg="#1877F2"
-            border="#1877F2"
             textColor="#fff"
             onPress={() => handleSocialLogin('Facebook')}
           />
           <SocialButton
-            emoji="G"
+            icon={<GoogleLogo size={20} />}
             label="Log In with Google"
             bg="#fff"
-            border="#DADCE0"
-            textColor="#3C4043"
+            textColor="rgba(0,0,0,0.54)"
+            shadow
             onPress={() => handleSocialLogin('Google')}
           />
           <SocialButton
-            emoji=""
+            icon={<AppleLogo size={20} />}
             label="Log In with Apple"
             bg="#000"
-            border="#000"
             textColor="#fff"
+            shadow
             onPress={() => handleSocialLogin('Apple')}
           />
 
@@ -122,7 +106,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* ── 회원가입 링크 ── Figma: "계정이 없으신가요? 회원가입" */}
+        {/* ── 회원가입 링크 ── */}
         <View style={styles.signupRow}>
           <Text style={styles.signupPrompt}>계정이 없으신가요?</Text>
           <TouchableOpacity onPress={() => router.push('/auth/signup')}>
@@ -138,67 +122,51 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
 
   topRow: { height: 44, justifyContent: 'center' },
-  backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34 },
+  backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', marginLeft: 14 },
 
-  scroll: { paddingHorizontal: 24, paddingBottom: 40 },
+  scroll: { paddingHorizontal: 24, paddingBottom: 40, alignItems: 'center' },
 
   /* ── 로고 ── */
-  logoSection: { alignItems: 'center', marginTop: 8, marginBottom: 28, gap: 6 },
+  logoSection: { alignItems: 'center', marginTop: 8, gap: 16 },
   logoText: {
-    fontSize: 36, fontWeight: '900', color: Colors.textPrimary,
-    letterSpacing: 4,
+    fontSize: 32, fontWeight: '600', color: Colors.navBar,
+    lineHeight: 36, textAlign: 'center',
   },
-  logoTagline: { fontSize: 13, color: Colors.textSecondary, textAlign: 'center' },
+  logoTagline: { fontSize: 16, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20, fontFamily: undefined },
 
   /* ── 캐릭터 ── */
   characterSection: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    marginBottom: 36,
-    height: 120,
+    marginTop: 32,
+    gap: 11,
+    height: 158,
   },
-  charWrap: { alignItems: 'center', position: 'relative' },
-  charCircle: {
-    width: 86, height: 86, borderRadius: 43,
-    alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12, shadowRadius: 8, elevation: 4,
-  },
-  charEmoji: { fontSize: 46 },
-  charBubble: {
-    position: 'absolute', top: -8,
-    backgroundColor: Colors.surface,
-    borderRadius: 12, paddingHorizontal: 10, paddingVertical: 5,
-    borderWidth: 1, borderColor: Colors.border,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08, shadowRadius: 4, elevation: 2,
-  },
-  charBubbleText: { fontSize: 12, fontWeight: '700', color: Colors.textPrimary },
-  charGap: { width: 32 },
+  jjaekiImg: { width: 69, height: 91, transform: [{ scaleX: -1 }] },
+  horangImg: { width: 102, height: 158 },
 
   /* ── 소셜 버튼 ── */
-  socialSection: { gap: 12, marginBottom: 20 },
+  socialSection: { width: '100%', maxWidth: 282, alignSelf: 'center', marginTop: 40, gap: 16 },
   socialBtn: {
-    height: 50, borderRadius: 12, borderWidth: 1.5,
+    height: 44, borderRadius: 8,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 10,
+    gap: 12,
   },
-  socialBtnEmoji: { fontSize: 18, width: 24, textAlign: 'center', fontWeight: '800' },
-  socialBtnLabel: { fontSize: 15, fontWeight: '600' },
+  socialBtnShadow: {
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.17, shadowRadius: 1.5, elevation: 2,
+  },
+  socialBtnLabel: { fontSize: 16, fontWeight: '500', fontFamily: undefined },
 
-  emailLoginBtn: { alignItems: 'center', paddingVertical: 12 },
-  emailLoginText: {
-    fontSize: 14, color: Colors.textSecondary,
-    textDecorationLine: 'underline',
-  },
+  emailLoginBtn: { alignItems: 'center', paddingTop: 4 },
+  emailLoginText: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
 
   /* ── 회원가입 링크 ── */
   signupRow: {
     flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'center', gap: 6, marginTop: 4,
+    justifyContent: 'center', gap: 6, marginTop: 32,
   },
-  signupPrompt: { fontSize: 14, color: Colors.textTertiary },
-  signupLink: { fontSize: 14, fontWeight: '700', color: Colors.navBar },
+  signupPrompt: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
+  signupLink: { fontSize: 14, fontWeight: '600', color: Colors.navBar, textDecorationLine: 'underline' },
 });

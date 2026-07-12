@@ -16,6 +16,8 @@ export type Word = {
   likes: number;
   saves: number;
   translations: { lang: string; text: string }[];
+  /** 단어 상세 상단 영상 클립 — 비디오 링크(mp4/스트리밍 URL)가 있는 단어만 지정 */
+  videoUrl?: string;
 };
 
 export const MOCK_WORDS: Word[] = [

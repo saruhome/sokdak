@@ -12,6 +12,7 @@ import { Colors } from '../../../constants/Colors';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { getCategoryBySlug } from '../../../constants/categories';
 import { authStore } from '../../../constants/authStore';
+import { WordVideo } from '@/components/WordVideo';
 
 const CHAT_AVATARS = ['🐯', '🦊'] as const;
 
@@ -67,6 +68,9 @@ export default function WordDetailScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+        {/* ── 영상 클립 (Figma: 상단 캡션 영상) — videoUrl 있으면 재생, 없으면 빈 자리 ── */}
+        <WordVideo videoUrl={word.videoUrl} />
+
         {/* ── 단어 헤더 ── */}
         <View style={styles.wordHeader}>
           <View style={styles.wordTitleRow}>

@@ -1,12 +1,15 @@
 import {
-  StyleSheet, View, SafeAreaView,
-  FlatList, TouchableOpacity,
+  StyleSheet, View, SafeAreaView, Image,
+  FlatList, TouchableOpacity, ImageBackground,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { Colors } from '../../../constants/Colors';
 import { CATEGORIES } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
+
+const MIC_ICON = require('../../../assets/categories/icon-mic.png');
+const STAR_ICON = require('../../../assets/categories/icon-star.png');
 
 export default function CategoryScreen() {
   const countBySlug = Object.fromEntries(
@@ -52,13 +55,17 @@ export default function CategoryScreen() {
           <TouchableOpacity
             style={styles.categoryCard}
             onPress={() => router.push(`/tabs/category/${item.slug}`)}
-            activeOpacity={0.75}
+            activeOpacity={0.8}
           >
-            <View style={[styles.categoryEmojiWrap, { backgroundColor: item.colorBg + '18' }]}>
-              <Text style={styles.categoryEmoji}>{item.emoji}</Text>
-            </View>
-            <Text style={styles.categoryName}>{item.name}</Text>
-            <Text style={styles.categoryCount}>{countBySlug[item.slug] ?? 0}개</Text>
+            <ImageBackground source={item.image} style={styles.cardBg} imageStyle={styles.cardBgImage}>
+              <Image source={MIC_ICON} style={styles.micIcon} />
+              <Image source={STAR_ICON} style={[styles.starIcon, { tintColor: item.colorFg }]} />
+              <View style={styles.cardScrim} />
+              <View style={styles.cardTextWrap}>
+                <Text style={styles.categoryName}>{item.name}</Text>
+                <Text style={styles.categoryCount}>{countBySlug[item.slug] ?? 0}개</Text>
+              </View>
+            </ImageBackground>
           </TouchableOpacity>
         )}
       />
@@ -98,24 +105,20 @@ const styles = StyleSheet.create({
   categoryCard: {
     flex: 1,
     height: 104,
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    padding: 12,
+    overflow: 'hidden',
   },
-  categoryEmojiWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 2,
+  cardBg: { flex: 1 },
+  cardBgImage: { resizeMode: 'cover' },
+  micIcon: { position: 'absolute', left: 12, top: 12, width: 16, height: 16, tintColor: '#1A1A1A' },
+  starIcon: { position: 'absolute', right: 12, top: 12, width: 16, height: 16 },
+  cardScrim: {
+    position: 'absolute', left: 0, right: 0, bottom: 0, height: 44,
+    backgroundColor: 'rgba(248,248,248,0.88)',
   },
-  categoryEmoji: { fontSize: 24 },
-  categoryName: { fontSize: 12, fontWeight: '600', color: Colors.textPrimary, textAlign: 'center' },
+  cardTextWrap: { position: 'absolute', left: 12, right: 12, bottom: 10, gap: 2 },
+  categoryName: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
   categoryCount: { fontSize: 11, color: Colors.textTertiary },
 });

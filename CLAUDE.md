@@ -4,8 +4,15 @@
 한국어 신조어 특화 모바일 학습 앱. 한국 거주 외국인 중·고급 학습자 타깃.
 - **저장소**: https://github.com/saruhome/sokdak (private)
 - **스택**: Expo SDK + React Native + TypeScript + Expo Router v3
-- **디자인**: Figma `RbDWZdCLT0xXbH0ZW25jPi` (node `229:1651`)
-- **기기 기준**: iPhone 13 mini 375×812 (Status Bar 44 / TopAppBar 44 / BottomBar 49)
+- **디자인**: Figma `RbDWZdCLT0xXbH0ZW25jPi` (node `229:1651`), 단어 상세는 `NF716dQONfz0eDisYWPiTs` (node `683:3679`)
+- **출시 타깃**: Google Play Store, Android 우선
+- **기기 기준**: 360×800dp (2026년 기준 안드로이드 10~30대 최다 사용 해상도 —
+  삼성 갤럭시 A/S 시리즈 중심, 실기기 물리 해상도로는 1080×2400 FHD+ 3x 밀도에 해당.
+  출처: StatCounter Global Stats, 모바일 뷰포트 360×800/390×844/393×852가 전체
+  트래픽의 60%를 차지하며 그중 360×800이 1위)
+  기존 화면들은 iPhone 13 mini(375×812) 기준으로 만들어졌지만 대부분 flex/margin
+  기반이라 폭이 좁아져도 깨지지 않음 — 새 화면은 처음부터 360dp 기준으로 작업할 것.
+  Status Bar/BottomBar 높이는 SafeAreaView가 플랫폼별로 알아서 처리하므로 하드코딩 금지.
 
 ## 로컬 실행
 

@@ -25,6 +25,9 @@ export default function CategoryScreen() {
       {/* TopAppBar – Figma: Navigation/TopAppBar/Default/Default (375×44) */}
       <View style={styles.topBar}>
         <Text style={styles.topBarTitle}>카테고리</Text>
+        <TouchableOpacity style={styles.searchBtn} onPress={() => router.push('/tabs/category/search')}>
+          <Text style={styles.searchBtnIcon}>🔍</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Figma: Callout Card/Recommend_호락 (327×120) */}
@@ -77,12 +80,16 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
   topBar: {
     height: 44,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: Colors.divider,
   },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
+  searchBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  searchBtnIcon: { fontSize: 16 },
 
   recommendCard: {
     marginHorizontal: 16,

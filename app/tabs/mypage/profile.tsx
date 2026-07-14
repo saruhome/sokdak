@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { authStore } from '../../../constants/authStore';
 
-const EMOJI_OPTIONS = ['🦊', '🐯', '🇰🇷', '🇺🇸', '🇯🇵', '🇨🇳', '🇫🇷', '🇩🇪', '🇧🇷', '✨'];
+const EMOJI_OPTIONS = ['🐦', '🐯', '🇰🇷', '🇺🇸', '🇯🇵', '🇨🇳', '🇫🇷', '🇩🇪', '🇧🇷', '✨'];
 
 /** Figma: 229:3295 — 내 정보 관리 (닉네임·이메일·프로필 이미지 수정) */
 export default function ProfileScreen() {
@@ -16,7 +16,7 @@ export default function ProfileScreen() {
 
   const [name, setName] = useState(user?.name ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
-  const [emoji, setEmoji] = useState(user?.emoji ?? '🦊');
+  const [emoji, setEmoji] = useState(user?.emoji ?? '🐦');
 
   if (!user) {
     return (

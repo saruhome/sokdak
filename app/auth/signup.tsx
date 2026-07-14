@@ -1,11 +1,13 @@
 import {
-  StyleSheet, View, SafeAreaView, ScrollView,
+  StyleSheet, View, Image, SafeAreaView, ScrollView,
   TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../constants/Colors';
+
+const JJAEKI_AVATAR = require('../../assets/characters/jjaeki.png');
 
 /* ── List/Item/Log up (327×48) 재사용 컴포넌트 ── */
 function FormField({
@@ -148,9 +150,10 @@ export default function SignupScreen() {
           keyboardShouldPersistTaps="handled"
         >
           {/* ── 환영 텍스트 ── Figma: "반가워요! 속닥 과 함께 진짜 한국어를 배워봐요." */}
-          <View style={styles.welcomeSection}>
+          <View style={[styles.welcomeSection, styles.welcomeRow]}>
+            <Image source={JJAEKI_AVATAR} style={styles.welcomeAvatar} resizeMode="cover" />
             <Text style={styles.welcomeText}>
-              반가워요!{'\n'}속닥 과 함께 진짜 한국어를{'\n'}배워봐요. 🦊
+              반가워요!{'\n'}속닥 과 함께 진짜 한국어를{'\n'}배워봐요.
             </Text>
           </View>
 
@@ -255,8 +258,10 @@ const styles = StyleSheet.create({
 
   /* 환영 */
   welcomeSection: { paddingVertical: 24 },
+  welcomeRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  welcomeAvatar: { width: 44, height: 44, borderRadius: 22 },
   welcomeText: {
-    fontSize: 22, fontWeight: '800', color: Colors.textPrimary,
+    flexShrink: 1, fontSize: 22, fontWeight: '800', color: Colors.textPrimary,
     lineHeight: 32, letterSpacing: -0.3,
   },
 

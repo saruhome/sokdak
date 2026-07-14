@@ -1,5 +1,5 @@
 import {
-  StyleSheet, View, SafeAreaView, ScrollView,
+  StyleSheet, View, Image, SafeAreaView, ScrollView,
   TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
@@ -7,6 +7,8 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../constants/Colors';
 import { authStore } from '../../constants/authStore';
+
+const JJAEKI_AVATAR = require('../../assets/characters/jjaeki.png');
 
 /* ── List/Item/Log up (327×48) 재사용 컴포넌트 — auth/signup.tsx와 동일 패턴 ── */
 function FormField({
@@ -136,8 +138,9 @@ export default function EmailLoginScreen() {
         >
           {mode === 'login' ? (
             <>
-              <View style={styles.welcomeSection}>
-                <Text style={styles.welcomeText}>다시 만나서 반가워요! 🦊{'\n'}이메일로 로그인해주세요.</Text>
+              <View style={[styles.welcomeSection, styles.welcomeRow]}>
+                <Image source={JJAEKI_AVATAR} style={styles.welcomeAvatar} resizeMode="cover" />
+                <Text style={styles.welcomeText}>다시 만나서 반가워요!{'\n'}이메일로 로그인해주세요.</Text>
               </View>
 
               <View style={styles.form}>
@@ -258,8 +261,10 @@ const styles = StyleSheet.create({
   scrollContent: { paddingHorizontal: 24, paddingBottom: 48, paddingTop: 4 },
 
   welcomeSection: { paddingVertical: 24 },
+  welcomeRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  welcomeAvatar: { width: 44, height: 44, borderRadius: 22 },
   welcomeText: {
-    fontSize: 20, fontWeight: '800', color: Colors.textPrimary,
+    flexShrink: 1, fontSize: 20, fontWeight: '800', color: Colors.textPrimary,
     lineHeight: 30, letterSpacing: -0.3,
   },
 

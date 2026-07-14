@@ -1,5 +1,5 @@
 import {
-  StyleSheet, View, SafeAreaView,
+  StyleSheet, View, Image, SafeAreaView,
   ScrollView, TouchableOpacity,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
@@ -9,6 +9,8 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { authStore } from '../../../constants/authStore';
+
+const JJAEKI_AVATAR = require('../../../assets/characters/jjaeki.png');
 
 /** Figma: 5-1.마이페이지 와이어프레임 — 내 정보 관리 / 저장한 단어 / 자주 묻는 질문 / 운영진에게 */
 const MAIN_MENU = [
@@ -110,7 +112,7 @@ export default function MyPageScreen() {
             activeOpacity={0.85}
           >
             <View style={styles.loginBannerLeft}>
-              <Text style={styles.loginBannerEmoji}>🦊</Text>
+              <Image source={JJAEKI_AVATAR} style={styles.loginBannerAvatar} resizeMode="cover" />
               <View>
                 <Text style={styles.loginBannerTitle}>속닥과 함께 시작해요!</Text>
                 <Text style={styles.loginBannerSub}>로그인하면 단어 저장·커뮤니티 이용 가능</Text>
@@ -216,7 +218,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center',
   },
   loginBannerLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  loginBannerEmoji: { fontSize: 32 },
+  loginBannerAvatar: { width: 40, height: 40, borderRadius: 20 },
   loginBannerTitle: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
   loginBannerSub: { fontSize: 12, color: Colors.navBarIconMuted, marginTop: 3 },
   loginBannerArrow: { fontSize: 22, color: Colors.navBarIconMuted },

@@ -102,7 +102,7 @@ export default function CommunityScreen() {
           </>
         }
         renderItem={({ item }) => (
-          /* ── List/Item/Post (327×92) */
+          /* ── List/Item/Post (Figma node 730:4885) ── */
           <TouchableOpacity
             style={styles.postItem}
             onPress={() => router.push(`/tabs/community/${item.id}`)}
@@ -115,11 +115,11 @@ export default function CommunityScreen() {
                     {item.board}
                   </Text>
                 </View>
-                <Text style={styles.postDate}>{item.createdAt}</Text>
               </View>
               <Text style={styles.postTitle} numberOfLines={2}>{item.title}</Text>
               <View style={styles.postMetaRow}>
                 <Text style={styles.postAuthor}>{item.author.emoji} {item.author.name}</Text>
+                <Text style={styles.postDate}>{item.createdAt}</Text>
                 <View style={styles.postStats}>
                   <Text style={styles.metaText}>👁 {item.views}</Text>
                   <Text style={styles.metaText}>❤️ {item.likes}</Text>
@@ -199,15 +199,15 @@ const styles = StyleSheet.create({
   },
   boardBadgeText: { fontSize: 11, fontWeight: '600' },
 
-  /* List/Item/Post (327×92) */
+  /* List/Item/Post (Figma node 730:4885) */
   postItem: { paddingHorizontal: 16, minHeight: 92, justifyContent: 'center' },
   postItemInner: { paddingVertical: 12, gap: 4 },
   postTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  postDate: { fontSize: 11, color: Colors.textTertiary, marginLeft: 'auto' },
+  postDate: { fontSize: 11, color: Colors.textTertiary },
   postTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, lineHeight: 20 },
-  postMetaRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
-  postAuthor: { fontSize: 11, color: Colors.textSecondary, flex: 1 },
-  postStats: { flexDirection: 'row', gap: 10 },
+  postMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
+  postAuthor: { fontSize: 11, color: Colors.textSecondary },
+  postStats: { flexDirection: 'row', gap: 10, marginLeft: 'auto' },
   metaText: { fontSize: 11, color: Colors.textTertiary },
 
   separator: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 16 },

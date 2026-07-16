@@ -54,19 +54,19 @@ export default function WritePostScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <SafeAreaView style={styles.safeArea}>
-        {/* ── TopAppBar – Figma: Navigation/TopAppBar/Write (375×44) */}
+        {/* ── TopAppBar – Figma: Navigation/TopAppBar/Write with Title(724:4248), state=작성 전/완료 */}
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.cancelBtn} onPress={handleCancel}>
-            <Text style={styles.cancelText}>취소</Text>
+          <TouchableOpacity style={styles.backBtn} onPress={handleCancel}>
+            <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>글쓰기</Text>
           <TouchableOpacity
-            style={[styles.submitBtn, isValid && { backgroundColor: Colors.navBar }]}
+            style={styles.submitBtn}
             onPress={handleSubmit}
             disabled={!isValid}
           >
-            <Text style={[styles.submitText, isValid && { color: Colors.navBarIconActive }]}>
-              완료
+            <Text style={[styles.submitText, isValid && styles.submitTextActive]}>
+              작성 완료
             </Text>
           </TouchableOpacity>
         </View>
@@ -181,15 +181,12 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.divider,
     backgroundColor: Colors.background,
   },
-  cancelBtn: { paddingHorizontal: 12, paddingVertical: 10 },
-  cancelText: { fontSize: 15, color: Colors.textSecondary },
+  backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34, marginTop: -2 },
   topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: Colors.textPrimary },
-  submitBtn: {
-    paddingHorizontal: 14, paddingVertical: 6,
-    borderRadius: 16, backgroundColor: Colors.border,
-    marginRight: 4,
-  },
-  submitText: { fontSize: 14, fontWeight: '700', color: Colors.textTertiary },
+  submitBtn: { paddingHorizontal: 12, height: 44, alignItems: 'center', justifyContent: 'center' },
+  submitText: { fontSize: 14, fontWeight: '600', color: Colors.textTertiary },
+  submitTextActive: { color: Colors.navBar, fontWeight: '700' },
 
   scroll: { flex: 1 },
 

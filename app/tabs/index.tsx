@@ -31,7 +31,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Home (375×44, bg #52514e) */}
       <View style={styles.topBar}>
-        <Text style={styles.logo}>SOKDAK</Text>
+        <Text style={styles.logo}>SokDak</Text>
         <View style={styles.topBarIcons}>
           <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/search')}>
             <Text style={styles.iconGlyph}>🔍</Text>
@@ -171,8 +171,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar,
   },
   logo: {
-    fontSize: 16, fontWeight: '700', color: Colors.navBarIconActive,
-    letterSpacing: 1, fontFamily: undefined,
+    fontSize: 18, fontWeight: '700', color: Colors.navBarIconActive,
+    fontFamily: 'NotoSerifKR_600SemiBold',
   },
   topBarIcons: { flexDirection: 'row' },
   iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },

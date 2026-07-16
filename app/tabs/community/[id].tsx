@@ -71,22 +71,28 @@ export default function PostDetailScreen() {
       keyboardVerticalOffset={0}
     >
       <SafeAreaView style={styles.safeArea}>
-        {/* ── TopAppBar – Figma: Navigation/TopAppBar/Post: 다른 사람 게시물 (375×44) */}
+        {/* ── TopAppBar – Figma: Navigation/TopAppBar/Post : 다른 사람 게시물(710:4873)/내 게시물(736:6169) — back + share + more, 뱃지 없음 */}
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
-          <View style={[styles.boardBadge, { backgroundColor: boardColor.bg }]}>
-            <Text style={[styles.boardBadgeText, { color: boardColor.fg }]}>{post.board}</Text>
+          <View style={styles.topBarRight}>
+            <TouchableOpacity style={styles.iconButton}>
+              <Text style={styles.shareIcon}>🔗</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <Text style={styles.moreIcon}>⋯</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.moreButton}>
-            <Text style={styles.moreIcon}>⋯</Text>
-          </TouchableOpacity>
         </View>
 
         <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
           {/* ── 게시글 본문 영역 ── */}
           <View style={styles.postSection}>
+            <View style={[styles.boardBadge, styles.boardBadgeStandalone, { backgroundColor: boardColor.bg }]}>
+              <Text style={[styles.boardBadgeText, { color: boardColor.fg }]}>{post.board}</Text>
+            </View>
+
             {/* Display/UserInfo (327×40) */}
             <View style={styles.userInfoRow}>
               <View style={styles.userAvatar}>
@@ -258,13 +264,16 @@ const styles = StyleSheet.create({
   },
   backButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34, marginTop: -2 },
+  topBarRight: { marginLeft: 'auto', flexDirection: 'row', alignItems: 'center' },
+  iconButton: { width: 40, height: 44, alignItems: 'center', justifyContent: 'center' },
+  shareIcon: { fontSize: 17 },
+  moreIcon: { fontSize: 20, color: Colors.textSecondary },
   boardBadge: {
     paddingHorizontal: 12, paddingVertical: 4,
     borderRadius: 12,
   },
+  boardBadgeStandalone: { alignSelf: 'flex-start', marginBottom: 12 },
   boardBadgeText: { fontSize: 11, fontWeight: '700' },
-  moreButton: { marginLeft: 'auto', width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  moreIcon: { fontSize: 20, color: Colors.textSecondary },
 
   scroll: { flex: 1 },
 

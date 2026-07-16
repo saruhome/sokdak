@@ -63,6 +63,11 @@ export default function CategoryScreen() {
             <ImageBackground source={item.image} style={styles.cardBg} imageStyle={styles.cardBgImage}>
               <Image source={MIC_ICON} style={styles.micIcon} />
               <Image source={STAR_ICON} style={[styles.starIcon, { tintColor: item.colorFg }]} />
+              {item.slug === 'new-slang' && (
+                <View style={styles.newBadge}>
+                  <Text style={styles.newBadgeText}>NEW</Text>
+                </View>
+              )}
               <View style={styles.cardScrim} />
               <View style={styles.cardTextWrap}>
                 <Text style={styles.categoryName}>{item.name}</Text>
@@ -121,6 +126,12 @@ const styles = StyleSheet.create({
   cardBgImage: { resizeMode: 'cover' },
   micIcon: { position: 'absolute', left: 12, top: 12, width: 16, height: 16, tintColor: '#1A1A1A' },
   starIcon: { position: 'absolute', right: 12, top: 12, width: 16, height: 16 },
+  newBadge: {
+    position: 'absolute', right: 10, top: 34,
+    backgroundColor: Colors.error, borderRadius: 8,
+    paddingHorizontal: 6, paddingVertical: 2,
+  },
+  newBadgeText: { fontSize: 9, fontWeight: '800', color: '#FFFFFF' },
   cardScrim: {
     position: 'absolute', left: 0, right: 0, bottom: 0, height: 44,
     backgroundColor: 'rgba(248,248,248,0.88)',

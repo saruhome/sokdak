@@ -3,12 +3,13 @@ import {
   TextInput, FlatList, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { useMemo, useState } from 'react';
-import { router } from 'expo-router';
+import { useMemo, useState, useCallback, useEffect } from 'react';
+import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { MOCK_WORDS, type Word } from '../../constants/mockWords';
 import { MOCK_POSTS, BOARD_COLORS, type Post } from '../../constants/mockPosts';
-import { CATEGORIES } from '../../constants/categories';
+import { CATEGORIES, getCategoryBySlug } from '../../constants/categories';
+import { authStore } from '../../constants/authStore';
 
 type ResultTab = 'word' | 'community';
 
@@ -24,6 +25,18 @@ export default function SearchScreen() {
   const [recent, setRecent] = useState<string[]>(['킹받다', '갑분싸', '핵인싸']);
   const [resultTab, setResultTab] = useState<ResultTab>('word');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
+
+  useFocusEffect(useCallback(() => { setSavedIds(authStore.getSavedWordIds()); }, []));
+  useEffect(() => {
+    const unsub = authStore.subscribeBookmarks(() => setSavedIds(authStore.getSavedWordIds()));
+    return () => { unsub(); };
+  }, []);
+
+  const toggleSave = (id: string) => {
+    authStore.toggleWordSaved(id);
+    setSavedIds(authStore.getSavedWordIds());
+  };
 
   const handleChangeText = (text: string) => {
     setQuery(text);
@@ -231,22 +244,28 @@ export default function SearchScreen() {
               <FlatList
                 data={wordResults}
                 keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.wordItem}
-                    onPress={() => router.push(`/tabs/dictionary/${item.id}`)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={styles.wordItemLeft}>
-                      <Text style={styles.wordText}>{item.word}</Text>
-                      <Text style={styles.wordDesc} numberOfLines={1}>{item.shortDesc}</Text>
-                    </View>
-                    <View style={styles.wordRight}>
-                      <Text style={styles.wordCategory}>{item.category}</Text>
-                      <Text style={styles.wordLikes}>❤️ {item.likes}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
+                renderItem={({ item }) => {
+                  const saved = savedIds.includes(item.id);
+                  return (
+                    <TouchableOpacity
+                      style={styles.wordItem}
+                      onPress={() => router.push(`/tabs/dictionary/${item.id}`)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.wordItemLeft}>
+                        <Text style={styles.wordText}>{item.word}</Text>
+                        <Text style={styles.wordDesc} numberOfLines={1}>{item.shortDesc}</Text>
+                      </View>
+                      <View style={styles.wordRight}>
+                        <Text style={styles.wordCategory}>{getCategoryBySlug(item.category)?.name ?? item.category}</Text>
+                        <Text style={styles.wordLikes}>❤️ {item.likes}</Text>
+                        <TouchableOpacity onPress={() => toggleSave(item.id)} hitSlop={8}>
+                          <Text style={styles.saveIcon}>{saved ? '⭐' : '☆'}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                }}
                 ItemSeparatorComponent={() => <View style={styles.separator} />}
                 /* ── 단어 없음 (Figma: 229:2794) ── */
                 ListEmptyComponent={
@@ -396,6 +415,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border,
   },
   wordLikes: { fontSize: 11, color: Colors.textTertiary },
+  saveIcon: { fontSize: 16, color: Colors.accent, marginTop: 2 },
 
   /* 게시글 결과 아이템 */
   postItem: { paddingHorizontal: 20, paddingVertical: 12, gap: 4 },

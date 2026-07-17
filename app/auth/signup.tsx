@@ -9,13 +9,13 @@ import { Colors } from '../../constants/Colors';
 
 const JJAEKI_AVATAR = require('../../assets/characters/jjaeki.png');
 
-/* ── List/Item/Log up (327×48) 재사용 컴포넌트 ── */
+/* ── List/Item/Log up (327×48) 재사용 컴포넌트 — Figma 1293:20263: 라벨 없이 아이콘+플레이스홀더 */
 function FormField({
-  label, value, onChangeText, placeholder,
+  icon, value, onChangeText, placeholder,
   secureTextEntry, keyboardType, helper, error,
   returnKeyType, onSubmitEditing,
 }: {
-  label: string; value: string;
+  icon: string; value: string;
   onChangeText: (v: string) => void;
   placeholder: string;
   secureTextEntry?: boolean;
@@ -27,22 +27,24 @@ function FormField({
   const [focused, setFocused] = useState(false);
   return (
     <View style={ff.wrap}>
-      <Text style={ff.label}>{label}</Text>
-      <TextInput
-        style={[ff.input, focused && ff.inputFocused, !!error && ff.inputError]}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={Colors.textTertiary}
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType ?? 'default'}
-        autoCapitalize="none"
-        autoCorrect={false}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        returnKeyType={returnKeyType ?? 'next'}
-        onSubmitEditing={onSubmitEditing}
-      />
+      <View style={[ff.inputRow, focused && ff.inputFocused, !!error && ff.inputError]}>
+        <Text style={ff.icon}>{icon}</Text>
+        <TextInput
+          style={ff.input}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={Colors.textTertiary}
+          secureTextEntry={secureTextEntry}
+          keyboardType={keyboardType ?? 'default'}
+          autoCapitalize="none"
+          autoCorrect={false}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          returnKeyType={returnKeyType ?? 'next'}
+          onSubmitEditing={onSubmitEditing}
+        />
+      </View>
       {helper && !error ? <Text style={ff.helper}>{helper}</Text> : null}
       {error ? <Text style={ff.error}>{error}</Text> : null}
     </View>
@@ -51,12 +53,13 @@ function FormField({
 
 const ff = StyleSheet.create({
   wrap: { gap: 4, marginBottom: 4 },
-  label: { fontSize: 12, fontWeight: '600', color: Colors.textSecondary, paddingHorizontal: 2 },
-  input: {
+  inputRow: {
     height: 48, borderRadius: 10, borderWidth: 1.5, borderColor: Colors.border,
-    paddingHorizontal: 14, fontSize: 15, color: Colors.textPrimary,
-    backgroundColor: Colors.surface,
+    paddingHorizontal: 14, backgroundColor: Colors.surface,
+    flexDirection: 'row', alignItems: 'center', gap: 10,
   },
+  icon: { fontSize: 15 },
+  input: { flex: 1, fontSize: 15, color: Colors.textPrimary, padding: 0 },
   inputFocused: { borderColor: Colors.navBar },
   inputError: { borderColor: Colors.error },
   helper: { fontSize: 11, color: Colors.textTertiary, paddingHorizontal: 2 },
@@ -134,7 +137,7 @@ export default function SignupScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <SafeAreaView style={styles.safeArea}>
-        {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Default/Default */}
+        {/* ── TopAppBar ── Figma node 1293:20263 — 다크 헤더 */}
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
             <Text style={styles.backIcon}>‹</Text>
@@ -149,48 +152,48 @@ export default function SignupScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* ── 환영 텍스트 ── Figma: "반가워요! 속닥 과 함께 진짜 한국어를 배워봐요." */}
+          {/* ── 환영 텍스트 ── Figma 1293:20263: "반가워요!" + "속닥(굵게) 과 함께 진짜 한국어를 배워봐요." (2줄) */}
           <View style={[styles.welcomeSection, styles.welcomeRow]}>
             <Image source={JJAEKI_AVATAR} style={styles.welcomeAvatar} resizeMode="cover" />
             <Text style={styles.welcomeText}>
-              반가워요!{'\n'}속닥 과 함께 진짜 한국어를{'\n'}배워봐요.
+              반가워요!{'\n'}<Text style={styles.welcomeTextBold}>속닥</Text> 과 함께 진짜 한국어를 배워봐요.
             </Text>
           </View>
 
           {/* ── 입력 폼 ── Figma: List/Item/Log up (327×48) × 4 */}
           <View style={styles.form}>
             <FormField
-              label="닉네임"
+              icon="👤"
               value={nickname}
               onChangeText={setNickname}
-              placeholder="2자 이상 입력해주세요"
+              placeholder="닉네임"
               helper="다른 사용자에게 표시되는 이름이에요."
               error={errors.nickname}
               returnKeyType="next"
             />
             <FormField
-              label="이메일"
+              icon="✉️"
               value={email}
               onChangeText={setEmail}
-              placeholder="example@email.com"
+              placeholder="이메일"
               keyboardType="email-address"
               error={errors.email}
               returnKeyType="next"
             />
             <FormField
-              label="비밀번호"
+              icon="🔒"
               value={password}
               onChangeText={setPassword}
-              placeholder="8자 이상"
+              placeholder="비밀번호"
               secureTextEntry
               error={errors.password}
               returnKeyType="next"
             />
             <FormField
-              label="비밀번호 확인"
+              icon="🔒"
               value={confirm}
               onChangeText={setConfirm}
-              placeholder="비밀번호를 다시 입력해주세요"
+              placeholder="비밀번호 확인"
               secureTextEntry
               error={errors.confirm}
               returnKeyType="done"
@@ -224,7 +227,7 @@ export default function SignupScreen() {
             activeOpacity={0.85}
           >
             <Text style={[styles.submitBtnText, !isValid && styles.submitBtnTextDisabled]}>
-              가입하기
+              회원가입
             </Text>
           </TouchableOpacity>
 
@@ -246,12 +249,11 @@ const styles = StyleSheet.create({
 
   topBar: {
     height: 44, flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: Colors.divider,
-    backgroundColor: Colors.background,
+    paddingHorizontal: 8, backgroundColor: Colors.navBar,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34, marginTop: -2 },
-  topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: Colors.textPrimary },
+  backIcon: { fontSize: 28, color: Colors.navBarIconActive, lineHeight: 34, marginTop: -2 },
+  topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: Colors.navBarIconActive },
 
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 24, paddingBottom: 48, paddingTop: 4 },
@@ -261,9 +263,10 @@ const styles = StyleSheet.create({
   welcomeRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   welcomeAvatar: { width: 44, height: 44, borderRadius: 22 },
   welcomeText: {
-    flexShrink: 1, fontSize: 22, fontWeight: '800', color: Colors.textPrimary,
-    lineHeight: 32, letterSpacing: -0.3,
+    flexShrink: 1, fontSize: 18, fontWeight: '400', color: Colors.textPrimary,
+    lineHeight: 26, letterSpacing: -0.3,
   },
+  welcomeTextBold: { fontWeight: '800' },
 
   /* 폼 */
   form: { gap: 16, marginBottom: 24 },

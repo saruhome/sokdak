@@ -1,6 +1,6 @@
 import {
   StyleSheet, View, SafeAreaView, ScrollView,
-  TouchableOpacity, Dimensions,
+  TouchableOpacity,
   type NativeSyntheticEvent, type NativeScrollEvent,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
@@ -10,8 +10,7 @@ import { Colors } from '../../constants/Colors';
 import { MOCK_WORDS } from '../../constants/mockWords';
 import { MOCK_POSTS, BOARD_COLORS } from '../../constants/mockPosts';
 import { getCategoryBySlug } from '../../constants/categories';
-
-const SCREEN_WIDTH = Dimensions.get('window').width;
+import { SCREEN_WIDTH } from '../../constants/layout';
 
 /** Figma: Card/Recommend2 — 좋아요 상위 3개 단어로 구성된 캐러셀 */
 const HERO_WORDS = [...MOCK_WORDS].sort((a, b) => b.likes - a.likes).slice(0, 3);

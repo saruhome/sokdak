@@ -13,6 +13,10 @@
   기존 화면들은 iPhone 13 mini(375×812) 기준으로 만들어졌지만 대부분 flex/margin
   기반이라 폭이 좁아져도 깨지지 않음 — 새 화면은 처음부터 360dp 기준으로 작업할 것.
   Status Bar/BottomBar 높이는 SafeAreaView가 플랫폼별로 알아서 처리하므로 하드코딩 금지.
+  **웹 프리뷰는 앱 자체가 360×800으로 고정됨** — `app/_layout.tsx`의 `DeviceFrame`이
+  브라우저 창 크기와 무관하게 360×800 프레임(다크 배경 중앙 정렬)으로 렌더링.
+  화면 폭이 필요하면 `Dimensions.get('window')` 대신 `constants/layout.ts`의
+  `SCREEN_WIDTH`를 사용할 것 (웹=360 고정, 네이티브=실기기 폭).
 
 ## 로컬 실행
 

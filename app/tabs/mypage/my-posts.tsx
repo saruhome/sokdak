@@ -10,10 +10,11 @@ import { authStore } from '../../../constants/authStore';
 
 type ActivityTab = 'written' | 'commented' | 'liked';
 
+/** Figma: Selection/Tab/02 (722:3448) — state=게시물/댓글/좋아요 */
 const TABS: { key: ActivityTab; label: string }[] = [
-  { key: 'written',   label: '내가 쓴 글' },
-  { key: 'commented', label: '댓글 단 글' },
-  { key: 'liked',     label: '좋아요 한 글' },
+  { key: 'written',   label: '게시물' },
+  { key: 'commented', label: '댓글' },
+  { key: 'liked',     label: '좋아요' },
 ];
 
 /** Figma: 229:3620~3679 — 내 활동 게시물 (쓴 글 / 댓글 단 글 / 좋아요 한 글) */
@@ -51,7 +52,7 @@ export default function MyPostsScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>내 활동 게시물</Text>
+        <Text style={styles.topBarTitle}>내 활동</Text>
         <View style={styles.backBtn} />
       </View>
 

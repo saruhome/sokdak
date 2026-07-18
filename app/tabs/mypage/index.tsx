@@ -12,12 +12,13 @@ import { authStore } from '../../../constants/authStore';
 
 const JJAEKI_AVATAR = require('../../../assets/characters/jjaeki.png');
 
-/** Figma: 5-1.마이페이지 와이어프레임 — 내 정보 관리 / 저장한 단어 / 자주 묻는 질문 / 운영진에게 */
+/** Figma: 5-1.마이페이지-2 와이어프레임(524:1871) — 저장한 단어 / 내 활동 / 자주 묻는 질문 / 제안하기.
+ *  내 정보 관리는 별도 메뉴가 아니라 프로필 행(›)으로 진입. */
 const MAIN_MENU = [
-  { label: '내 정보 관리',   emoji: '⚙️', route: '/tabs/mypage/profile' },
   { label: '저장한 단어',    emoji: '📌', route: '/tabs/mypage/saved' },
+  { label: '내 활동',        emoji: '📝', route: '/tabs/mypage/my-posts' },
   { label: '자주 묻는 질문', emoji: '❓', route: '/tabs/mypage/support' },
-  { label: '운영진에게',     emoji: '💡', route: '/tabs/mypage/suggest' },
+  { label: '제안하기',       emoji: '💡', route: '/tabs/mypage/suggest' },
 ];
 
 export default function MyPageScreen() {
@@ -65,11 +66,11 @@ export default function MyPageScreen() {
       </View>
 
       <ScrollView style={styles.scroll}>
-        {/* ── 프로필 + 통계 ── Figma: 5-1.마이페이지-2 와이어프레임 */}
+        {/* ── 프로필 + 통계 ── Figma: 5-1.마이페이지-2 와이어프레임 — 로그인 시 › 로 내 정보 관리 진입 */}
         <TouchableOpacity
           style={styles.profileRow}
-          onPress={!loggedIn ? () => router.push('/auth/login') : undefined}
-          activeOpacity={loggedIn ? 1 : 0.75}
+          onPress={() => router.push(loggedIn ? '/tabs/mypage/profile' : '/auth/login')}
+          activeOpacity={0.75}
         >
           <View style={[styles.avatar, !loggedIn && styles.avatarGuest]}>
             <Text style={styles.avatarText}>

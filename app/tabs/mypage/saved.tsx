@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { MOCK_WORDS, type Word } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
+import { getCategoryBySlug } from '../../../constants/categories';
 
 /** Figma: 229:3738 — 저장한 단어 (북마크된 단어 목록, 삭제 가능) */
 export default function SavedWordsScreen() {
@@ -58,7 +59,7 @@ export default function SavedWordsScreen() {
               <Text style={styles.wordDesc} numberOfLines={1}>{item.shortDesc}</Text>
             </View>
             <View style={styles.wordRight}>
-              <Text style={styles.wordCategory}>{item.category}</Text>
+              <Text style={styles.wordCategory}>{getCategoryBySlug(item.category)?.name ?? item.category}</Text>
               <TouchableOpacity onPress={() => handleRemove(item.id)} hitSlop={8}>
                 <Text style={styles.removeIcon}>🗑️</Text>
               </TouchableOpacity>

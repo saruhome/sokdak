@@ -11,6 +11,7 @@ import { MOCK_WORDS } from '../../constants/mockWords';
 import { MOCK_POSTS, BOARD_COLORS } from '../../constants/mockPosts';
 import { getCategoryBySlug } from '../../constants/categories';
 import { SCREEN_WIDTH } from '../../constants/layout';
+import { SokDakLogo } from '@/components/icons/SokDakLogo';
 
 /** Figma: Card/Recommend2 — 좋아요 상위 3개 단어로 구성된 캐러셀 */
 const HERO_WORDS = [...MOCK_WORDS].sort((a, b) => b.likes - a.likes).slice(0, 3);
@@ -28,9 +29,11 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Home (375×44, bg #52514e) */}
+      {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Home (375×44, bg #52514e) — 실제 SokDak 워드마크 SVG */}
       <View style={styles.topBar}>
-        <Text style={styles.logo}>SokDak</Text>
+        <TouchableOpacity style={styles.logoBtn} onPress={() => router.push('/tabs')} activeOpacity={0.8}>
+          <SokDakLogo width={83} />
+        </TouchableOpacity>
         <View style={styles.topBarIcons}>
           <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/search')}>
             <Text style={styles.iconGlyph}>🔍</Text>
@@ -169,10 +172,7 @@ const styles = StyleSheet.create({
     paddingRight: 6,
     backgroundColor: Colors.navBar,
   },
-  logo: {
-    fontSize: 18, fontWeight: '700', color: Colors.navBarIconActive,
-    fontFamily: 'NotoSerifKR_600SemiBold',
-  },
+  logoBtn: { height: 44, justifyContent: 'center' },
   topBarIcons: { flexDirection: 'row' },
   iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   iconGlyph: { fontSize: 18 },

@@ -6,6 +6,8 @@ import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../../constants/Colors';
+import { AppIcon } from '@/components/AppIcon';
+import { Mail } from 'lucide-react-native';
 
 const FAQ_ITEMS = [
   { q: '속닥은 어떤 앱인가요?', a: '한국 거주 외국인 중·고급 학습자를 위한 한국어 신조어 학습 앱이에요. 교과서에는 없는 진짜 생활 한국어를 배울 수 있어요.' },
@@ -60,7 +62,10 @@ export default function SupportScreen() {
         <Text style={styles.sectionTitle}>더 궁금한 점이 있나요?</Text>
         <TouchableOpacity style={styles.contactCard} onPress={handleContact} activeOpacity={0.85}>
           <View>
-            <Text style={styles.contactTitle}>📧 이메일로 문의하기</Text>
+            <View style={styles.contactTitleRow}>
+              <AppIcon icon={Mail} size={14} color={Colors.navBarIconActive} />
+              <Text style={styles.contactTitle}>이메일로 문의하기</Text>
+            </View>
             <Text style={styles.contactSub}>support@sokdak.app</Text>
           </View>
           <Text style={styles.contactArrow}>›</Text>
@@ -104,7 +109,8 @@ const styles = StyleSheet.create({
     padding: 16, borderRadius: 12,
     backgroundColor: Colors.navBar,
   },
-  contactTitle: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive, marginBottom: 3 },
+  contactTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 3 },
+  contactTitle: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
   contactSub: { fontSize: 12, color: Colors.navBarIconMuted },
   contactArrow: { fontSize: 20, color: Colors.navBarIconMuted },
 });

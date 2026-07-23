@@ -9,6 +9,8 @@ import { useCallback, useState, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { MOCK_POSTS, BOARD_COLORS, type Comment } from '../../../constants/mockPosts';
 import { authStore } from '../../../constants/authStore';
+import { AppIcon, IconStat } from '@/components/AppIcon';
+import { Heart, MessageCircle, Bookmark, Share2, MoreVertical, Eye } from 'lucide-react-native';
 
 export default function PostDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -77,12 +79,8 @@ export default function PostDetailScreen() {
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <View style={styles.topBarRight}>
-            <TouchableOpacity style={styles.iconButton}>
-              <Text style={styles.shareIcon}>🔗</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton}>
-              <Text style={styles.moreIcon}>⋯</Text>
-            </TouchableOpacity>
+            <AppIcon icon={Share2} size={20} style={styles.iconButton} onPress={() => {}} />
+            <AppIcon icon={MoreVertical} size={20} style={styles.iconButton} onPress={() => {}} />
           </View>
         </View>
 
@@ -113,35 +111,35 @@ export default function PostDetailScreen() {
             {/* 액션 버튼들 */}
             <View style={styles.actionRow}>
               <TouchableOpacity style={[styles.actionBtn, liked && styles.actionBtnActive]} onPress={handleLike}>
-                <Text style={styles.actionIcon}>{liked ? '❤️' : '🤍'}</Text>
+                <AppIcon icon={Heart} size={16} fill={liked ? Colors.error : undefined} color={liked ? Colors.error : undefined} />
                 <Text style={[styles.actionLabel, liked && { color: Colors.error }]}>{likeCount}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionBtn}>
-                <Text style={styles.actionIcon}>💬</Text>
+                <AppIcon icon={MessageCircle} size={16} />
                 <Text style={styles.actionLabel}>{totalComments}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.actionBtn, saved && styles.actionBtnActive]}
                 onPress={() => setSaved(p => !p)}
               >
-                <Text style={styles.actionIcon}>{saved ? '🔖' : '📌'}</Text>
+                <AppIcon icon={Bookmark} size={16} fill={saved ? Colors.accent : undefined} color={saved ? Colors.accent : undefined} />
                 <Text style={[styles.actionLabel, saved && { color: Colors.accent }]}>
                   {saved ? '저장됨' : '저장'}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionBtn}>
-                <Text style={styles.actionIcon}>📤</Text>
+                <AppIcon icon={Share2} size={16} />
                 <Text style={styles.actionLabel}>공유</Text>
               </TouchableOpacity>
             </View>
 
             {/* Group 189 – 조회·좋아요·댓글 메타 */}
             <View style={styles.metaRow}>
-              <Text style={styles.metaItem}>👁 조회 {post.views}</Text>
+              <IconStat icon={Eye} value={`조회 ${post.views}`} textStyle={styles.metaItem} />
               <Text style={styles.metaDot}>·</Text>
-              <Text style={styles.metaItem}>❤️ 좋아요 {likeCount}</Text>
+              <IconStat icon={Heart} value={`좋아요 ${likeCount}`} textStyle={styles.metaItem} />
               <Text style={styles.metaDot}>·</Text>
-              <Text style={styles.metaItem}>💬 댓글 {totalComments}</Text>
+              <IconStat icon={MessageCircle} value={`댓글 ${totalComments}`} textStyle={styles.metaItem} />
             </View>
           </View>
 
@@ -233,7 +231,7 @@ function CommentItem({
             style={styles.commentAction}
             onPress={() => setLiked(p => !p)}
           >
-            <Text style={styles.commentActionIcon}>{liked ? '❤️' : '🤍'}</Text>
+            <AppIcon icon={Heart} size={13} fill={liked ? Colors.error : undefined} color={liked ? Colors.error : undefined} />
             <Text style={styles.commentActionText}>
               {liked ? comment.likes + 1 : comment.likes}
             </Text>

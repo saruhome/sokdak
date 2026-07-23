@@ -12,13 +12,16 @@ import { authStore } from '../../../constants/authStore';
 
 const JJAEKI_AVATAR = require('../../../assets/characters/jjaeki.png');
 
+import { AppIcon } from '@/components/AppIcon';
+import { Bookmark, FileText, HelpCircle, Lightbulb, Settings } from 'lucide-react-native';
+
 /** Figma: 5-1.마이페이지-2 와이어프레임(524:1871) — 저장한 단어 / 내 활동 / 자주 묻는 질문 / 제안하기.
  *  내 정보 관리는 별도 메뉴가 아니라 프로필 행(›)으로 진입. */
 const MAIN_MENU = [
-  { label: '저장한 단어',    emoji: '📌', route: '/tabs/mypage/saved' },
-  { label: '내 활동',        emoji: '📝', route: '/tabs/mypage/my-posts' },
-  { label: '자주 묻는 질문', emoji: '❓', route: '/tabs/mypage/support' },
-  { label: '제안하기',       emoji: '💡', route: '/tabs/mypage/suggest' },
+  { label: '저장한 단어',    icon: Bookmark,   route: '/tabs/mypage/saved' },
+  { label: '내 활동',        icon: FileText,   route: '/tabs/mypage/my-posts' },
+  { label: '자주 묻는 질문', icon: HelpCircle, route: '/tabs/mypage/support' },
+  { label: '제안하기',       icon: Lightbulb,  route: '/tabs/mypage/suggest' },
 ];
 
 export default function MyPageScreen() {
@@ -57,12 +60,12 @@ export default function MyPageScreen() {
       <View style={styles.topBar}>
         <View style={styles.backBtn} />
         <Text style={styles.topBarTitle}>마이페이지</Text>
-        <TouchableOpacity
+        <AppIcon
+          icon={Settings}
+          size={20}
           style={styles.backBtn}
           onPress={() => router.push('/tabs/mypage/settings')}
-        >
-          <Text style={styles.settingsIcon}>⚙️</Text>
-        </TouchableOpacity>
+        />
       </View>
 
       <ScrollView style={styles.scroll}>
@@ -138,7 +141,7 @@ export default function MyPageScreen() {
                   : router.push('/auth/login')
                 }
               >
-                <Text style={styles.menuEmoji}>{item.emoji}</Text>
+                <AppIcon icon={item.icon} size={18} style={styles.menuIconWrap} />
                 <Text style={styles.menuLabel}>{item.label}</Text>
                 <Text style={styles.menuArrow}>›</Text>
               </TouchableOpacity>
@@ -184,7 +187,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  settingsIcon: { fontSize: 18 },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
   scroll: { flex: 1 },
 
@@ -233,7 +235,7 @@ const styles = StyleSheet.create({
   },
   menuItem: { flexDirection: 'row', alignItems: 'center', height: 52, paddingHorizontal: 16, gap: 12 },
   menuItemBorder: { borderBottomWidth: 1, borderBottomColor: Colors.divider },
-  menuEmoji: { fontSize: 18, width: 26 },
+  menuIconWrap: { width: 26 },
   menuLabel: { flex: 1, fontSize: 14, color: Colors.textPrimary },
   menuArrow: { fontSize: 18, color: Colors.border },
 

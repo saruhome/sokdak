@@ -8,6 +8,8 @@ import { Colors } from '../../../constants/Colors';
 import { MOCK_WORDS, type Word } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
 import { getCategoryBySlug } from '../../../constants/categories';
+import { AppIcon } from '@/components/AppIcon';
+import { Trash2, Bookmark } from 'lucide-react-native';
 
 /** Figma: 229:3738 — 저장한 단어 (북마크된 단어 목록, 삭제 가능) */
 export default function SavedWordsScreen() {
@@ -60,16 +62,14 @@ export default function SavedWordsScreen() {
             </View>
             <View style={styles.wordRight}>
               <Text style={styles.wordCategory}>{getCategoryBySlug(item.category)?.name ?? item.category}</Text>
-              <TouchableOpacity onPress={() => handleRemove(item.id)} hitSlop={8}>
-                <Text style={styles.removeIcon}>🗑️</Text>
-              </TouchableOpacity>
+              <AppIcon icon={Trash2} size={16} onPress={() => handleRemove(item.id)} hitSlop={8} />
             </View>
           </TouchableOpacity>
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
           <View style={styles.emptyWrap}>
-            <Text style={styles.emptyEmoji}>📌</Text>
+            <AppIcon icon={Bookmark} size={36} color={Colors.textTertiary} />
             <Text style={styles.emptyText}>아직 저장한 단어가 없어요</Text>
             <TouchableOpacity
               style={styles.emptyCta}
@@ -110,12 +110,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7, paddingVertical: 2, borderRadius: 8,
     borderWidth: 1, borderColor: Colors.border,
   },
-  removeIcon: { fontSize: 15 },
 
   separator: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 20 },
 
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 },
-  emptyEmoji: { fontSize: 36 },
   emptyText: { fontSize: 14, color: Colors.textTertiary },
   emptyCta: {
     marginTop: 8, paddingHorizontal: 18, paddingVertical: 10,

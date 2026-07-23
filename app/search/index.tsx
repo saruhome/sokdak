@@ -10,6 +10,8 @@ import { MOCK_WORDS, type Word } from '../../constants/mockWords';
 import { MOCK_POSTS, BOARD_COLORS, type Post } from '../../constants/mockPosts';
 import { CATEGORIES, getCategoryBySlug } from '../../constants/categories';
 import { authStore } from '../../constants/authStore';
+import { AppIcon, IconStat } from '@/components/AppIcon';
+import { Search, BookOpen, Heart, Star, Eye, MessageCircle, Inbox } from 'lucide-react-native';
 
 type ResultTab = 'word' | 'community';
 
@@ -169,7 +171,7 @@ export default function SearchScreen() {
               onPress={() => handleSubmit(query)}
               activeOpacity={0.7}
             >
-              <Text style={styles.suggestIcon}>🔍</Text>
+              <AppIcon icon={Search} size={15} style={styles.suggestIconWrap} />
               <Text style={styles.suggestQueryText} numberOfLines={1}>
                 '{query}' 검색
               </Text>
@@ -181,7 +183,7 @@ export default function SearchScreen() {
               onPress={() => handleSubmit(item.word)}
               activeOpacity={0.7}
             >
-              <Text style={styles.suggestIcon}>📖</Text>
+              <AppIcon icon={BookOpen} size={15} style={styles.suggestIconWrap} />
               <Text style={styles.suggestWord}>{item.word}</Text>
               <Text style={styles.suggestDesc} numberOfLines={1}>{item.shortDesc}</Text>
             </TouchableOpacity>
@@ -258,10 +260,15 @@ export default function SearchScreen() {
                       </View>
                       <View style={styles.wordRight}>
                         <Text style={styles.wordCategory}>{getCategoryBySlug(item.category)?.name ?? item.category}</Text>
-                        <Text style={styles.wordLikes}>❤️ {item.likes}</Text>
-                        <TouchableOpacity onPress={() => toggleSave(item.id)} hitSlop={8}>
-                          <Text style={styles.saveIcon}>{saved ? '⭐' : '☆'}</Text>
-                        </TouchableOpacity>
+                        <IconStat icon={Heart} value={item.likes} textStyle={styles.wordLikes} />
+                        <AppIcon
+                          icon={Star}
+                          size={16}
+                          fill={saved ? '#FACC15' : undefined}
+                          color={saved ? '#FACC15' : undefined}
+                          onPress={() => toggleSave(item.id)}
+                          hitSlop={8}
+                        />
                       </View>
                     </TouchableOpacity>
                   );
@@ -270,7 +277,7 @@ export default function SearchScreen() {
                 /* ── 단어 없음 (Figma: 229:2794) ── */
                 ListEmptyComponent={
                   <View style={styles.resultEmptyWrap}>
-                    <Text style={styles.resultEmptyEmoji}>🔍</Text>
+                    <AppIcon icon={Search} size={36} color={Colors.textTertiary} />
                     <Text style={styles.resultEmptyTitle}>'{submittedQuery}'에 대한 검색 결과가 없어요</Text>
                     <Text style={styles.resultEmptyHint}>다른 검색어로 시도해보세요</Text>
                   </View>
@@ -300,9 +307,9 @@ export default function SearchScreen() {
                   <View style={styles.postMetaRow}>
                     <Text style={styles.postAuthor}>{item.author.emoji} {item.author.name}</Text>
                     <View style={styles.postStats}>
-                      <Text style={styles.metaText}>👁 {item.views}</Text>
-                      <Text style={styles.metaText}>❤️ {item.likes}</Text>
-                      <Text style={styles.metaText}>💬 {item.comments.length}</Text>
+                      <IconStat icon={Eye} value={item.views} textStyle={styles.metaText} />
+                      <IconStat icon={Heart} value={item.likes} textStyle={styles.metaText} />
+                      <IconStat icon={MessageCircle} value={item.comments.length} textStyle={styles.metaText} />
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -310,7 +317,7 @@ export default function SearchScreen() {
               ItemSeparatorComponent={() => <View style={styles.separator} />}
               ListEmptyComponent={
                 <View style={styles.resultEmptyWrap}>
-                  <Text style={styles.resultEmptyEmoji}>📭</Text>
+                  <AppIcon icon={Inbox} size={36} color={Colors.textTertiary} />
                   <Text style={styles.resultEmptyTitle}>'{submittedQuery}'에 대한 게시글이 없어요</Text>
                   <Text style={styles.resultEmptyHint}>다른 검색어로 시도해보세요</Text>
                 </View>
@@ -379,7 +386,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20, height: 48,
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
-  suggestIcon: { fontSize: 15, width: 18, textAlign: 'center' },
+  suggestIconWrap: { width: 18, alignItems: 'center' },
   suggestQueryText: { flex: 1, fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
   suggestWord: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
   suggestDesc: { flex: 1, fontSize: 12, color: Colors.textTertiary, textAlign: 'right' },
@@ -415,7 +422,6 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border,
   },
   wordLikes: { fontSize: 11, color: Colors.textTertiary },
-  saveIcon: { fontSize: 16, color: Colors.accent, marginTop: 2 },
 
   /* 게시글 결과 아이템 */
   postItem: { paddingHorizontal: 20, paddingVertical: 12, gap: 4 },
@@ -433,7 +439,6 @@ const styles = StyleSheet.create({
 
   /* 결과 없음 */
   resultEmptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 40 },
-  resultEmptyEmoji: { fontSize: 36 },
   resultEmptyTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, textAlign: 'center' },
   resultEmptyHint: { fontSize: 12, color: Colors.textTertiary },
 });

@@ -12,6 +12,8 @@ import { MOCK_POSTS, BOARD_COLORS } from '../../constants/mockPosts';
 import { getCategoryBySlug } from '../../constants/categories';
 import { SCREEN_WIDTH } from '../../constants/layout';
 import { SokDakLogo } from '@/components/icons/SokDakLogo';
+import { AppIcon, IconStat } from '@/components/AppIcon';
+import { Search, Bell, Eye, Heart, MessageCircle } from 'lucide-react-native';
 
 /** Figma: Card/Recommend2 — 좋아요 상위 3개 단어로 구성된 캐러셀 */
 const HERO_WORDS = [...MOCK_WORDS].sort((a, b) => b.likes - a.likes).slice(0, 3);
@@ -35,12 +37,9 @@ export default function HomeScreen() {
           <SokDakLogo width={83} />
         </TouchableOpacity>
         <View style={styles.topBarIcons}>
-          <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/search')}>
-            <Text style={styles.iconGlyph}>🔍</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconBtn}>
-            <Text style={styles.iconGlyph}>🔔</Text>
-          </TouchableOpacity>
+          {/* 다크 헤더 위라 기본 gray-600 대신 밝은색으로 대비 확보 */}
+          <AppIcon icon={Search} size={22} color={Colors.navBarIconActive} style={styles.iconBtn} onPress={() => router.push('/search')} />
+          <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} style={styles.iconBtn} onPress={() => {}} />
         </View>
       </View>
 
@@ -144,9 +143,9 @@ export default function HomeScreen() {
                   <Text style={styles.postAuthor}>{post.author.name}</Text>
                   <Text style={styles.postDate}>{post.createdAt}</Text>
                   <View style={styles.postStats}>
-                    <Text style={styles.postStat}>👁 {post.views}</Text>
-                    <Text style={styles.postStat}>❤️ {post.likes}</Text>
-                    <Text style={styles.postStat}>💬 {post.comments.length}</Text>
+                    <IconStat icon={Eye} value={post.views} textStyle={styles.postStat} />
+                    <IconStat icon={Heart} value={post.likes} textStyle={styles.postStat} />
+                    <IconStat icon={MessageCircle} value={post.comments.length} textStyle={styles.postStat} />
                   </View>
                 </View>
               </View>

@@ -7,6 +7,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { MOCK_POSTS, BOARD_COLORS, type Post } from '../../../constants/mockPosts';
 import { authStore } from '../../../constants/authStore';
+import { AppIcon, IconStat } from '@/components/AppIcon';
+import { Eye, Heart, MessageCircle, Pencil } from 'lucide-react-native';
 
 type ActivityTab = 'written' | 'commented' | 'liked';
 
@@ -41,9 +43,9 @@ export default function MyPostsScreen() {
   const data = tab === 'liked' ? likedPosts : [];
 
   const emptyContent = {
-    written:   { emoji: '📝', text: '아직 작성한 글이 없어요', ctaLabel: '글쓰기', ctaRoute: '/tabs/community/write' as const },
-    commented: { emoji: '💬', text: '아직 댓글을 단 글이 없어요', ctaLabel: '커뮤니티 둘러보기', ctaRoute: '/tabs/community' as const },
-    liked:     { emoji: '❤️', text: '아직 좋아요 한 글이 없어요', ctaLabel: '커뮤니티 둘러보기', ctaRoute: '/tabs/community' as const },
+    written:   { icon: Pencil,       text: '아직 작성한 글이 없어요', ctaLabel: '글쓰기', ctaRoute: '/tabs/community/write' as const },
+    commented: { icon: MessageCircle, text: '아직 댓글을 단 글이 없어요', ctaLabel: '커뮤니티 둘러보기', ctaRoute: '/tabs/community' as const },
+    liked:     { icon: Heart,        text: '아직 좋아요 한 글이 없어요', ctaLabel: '커뮤니티 둘러보기', ctaRoute: '/tabs/community' as const },
   }[tab];
 
   return (
@@ -89,9 +91,9 @@ export default function MyPostsScreen() {
             <View style={styles.postMetaRow}>
               <Text style={styles.postAuthor}>{item.author.emoji} {item.author.name}</Text>
               <View style={styles.postStats}>
-                <Text style={styles.metaText}>👁 {item.views}</Text>
-                <Text style={styles.metaText}>❤️ {item.likes}</Text>
-                <Text style={styles.metaText}>💬 {item.comments.length}</Text>
+                <IconStat icon={Eye} value={item.views} textStyle={styles.metaText} />
+                <IconStat icon={Heart} value={item.likes} textStyle={styles.metaText} />
+                <IconStat icon={MessageCircle} value={item.comments.length} textStyle={styles.metaText} />
               </View>
             </View>
           </TouchableOpacity>
@@ -99,7 +101,7 @@ export default function MyPostsScreen() {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
           <View style={styles.emptyWrap}>
-            <Text style={styles.emptyEmoji}>{emptyContent.emoji}</Text>
+            <AppIcon icon={emptyContent.icon} size={36} color={Colors.textTertiary} />
             <Text style={styles.emptyText}>{emptyContent.text}</Text>
             <TouchableOpacity
               style={styles.emptyCta}
@@ -147,7 +149,6 @@ const styles = StyleSheet.create({
   separator: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 20 },
 
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 },
-  emptyEmoji: { fontSize: 36 },
   emptyText: { fontSize: 14, color: Colors.textTertiary },
   emptyCta: {
     marginTop: 8, paddingHorizontal: 18, paddingVertical: 10,

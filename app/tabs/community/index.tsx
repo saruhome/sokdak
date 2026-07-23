@@ -7,6 +7,8 @@ import { router } from 'expo-router';
 import { useState, useMemo } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { MOCK_POSTS, BOARD_COLORS, type PostBoard } from '../../../constants/mockPosts';
+import { AppIcon, IconStat } from '@/components/AppIcon';
+import { Eye, Heart, MessageCircle, Pencil, Inbox } from 'lucide-react-native';
 
 type BoardTab = '전체' | PostBoard;
 const BOARD_TABS: BoardTab[] = ['전체', '궁금해요', 'Q&A', '질문하기'];
@@ -52,9 +54,9 @@ export default function CommunityScreen() {
                         {post.title}
                       </Text>
                       <View style={styles.featuredCardMeta}>
-                        <Text style={styles.metaText}>👁 {post.views}</Text>
-                        <Text style={styles.metaText}>❤️ {post.likes}</Text>
-                        <Text style={styles.metaText}>💬 {post.comments.length}</Text>
+                        <IconStat icon={Eye} value={post.views} textStyle={styles.metaText} />
+                        <IconStat icon={Heart} value={post.likes} textStyle={styles.metaText} />
+                        <IconStat icon={MessageCircle} value={post.comments.length} textStyle={styles.metaText} />
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -121,9 +123,9 @@ export default function CommunityScreen() {
                 <Text style={styles.postAuthor}>{item.author.emoji} {item.author.name}</Text>
                 <Text style={styles.postDate}>{item.createdAt}</Text>
                 <View style={styles.postStats}>
-                  <Text style={styles.metaText}>👁 {item.views}</Text>
-                  <Text style={styles.metaText}>❤️ {item.likes}</Text>
-                  <Text style={styles.metaText}>💬 {item.comments.length}</Text>
+                  <IconStat icon={Eye} value={item.views} textStyle={styles.metaText} />
+                  <IconStat icon={Heart} value={item.likes} textStyle={styles.metaText} />
+                  <IconStat icon={MessageCircle} value={item.comments.length} textStyle={styles.metaText} />
                 </View>
               </View>
             </View>
@@ -132,7 +134,7 @@ export default function CommunityScreen() {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
           <View style={styles.emptyWrap}>
-            <Text style={styles.emptyEmoji}>📭</Text>
+            <AppIcon icon={Inbox} size={36} color={Colors.textTertiary} />
             <Text style={styles.emptyText}>아직 게시글이 없어요</Text>
           </View>
         }
@@ -145,7 +147,8 @@ export default function CommunityScreen() {
         onPress={() => router.push('/tabs/community/write')}
         activeOpacity={0.85}
       >
-        <Text style={styles.fabIcon}>✏️</Text>
+        {/* 다크 FAB 위라 밝은색으로 대비 확보 */}
+        <AppIcon icon={Pencil} size={22} color={Colors.navBarIconActive} />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -212,7 +215,6 @@ const styles = StyleSheet.create({
 
   separator: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 16 },
   emptyWrap: { paddingVertical: 60, alignItems: 'center', gap: 8 },
-  emptyEmoji: { fontSize: 36 },
   emptyText: { fontSize: 14, color: Colors.textTertiary },
 
   /* FAB */

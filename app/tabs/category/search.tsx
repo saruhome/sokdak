@@ -8,6 +8,8 @@ import { useMemo, useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { CATEGORIES } from '../../../constants/categories';
 import { JjaekiQuestion } from '@/components/icons/JjaekiQuestion';
+import { AppIcon } from '@/components/AppIcon';
+import { Search, Mic, Clock } from 'lucide-react-native';
 
 const RECOMMENDED_SLUGS = ['consonant', 'kpop', 'exclamation'];
 
@@ -61,7 +63,7 @@ export default function CategorySearchScreen() {
 
       <View style={styles.searchBarWrap}>
         <View style={styles.searchBar}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <AppIcon icon={Search} size={15} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search"
@@ -73,7 +75,7 @@ export default function CategorySearchScreen() {
             autoFocus
             clearButtonMode="while-editing"
           />
-          <Text style={styles.micIcon}>🎙️</Text>
+          <AppIcon icon={Mic} size={15} />
         </View>
       </View>
 
@@ -138,7 +140,7 @@ export default function CategorySearchScreen() {
                     onPress={() => handleSubmit(term)}
                     activeOpacity={0.7}
                   >
-                    <Text style={styles.recentIcon}>🕐</Text>
+                    <AppIcon icon={Clock} size={14} />
                     <Text style={styles.recentText}>{term}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => removeRecent(term)} hitSlop={8}>
@@ -189,9 +191,7 @@ const styles = StyleSheet.create({
     height: 44, borderRadius: 12, paddingHorizontal: 14,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
-  searchIcon: { fontSize: 15 },
   searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary },
-  micIcon: { fontSize: 15 },
 
   stateScroll: { paddingHorizontal: 20, paddingBottom: 40 },
   section: { marginTop: 12 },
@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   recentRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  recentIcon: { fontSize: 14, color: Colors.textTertiary },
   recentText: { fontSize: 15, color: Colors.textPrimary },
   recentRemove: { fontSize: 14, color: Colors.textTertiary, padding: 4 },
 

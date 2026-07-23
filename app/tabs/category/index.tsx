@@ -7,6 +7,8 @@ import { router } from 'expo-router';
 import { Colors } from '../../../constants/Colors';
 import { CATEGORIES } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
+import { AppIcon } from '@/components/AppIcon';
+import { Search } from 'lucide-react-native';
 
 const MIC_ICON = require('../../../assets/categories/icon-mic.png');
 const STAR_ICON = require('../../../assets/categories/icon-star.png');
@@ -25,9 +27,7 @@ export default function CategoryScreen() {
       {/* TopAppBar – Figma: Navigation/TopAppBar/Default/Default (375×44) */}
       <View style={styles.topBar}>
         <Text style={styles.topBarTitle}>카테고리</Text>
-        <TouchableOpacity style={styles.searchBtn} onPress={() => router.push('/tabs/category/search')}>
-          <Text style={styles.searchBtnIcon}>🔍</Text>
-        </TouchableOpacity>
+        <AppIcon icon={Search} size={18} style={styles.searchBtn} onPress={() => router.push('/tabs/category/search')} />
       </View>
 
       {/* Figma: Callout Card/Recommend_호락 (327×120) */}
@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
   },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
   searchBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
-  searchBtnIcon: { fontSize: 16 },
 
   recommendCard: {
     marginHorizontal: 16,

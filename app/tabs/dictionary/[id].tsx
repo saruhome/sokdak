@@ -13,6 +13,8 @@ import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { getCategoryBySlug, type Category } from '../../../constants/categories';
 import { authStore } from '../../../constants/authStore';
+import { AppIcon } from '@/components/AppIcon';
+import { Star, Volume2, MessageCircle } from 'lucide-react-native';
 import { WordVideo } from '@/components/WordVideo';
 import { FocusIcon } from '@/components/icons/FocusIcon';
 
@@ -67,9 +69,14 @@ export default function WordDetailScreen() {
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle} numberOfLines={1}>{word.word}</Text>
-        <TouchableOpacity style={styles.iconBtn} onPress={handleSave}>
-          <Text style={styles.starIcon}>{saved ? '⭐' : '☆'}</Text>
-        </TouchableOpacity>
+        <AppIcon
+          icon={Star}
+          size={22}
+          fill={saved ? '#FACC15' : undefined}
+          color={saved ? '#FACC15' : undefined}
+          style={styles.iconBtn}
+          onPress={handleSave}
+        />
       </View>
 
       <ScrollView
@@ -105,9 +112,7 @@ export default function WordDetailScreen() {
               <View style={styles.wordTitleRow}>
                 <Text style={styles.wordTitle}>{word.word}</Text>
                 {reading && <Text style={styles.reading}>{reading}</Text>}
-                <View style={styles.soundBtn}>
-                  <Text style={styles.soundIcon}>🔊</Text>
-                </View>
+                <AppIcon icon={Volume2} size={18} style={styles.soundBtn} onPress={() => {}} />
               </View>
               {categories.length > 0 && (
                 <View style={styles.badgeRow}>
@@ -227,7 +232,10 @@ export default function WordDetailScreen() {
 
           {/* ── 커뮤니티 연결 ── */}
           <TouchableOpacity style={styles.communityBanner} onPress={() => router.push('/tabs/community')}>
-            <Text style={styles.communityBannerTitle}>💬 이 단어로 커뮤니티에 물어보기</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <AppIcon icon={MessageCircle} size={15} color={Colors.navBarIconActive} />
+              <Text style={styles.communityBannerTitle}>이 단어로 커뮤니티에 물어보기</Text>
+            </View>
             <Text style={styles.communityBannerSub}>
               {word.word}에 대해 더 궁금한 점이 있으신가요?
             </Text>

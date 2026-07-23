@@ -8,6 +8,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { MOCK_WORDS, type Word } from '../../../constants/mockWords';
+import { AppIcon } from '@/components/AppIcon';
+import { Search, Star, Volume2, Mic } from 'lucide-react-native';
 import { getCategoryBySlug } from '../../../constants/categories';
 import { authStore } from '../../../constants/authStore';
 
@@ -60,7 +62,7 @@ export default function DictionaryScreen() {
           <>
             {/* ── 검색바 ── Figma: Bars */}
             <View style={styles.searchWrap}>
-              <Text style={styles.searchIcon}>🔍</Text>
+              <AppIcon icon={Search} size={16} />
               <TextInput
                 style={styles.searchInput}
                 placeholder="단어를 검색하세요"
@@ -70,7 +72,7 @@ export default function DictionaryScreen() {
                 returnKeyType="search"
                 clearButtonMode="while-editing"
               />
-              <Text style={styles.voiceIcon}>🎤</Text>
+              <AppIcon icon={Mic} size={16} />
             </View>
 
             {/* ── 추천 팁 카드 ── Figma: Callout Card/Recommend_짹이 (단순화: 마스코트 일러스트 대신 이모지) */}
@@ -136,12 +138,16 @@ export default function DictionaryScreen() {
                 <Text style={styles.wordDesc} numberOfLines={1}>{item.shortDesc}</Text>
               </View>
               <View style={styles.wordItemRight}>
-                <TouchableOpacity style={styles.iconBtn} onPress={() => toggleSave(item.id)} hitSlop={6}>
-                  <Text style={styles.iconGlyph}>{saved ? '⭐' : '☆'}</Text>
-                </TouchableOpacity>
-                <View style={styles.iconBtn}>
-                  <Text style={styles.iconGlyph}>🔊</Text>
-                </View>
+                <AppIcon
+                  icon={Star}
+                  size={20}
+                  fill={saved ? '#FACC15' : undefined}
+                  color={saved ? '#FACC15' : undefined}
+                  style={styles.iconBtn}
+                  hitSlop={6}
+                  onPress={() => toggleSave(item.id)}
+                />
+                <AppIcon icon={Volume2} size={20} style={styles.iconBtn} onPress={() => {}} />
               </View>
             </TouchableOpacity>
           );
@@ -176,9 +182,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border, borderRadius: 8,
     paddingHorizontal: 8,
   },
-  searchIcon: { fontSize: 14 },
   searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontFamily: undefined },
-  voiceIcon: { fontSize: 14 },
 
   /* 추천 팁 카드 */
   tipCard: {

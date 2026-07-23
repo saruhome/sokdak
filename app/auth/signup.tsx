@@ -6,6 +6,8 @@ import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../constants/Colors';
+import { AppIcon } from '@/components/AppIcon';
+import { User, Mail, Lock, type LucideIcon } from 'lucide-react-native';
 
 const JJAEKI_AVATAR = require('../../assets/characters/jjaeki.png');
 
@@ -15,7 +17,7 @@ function FormField({
   secureTextEntry, keyboardType, helper, error,
   returnKeyType, onSubmitEditing,
 }: {
-  icon: string; value: string;
+  icon: LucideIcon; value: string;
   onChangeText: (v: string) => void;
   placeholder: string;
   secureTextEntry?: boolean;
@@ -28,7 +30,7 @@ function FormField({
   return (
     <View style={ff.wrap}>
       <View style={[ff.inputRow, focused && ff.inputFocused, !!error && ff.inputError]}>
-        <Text style={ff.icon}>{icon}</Text>
+        <AppIcon icon={icon} size={15} />
         <TextInput
           style={ff.input}
           value={value}
@@ -58,7 +60,6 @@ const ff = StyleSheet.create({
     paddingHorizontal: 14, backgroundColor: Colors.surface,
     flexDirection: 'row', alignItems: 'center', gap: 10,
   },
-  icon: { fontSize: 15 },
   input: { flex: 1, fontSize: 15, color: Colors.textPrimary, padding: 0 },
   inputFocused: { borderColor: Colors.navBar },
   inputError: { borderColor: Colors.error },
@@ -163,7 +164,7 @@ export default function SignupScreen() {
           {/* ── 입력 폼 ── Figma: List/Item/Log up (327×48) × 4 */}
           <View style={styles.form}>
             <FormField
-              icon="👤"
+              icon={User}
               value={nickname}
               onChangeText={setNickname}
               placeholder="닉네임"
@@ -172,7 +173,7 @@ export default function SignupScreen() {
               returnKeyType="next"
             />
             <FormField
-              icon="✉️"
+              icon={Mail}
               value={email}
               onChangeText={setEmail}
               placeholder="이메일"
@@ -181,7 +182,7 @@ export default function SignupScreen() {
               returnKeyType="next"
             />
             <FormField
-              icon="🔒"
+              icon={Lock}
               value={password}
               onChangeText={setPassword}
               placeholder="비밀번호"
@@ -190,7 +191,7 @@ export default function SignupScreen() {
               returnKeyType="next"
             />
             <FormField
-              icon="🔒"
+              icon={Lock}
               value={confirm}
               onChangeText={setConfirm}
               placeholder="비밀번호 확인"

@@ -7,8 +7,17 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { BOARD_COLORS, type PostBoard } from '../../../constants/mockPosts';
+import { AppIcon } from '@/components/AppIcon';
+import { Camera, Link2, Type } from 'lucide-react-native';
 
 const BOARD_OPTIONS: PostBoard[] = ['궁금해요', 'Q&A', '질문하기'];
+
+/** Figma: Controls/Icon/Icon Group — 하단 툴바 아이콘 */
+const TOOLBAR_ITEMS = [
+  { icon: Camera, label: '사진' },
+  { icon: Link2, label: '링크' },
+  { icon: Type, label: '서식' },
+];
 
 export default function WritePostScreen() {
   const [board, setBoard]       = useState<PostBoard>('궁금해요');
@@ -142,17 +151,13 @@ export default function WritePostScreen() {
 
         {/* ── Controls/Icon/Icon Group (375×52) – 하단 툴바 */}
         <View style={styles.toolbar}>
-          {[
-            { icon: '📷', label: '사진' },
-            { icon: '🔗', label: '링크' },
-            { icon: '📝', label: '서식' },
-          ].map(({ icon, label }) => (
+          {TOOLBAR_ITEMS.map(({ icon, label }) => (
             <TouchableOpacity
               key={label}
               style={styles.toolbarBtn}
               onPress={() => Alert.alert(label, `${label} 기능은 준비 중이에요.`)}
             >
-              <Text style={styles.toolbarIcon}>{icon}</Text>
+              <AppIcon icon={icon} size={16} />
               <Text style={styles.toolbarLabel}>{label}</Text>
             </TouchableOpacity>
           ))}

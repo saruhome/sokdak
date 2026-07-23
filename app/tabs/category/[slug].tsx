@@ -13,6 +13,8 @@ import { useState, useMemo, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { getCategoryBySlug } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
+import { AppIcon } from '@/components/AppIcon';
+import { Heart, Search } from 'lucide-react-native';
 
 const SORT_OPTIONS = ['인기순', '최신순', 'ㄱㄴㄷ순'] as const;
 
@@ -143,7 +145,7 @@ export default function CategoryDetailScreen() {
 
             <View style={styles.wordItemRight}>
               <View style={styles.likeRow}>
-                <Text style={styles.likeIcon}>❤️</Text>
+                <AppIcon icon={Heart} size={12} />
                 <Text style={styles.likeCount}>{item.likes}</Text>
               </View>
               <Text style={styles.chevron}>›</Text>
@@ -153,7 +155,7 @@ export default function CategoryDetailScreen() {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
           <View style={styles.emptyWrap}>
-            <Text style={styles.emptyEmoji}>🔍</Text>
+            <AppIcon icon={Search} size={36} color={Colors.textTertiary} />
             <Text style={styles.emptyTitle}>검색 결과가 없어요</Text>
             <Text style={styles.emptyDesc}>
               다른 검색어를 입력하거나{'\n'}다른 카테고리를 탐색해보세요.
@@ -255,7 +257,6 @@ const styles = StyleSheet.create({
   wordDesc: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
   wordItemRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   likeRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  likeIcon: { fontSize: 12 },
   likeCount: { fontSize: 11, color: Colors.textTertiary },
   chevron: { fontSize: 20, color: Colors.border },
 
@@ -263,7 +264,6 @@ const styles = StyleSheet.create({
 
   /* ── Empty ── */
   emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 },
-  emptyEmoji: { fontSize: 40 },
   emptyTitle: { fontSize: 16, fontWeight: '600', color: Colors.textPrimary },
   emptyDesc: { fontSize: 13, color: Colors.textTertiary, textAlign: 'center', lineHeight: 20 },
 

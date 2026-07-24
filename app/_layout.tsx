@@ -1,11 +1,11 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Platform, StyleSheet, View } from 'react-native';
-import {
-  useFonts,
-  NotoSerifKR_400Regular,
-  NotoSerifKR_600SemiBold,
-} from '@expo-google-fonts/noto-serif-kr';
+import { useFonts } from 'expo-font';
+// 배럴(index.js)에서 import하면 두 웨이트만 써도 metro 웹 번들에 8개 웨이트(91MB)가
+// 전부 딸려온다 — 서브패스로 필요한 웨이트만 개별 import.
+import { NotoSerifKR_400Regular } from '@expo-google-fonts/noto-serif-kr/400Regular';
+import { NotoSerifKR_600SemiBold } from '@expo-google-fonts/noto-serif-kr/600SemiBold';
 import { Colors } from '../constants/Colors';
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../constants/layout';
 

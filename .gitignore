@@ -11,3 +11,14 @@ web-build/
 .DS_Store
 .env*.local
 expo-env.d.ts
+.vercel
+
+# Local tooling state (Claude Code / claude-flow) — machine-specific, not app code
+.claude/settings.local.json
+.claude/proven-config.json
+.claude/.proven-config-version
+.claude-flow/
+
+# Separate nested repo (its own GitHub remote: saruhome/sokdak-landing-page) —
+# never add here as an embedded git repository.
+sokdak-landing-page/

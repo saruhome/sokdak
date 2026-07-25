@@ -48,21 +48,21 @@ export default function TabLayout() {
         }}
       />
 
-      {/* 2. 사전 */}
-      <Tabs.Screen
-        name="dictionary"
-        options={{
-          title: '사전',
-          tabBarIcon: ({ focused }) => <TabBarIcon name="dictionary" focused={focused} />,
-        }}
-      />
-
-      {/* 3. 카테고리 */}
+      {/* 2. 카테고리 */}
       <Tabs.Screen
         name="category"
         options={{
           title: '카테고리',
           tabBarIcon: ({ focused }) => <TabBarIcon name="category" focused={focused} />,
+        }}
+      />
+
+      {/* 3. 사전 */}
+      <Tabs.Screen
+        name="dictionary"
+        options={{
+          title: '사전',
+          tabBarIcon: ({ focused }) => <TabBarIcon name="dictionary" focused={focused} />,
         }}
       />
 

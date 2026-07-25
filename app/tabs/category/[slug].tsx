@@ -11,6 +11,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useState, useMemo, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
+import { safeGoBack } from '../../../constants/navigation';
 import { getCategoryBySlug } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { AppIcon } from '@/components/AppIcon';
@@ -53,7 +54,7 @@ export default function CategoryDetailScreen() {
     return (
       <SafeAreaView style={styles.notFound}>
         <Text style={styles.notFoundText}>카테고리를 찾을 수 없어요</Text>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backBtnText}>돌아가기</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -66,7 +67,7 @@ export default function CategoryDetailScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Dictionary (375×44) */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backButton} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <View style={styles.topBarCenter}>

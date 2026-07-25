@@ -6,6 +6,7 @@ import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../../constants/Colors';
+import { safeGoBack } from '../../../constants/navigation';
 import { CATEGORIES } from '../../../constants/categories';
 
 /** Figma: 229:3332(입력 전) / 229:3342(입력 후) — 신조어 제안 폼 */
@@ -36,7 +37,7 @@ export default function SuggestScreen() {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>신조어 제안하기</Text>
@@ -66,7 +67,7 @@ export default function SuggestScreen() {
           <TouchableOpacity style={styles.doneCtaPrimary} onPress={handleReset} activeOpacity={0.85}>
             <Text style={styles.doneCtaPrimaryText}>다른 단어 제안하기</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.doneCtaSecondary} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.doneCtaSecondary} onPress={() => safeGoBack()}>
             <Text style={styles.doneCtaSecondaryText}>마이페이지로 돌아가기</Text>
           </TouchableOpacity>
         </View>
@@ -79,7 +80,7 @@ export default function SuggestScreen() {
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>신조어 제안하기</Text>

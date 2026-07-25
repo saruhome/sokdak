@@ -6,6 +6,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
+import { safeGoBack } from '../../constants/navigation';
 import { MOCK_WORDS, type Word } from '../../constants/mockWords';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
@@ -102,7 +103,7 @@ export default function SearchScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopBar: 뒤로가기 + 검색 인풋 ── */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <TextInput

@@ -4,6 +4,7 @@ import {
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { Colors } from '../../../constants/Colors';
+import { safeGoBack } from '../../../constants/navigation';
 import { AppIcon } from '@/components/AppIcon';
 import { Bell, Globe } from 'lucide-react-native';
 
@@ -17,7 +18,7 @@ export default function MyPageSettingsScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>설정</Text>

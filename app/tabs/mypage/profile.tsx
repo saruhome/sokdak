@@ -6,6 +6,7 @@ import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../../constants/Colors';
+import { safeGoBack } from '../../../constants/navigation';
 import { authStore } from '../../../constants/authStore';
 
 const EMOJI_OPTIONS = ['🐦', '🐯', '🇰🇷', '🇺🇸', '🇯🇵', '🇨🇳', '🇫🇷', '🇩🇪', '🇧🇷', '✨'];
@@ -44,14 +45,14 @@ export default function ProfileScreen() {
       Alert.alert('저장 실패', error);
       return;
     }
-    Alert.alert('저장 완료', '내 정보가 수정됐어요.', [{ text: '확인', onPress: () => router.back() }]);
+    Alert.alert('저장 완료', '내 정보가 수정됐어요.', [{ text: '확인', onPress: () => safeGoBack() }]);
   };
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>내 정보 관리</Text>

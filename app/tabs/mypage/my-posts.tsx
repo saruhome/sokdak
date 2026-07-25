@@ -5,6 +5,7 @@ import { AppText as Text } from '@/components/AppText';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
+import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS } from '../../../constants/mockPosts';
 import { fetchMyPosts, fetchPostsCommentedByMe, fetchPostsByIds, type CommunityPostSummary } from '../../../constants/community';
 import { authStore } from '../../../constants/authStore';
@@ -49,7 +50,7 @@ export default function MyPostsScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>내 활동</Text>

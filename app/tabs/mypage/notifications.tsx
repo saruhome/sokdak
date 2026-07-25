@@ -6,6 +6,7 @@ import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../../constants/Colors';
+import { safeGoBack } from '../../../constants/navigation';
 import { Toggle } from '@/components/Toggle';
 
 type NotificationKey = 'newSlang' | 'popularSlang' | 'popularPost' | 'like' | 'comment';
@@ -58,7 +59,7 @@ export default function NotificationsScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>알림 설정</Text>

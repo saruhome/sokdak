@@ -6,6 +6,7 @@ import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../../constants/Colors';
+import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS, type PostBoard } from '../../../constants/mockPosts';
 import { AppIcon } from '@/components/AppIcon';
 import { Camera, Link2, Type } from 'lucide-react-native';
@@ -70,11 +71,11 @@ export default function WritePostScreen() {
         '작성 중인 내용이 사라집니다. 취소할까요?',
         [
           { text: '계속 작성', style: 'cancel' },
-          { text: '취소', style: 'destructive', onPress: () => router.back() },
+          { text: '취소', style: 'destructive', onPress: () => safeGoBack() },
         ],
       );
     } else {
-      router.back();
+      safeGoBack();
     }
   };
 

@@ -11,6 +11,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
+import { safeGoBack } from '../../../constants/navigation';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { getCategoryBySlug, type Category } from '../../../constants/categories';
 import { authStore } from '../../../constants/authStore';
@@ -41,7 +42,7 @@ export default function WordDetailScreen() {
     return (
       <SafeAreaView style={styles.notFound}>
         <Text style={styles.notFoundText}>단어를 찾을 수 없어요</Text>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backBtnText}>돌아가기</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -73,7 +74,7 @@ export default function WordDetailScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar ── */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.iconBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle} numberOfLines={1}>{word.word}</Text>

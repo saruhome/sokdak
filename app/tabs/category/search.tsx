@@ -6,6 +6,7 @@ import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
+import { safeGoBack } from '../../../constants/navigation';
 import { CATEGORIES } from '../../../constants/categories';
 import { JjaekiQuestion } from '@/components/icons/JjaekiQuestion';
 import { AppIcon } from '@/components/AppIcon';
@@ -54,7 +55,7 @@ export default function CategorySearchScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopBar: 다크 헤더 + 검색 인풋 ── */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>카테고리 검색</Text>

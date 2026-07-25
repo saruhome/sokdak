@@ -6,6 +6,7 @@ import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../constants/Colors';
+import { safeGoBack } from '../../constants/navigation';
 import { authStore } from '../../constants/authStore';
 
 const JJAEKI_AVATAR = require('../../assets/characters/jjaeki.png');
@@ -108,7 +109,7 @@ export default function EmailLoginScreen() {
       );
       return;
     }
-    router.back();
+    safeGoBack();
   };
 
   const [resetPending, setResetPending] = useState(false);
@@ -139,7 +140,7 @@ export default function EmailLoginScreen() {
         <View style={styles.topBar}>
           <TouchableOpacity
             style={styles.backBtn}
-            onPress={() => (mode === 'forgot' ? goBackToLogin() : router.back())}
+            onPress={() => (mode === 'forgot' ? goBackToLogin() : safeGoBack())}
           >
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>

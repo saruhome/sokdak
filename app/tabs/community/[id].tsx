@@ -7,6 +7,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
+import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS } from '../../../constants/mockPosts';
 import { authStore } from '../../../constants/authStore';
 import { fetchPost, createComment, type CommunityComment, type CommunityPostDetail } from '../../../constants/community';
@@ -50,7 +51,7 @@ export default function PostDetailScreen() {
     return (
       <SafeAreaView style={styles.notFound}>
         <Text style={styles.notFoundText}>게시글을 찾을 수 없어요</Text>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backBtnText}>돌아가기</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -114,7 +115,7 @@ export default function PostDetailScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* ── TopAppBar – Figma: Navigation/TopAppBar/Post : 다른 사람 게시물(710:4873)/내 게시물(736:6169) — back + share + more, 뱃지 없음 */}
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.backButton} onPress={() => safeGoBack()}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <View style={styles.topBarRight}>

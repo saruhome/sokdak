@@ -5,7 +5,9 @@ import {
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/Colors';
+import { safeGoBack } from '../../constants/navigation';
 import { BackIcon, FacebookLogo, GoogleLogo, AppleLogo } from '@/components/icons/SocialIcons';
+import { SokDakLogo } from '@/components/icons/SokDakLogo';
 
 const AVATAR_JJAEKI = require('../../assets/characters/jjaeki-full.png');
 const AVATAR_HORANG = require('../../assets/characters/horang-full.png');
@@ -46,7 +48,7 @@ export default function LoginScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── Controls/Icon/Back ── */}
       <View style={styles.topRow}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <BackIcon size={24} color={Colors.navBar} />
         </TouchableOpacity>
       </View>
@@ -58,7 +60,7 @@ export default function LoginScreen() {
       >
         {/* ── 로고 섹션 ── */}
         <View style={styles.logoSection}>
-          <Text style={styles.logoText}>SOK-DAK</Text>
+          <SokDakLogo width={200} color={Colors.navBar} />
           <Text style={styles.logoTagline}>속닥속닥 배우는{'\n'}교과서에는 없던 진짜국어</Text>
         </View>
 
@@ -95,7 +97,7 @@ export default function LoginScreen() {
           />
 
           {/* 이메일로 로그인 */}
-          <TouchableOpacity style={styles.emailLoginBtn} onPress={handleEmailLogin}>
+          <TouchableOpacity style={styles.emailLoginBtn} onPress={handleEmailLogin} activeOpacity={0.85}>
             <Text style={styles.emailLoginText}>이메일로 로그인</Text>
           </TouchableOpacity>
         </View>
@@ -122,10 +124,6 @@ const styles = StyleSheet.create({
 
   /* ── 로고 ── */
   logoSection: { alignItems: 'center', marginTop: 8, gap: 16 },
-  logoText: {
-    fontSize: 32, fontWeight: '600', color: Colors.navBar,
-    lineHeight: 36, textAlign: 'center',
-  },
   logoTagline: { fontSize: 16, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20, fontFamily: undefined },
 
   /* ── 캐릭터 ── */
@@ -153,8 +151,12 @@ const styles = StyleSheet.create({
   },
   socialBtnLabel: { fontSize: 16, fontWeight: '500', fontFamily: undefined },
 
-  emailLoginBtn: { alignItems: 'center', paddingTop: 4 },
-  emailLoginText: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
+  emailLoginBtn: {
+    height: 44, borderRadius: 8,
+    borderWidth: 1, borderColor: Colors.border,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  emailLoginText: { fontSize: 16, fontWeight: '500', color: Colors.navBar, fontFamily: undefined },
 
   /* ── 회원가입 링크 ── */
   signupRow: {

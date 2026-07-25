@@ -65,7 +65,10 @@ export default function HomeScreen() {
         <View style={styles.topBarIcons}>
           {/* 다크 헤더 위라 기본 gray-600 대신 밝은색으로 대비 확보 */}
           <AppIcon icon={Search} size={22} color={Colors.navBarIconActive} style={styles.iconBtn} onPress={() => router.push('/search')} />
-          <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} style={styles.iconBtn} onPress={() => {}} />
+          <View style={styles.iconBtn}>
+            <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
+            <View style={styles.notifDot} />
+          </View>
         </View>
       </View>
 
@@ -92,7 +95,9 @@ export default function HomeScreen() {
                   <View style={styles.heroScrim} />
                   <View style={styles.heroContent}>
                     {category && (
-                      <Text style={[styles.heroBadge, { color: category.colorFg }]}>{category.name}</Text>
+                      <View style={[styles.heroBadge, { backgroundColor: category.colorBg }]}>
+                        <Text style={[styles.heroBadgeText, { color: category.colorFg }]}>{category.name}</Text>
+                      </View>
                     )}
                     <Text style={styles.heroWord}>{word.word}</Text>
                     <Text style={styles.heroDesc} numberOfLines={2}>{word.shortDesc}</Text>
@@ -202,7 +207,12 @@ const styles = StyleSheet.create({
   logoBtn: { height: 44, justifyContent: 'center' },
   topBarIcons: { flexDirection: 'row' },
   iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  iconGlyph: { fontSize: 18 },
+  /* Figma: data-badge="on" — 벨 아이콘 우측 상단 알림 점 */
+  notifDot: {
+    position: 'absolute', top: 10, right: 12,
+    width: 6, height: 6, borderRadius: 3,
+    backgroundColor: Colors.error,
+  },
 
   content: { paddingBottom: 24 },
 
@@ -219,25 +229,33 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.pageBackground,
     opacity: 0.55,
   },
-  heroContent: { gap: 24 },
-  heroBadge: { fontSize: 10, fontWeight: '600' },
-  heroWord: {
-    fontSize: 26, fontWeight: '700', color: '#000',
-    marginTop: 8,
+  heroContent: { gap: 8 },
+  heroBadge: {
+    alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2,
+    borderRadius: 12, marginBottom: 8,
   },
-  heroDesc: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined, marginTop: 8 },
+  heroBadgeText: { fontSize: 10, fontWeight: '600', fontFamily: 'NotoSerifKR_600SemiBold' },
+  heroWord: {
+    fontSize: 24, lineHeight: 36, color: '#000',
+    fontFamily: 'NotoSerifKR_600SemiBold',
+  },
+  heroDesc: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined, opacity: 0.9, marginTop: 8 },
 
   dotsRow: {
     flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
     gap: 6, paddingVertical: 12,
   },
-  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.border },
-  dotActive: { width: 13, backgroundColor: 'rgba(38,43,49,0.7)' },
+  dot: {
+    width: 6, height: 6, borderRadius: 3,
+    backgroundColor: 'rgba(113,113,122,0.3)',
+    borderWidth: 0.5, borderColor: Colors.border,
+  },
+  dotActive: { width: 14, backgroundColor: 'rgba(38,43,49,0.7)' },
 
   /* 섹션 공통 */
   section: { paddingHorizontal: 24, marginTop: 16, gap: 16 },
   sectionHeader: { gap: 8 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: Colors.textPrimary },
+  sectionTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   sectionSubRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   sectionSub: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined, flexShrink: 1 },
   moreLink: { flexDirection: 'row', alignItems: 'center', gap: 2 },
@@ -247,14 +265,14 @@ const styles = StyleSheet.create({
   /* 새로운 신조어 카드 */
   wordCardRow: { gap: 16, paddingRight: 24 },
   wordCard: {
-    width: 255, height: 150,
+    width: 256, height: 144,
     backgroundColor: Colors.pageBackground,
     borderWidth: 1, borderColor: Colors.border, borderRadius: 10,
     padding: 16, justifyContent: 'flex-end', gap: 8,
     shadowColor: '#8B8B8B', shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 0.15, shadowRadius: 2.5, elevation: 3,
   },
-  wordCardTitle: { fontSize: 18, fontWeight: '600', color: Colors.textPrimary },
+  wordCardTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   wordCardDesc: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16, fontFamily: undefined },
 
   /* 커뮤니티 리스트 */
@@ -262,15 +280,16 @@ const styles = StyleSheet.create({
   postItemBorder: { borderTopWidth: 1, borderTopColor: Colors.divider },
   postItemLeft: { flex: 1, gap: 8 },
   postBadge: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
-  postBadgeText: { fontSize: 12, fontWeight: '600' },
-  postTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, lineHeight: 18 },
+  postBadgeText: { fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold' },
+  postTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, lineHeight: 18 },
   postMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   postAuthor: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
   postDate: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
   postStats: { flexDirection: 'row', gap: 8 },
   postStat: { fontSize: 12, color: Colors.textTertiary },
+  /* Figma: size-16(64px) — 게시글 실사 이미지 필드가 아직 없어 자리표시 박스로 대체 */
   postThumb: {
-    width: 72, height: 72, borderRadius: 8,
+    width: 64, height: 64, borderRadius: 8,
     borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.pageBackground,
   },

@@ -8,8 +8,9 @@ import { useState, useMemo, useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { BOARD_COLORS, type PostBoard } from '../../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../../constants/community';
+import { authStore } from '../../../constants/authStore';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Eye, Heart, MessageCircle, Pencil, Inbox } from 'lucide-react-native';
+import { Eye, Heart, MessageCircle, Pencil, Inbox, Bell } from 'lucide-react-native';
 
 type BoardTab = '전체' | PostBoard;
 const BOARD_TABS: BoardTab[] = ['전체', '궁금해요', 'Q&A', '질문하기'];
@@ -37,9 +38,13 @@ export default function CommunityScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* ── TopAppBar – Figma: Navigation/TopAppBar/Default/Default (375×44) */}
+      {/* ── TopAppBar – Figma: Navigation/TopAppBar/Default/Default (375×44, bg #52514e) */}
       <View style={styles.topBar}>
         <Text style={styles.topBarTitle}>커뮤니티</Text>
+        <View style={styles.topBarBell}>
+          <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
+          <View style={styles.notifDot} />
+        </View>
       </View>
 
       <FlatList
@@ -58,14 +63,16 @@ export default function CommunityScreen() {
                     onPress={() => router.push(`/tabs/community/${post.id}`)}
                     activeOpacity={0.8}
                   >
-                    {/* 게시판 색상 띠 */}
-                    <View style={[styles.featuredCardTop, { backgroundColor: BOARD_COLORS[post.board].bg }]}>
-                      <Text style={styles.featuredCardBoard}>{post.board}</Text>
+                    <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[post.board].bg }]}>
+                      <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[post.board].fg }]}>
+                        {post.board}
+                      </Text>
                     </View>
                     <View style={styles.featuredCardBody}>
-                      <Text style={styles.featuredCardTitle} numberOfLines={2}>
+                      <Text style={styles.featuredCardTitle} numberOfLines={1}>
                         {post.title}
                       </Text>
+                      <Text style={styles.featuredCardSub}>{post.views} · {post.createdAt}</Text>
                       <View style={styles.featuredCardMeta}>
                         <IconStat icon={Eye} value={post.views} textStyle={styles.metaText} />
                         <IconStat icon={Heart} value={post.likes} textStyle={styles.metaText} />
@@ -163,7 +170,7 @@ export default function CommunityScreen() {
       {/* ── FAB 글쓰기 – Figma: Controls/Icon/write (50×50, 우하단) */}
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => router.push('/tabs/community/write')}
+        onPress={() => router.push(authStore.isLoggedIn() ? '/tabs/community/write' : '/auth/login')}
         activeOpacity={0.85}
       >
         {/* 다크 FAB 위라 밝은색으로 대비 확보 */}
@@ -176,60 +183,72 @@ export default function CommunityScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
 
+  /* Figma: Navigation/TopAppBar/Community (375×44, bg #52514e) */
   topBar: {
     height: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.navBar,
   },
-  topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
+  topBarTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
+  topBarBell: {
+    position: 'absolute', right: 0, top: 0,
+    width: 44, height: 44, alignItems: 'center', justifyContent: 'center',
+  },
+  /* Figma: data-badge="on" — 벨 아이콘 우측 상단 알림 점 */
+  notifDot: {
+    position: 'absolute', top: 10, right: 12,
+    width: 6, height: 6, borderRadius: 3,
+    backgroundColor: Colors.error,
+  },
 
   /* Featured */
-  featuredSection: { paddingLeft: 16, paddingTop: 14, paddingBottom: 4 },
-  sectionTitle: { fontSize: 13, fontWeight: '700', color: Colors.textSecondary, marginBottom: 10, paddingRight: 16 },
+  featuredSection: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 4, gap: 16 },
+  sectionTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   featuredCard: {
-    width: 220, height: 144, backgroundColor: Colors.surface,
-    borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
-    marginRight: 12, overflow: 'hidden',
+    width: 224, backgroundColor: Colors.surface,
+    borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
+    padding: 16, marginRight: 12, gap: 8,
   },
-  featuredCardTop: { height: 36, justifyContent: 'center', paddingHorizontal: 12 },
-  featuredCardBoard: { fontSize: 11, fontWeight: '700', color: '#fff' },
-  featuredCardBody: { flex: 1, padding: 12, justifyContent: 'space-between' },
-  featuredCardTitle: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary, lineHeight: 19 },
+  featuredCardBody: { gap: 8 },
+  featuredCardTitle: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, lineHeight: 20 },
+  featuredCardSub: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
   featuredCardMeta: { flexDirection: 'row', gap: 10 },
 
   /* 상단메뉴 탭 */
   boardTabs: {
     flexDirection: 'row',
+    gap: 24,
+    paddingHorizontal: 24,
     borderBottomWidth: 1,
     borderBottomColor: Colors.divider,
     marginTop: 12,
   },
   boardTab: {
-    flex: 1, alignItems: 'center', paddingVertical: 10,
+    alignItems: 'center', paddingVertical: 10,
     borderBottomWidth: 2, borderBottomColor: 'transparent',
   },
-  boardTabText: { fontSize: 13, color: Colors.textTertiary },
+  boardTabText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textTertiary },
 
   /* 게시판 뱃지 행 */
   boardBadgeRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingVertical: 10 },
   boardBadge: {
+    alignSelf: 'flex-start',
     paddingHorizontal: 12, paddingVertical: 4,
     borderRadius: 12,
   },
-  boardBadgeText: { fontSize: 11, fontWeight: '600' },
+  boardBadgeText: { fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   /* List/Item/Post (Figma node 730:4885) */
   postItem: { paddingHorizontal: 16, minHeight: 92, justifyContent: 'center' },
-  postItemInner: { paddingVertical: 12, gap: 4 },
+  postItemInner: { paddingVertical: 12, gap: 8 },
   postTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   postDate: { fontSize: 11, color: Colors.textTertiary },
-  postTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, lineHeight: 20 },
+  postTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, lineHeight: 20 },
   postMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
   postAuthor: { fontSize: 11, color: Colors.textSecondary },
-  postStats: { flexDirection: 'row', gap: 10, marginLeft: 'auto' },
+  postStats: { flexDirection: 'row', gap: 10 },
   metaText: { fontSize: 11, color: Colors.textTertiary },
 
   separator: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 16 },

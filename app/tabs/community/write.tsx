@@ -9,6 +9,8 @@ import { Colors } from '../../../constants/Colors';
 import { BOARD_COLORS, type PostBoard } from '../../../constants/mockPosts';
 import { AppIcon } from '@/components/AppIcon';
 import { Camera, Link2, Type } from 'lucide-react-native';
+import { authStore } from '../../../constants/authStore';
+import { createPost } from '../../../constants/community';
 
 const BOARD_OPTIONS: PostBoard[] = ['궁금해요', 'Q&A', '질문하기'];
 
@@ -24,10 +26,22 @@ export default function WritePostScreen() {
   const [accordionOpen, setAccordionOpen] = useState(false);
   const [title, setTitle]       = useState('');
   const [content, setContent]   = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  if (!authStore.isLoggedIn()) {
+    return (
+      <SafeAreaView style={styles.notFound}>
+        <Text style={styles.notFoundText}>로그인이 필요해요</Text>
+        <TouchableOpacity style={styles.notFoundBtn} onPress={() => router.replace('/auth/login')}>
+          <Text style={styles.notFoundBtnText}>로그인하러 가기</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   const isValid = title.trim().length >= 2 && content.trim().length >= 10;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isValid) {
       Alert.alert(
         '작성 조건 확인',
@@ -35,10 +49,17 @@ export default function WritePostScreen() {
       );
       return;
     }
+    setSubmitting(true);
+    const { data, error } = await createPost({ board, title: title.trim(), content: content.trim() });
+    setSubmitting(false);
+    if (error || !data) {
+      Alert.alert('등록 실패', error ?? '알 수 없는 오류가 발생했어요.');
+      return;
+    }
     Alert.alert(
       '게시글 등록',
       '게시글이 등록됐어요!',
-      [{ text: '확인', onPress: () => router.back() }],
+      [{ text: '확인', onPress: () => router.replace(`/tabs/community/${data.id}`) }],
     );
   };
 
@@ -72,10 +93,10 @@ export default function WritePostScreen() {
           <TouchableOpacity
             style={styles.submitBtn}
             onPress={handleSubmit}
-            disabled={!isValid}
+            disabled={!isValid || submitting}
           >
-            <Text style={[styles.submitText, isValid && styles.submitTextActive]}>
-              작성 완료
+            <Text style={[styles.submitText, isValid && !submitting && styles.submitTextActive]}>
+              {submitting ? '등록 중…' : '작성 완료'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -265,4 +286,9 @@ const styles = StyleSheet.create({
   toolbarLabel: { fontSize: 12, color: Colors.textSecondary },
   toolbarDivider: { flex: 1 },
   charCountCompact: { paddingRight: 8 },
+
+  notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
+  notFoundText: { fontSize: 16, color: Colors.textSecondary },
+  notFoundBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8, backgroundColor: Colors.navBar },
+  notFoundBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontWeight: '600' },
 });

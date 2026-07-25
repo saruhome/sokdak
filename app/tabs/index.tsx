@@ -4,11 +4,12 @@ import {
   type NativeSyntheticEvent, type NativeScrollEvent,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { useState } from 'react';
-import { router } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { MOCK_WORDS } from '../../constants/mockWords';
-import { MOCK_POSTS, BOARD_COLORS } from '../../constants/mockPosts';
+import { BOARD_COLORS } from '../../constants/mockPosts';
+import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
 import { getCategoryBySlug } from '../../constants/categories';
 import { SCREEN_WIDTH } from '../../constants/layout';
 import { SokDakLogo } from '@/components/icons/SokDakLogo';
@@ -19,11 +20,14 @@ import { Search, Bell, Eye, Heart, MessageCircle } from 'lucide-react-native';
 const HERO_WORDS = [...MOCK_WORDS].sort((a, b) => b.likes - a.likes).slice(0, 3);
 /** Figma: 새로운 신조어 섹션 — new-slang 카테고리 단어 미리보기 */
 const NEW_SLANG_WORDS = MOCK_WORDS.filter(w => w.category === 'new-slang');
-/** Figma: 커뮤니티(Recommended Section) — 게시글 미리보기 */
-const COMMUNITY_POSTS = MOCK_POSTS.slice(0, 3);
 
 export default function HomeScreen() {
   const [heroIndex, setHeroIndex] = useState(0);
+  const [communityPosts, setCommunityPosts] = useState<CommunityPostSummary[]>([]);
+
+  useFocusEffect(useCallback(() => {
+    fetchPosts().then(data => setCommunityPosts(data.slice(0, 3)));
+  }, []));
 
   const handleHeroScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH));
@@ -125,7 +129,7 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {COMMUNITY_POSTS.map((post, i) => (
+          {communityPosts.map((post, i) => (
             <TouchableOpacity
               key={post.id}
               style={[styles.postItem, i > 0 && styles.postItemBorder]}
@@ -145,7 +149,7 @@ export default function HomeScreen() {
                   <View style={styles.postStats}>
                     <IconStat icon={Eye} value={post.views} textStyle={styles.postStat} />
                     <IconStat icon={Heart} value={post.likes} textStyle={styles.postStat} />
-                    <IconStat icon={MessageCircle} value={post.comments.length} textStyle={styles.postStat} />
+                    <IconStat icon={MessageCircle} value={post.commentCount} textStyle={styles.postStat} />
                   </View>
                 </View>
               </View>

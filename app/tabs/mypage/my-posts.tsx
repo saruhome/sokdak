@@ -1,11 +1,12 @@
 import {
-  StyleSheet, View, SafeAreaView, FlatList, TouchableOpacity,
+  StyleSheet, View, SafeAreaView, FlatList, TouchableOpacity, ActivityIndicator,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
-import { MOCK_POSTS, BOARD_COLORS, type Post } from '../../../constants/mockPosts';
+import { BOARD_COLORS } from '../../../constants/mockPosts';
+import { fetchMyPosts, fetchPostsCommentedByMe, fetchPostsByIds, type CommunityPostSummary } from '../../../constants/community';
 import { authStore } from '../../../constants/authStore';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle, Pencil } from 'lucide-react-native';
@@ -22,25 +23,22 @@ const TABS: { key: ActivityTab; label: string }[] = [
 /** Figma: 229:3620~3679 — 내 활동 게시물 (쓴 글 / 댓글 단 글 / 좋아요 한 글) */
 export default function MyPostsScreen() {
   const [tab, setTab] = useState<ActivityTab>('written');
-  const [likedIds, setLikedIds] = useState<string[]>(authStore.getLikedPostIds());
+  const [data, setData] = useState<CommunityPostSummary[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
-      setLikedIds(authStore.getLikedPostIds());
-    }, []),
+      let cancelled = false;
+      setLoading(true);
+      const load = tab === 'written' ? fetchMyPosts
+        : tab === 'commented' ? fetchPostsCommentedByMe
+        : () => fetchPostsByIds(authStore.getLikedPostIds());
+      load().then(result => {
+        if (!cancelled) { setData(result); setLoading(false); }
+      });
+      return () => { cancelled = true; };
+    }, [tab]),
   );
-
-  useEffect(() => {
-    const unsub = authStore.subscribeBookmarks(() => setLikedIds(authStore.getLikedPostIds()));
-    return () => { unsub(); };
-  }, []);
-
-  const likedPosts = likedIds
-    .map(id => MOCK_POSTS.find(p => p.id === id))
-    .filter((p): p is Post => !!p);
-
-  /* 작성/댓글 이력은 아직 서버 연동 전이라 추적 데이터가 없음 — 정직하게 빈 상태로 표시 */
-  const data = tab === 'liked' ? likedPosts : [];
 
   const emptyContent = {
     written:   { icon: Pencil,       text: '아직 작성한 글이 없어요', ctaLabel: '글쓰기', ctaRoute: '/tabs/community/write' as const },
@@ -93,24 +91,30 @@ export default function MyPostsScreen() {
               <View style={styles.postStats}>
                 <IconStat icon={Eye} value={item.views} textStyle={styles.metaText} />
                 <IconStat icon={Heart} value={item.likes} textStyle={styles.metaText} />
-                <IconStat icon={MessageCircle} value={item.comments.length} textStyle={styles.metaText} />
+                <IconStat icon={MessageCircle} value={item.commentCount} textStyle={styles.metaText} />
               </View>
             </View>
           </TouchableOpacity>
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
-          <View style={styles.emptyWrap}>
-            <AppIcon icon={emptyContent.icon} size={36} color={Colors.textTertiary} />
-            <Text style={styles.emptyText}>{emptyContent.text}</Text>
-            <TouchableOpacity
-              style={styles.emptyCta}
-              onPress={() => router.push(emptyContent.ctaRoute)}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.emptyCtaText}>{emptyContent.ctaLabel}</Text>
-            </TouchableOpacity>
-          </View>
+          loading ? (
+            <View style={styles.emptyWrap}>
+              <ActivityIndicator color={Colors.textTertiary} />
+            </View>
+          ) : (
+            <View style={styles.emptyWrap}>
+              <AppIcon icon={emptyContent.icon} size={36} color={Colors.textTertiary} />
+              <Text style={styles.emptyText}>{emptyContent.text}</Text>
+              <TouchableOpacity
+                style={styles.emptyCta}
+                onPress={() => router.push(emptyContent.ctaRoute)}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.emptyCtaText}>{emptyContent.ctaLabel}</Text>
+              </TouchableOpacity>
+            </View>
+          )
         }
         contentContainerStyle={data.length === 0 ? { flex: 1 } : { paddingBottom: 24 }}
       />

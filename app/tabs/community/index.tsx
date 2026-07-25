@@ -1,12 +1,13 @@
 import {
   StyleSheet, View, SafeAreaView,
-  ScrollView, TouchableOpacity, FlatList,
+  ScrollView, TouchableOpacity, FlatList, ActivityIndicator,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { router } from 'expo-router';
-import { useState, useMemo } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useState, useMemo, useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
-import { MOCK_POSTS, BOARD_COLORS, type PostBoard } from '../../../constants/mockPosts';
+import { BOARD_COLORS, type PostBoard } from '../../../constants/mockPosts';
+import { fetchPosts, type CommunityPostSummary } from '../../../constants/community';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle, Pencil, Inbox } from 'lucide-react-native';
 
@@ -15,11 +16,23 @@ const BOARD_TABS: BoardTab[] = ['전체', '궁금해요', 'Q&A', '질문하기']
 
 export default function CommunityScreen() {
   const [activeTab, setActiveTab] = useState<BoardTab>('전체');
+  const [posts, setPosts] = useState<CommunityPostSummary[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const featured = useMemo(() => MOCK_POSTS.filter(p => p.isFeatured), []);
+  useFocusEffect(useCallback(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchPosts().then(data => {
+      if (!cancelled) { setPosts(data); setLoading(false); }
+    });
+    return () => { cancelled = true; };
+  }, []));
+
+  /* 화제의 게시글: 조회수 상위 3개 (별도 "featured" 플래그 없이 파생) */
+  const featured = useMemo(() => [...posts].sort((a, b) => b.views - a.views).slice(0, 3), [posts]);
   const filtered  = useMemo(
-    () => activeTab === '전체' ? MOCK_POSTS : MOCK_POSTS.filter(p => p.board === activeTab),
-    [activeTab],
+    () => activeTab === '전체' ? posts : posts.filter(p => p.board === activeTab),
+    [activeTab, posts],
   );
 
   return (
@@ -56,7 +69,7 @@ export default function CommunityScreen() {
                       <View style={styles.featuredCardMeta}>
                         <IconStat icon={Eye} value={post.views} textStyle={styles.metaText} />
                         <IconStat icon={Heart} value={post.likes} textStyle={styles.metaText} />
-                        <IconStat icon={MessageCircle} value={post.comments.length} textStyle={styles.metaText} />
+                        <IconStat icon={MessageCircle} value={post.commentCount} textStyle={styles.metaText} />
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -125,7 +138,7 @@ export default function CommunityScreen() {
                 <View style={styles.postStats}>
                   <IconStat icon={Eye} value={item.views} textStyle={styles.metaText} />
                   <IconStat icon={Heart} value={item.likes} textStyle={styles.metaText} />
-                  <IconStat icon={MessageCircle} value={item.comments.length} textStyle={styles.metaText} />
+                  <IconStat icon={MessageCircle} value={item.commentCount} textStyle={styles.metaText} />
                 </View>
               </View>
             </View>
@@ -133,10 +146,16 @@ export default function CommunityScreen() {
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
-          <View style={styles.emptyWrap}>
-            <AppIcon icon={Inbox} size={36} color={Colors.textTertiary} />
-            <Text style={styles.emptyText}>아직 게시글이 없어요</Text>
-          </View>
+          loading ? (
+            <View style={styles.emptyWrap}>
+              <ActivityIndicator color={Colors.textTertiary} />
+            </View>
+          ) : (
+            <View style={styles.emptyWrap}>
+              <AppIcon icon={Inbox} size={36} color={Colors.textTertiary} />
+              <Text style={styles.emptyText}>아직 게시글이 없어요</Text>
+            </View>
+          )
         }
         contentContainerStyle={{ paddingBottom: 80 }}
       />

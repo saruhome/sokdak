@@ -1,11 +1,10 @@
 import {
   StyleSheet, View, Image, SafeAreaView,
-  TouchableOpacity, ScrollView,
+  TouchableOpacity, ScrollView, Alert,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/Colors';
-import { authStore } from '../../constants/authStore';
 import { BackIcon, FacebookLogo, GoogleLogo, AppleLogo } from '@/components/icons/SocialIcons';
 
 const AVATAR_JJAEKI = require('../../assets/characters/jjaeki-full.png');
@@ -31,17 +30,12 @@ function SocialButton({
   );
 }
 
-/** Figma node 1288:16671(속닥 Sokdak) — 로그인 페이지 */
+/** Figma node 1288:16671(속닥 Sokdak) — 로그인 페이지
+ *  소셜 로그인(Facebook/Google/Apple)은 Supabase 쪽 OAuth 프로바이더 설정(클라이언트 ID·
+ *  리다이렉트 URI 등)이 별도로 필요해 이번 백엔드 연동 범위 밖 — 실제 인증은 이메일 로그인으로. */
 export default function LoginScreen() {
   const handleSocialLogin = (provider: string) => {
-    authStore.login({
-      name: '속닥 유저',
-      email: `user@${provider.toLowerCase()}.com`,
-      emoji: provider === 'Facebook' ? '🇫🇷'
-           : provider === 'Google'   ? '🇺🇸'
-           : '🍎',
-    });
-    router.back();
+    Alert.alert(`${provider} 로그인`, '소셜 로그인은 준비 중이에요. 이메일로 로그인해주세요.');
   };
 
   const handleEmailLogin = () => {

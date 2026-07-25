@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Colors } from '../../constants/Colors';
 import { AppIcon } from '@/components/AppIcon';
 import { User, Mail, Lock, type LucideIcon } from 'lucide-react-native';
+import { authStore } from '../../constants/authStore';
 
 const JJAEKI_AVATAR = require('../../assets/characters/jjaeki.png');
 
@@ -122,14 +123,36 @@ export default function SignupScreen() {
     && password.length >= 8 && password === confirm
     && terms && privacy;
 
-  const handleSubmit = () => {
+  const [pending, setPending] = useState(false);
+  const [signupError, setSignupError] = useState<string | null>(null);
+
+  const handleSubmit = async () => {
     setSubmitted(true);
+    setSignupError(null);
     if (!isValid) return;
-    Alert.alert(
-      '가입 완료! 🎉',
-      `${nickname}님, 속닥에 오신 걸 환영해요!\n로그인 후 이용해주세요.`,
-      [{ text: '로그인하러 가기', onPress: () => router.replace('/auth/login') }],
-    );
+    setPending(true);
+    const { error, needsEmailConfirmation } = await authStore.signUp({
+      email, password, nickname: nickname.trim(),
+    });
+    setPending(false);
+    if (error) {
+      setSignupError(
+        error === 'User already registered'
+          ? '이미 가입된 이메일이에요.'
+          : error,
+      );
+      return;
+    }
+    if (needsEmailConfirmation) {
+      Alert.alert(
+        '가입 완료! 🎉',
+        `${nickname}님, 속닥에 오신 걸 환영해요!\n'${email}'로 보낸 인증 메일을 확인한 뒤 로그인해주세요.`,
+        [{ text: '로그인하러 가기', onPress: () => router.replace('/auth/login') }],
+      );
+    } else {
+      // Confirm email 설정이 꺼져 있으면 가입 즉시 세션이 생겨 로그인 상태 — 바로 앱으로.
+      router.replace('/tabs');
+    }
   };
 
   return (
@@ -221,14 +244,17 @@ export default function SignupScreen() {
             )}
           </View>
 
+          {signupError ? <Text style={styles.formError}>{signupError}</Text> : null}
+
           {/* ── 가입하기 버튼 ── Figma: Controls/Buttons/Text Button_02 (320×52) */}
           <TouchableOpacity
-            style={[styles.submitBtn, !isValid && styles.submitBtnDisabled]}
+            style={[styles.submitBtn, (!isValid || pending) && styles.submitBtnDisabled]}
             onPress={handleSubmit}
             activeOpacity={0.85}
+            disabled={pending}
           >
-            <Text style={[styles.submitBtnText, !isValid && styles.submitBtnTextDisabled]}>
-              회원가입
+            <Text style={[styles.submitBtnText, (!isValid || pending) && styles.submitBtnTextDisabled]}>
+              {pending ? '가입 중…' : '회원가입'}
             </Text>
           </TouchableOpacity>
 
@@ -275,6 +301,7 @@ const styles = StyleSheet.create({
   /* 약관 */
   termsSection: { gap: 12, marginBottom: 28 },
   termsError: { fontSize: 11, color: Colors.error, marginTop: 2 },
+  formError: { fontSize: 12, color: Colors.error, textAlign: 'center', marginBottom: 12 },
 
   /* 가입 버튼 (Controls/Buttons/Text Button_02 320×52) */
   submitBtn: {

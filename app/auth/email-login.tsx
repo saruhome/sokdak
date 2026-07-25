@@ -81,6 +81,9 @@ export default function EmailLoginScreen() {
   const [resetSubmitted, setResetSubmitted] = useState(false);
   const [resetSent, setResetSent] = useState(false);
 
+  const [loginPending, setLoginPending] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+
   const errors = submitted ? {
     email: !validateEmail(email) ? '올바른 이메일 형식을 입력해주세요.' : undefined,
     password: password.length < 1 ? '비밀번호를 입력해주세요.' : undefined,
@@ -88,23 +91,37 @@ export default function EmailLoginScreen() {
 
   const isValid = validateEmail(email) && password.length >= 1;
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setSubmitted(true);
+    setLoginError(null);
     if (!isValid) return;
-    authStore.login({
-      name: email.split('@')[0],
-      email,
-      emoji: '📧',
-    });
+    setLoginPending(true);
+    const { error } = await authStore.signIn({ email, password });
+    setLoginPending(false);
+    if (error) {
+      setLoginError(
+        error === 'Invalid login credentials'
+          ? '이메일 또는 비밀번호가 올바르지 않아요.'
+          : error === 'Email not confirmed'
+          ? '이메일 인증이 아직 완료되지 않았어요. 받은 메일함을 확인해주세요.'
+          : error,
+      );
+      return;
+    }
     router.back();
   };
 
+  const [resetPending, setResetPending] = useState(false);
   const resetError = resetSubmitted && !validateEmail(resetEmail)
     ? '올바른 이메일 형식을 입력해주세요.' : undefined;
 
-  const handleSendReset = () => {
+  const handleSendReset = async () => {
     setResetSubmitted(true);
     if (!validateEmail(resetEmail)) return;
+    setResetPending(true);
+    await authStore.requestPasswordReset(resetEmail);
+    setResetPending(false);
+    // Supabase는 미가입 이메일에도 동일하게 성공 응답을 줌(계정 존재 여부 노출 방지) — 그대로 완료 화면 표시.
     setResetSent(true);
   };
 
@@ -170,14 +187,17 @@ export default function EmailLoginScreen() {
                 <Text style={styles.forgotLink}>비밀번호를 잊으셨나요?</Text>
               </TouchableOpacity>
 
+              {loginError ? <Text style={styles.formError}>{loginError}</Text> : null}
+
               {/* ── 로그인 버튼 ── Figma: Controls/Buttons/Text Button_02 (320×52) */}
               <TouchableOpacity
-                style={[styles.submitBtn, !isValid && styles.submitBtnDisabled]}
+                style={[styles.submitBtn, (!isValid || loginPending) && styles.submitBtnDisabled]}
                 onPress={handleLogin}
                 activeOpacity={0.85}
+                disabled={loginPending}
               >
-                <Text style={[styles.submitBtnText, !isValid && styles.submitBtnTextDisabled]}>
-                  로그인
+                <Text style={[styles.submitBtnText, (!isValid || loginPending) && styles.submitBtnTextDisabled]}>
+                  {loginPending ? '로그인 중…' : '로그인'}
                 </Text>
               </TouchableOpacity>
 
@@ -223,12 +243,13 @@ export default function EmailLoginScreen() {
               </View>
 
               <TouchableOpacity
-                style={[styles.submitBtn, !validateEmail(resetEmail) && styles.submitBtnDisabled]}
+                style={[styles.submitBtn, (!validateEmail(resetEmail) || resetPending) && styles.submitBtnDisabled]}
                 onPress={handleSendReset}
                 activeOpacity={0.85}
+                disabled={resetPending}
               >
-                <Text style={[styles.submitBtnText, !validateEmail(resetEmail) && styles.submitBtnTextDisabled]}>
-                  재설정 링크 보내기
+                <Text style={[styles.submitBtnText, (!validateEmail(resetEmail) || resetPending) && styles.submitBtnTextDisabled]}>
+                  {resetPending ? '전송 중…' : '재설정 링크 보내기'}
                 </Text>
               </TouchableOpacity>
 
@@ -272,6 +293,7 @@ const styles = StyleSheet.create({
 
   forgotRow: { alignItems: 'flex-end', marginBottom: 24 },
   forgotLink: { fontSize: 13, color: Colors.textSecondary, textDecorationLine: 'underline' },
+  formError: { fontSize: 12, color: Colors.error, textAlign: 'center', marginBottom: 12 },
 
   submitBtn: {
     height: 52, borderRadius: 14,

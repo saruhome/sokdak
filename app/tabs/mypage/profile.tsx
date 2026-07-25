@@ -15,7 +15,7 @@ export default function ProfileScreen() {
   const user = authStore.getUser();
 
   const [name, setName] = useState(user?.name ?? '');
-  const [email, setEmail] = useState(user?.email ?? '');
+  const email = user?.email ?? '';
   const [emoji, setEmoji] = useState(user?.emoji ?? '🐦');
 
   if (!user) {
@@ -29,14 +29,21 @@ export default function ProfileScreen() {
     );
   }
 
-  const isValid = name.trim().length >= 1 && /\S+@\S+\.\S+/.test(email.trim());
+  const isValid = name.trim().length >= 1;
+  const [saving, setSaving] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!isValid) {
-      Alert.alert('입력 확인', '닉네임과 올바른 이메일 주소를 입력해주세요.');
+      Alert.alert('입력 확인', '닉네임을 입력해주세요.');
       return;
     }
-    authStore.updateUser({ name: name.trim(), email: email.trim(), emoji });
+    setSaving(true);
+    const { error } = await authStore.updateUser({ name: name.trim(), emoji });
+    setSaving(false);
+    if (error) {
+      Alert.alert('저장 실패', error);
+      return;
+    }
     Alert.alert('저장 완료', '내 정보가 수정됐어요.', [{ text: '확인', onPress: () => router.back() }]);
   };
 
@@ -49,11 +56,13 @@ export default function ProfileScreen() {
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>내 정보 관리</Text>
           <TouchableOpacity
-            style={[styles.saveBtn, isValid && { backgroundColor: Colors.navBar }]}
+            style={[styles.saveBtn, isValid && !saving && { backgroundColor: Colors.navBar }]}
             onPress={handleSave}
-            disabled={!isValid}
+            disabled={!isValid || saving}
           >
-            <Text style={[styles.saveBtnText, isValid && { color: Colors.navBarIconActive }]}>저장</Text>
+            <Text style={[styles.saveBtnText, isValid && !saving && { color: Colors.navBarIconActive }]}>
+              {saving ? '저장 중…' : '저장'}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -91,14 +100,11 @@ export default function ProfileScreen() {
           <View style={styles.field}>
             <Text style={styles.fieldLabel}>이메일</Text>
             <TextInput
-              style={styles.fieldInput}
+              style={[styles.fieldInput, styles.fieldInputDisabled]}
               value={email}
-              onChangeText={setEmail}
-              placeholder="email@example.com"
-              placeholderTextColor={Colors.textTertiary}
-              keyboardType="email-address"
-              autoCapitalize="none"
+              editable={false}
             />
+            <Text style={styles.fieldHint}>이메일 변경은 아직 지원하지 않아요.</Text>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -146,6 +152,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, paddingHorizontal: 14,
     fontSize: 15, color: Colors.textPrimary,
   },
+  fieldInputDisabled: { backgroundColor: Colors.divider, color: Colors.textTertiary },
+  fieldHint: { fontSize: 11, color: Colors.textTertiary },
 
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
   notFoundText: { fontSize: 16, color: Colors.textSecondary },

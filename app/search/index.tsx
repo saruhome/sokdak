@@ -1,13 +1,14 @@
 import {
   StyleSheet, View, SafeAreaView,
-  TextInput, FlatList, ScrollView, TouchableOpacity,
+  TextInput, FlatList, ScrollView, TouchableOpacity, Alert,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { MOCK_WORDS, type Word } from '../../constants/mockWords';
-import { MOCK_POSTS, BOARD_COLORS, type Post } from '../../constants/mockPosts';
+import { BOARD_COLORS } from '../../constants/mockPosts';
+import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
 import { CATEGORIES, getCategoryBySlug } from '../../constants/categories';
 import { authStore } from '../../constants/authStore';
 import { AppIcon, IconStat } from '@/components/AppIcon';
@@ -28,14 +29,23 @@ export default function SearchScreen() {
   const [resultTab, setResultTab] = useState<ResultTab>('word');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
+  const [communityPosts, setCommunityPosts] = useState<CommunityPostSummary[]>([]);
 
   useFocusEffect(useCallback(() => { setSavedIds(authStore.getSavedWordIds()); }, []));
   useEffect(() => {
     const unsub = authStore.subscribeBookmarks(() => setSavedIds(authStore.getSavedWordIds()));
     return () => { unsub(); };
   }, []);
+  useEffect(() => { fetchPosts().then(setCommunityPosts); }, []);
 
   const toggleSave = (id: string) => {
+    if (!authStore.isLoggedIn()) {
+      Alert.alert('로그인이 필요해요', '단어를 저장하려면 먼저 로그인해주세요.', [
+        { text: '취소', style: 'cancel' },
+        { text: '로그인하러 가기', onPress: () => router.push('/auth/login') },
+      ]);
+      return;
+    }
     authStore.toggleWordSaved(id);
     setSavedIds(authStore.getSavedWordIds());
   };
@@ -78,11 +88,11 @@ export default function SearchScreen() {
   }, [submittedQuery, categoryFilter]);
 
   /* ── 커뮤니티 검색 결과 (Figma: 229:2808) ── */
-  const postResults = useMemo<Post[]>(() => {
+  const postResults = useMemo<CommunityPostSummary[]>(() => {
     const q = submittedQuery?.trim().toLowerCase() ?? '';
-    return MOCK_POSTS.filter(p =>
+    return communityPosts.filter(p =>
       p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q));
-  }, [submittedQuery]);
+  }, [submittedQuery, communityPosts]);
 
   const showEmptyState = submittedQuery === null && query.trim() === '';
   const showSuggestState = submittedQuery === null && query.trim() !== '';
@@ -309,7 +319,7 @@ export default function SearchScreen() {
                     <View style={styles.postStats}>
                       <IconStat icon={Eye} value={item.views} textStyle={styles.metaText} />
                       <IconStat icon={Heart} value={item.likes} textStyle={styles.metaText} />
-                      <IconStat icon={MessageCircle} value={item.comments.length} textStyle={styles.metaText} />
+                      <IconStat icon={MessageCircle} value={item.commentCount} textStyle={styles.metaText} />
                     </View>
                   </View>
                 </TouchableOpacity>

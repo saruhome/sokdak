@@ -1,34 +1,50 @@
 import {
   StyleSheet, View, SafeAreaView, ScrollView,
   TouchableOpacity, TextInput, KeyboardAvoidingView,
-  Platform, Alert,
+  Platform, Alert, ActivityIndicator,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
-import { MOCK_POSTS, BOARD_COLORS, type Comment } from '../../../constants/mockPosts';
+import { BOARD_COLORS } from '../../../constants/mockPosts';
 import { authStore } from '../../../constants/authStore';
+import { fetchPost, createComment, type CommunityComment, type CommunityPostDetail } from '../../../constants/community';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Heart, MessageCircle, Bookmark, Share2, MoreVertical, Eye } from 'lucide-react-native';
 
 export default function PostDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const post = MOCK_POSTS.find(p => p.id === id);
-
-  const [liked, setLiked] = useState(() => (post ? authStore.isPostLiked(post.id) : false));
+  const [post, setPost] = useState<CommunityPostDetail | null | undefined>(undefined);
+  const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [likeCount, setLikeCount] = useState(post?.likes ?? 0);
+  const [likeCount, setLikeCount] = useState(0);
   const [commentText, setCommentText] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [sendingComment, setSendingComment] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
-  /* 마이페이지 > 내 활동 게시물(좋아요)에서 해제된 경우 등 화면 재진입 시 동기화 */
-  useFocusEffect(
-    useCallback(() => {
-      if (post) setLiked(authStore.isPostLiked(post.id));
-    }, [post]),
-  );
+  const load = useCallback(() => {
+    if (!id) return;
+    fetchPost(id).then(data => {
+      setPost(data);
+      if (data) {
+        setLiked(authStore.isPostLiked(data.id));
+        setLikeCount(data.likes);
+      }
+    });
+  }, [id]);
+
+  /* 화면 재진입 시(마이페이지 좋아요 해제 등) 최신 상태로 다시 불러옴 */
+  useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  if (post === undefined) {
+    return (
+      <SafeAreaView style={styles.notFound}>
+        <ActivityIndicator color={Colors.textTertiary} />
+      </SafeAreaView>
+    );
+  }
 
   if (!post) {
     return (
@@ -44,27 +60,50 @@ export default function PostDetailScreen() {
   const boardColor = BOARD_COLORS[post.board];
 
   const handleLike = () => {
+    if (!authStore.isLoggedIn()) {
+      Alert.alert('로그인이 필요해요', '좋아요를 누르려면 먼저 로그인해주세요.', [
+        { text: '취소', style: 'cancel' },
+        { text: '로그인하러 가기', onPress: () => router.push('/auth/login') },
+      ]);
+      return;
+    }
     authStore.togglePostLiked(post.id);
     setLiked(p => !p);
     setLikeCount(p => liked ? p - 1 : p + 1);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!commentText.trim()) return;
-    Alert.alert('댓글 등록', `"${commentText.trim()}" 댓글이 등록됐어요!`);
+    if (!authStore.isLoggedIn()) {
+      Alert.alert('로그인이 필요해요', '댓글을 작성하려면 먼저 로그인해주세요.', [
+        { text: '취소', style: 'cancel' },
+        { text: '로그인하러 가기', onPress: () => router.push('/auth/login') },
+      ]);
+      return;
+    }
+    setSendingComment(true);
+    const { error } = await createComment({
+      postId: post.id,
+      content: commentText.trim(),
+      parentCommentId: replyingTo,
+    });
+    setSendingComment(false);
+    if (error) {
+      Alert.alert('댓글 등록 실패', error);
+      return;
+    }
     setCommentText('');
     setReplyingTo(null);
+    load();
   };
 
-  const handleReply = (comment: Comment) => {
+  const handleReply = (comment: CommunityComment) => {
     setReplyingTo(comment.id);
     setCommentText(`@${comment.author.name} `);
     inputRef.current?.focus();
   };
 
-  const totalComments = post.comments.reduce(
-    (sum, c) => sum + 1 + (c.replies?.length ?? 0), 0
-  );
+  const totalComments = post.commentCount;
 
   return (
     <KeyboardAvoidingView
@@ -195,11 +234,11 @@ export default function PostDetailScreen() {
               maxLength={500}
             />
             <TouchableOpacity
-              style={[styles.sendBtn, !commentText.trim() && styles.sendBtnDisabled]}
+              style={[styles.sendBtn, (!commentText.trim() || sendingComment) && styles.sendBtnDisabled]}
               onPress={handleSend}
-              disabled={!commentText.trim()}
+              disabled={!commentText.trim() || sendingComment}
             >
-              <Text style={styles.sendBtnText}>전송</Text>
+              <Text style={styles.sendBtnText}>{sendingComment ? '전송 중…' : '전송'}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -211,7 +250,7 @@ export default function PostDetailScreen() {
 /* ── 댓글 단일 아이템 컴포넌트 ── */
 function CommentItem({
   comment, isReply = false, onReply,
-}: { comment: Comment; isReply?: boolean; onReply: () => void }) {
+}: { comment: CommunityComment; isReply?: boolean; onReply: () => void }) {
   const [liked, setLiked] = useState(false);
 
   return (
@@ -232,9 +271,7 @@ function CommentItem({
             onPress={() => setLiked(p => !p)}
           >
             <AppIcon icon={Heart} size={13} fill={liked ? Colors.error : undefined} color={liked ? Colors.error : undefined} />
-            <Text style={styles.commentActionText}>
-              {liked ? comment.likes + 1 : comment.likes}
-            </Text>
+            <Text style={styles.commentActionText}>{liked ? 1 : 0}</Text>
           </TouchableOpacity>
           {!isReply && (
             <TouchableOpacity style={styles.commentAction} onPress={onReply}>

@@ -1,6 +1,6 @@
 import {
   StyleSheet, View, SafeAreaView,
-  TextInput, FlatList, TouchableOpacity,
+  TextInput, FlatList, TouchableOpacity, Alert,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useState, useMemo, useEffect } from 'react';
@@ -44,6 +44,13 @@ export default function DictionaryScreen() {
   }, [sortIndex, query]);
 
   const toggleSave = (id: string) => {
+    if (!authStore.isLoggedIn()) {
+      Alert.alert('로그인이 필요해요', '단어를 저장하려면 먼저 로그인해주세요.', [
+        { text: '취소', style: 'cancel' },
+        { text: '로그인하러 가기', onPress: () => router.push('/auth/login') },
+      ]);
+      return;
+    }
     authStore.toggleWordSaved(id);
     setSavedIds(authStore.getSavedWordIds());
   };

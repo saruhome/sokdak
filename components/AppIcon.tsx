@@ -2,22 +2,25 @@ import { useState } from 'react';
 import { Pressable, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import type { LucideIcon } from 'lucide-react-native';
 import { AppText as Text } from '@/components/AppText';
+import { Colors } from '@/constants/Colors';
 
-/** Tailwind text-gray-600 — 앱 전체 아이콘 기본색 */
-export const ICON_DEFAULT = '#4B5563';
-/** Tailwind text-blue-500 — 마우스 호버 시 색 */
-export const ICON_HOVER = '#3B82F6';
+/** Sok-Dak Color/Font_03(본문) — 앱 전체 아이콘 기본색 */
+export const ICON_DEFAULT = Colors.textSecondary;
+/** Sok-Dak Color/Point_02 — 마우스 호버 시 색 */
+export const ICON_HOVER = Colors.point2;
 
 /**
  * 앱 공통 아이콘 래퍼 — Lucide 아이콘을 통일된 스타일로 렌더링한다.
  * - Outline 전용, 선 두께 1.5px 고정 (absoluteStrokeWidth: 크기와 무관하게 항상 1.5px)
- * - 기본색 gray-600(#4B5563), 마우스 호버 시 blue-500(#3B82F6) — 웹/포인터 환경에서 동작,
+ * - 기본색 Font_03/본문, 마우스 호버 시 Point_02 — 웹/포인터 환경에서 동작,
  *   터치 기기에는 호버 개념이 없어 기본색 유지
  * - 다크 배경(헤더/FAB 등) 위에서는 color로 밝은 색을 넘겨 대비 확보
+ * - 표준 크기 24×24px (SOKDAK_GUIDELINES.md 4-5) — 검색바(18px)·메타 아이콘(12px) 등은
+ *   컨텍스트별로 호출부에서 size를 개별 지정
  */
 export function AppIcon({
   icon: Icon,
-  size = 20,
+  size = 24,
   color = ICON_DEFAULT,
   hoverColor = ICON_HOVER,
   fill,

@@ -29,7 +29,7 @@ export const Colors = {
   point5: '#E2B55D',
 
   accent:   '#121212',   // = textEmphasis. 기존 초록색은 Figma에 없던 임의값이었음
-  error:    '#C04A3A',
+  error:    '#A94949',   // SOKDAK_GUIDELINES.md point.like — 좋아요 활성/알림 뱃지/경고에 겸용
   warning:  '#C07A2A',
   success:  '#3A8C5C',
 } as const;

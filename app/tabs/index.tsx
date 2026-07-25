@@ -60,7 +60,7 @@ export default function HomeScreen() {
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Home (375×44, bg #52514e) — 실제 SokDak 워드마크 SVG */}
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.logoBtn} onPress={() => router.push('/tabs')} activeOpacity={0.8}>
-          <SokDakLogo />
+          <SokDakLogo width={83} />
         </TouchableOpacity>
         <View style={styles.topBarIcons}>
           {/* 다크 헤더 위라 기본 gray-600 대신 밝은색으로 대비 확보 */}

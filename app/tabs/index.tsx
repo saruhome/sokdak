@@ -1,10 +1,10 @@
 import {
   StyleSheet, View, SafeAreaView, ScrollView,
-  TouchableOpacity,
+  TouchableOpacity, Platform,
   type NativeSyntheticEvent, type NativeScrollEvent,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { MOCK_WORDS } from '../../constants/mockWords';
@@ -21,16 +21,38 @@ const HERO_WORDS = [...MOCK_WORDS].sort((a, b) => b.likes - a.likes).slice(0, 3)
 /** Figma: 새로운 신조어 섹션 — new-slang 카테고리 단어 미리보기 */
 const NEW_SLANG_WORDS = MOCK_WORDS.filter(w => w.category === 'new-slang');
 
+/** 히어로 캐러셀 자동 재생 간격(ms) */
+const HERO_AUTOPLAY_INTERVAL = 4000;
+
 export default function HomeScreen() {
   const [heroIndex, setHeroIndex] = useState(0);
   const [communityPosts, setCommunityPosts] = useState<CommunityPostSummary[]>([]);
+  const heroScrollRef = useRef<ScrollView>(null);
+  const heroPausedRef = useRef(false);
 
   useFocusEffect(useCallback(() => {
     fetchPosts().then(data => setCommunityPosts(data.slice(0, 3)));
   }, []));
 
+  /* 히어로 캐러셀 자동 재생 — 오른쪽에서 왼쪽으로 넘어가도록 다음 인덱스로 스크롤.
+   * 사용자가 직접 스와이프하는 동안(heroPausedRef)에는 타이머가 끼어들지 않게 건너뜀. */
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (heroPausedRef.current) return;
+      setHeroIndex(prev => {
+        const next = (prev + 1) % HERO_WORDS.length;
+        // 웹(react-native-web)에서는 animated:true인 scrollTo가 실제로 스크롤을
+        // 이동시키지 않는 버그가 있어(로컬 검증 완료) 웹만 즉시 이동으로 처리.
+        heroScrollRef.current?.scrollTo({ x: next * SCREEN_WIDTH, animated: Platform.OS !== 'web' });
+        return next;
+      });
+    }, HERO_AUTOPLAY_INTERVAL);
+    return () => clearInterval(timer);
+  }, []);
+
   const handleHeroScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH));
+    heroPausedRef.current = false;
   };
 
   return (
@@ -38,7 +60,7 @@ export default function HomeScreen() {
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Home (375×44, bg #52514e) — 실제 SokDak 워드마크 SVG */}
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.logoBtn} onPress={() => router.push('/tabs')} activeOpacity={0.8}>
-          <SokDakLogo width={83} />
+          <SokDakLogo />
         </TouchableOpacity>
         <View style={styles.topBarIcons}>
           {/* 다크 헤더 위라 기본 gray-600 대신 밝은색으로 대비 확보 */}
@@ -51,9 +73,11 @@ export default function HomeScreen() {
         {/* ── 히어로 캐러셀 ── Figma: Card/Recommend2 (375×250) */}
         <View>
           <ScrollView
+            ref={heroScrollRef}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
+            onScrollBeginDrag={() => { heroPausedRef.current = true; }}
             onMomentumScrollEnd={handleHeroScrollEnd}
           >
             {HERO_WORDS.map(word => {

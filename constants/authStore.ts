@@ -25,6 +25,8 @@ const _listeners = new Set<AuthListener>();
 
 const _savedWordIds = new Set<string>();
 const _likedPostIds = new Set<string>();
+/** 좋아요 한 카테고리 — DB 테이블이 아직 없어 세션 동안만 유지(로그아웃/새로고침 시 초기화) */
+const _likedCategorySlugs = new Set<string>();
 const _bookmarkListeners = new Set<BookmarkListener>();
 
 let _initialized = false;
@@ -71,6 +73,7 @@ async function applySession(userId: string | undefined, email: string | undefine
     _user = null;
     _savedWordIds.clear();
     _likedPostIds.clear();
+    _likedCategorySlugs.clear();
     notifyAuth();
     notifyBookmarks();
     return;
@@ -195,6 +198,15 @@ export const authStore = {
     });
   },
   getLikedPostIds: () => Array.from(_likedPostIds),
+
+  /* ── 좋아요 한 카테고리 (세션 전용, DB 미연동) ── */
+  isCategoryLiked: (slug: string) => _likedCategorySlugs.has(slug),
+  toggleCategoryLiked(slug: string) {
+    if (!_user) return;
+    if (_likedCategorySlugs.has(slug)) _likedCategorySlugs.delete(slug); else _likedCategorySlugs.add(slug);
+    notifyBookmarks();
+  },
+  getLikedCategorySlugs: () => Array.from(_likedCategorySlugs),
 
   subscribeBookmarks(fn: BookmarkListener) {
     _bookmarkListeners.add(fn);

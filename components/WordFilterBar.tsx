@@ -1,7 +1,7 @@
 import { StyleSheet, View, Modal, ScrollView, TouchableOpacity } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useState } from 'react';
-import { Colors, getCategoryLabelColor } from '@/constants/Colors';
+import { Colors, getCategoryLabelColor, getReadableTextColor } from '@/constants/Colors';
 import { CATEGORIES, getCategoryBySlug } from '@/constants/categories';
 import { SCREEN_WIDTH } from '@/constants/layout';
 import { type Word } from '@/constants/mockWords';
@@ -128,9 +128,8 @@ export function WordFilterBar({
         <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setPickerOpen(false)}>
           <TouchableOpacity style={styles.modalSheet} activeOpacity={1}>
             <View style={styles.grabHandle} />
-            <Text style={styles.modalTitle}>카테고리 필터</Text>
             <View style={styles.modalHint}>
-              <Text style={styles.modalHintText}>선택한 카테고리에 해당하는 단어만 보여드려요</Text>
+              <Text style={styles.modalHintText} numberOfLines={1}>선택한 카테고리에 해당하는 단어만 보여드려요</Text>
             </View>
 
             <ScrollView contentContainerStyle={styles.chipGrid}>
@@ -151,7 +150,12 @@ export function WordFilterBar({
                       onPress={() => onToggleCategory(c.slug)}
                       activeOpacity={0.8}
                     >
-                      <Text style={[styles.pickChipText, { color: getCategoryLabelColor(c.colorBg, c.colorFg) }]}>
+                      <Text
+                        style={[
+                          styles.pickChipText,
+                          { color: on ? getReadableTextColor(c.colorBg) : getCategoryLabelColor(c.colorBg, c.colorFg) },
+                        ]}
+                      >
                         {c.name}
                       </Text>
                     </TouchableOpacity>
@@ -234,12 +238,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center', width: 96, height: 4, borderRadius: 2,
     backgroundColor: Colors.border, marginBottom: 16,
   },
-  modalTitle: {
-    fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary,
-    textAlign: 'center', marginBottom: 16,
-  },
   modalHint: {
-    paddingHorizontal: 40, paddingVertical: 8, alignItems: 'center',
+    paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center',
     borderTopWidth: 1, borderBottomWidth: 1, borderColor: Colors.border,
   },
   modalHintText: { fontSize: 14, color: Colors.textPrimary, fontFamily: undefined, textAlign: 'center' },

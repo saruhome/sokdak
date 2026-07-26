@@ -1,6 +1,6 @@
 import {
   StyleSheet, View, SafeAreaView, Image, ImageBackground,
-  FlatList, TouchableOpacity, Alert,
+  FlatList, TouchableOpacity,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
@@ -36,14 +36,10 @@ export default function CategoryScreen() {
       : a.name.localeCompare(b.name, 'ko')
   );
 
+  /* 단어 즐겨찾기(별)와 동일하게 비로그인도 허용 — 세션/로컬에 유지되고 로그인 시 계정으로 이관된다.
+   * 예전엔 여기서 로그인 유도 Alert을 띄웠는데, react-native-web은 Alert을 구현하지 않아
+   * 웹에서는 하트를 눌러도 아무 반응이 없었다. */
   const handleToggleLike = (category: Category) => {
-    if (!authStore.isLoggedIn()) {
-      Alert.alert('로그인이 필요해요', '카테고리를 좋아요하려면 먼저 로그인해주세요.', [
-        { text: '취소', style: 'cancel' },
-        { text: '로그인하러 가기', onPress: () => router.push('/auth/login') },
-      ]);
-      return;
-    }
     authStore.toggleCategoryLiked(category.slug);
     forceUpdate(n => n + 1);
   };
@@ -123,7 +119,13 @@ export default function CategoryScreen() {
                 <View style={styles.cardTopRow}>
                   <Image source={MIC_ICON} style={styles.micIcon} />
                   <TouchableOpacity style={styles.likeBtn} onPress={() => handleToggleLike(item)} hitSlop={8}>
-                    <AppIcon icon={Heart} size={18} color={item.colorFg} fill={liked ? item.colorFg : 'none'} />
+                    {/* 활성 시 좋아요 색(Colors.error)으로 채워 단어 별(노랑)과 같은 방식으로 상태를 보여준다 */}
+                    <AppIcon
+                      icon={Heart}
+                      size={18}
+                      color={liked ? Colors.error : labelColor}
+                      fill={liked ? Colors.error : 'none'}
+                    />
                   </TouchableOpacity>
                 </View>
                 {/* 사진 위 글자 가독성 확보용 반투명 스크림 */}

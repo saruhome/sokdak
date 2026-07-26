@@ -104,7 +104,12 @@ export function WordFilterBar({
       )}
 
       {showConsonantRow && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.consonantRow}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.consonantRowScroll}
+          contentContainerStyle={styles.consonantRow}
+        >
           {CONSONANT_FILTERS.map(c => (
             <TouchableOpacity
               key={c}
@@ -194,6 +199,10 @@ const styles = StyleSheet.create({
   },
   chipText: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
 
+  /* width:100%이 없으면 네이티브(Yoga)에서 칩 14개의 내용 너비가 그대로 부모 컬럼의
+   * 최소 너비로 계산돼 검색바·배너·단어카드까지 전부 오른쪽으로 늘어난다(웹은 overflow
+   * 스크롤 요소의 자동 최소 크기가 0이라 발생하지 않아 재현되지 않았음). */
+  consonantRowScroll: { width: '100%' },
   consonantRow: { gap: 8, paddingHorizontal: 24, paddingBottom: 12 },
   consonantChip: {
     width: 32, height: 32, borderRadius: 16,

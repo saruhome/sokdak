@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Image, Platform, StyleSheet, View } from 'react-native';
-import { useEffect, useState } from 'react';
+import { Animated, Image, Platform, StyleSheet, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
 import { useFonts } from 'expo-font';
 // 배럴(index.js)에서 import하면 두 웨이트만 써도 metro 웹 번들에 8개 웨이트(91MB)가
 // 전부 딸려온다 — 서브패스로 필요한 웨이트만 개별 import.
@@ -23,6 +23,10 @@ function DeviceFrame({ children }: { children: React.ReactNode }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  splash: { flex: 1, width: '100%', backgroundColor: Colors.background },
+});
 
 const frameStyles = StyleSheet.create({
   outer: {
@@ -46,6 +50,9 @@ export default function RootLayout() {
   const [authReady, setAuthReady] = useState(authStore.isInitialized());
   /* 폰트·세션 로딩이 빨리 끝나도 스플래시가 깜빡이고 사라지지 않도록 최소 노출 시간 확보 */
   const [splashDone, setSplashDone] = useState(false);
+  /* fade out이 끝나야 언마운트 — 그 전까지 앱 위에 겹쳐 둔다 */
+  const [splashVisible, setSplashVisible] = useState(true);
+  const splashFade = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     authStore.initialize().then(() => setAuthReady(true));
@@ -53,10 +60,21 @@ export default function RootLayout() {
     return () => clearTimeout(t);
   }, []);
 
-  if (!fontsLoaded || !authReady || !splashDone) {
+  const ready = fontsLoaded && authReady && splashDone;
+
+  useEffect(() => {
+    if (!ready) return;
+    Animated.timing(splashFade, {
+      toValue: 0,
+      duration: 400,
+      useNativeDriver: Platform.OS !== 'web',
+    }).start(() => setSplashVisible(false));
+  }, [ready, splashFade]);
+
+  if (!ready) {
     return (
       <DeviceFrame>
-        <Image source={SPLASH} style={{ flex: 1, width: '100%', backgroundColor: Colors.background }} resizeMode="contain" />
+        <Image source={SPLASH} style={styles.splash} resizeMode="contain" />
       </DeviceFrame>
     );
   }
@@ -70,6 +88,13 @@ export default function RootLayout() {
         <Stack.Screen name="search" options={{ headerShown: false }} />
         <Stack.Screen name="notifications" options={{ headerShown: false }} />
       </Stack>
+      {splashVisible && (
+        <Animated.Image
+          source={SPLASH}
+          style={[StyleSheet.absoluteFill, styles.splash, { opacity: splashFade }]}
+          resizeMode="contain"
+        />
+      )}
     </DeviceFrame>
   );
 }

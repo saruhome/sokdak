@@ -40,10 +40,23 @@ export const Colors = {
  * 배경색 밝기를 계산해 검정/흰 텍스트 중 읽기 쉬운 쪽을 고른다.
  */
 export function getReadableTextColor(bgHex: string): string {
-  const hex = bgHex.replace('#', '');
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.6 ? '#1A1A1A' : '#FFFFFF';
+  return luminanceOf(bgHex) > 0.6 ? '#1A1A1A' : '#FFFFFF';
+}
+
+function luminanceOf(hex: string): number {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
+
+/**
+ * 카테고리 2톤(colorBg/colorFg) 중 어두운 쪽을 반환.
+ * 카드 라벨은 밝은 스크림 위에 얹히는데, 릴스처럼 colorFg가 밝은 톤(#DCEDFF)인
+ * 카테고리는 그대로 쓰면 글자가 보이지 않는다. 카테고리 색 정체성은 유지하면서
+ * 대비만 확보하기 위해 두 톤 중 더 어두운 쪽을 고른다.
+ */
+export function getCategoryLabelColor(colorBg: string, colorFg: string): string {
+  return luminanceOf(colorFg) <= luminanceOf(colorBg) ? colorFg : colorBg;
 }

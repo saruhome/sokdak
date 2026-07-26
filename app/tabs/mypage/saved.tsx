@@ -203,7 +203,8 @@ const styles = StyleSheet.create({
     flex: 1, height: 104, borderRadius: 10,
     borderWidth: 1, borderColor: Colors.border, overflow: 'hidden',
   },
-  categoryCardBg: { flex: 1 },
+  /* width/height 미지정 시 ImageBackground가 이미지 원본 폭 기준으로 커져 카드가 넘친다 */
+  categoryCardBg: { flex: 1, width: '100%', height: '100%' },
   categoryCardBgImage: { resizeMode: 'cover' },
   micIcon: { position: 'absolute', left: 12, top: 12, width: 16, height: 16, tintColor: '#1A1A1A' },
   starIcon: { position: 'absolute', right: 12, top: 12, width: 16, height: 16 },

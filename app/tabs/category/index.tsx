@@ -5,7 +5,7 @@ import {
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Colors } from '../../../constants/Colors';
+import { Colors, getCategoryLabelColor } from '../../../constants/Colors';
 import { CATEGORIES, type Category } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
@@ -112,6 +112,7 @@ export default function CategoryScreen() {
         }
         renderItem={({ item }) => {
           const liked = authStore.isCategoryLiked(item.slug);
+          const labelColor = getCategoryLabelColor(item.colorBg, item.colorFg);
           return (
             <TouchableOpacity
               style={styles.categoryCard}
@@ -128,8 +129,8 @@ export default function CategoryScreen() {
                 {/* 사진 위 글자 가독성 확보용 반투명 스크림 */}
                 <View style={styles.cardScrim} />
                 <View style={styles.cardTextWrap}>
-                  <Text style={[styles.categoryName, { color: item.colorFg }]}>{item.name}</Text>
-                  <Text style={[styles.categoryDesc, { color: item.colorFg }]} numberOfLines={1}>
+                  <Text style={[styles.categoryName, { color: labelColor }]}>{item.name}</Text>
+                  <Text style={[styles.categoryDesc, { color: labelColor }]} numberOfLines={1}>
                     {item.description}
                   </Text>
                 </View>
@@ -207,7 +208,9 @@ const styles = StyleSheet.create({
     shadowColor: '#000', shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.15, shadowRadius: 6, elevation: 3,
   },
-  cardBg: { flex: 1 },
+  /* width/height를 명시하지 않으면 ImageBackground가 이미지 원본 폭(600px)을 기준으로
+   * 크기를 잡아 카드가 화면 밖으로 늘어난다(flex: 0 0 auto라 줄어들지도 않음). */
+  cardBg: { flex: 1, width: '100%', height: '100%' },
   cardBgImage: { resizeMode: 'cover' },
   cardTopRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',

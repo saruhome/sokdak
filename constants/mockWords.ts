@@ -2,6 +2,8 @@
 export type Word = {
   id: string;
   word: string;
+  /** 로마자 표기(국립국어원 Revised Romanization, 음절 단위 하이픈) — 목록에서 단어 옆에 표시 */
+  romanization: string;
   category: string;   // Category slug (주 카테고리)
   /** Figma: 단어가 두 카테고리에 걸치는 경우(예: "오빠" = 감탄사+릴스) 상세 화면에 배지/탭 2개로 표시 */
   secondaryCategory?: string;
@@ -27,7 +29,7 @@ export type Word = {
 export const MOCK_WORDS: Word[] = [
   // ── 일상 ──
   {
-    id: '1', word: '핵인싸', category: 'daily',
+    id: '1', word: '핵인싸', romanization: 'Haek-In-Ssa', category: 'daily',
     pronunciation: '[핵-인-싸]', shortDesc: '매우 사교적이고 무리에 잘 어울리는 사람',
     meanings: [{ type: '명사', definition: "'핵'(매우)과 '인싸'(insider)의 합성어. 어떤 무리에서든 핵심 인물로서 활발하게 어울리는 사람.", examples: [{ kor: '걔는 어딜 가도 핵인싸야, 친구가 엄청 많아.', eng: "They're a total social butterfly wherever they go." }, { kor: '이번 MT에서 민준이가 완전 핵인싸였어.', eng: 'Minjun was the life of the party at the MT.' }] }],
     origin: "'핵'(접두사: 매우) + '인싸'(insider의 줄임말)",
@@ -36,7 +38,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'The ultimate insider / Social butterfly' }, { lang: '🇯🇵 JA', text: '超陽キャ' }, { lang: '🇨🇳 ZH', text: '超级社交达人' }],
   },
   {
-    id: '2', word: '갓벽', category: 'daily',
+    id: '2', word: '갓벽', romanization: 'Gat-Byeok', category: 'daily',
     pronunciation: '[갇-벽]', shortDesc: '신이 내린 듯 완벽한 상태',
     meanings: [{ type: '형용사/명사', definition: "'God'(갓)과 '완벽'의 합성어. 신의 경지에 달한 완벽함.", examples: [{ kor: '이 앨범 진짜 갓벽이다.', eng: 'This album is absolutely godlike.' }, { kor: '오늘 네 발표 완전 갓벽했어!', eng: 'Your presentation today was absolutely perfect!' }] }],
     origin: "'갓'(God) + '완벽'의 합성",
@@ -45,7 +47,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Godlike / Absolutely perfect' }, { lang: '🇯🇵 JA', text: '神完璧' }, { lang: '🇨🇳 ZH', text: '神级完美' }],
   },
   {
-    id: '4', word: '넵병', category: 'daily',
+    id: '4', word: '넵병', romanization: 'Nep-Byeong', category: 'daily',
     pronunciation: '[넵-뼝]', shortDesc: "메신저에서 '네' 대신 '넵!'을 남발하는 직장인 증상",
     meanings: [{ type: '명사', definition: "메신저에서 반사적으로 '넵!'을 입력하는 현상. 과도한 긍정과 복종 표현.", examples: [{ kor: '과장님한테 또 넵! 했어, 완전 넵병이야.', eng: "I typed 'Yes sir!' to the manager again." }, { kor: '월급 루팡인데 넵병은 심하다.', eng: "Barely doing any work but can't stop saying 'Yes sir!'" }] }],
     origin: "'넵'(네의 귀여운 표현) + '병'(병적 반복 증상)",
@@ -54,7 +56,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: '"Yes-itis" / Compulsive yes-sirring' }, { lang: '🇯🇵 JA', text: '「はいッ！」病' }, { lang: '🇨🇳 ZH', text: '好的症' }],
   },
   {
-    id: '5', word: '킹받다', category: 'daily',
+    id: '5', word: '킹받다', romanization: 'King-Bat-Da', category: 'daily',
     pronunciation: '[킹-받-따]', shortDesc: '매우 열받다, 극도로 화가 나다',
     meanings: [{ type: '동사', definition: "'킹'(king, 최고 강조 접두사) + '열받다'의 합성.", examples: [{ kor: '아 진짜 킹받네, 왜 그런 말을 하는 거야?', eng: "Ugh, that's so infuriating." }, { kor: '지각했는데 버스도 놓쳐서 킹받았어.', eng: 'I was already late and then missed the bus — absolutely fuming.' }] }],
     origin: "'킹'(King, 강조 접두사) + '열받다'",
@@ -63,7 +65,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Supremely pissed off' }, { lang: '🇯🇵 JA', text: 'キングにムカつく' }, { lang: '🇨🇳 ZH', text: '超级气' }],
   },
   {
-    id: '6', word: '갑분싸', category: 'daily',
+    id: '6', word: '갑분싸', romanization: 'Gap-Bun-Ssa', category: 'daily',
     pronunciation: '[갑-분-싸]', shortDesc: '갑자기 분위기 싸해짐',
     meanings: [{ type: '명사', definition: "'갑자기 분위기 싸해짐'의 줄임말.", examples: [{ kor: '그 말 하고 나서 갑분싸가 됐어.', eng: 'The vibe suddenly got really awkward after that.' }, { kor: '갑분싸 만든 사람이 누구야?', eng: 'Who killed the vibe just now?' }] }],
     origin: "'갑자기' + '분위기' + '싸해짐'",
@@ -72,7 +74,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Sudden awkward silence / Vibe killer' }, { lang: '🇯🇵 JA', text: '急に空気が冷える' }, { lang: '🇨🇳 ZH', text: '突然冷场' }],
   },
   {
-    id: '8', word: '알잖아', category: 'daily',
+    id: '8', word: '알잖아', romanization: 'Al-Ja-Na', category: 'daily',
     pronunciation: '[알-자-나]', shortDesc: '상대방이 이미 알고 있다는 것을 전제하는 표현',
     meanings: [{ type: '표현', definition: "'너도 알잖아'의 줄임말.", examples: [{ kor: '그거 왜 그런지 알잖아, 더 설명 안 해도 되지?', eng: "You know why, right? No need to explain further." }] }],
     origin: "'(너도) 알잖아'의 구어적 줄임",
@@ -81,7 +83,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'You know (right)?' }, { lang: '🇯🇵 JA', text: 'わかるじゃん' }, { lang: '🇨🇳 ZH', text: '你懂的' }],
   },
   {
-    id: '11', word: '개이득', category: 'daily',
+    id: '11', word: '개이득', romanization: 'Gae-I-Deuk', category: 'daily',
     pronunciation: '[개-이-득]', shortDesc: '엄청난 이득, 예상보다 훨씬 좋은 결과',
     meanings: [{ type: '명사/감탄사', definition: "'개'(매우, 강조 접두사) + '이득'. 기대 이상의 혜택이나 이익을 얻었을 때.", examples: [{ kor: '1+1이라고? 개이득이다!', eng: 'Buy one get one free? What a steal!' }, { kor: '환불도 되고 교환도 된다니 개이득이네.', eng: "Both refund and exchange? That's an insane deal." }] }],
     origin: "'개'(강조 접두사) + '이득'",
@@ -92,7 +94,7 @@ export const MOCK_WORDS: Word[] = [
 
   // ── K-POP ──
   {
-    id: '3', word: '억까', category: 'kpop',
+    id: '3', word: '억까', romanization: 'Eok-Kka', category: 'kpop',
     pronunciation: '[억-까]', shortDesc: '억지로 까는 행위, 근거 없는 비난',
     meanings: [{ type: '명사/동사', definition: "'억지로 깐다'의 줄임말. 합리적 근거 없이 억지로 비난하는 행위.", examples: [{ kor: '저건 그냥 억까잖아, 말이 안 되는 비판이야.', eng: "That's just baseless hate." }, { kor: '아무리 팬이어도 억까는 하지 마.', eng: "Even if you're a fan, don't engage in baseless criticism." }] }],
     origin: "'억지로'의 '억' + '깐다'의 '까'",
@@ -101,7 +103,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Baseless hate / Forced criticism' }, { lang: '🇯🇵 JA', text: '言いがかり' }, { lang: '🇨🇳 ZH', text: '无理由黑' }],
   },
   {
-    id: '9', word: '레전드', category: 'kpop',
+    id: '9', word: '레전드', romanization: 'Le-Jen-Deu', category: 'kpop',
     pronunciation: '[레-전-드]', shortDesc: '전설적인, 역사에 남을 만큼 훌륭한',
     meanings: [{ type: '명사/형용사', definition: "영어 'legend'의 한국어 발음. 역사적으로 남을 정도로 훌륭한 무언가.", examples: [{ kor: '그 무대 진짜 레전드였어.', eng: "That performance was legendary." }] }],
     origin: "영어 'legend' → K-POP 팬덤 → 일반 사용 확산",
@@ -110,7 +112,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Legendary / GOAT-level' }, { lang: '🇯🇵 JA', text: '伝説' }, { lang: '🇨🇳 ZH', text: '传说级' }],
   },
   {
-    id: '12', word: '직관', category: 'kpop',
+    id: '12', word: '직관', romanization: 'Jik-Gwan', category: 'kpop',
     pronunciation: '[직-관]', shortDesc: '콘서트에 직접 관람하러 가는 것',
     meanings: [{ type: '명사/동사', definition: "'직접 관람'의 줄임말. 콘서트나 공연장에 직접 가서 보는 행위.", examples: [{ kor: '이번 콘서트 직관 성공했어!', eng: "I managed to see the concert in person!" }, { kor: '직관 각이다, 티켓팅 도전해봐.', eng: "Time to go in person — try getting a ticket." }] }],
     origin: "'직접 관람'의 줄임",
@@ -119,7 +121,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Attending in person (concert)' }, { lang: '🇯🇵 JA', text: '現場参戦' }, { lang: '🇨🇳 ZH', text: '现场观看' }],
   },
   {
-    id: '13', word: '최애', category: 'kpop',
+    id: '13', word: '최애', romanization: 'Choe-Ae', category: 'kpop',
     pronunciation: '[최-애]', shortDesc: '가장 좋아하는 멤버 또는 최고로 사랑하는 대상',
     meanings: [{ type: '명사', definition: "'최고로 사랑함'의 줄임. K-POP에서 자신이 제일 좋아하는 아이돌 멤버를 가리킬 때 사용.", examples: [{ kor: '내 최애는 무조건 지민이야.', eng: 'My ultimate bias is Jimin, hands down.' }, { kor: '최애 생일 챙기느라 바빠.', eng: "Busy preparing for my bias's birthday." }] }],
     origin: "일본어 '推し(おし)'에서 유래해 한국화된 표현",
@@ -130,7 +132,7 @@ export const MOCK_WORDS: Word[] = [
 
   // ── 드라마/영화 ──
   {
-    id: '7', word: '요즘 뭐 봐?', category: 'drama',
+    id: '7', word: '요즘 뭐 봐?', romanization: 'Yo-Jeum Mwo Bwa', category: 'drama',
     pronunciation: '', shortDesc: '안부 인사를 대신하는 콘텐츠 중심 표현',
     meanings: [{ type: '표현', definition: "안부 인사를 대신하는 콘텐츠 공유형 인사법.", examples: [{ kor: '오랜만이야! 요즘 뭐 봐?', eng: "Long time no see! What are you watching these days?" }] }],
     origin: 'OTT 플랫폼 대중화 이후 콘텐츠 소비가 일상화되며 발생',
@@ -139,7 +141,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'What are you watching these days?' }, { lang: '🇯🇵 JA', text: '最近何見てる？' }, { lang: '🇨🇳 ZH', text: '最近在看什么？' }],
   },
   {
-    id: '10', word: '정주행', category: 'drama',
+    id: '10', word: '정주행', romanization: 'Jeong-Ju-Haeng', category: 'drama',
     pronunciation: '[정-주-행]', shortDesc: '콘텐츠를 처음부터 끝까지 순서대로 모두 보는 것',
     meanings: [{ type: '명사/동사', definition: "드라마, 애니 등을 1화부터 최신화까지 순서대로 전부 보는 행위.", examples: [{ kor: '이번 주에 이상한 변호사 우영우 정주행 했어.', eng: "This week I watched all of Extraordinary Attorney Woo from start to finish." }] }],
     origin: "'정방향 주행'의 줄임말 → 역주행의 반대 개념",
@@ -148,7 +150,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Binge-watching from ep 1' }, { lang: '🇯🇵 JA', text: '1話から全部見る' }, { lang: '🇨🇳 ZH', text: '从头到尾追完' }],
   },
   {
-    id: '14', word: '역주행', category: 'drama',
+    id: '14', word: '역주행', romanization: 'Yeok-Ju-Haeng', category: 'drama',
     pronunciation: '[역-주-행]', shortDesc: '과거에 나온 콘텐츠가 뒤늦게 인기를 얻는 현상',
     meanings: [{ type: '명사', definition: "오래된 노래·드라마·영화가 갑자기 뒤늦게 인기를 끄는 현상.", examples: [{ kor: '그 노래 완전 역주행이잖아, 몇 년 전 노래인데.', eng: "That song's doing a total comeback — it's years old!" }, { kor: '드라마가 종영 후에 역주행하는 경우도 많아.', eng: 'Many dramas go viral after they end.' }] }],
     origin: "'역방향 주행'의 줄임 → 정주행(순방향)의 반대",
@@ -159,7 +161,7 @@ export const MOCK_WORDS: Word[] = [
 
   // ── 감탄사 ──
   {
-    id: '15', word: '레알', category: 'exclamation',
+    id: '15', word: '레알', romanization: 'Le-Al', category: 'exclamation',
     pronunciation: '[레-알]', shortDesc: '진짜, 정말 — 강조 감탄사',
     meanings: [{ type: '감탄사/부사', definition: "스페인어 'Real'에서 온 것으로 추정. '진짜', '정말'을 강조할 때 사용.", examples: [{ kor: '레알? 그게 사실이야?', eng: "For real? Is that actually true?" }, { kor: '레알로 맛있다 이 거.', eng: 'This is genuinely delicious.' }] }],
     origin: "스페인어 'real' 차용 또는 온라인 은어에서 자연 발생",
@@ -168,7 +170,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'For real / Seriously' }, { lang: '🇯🇵 JA', text: 'マジで' }, { lang: '🇨🇳 ZH', text: '真的吗/认真的' }],
   },
   {
-    id: '16', word: '헐', category: 'exclamation',
+    id: '16', word: '헐', romanization: 'Heol', category: 'exclamation',
     pronunciation: '[헐]', shortDesc: '놀라움이나 당혹감을 나타내는 감탄사',
     meanings: [{ type: '감탄사', definition: "놀라움, 어이없음, 당혹감을 한 음절로 표현하는 감탄사.", examples: [{ kor: '헐, 그런 일이 있었어?', eng: "Whoa, that actually happened?" }, { kor: '헐... 진짜 충격이다.', eng: "Oh my... that's genuinely shocking." }] }],
     origin: '정확한 기원 불명. 2000년대 초 인터넷 은어로 보급됨.',
@@ -177,7 +179,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Whoa / Oh my / No way' }, { lang: '🇯🇵 JA', text: 'えっ / うわ' }, { lang: '🇨🇳 ZH', text: '哇 / 天啊' }],
   },
   {
-    id: '17', word: '찐', category: 'exclamation',
+    id: '17', word: '찐', romanization: 'Jjin', category: 'exclamation',
     pronunciation: '[찐]', shortDesc: '진짜, 진심, 진정한 — 진짜임을 강조',
     meanings: [{ type: '부사/형용사', definition: "'진짜'의 강조형. 가식 없이 진심으로, 혹은 진정한 의미의 무언가를 표현.", examples: [{ kor: '이 친구가 내 찐친이야.', eng: 'This person is my genuine bestie.' }, { kor: '찐으로 맛있다.', eng: "This is genuinely, truly delicious." }] }],
     origin: "'진짜'의 'ㅈ'과 강조 발음이 결합된 신조 발음",
@@ -188,7 +190,7 @@ export const MOCK_WORDS: Word[] = [
 
   // ── 릴스 ──
   {
-    id: '18', word: '숏폼', category: 'reels',
+    id: '18', word: '숏폼', romanization: 'Syot-Pom', category: 'reels',
     pronunciation: '[숏-폼]', shortDesc: '짧은 영상 콘텐츠 형식',
     meanings: [{ type: '명사', definition: "'Short-form'의 한국어 표기. 15초-3분 내외의 짧은 영상 콘텐츠.", examples: [{ kor: '요즘 숏폼이 대세야, 긴 영상은 잘 안 봐.', eng: "Short-form content is king these days — nobody watches long videos anymore." }] }],
     origin: "영어 'short-form content'에서 차용",
@@ -197,7 +199,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Short-form (video content)' }, { lang: '🇯🇵 JA', text: 'ショート動画' }, { lang: '🇨🇳 ZH', text: '短视频' }],
   },
   {
-    id: '19', word: '바이럴', category: 'reels',
+    id: '19', word: '바이럴', romanization: 'Ba-I-Reol', category: 'reels',
     pronunciation: '[바-이-럴]', shortDesc: '인터넷에서 빠르게 퍼지는 콘텐츠 현상',
     meanings: [{ type: '명사/동사', definition: "영어 'viral'의 한국어 표기. 콘텐츠가 SNS에서 폭발적으로 공유되는 현상.", examples: [{ kor: '그 영상 완전 바이럴됐잖아.', eng: 'That video went totally viral.' }, { kor: '바이럴 마케팅으로 매출이 터졌어.', eng: 'Viral marketing blew up our sales.' }] }],
     origin: "영어 'viral' 차용",
@@ -208,7 +210,7 @@ export const MOCK_WORDS: Word[] = [
 
   // ── 새로운 신조어 ──
   {
-    id: '20', word: '스불재', category: 'new-slang',
+    id: '20', word: '스불재', romanization: 'Seu-Bul-Jae', category: 'new-slang',
     pronunciation: '[스-불-재]', shortDesc: '스스로 불러온 재앙 — 자초한 사태',
     meanings: [{ type: '명사', definition: "'스스로 불러온 재앙'의 줄임. 자신의 행동이 원인이 되어 발생한 나쁜 상황.", examples: [{ kor: '늦잠 자다가 지각한 거잖아, 완전 스불재야.', eng: "You overslept and got late — that's a self-inflicted disaster." }] }],
     origin: "'스스로' + '불러온' + '재앙'의 각 첫 글자",
@@ -217,7 +219,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Self-inflicted disaster' }, { lang: '🇯🇵 JA', text: '自業自得災害' }, { lang: '🇨🇳 ZH', text: '自找的灾难' }],
   },
   {
-    id: '21', word: 'TMI', category: 'new-slang',
+    id: '21', word: 'TMI', romanization: 'T-M-I', category: 'new-slang',
     pronunciation: '[티-엠-아이]', shortDesc: '너무 많거나 불필요한 정보',
     meanings: [{ type: '명사/감탄사', definition: "영어 'Too Much Information'의 약자. 굳이 알고 싶지 않은 과도한 개인 정보나 세부 사항.", examples: [{ kor: 'TMI인데, 나 어제 밤새 울었어.', eng: "TMI, but I cried all night yesterday." }, { kor: '그건 좀 TMI 아니야?', eng: "Isn't that a bit TMI?" }] }],
     origin: "영어 'Too Much Information'의 약자, 한국에서 신조어화",
@@ -228,7 +230,7 @@ export const MOCK_WORDS: Word[] = [
 
   // ── 자주 쓰는 신조어 ──
   {
-    id: '22', word: 'ㅇㅈ', category: 'frequently-used',
+    id: '22', word: 'ㅇㅈ', romanization: 'In-Jeong', category: 'frequently-used',
     pronunciation: '[인-정]', shortDesc: '인정 — 동의하거나 맞다고 인정할 때',
     meanings: [{ type: '감탄사/동사', definition: "'인정'의 초성 줄임말. 상대방의 말이 옳거나 사실임을 인정할 때.", examples: [{ kor: '그 말이 맞는 거 ㅇㅈ이지.', eng: "Gotta admit that's true." }, { kor: 'ㅇㅈ, 나도 그렇게 생각해.', eng: "Agreed, I think so too." }] }],
     origin: "'인정'의 초성 ㅇ, ㅈ만 추출",
@@ -237,7 +239,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'Acknowledged / Agreed / Fr' }, { lang: '🇯🇵 JA', text: '認める / そうだね' }, { lang: '🇨🇳 ZH', text: '认可/承认' }],
   },
   {
-    id: '23', word: 'ㄹㅇ', category: 'frequently-used',
+    id: '23', word: 'ㄹㅇ', romanization: 'Ri-Eol', category: 'frequently-used',
     pronunciation: '[리-얼]', shortDesc: '진짜, 정말 — 강한 동의나 강조',
     meanings: [{ type: '부사/감탄사', definition: "'리얼(real)'의 초성 줄임말. '진짜로', '정말로'를 강조하는 표현.", examples: [{ kor: 'ㄹㅇ 맞아, 완전 공감이야.', eng: "For real, I totally relate." }, { kor: '그거 ㄹㅇ 힘들겠다.', eng: "That must genuinely be tough." }] }],
     origin: "'리얼(real)'의 초성만 추출",
@@ -248,7 +250,7 @@ export const MOCK_WORDS: Word[] = [
 
   // ── 초성 모음집 ──
   {
-    id: '24', word: 'ㅋㅋ', category: 'consonant',
+    id: '24', word: 'ㅋㅋ', romanization: 'K-K', category: 'consonant',
     pronunciation: '[크-크]', shortDesc: '웃음을 표현하는 초성 표현',
     meanings: [{ type: '감탄사', definition: "'크크'의 초성 표기. 가볍게 웃거나 재밌을 때 사용. 개수가 많을수록 더 크게 웃는 것을 의미.", examples: [{ kor: '그거 진짜 웃기다 ㅋㅋ', eng: "That's actually funny lol" }, { kor: 'ㅋㅋㅋㅋ 완전 터졌어.', eng: "LOL I'm dying 😂" }] }],
     origin: '인터넷 채팅 초기부터 사용된 원조 초성 표현',
@@ -257,7 +259,7 @@ export const MOCK_WORDS: Word[] = [
     translations: [{ lang: '🇺🇸 EN', text: 'lol / haha / 😂' }, { lang: '🇯🇵 JA', text: 'w / www' }, { lang: '🇨🇳 ZH', text: '哈哈 / 23333' }],
   },
   {
-    id: '25', word: 'ㅠㅠ', category: 'consonant',
+    id: '25', word: 'ㅠㅠ', romanization: 'Yu-Yu', category: 'consonant',
     pronunciation: '[유-유]', shortDesc: '슬픔이나 아쉬움을 표현하는 초성 이모티콘',
     meanings: [{ type: '감탄사', definition: "눈물 흘리는 모양을 초성으로 표현. 슬픔, 아쉬움, 실망을 나타냄.", examples: [{ kor: '비가 와서 소풍 취소됐어 ㅠㅠ', eng: "The picnic got cancelled because of rain T_T" }, { kor: '오늘 너무 힘들었어 ㅠㅠ', eng: "Today was so hard T_T" }] }],
     origin: '눈물 방울 모양(ㅠ)이 두 개 → 두 눈에서 눈물',
@@ -268,7 +270,7 @@ export const MOCK_WORDS: Word[] = [
 
   // ── 무한도전 ──
   {
-    id: '26', word: '무야호', category: 'muhandoejeon',
+    id: '26', word: '무야호', romanization: 'Mu-Ya-Ho', category: 'muhandoejeon',
     pronunciation: '[무-야-호]', shortDesc: '기쁘거나 신날 때 쓰는 감탄사',
     meanings: [{ type: '감탄사', definition: "무한도전의 한 장면에서 비롯된 밈 표현. 기쁜 일이 생겼을 때 크게 외치는 감탄사.", examples: [{ kor: '오늘 조기퇴근한다 무야호!', eng: "Early leave today — WOOHOO!" }, { kor: '합격했어!! 무야호~~', eng: "I passed!! YAHOOO~~" }] }],
     origin: "무한도전 등산 특집에서 박명수가 외친 '야호'에서 유래, '무야호' 밈으로 확산",
@@ -279,7 +281,7 @@ export const MOCK_WORDS: Word[] = [
 
   // ── 한물 간 신조어 ──
   {
-    id: '27', word: '좋좋소', category: 'outdated-slang',
+    id: '27', word: '좋좋소', romanization: 'Jot-Jot-So', category: 'outdated-slang',
     pronunciation: '[좋-좋-쏘]', shortDesc: '좋은 것이 아닌데 좋다고 말해야 하는 상황 풍자',
     meanings: [{ type: '명사/표현', definition: "'좋은 게 좋은 소리야'의 줄임. 억지로 긍정적인 척해야 하는 상황을 자조적으로 표현.", examples: [{ kor: '연봉 협상 당연히 좋좋소하고 끝냈지.', eng: "Just gave the 'sounds great' nod at the salary negotiation and called it done." }] }],
     origin: "'좋은 게 좋은 소리'의 약어, 2021년 즈음 직장인 커뮤니티에서 유행",
@@ -290,7 +292,7 @@ export const MOCK_WORDS: Word[] = [
 
   // ── 감탄사 (+ 릴스, 다중 카테고리 예시) ──
   {
-    id: '28', word: '오빠', category: 'exclamation', secondaryCategory: 'reels',
+    id: '28', word: '오빠', romanization: 'Op-Pa', category: 'exclamation', secondaryCategory: 'reels',
     pronunciation: 'Oppa', shortDesc: '여성 팬이 좋아하는 남자 연예인을 애정을 담아 부르는 표현',
     meanings: [{
       type: '명사', definition: '여성 팬이 좋아하는 남자 연예인을 애정을 담아 부르는 표현',

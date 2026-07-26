@@ -6,10 +6,16 @@
  *   먼저 로컬 캐시를 낙관적으로 갱신해 구독자에게 즉시 알리고, DB 반영은 백그라운드에서 처리한다.
  *   실패 시 롤백하고 다시 알린다.
  */
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from './supabase';
 
 type AuthListener = (loggedIn: boolean) => void;
 type BookmarkListener = () => void;
+
+/* 비로그인(게스트) 즐겨찾기 로컬 보관 키 — 로그인하면 DB로 이관 후 비운다. */
+const GUEST_SAVED_KEY = 'sokdak.guest.savedWords';
+const GUEST_LIKED_POSTS_KEY = 'sokdak.guest.likedPosts';
+const GUEST_LIKED_CATEGORIES_KEY = 'sokdak.guest.likedCategories';
 
 export type SokDakUser = {
   id: string;
@@ -38,6 +44,45 @@ function notifyAuth() {
 
 function notifyBookmarks() {
   _bookmarkListeners.forEach(fn => fn());
+  persistGuestBookmarks();
+}
+
+/** 게스트 즐겨찾기를 기기에 저장 — 로그인 상태에선 DB가 소스라 저장하지 않는다. */
+function persistGuestBookmarks() {
+  if (_user) return;
+  Promise.all([
+    AsyncStorage.setItem(GUEST_SAVED_KEY, JSON.stringify(Array.from(_savedWordIds))),
+    AsyncStorage.setItem(GUEST_LIKED_POSTS_KEY, JSON.stringify(Array.from(_likedPostIds))),
+    AsyncStorage.setItem(GUEST_LIKED_CATEGORIES_KEY, JSON.stringify(Array.from(_likedCategorySlugs))),
+  ]).catch(() => { /* 저장 실패해도 세션 내 동작에는 영향 없음 */ });
+}
+
+/** 앱 시작 시(비로그인) 기기에 저장된 게스트 즐겨찾기 복원 */
+async function loadGuestBookmarks() {
+  const read = async (key: string): Promise<string[]> => {
+    try {
+      const raw = await AsyncStorage.getItem(key);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : [];
+    } catch {
+      return []; /* 손상된 값이면 무시하고 빈 상태로 시작 */
+    }
+  };
+  const [saved, likedPosts, likedCategories] = await Promise.all([
+    read(GUEST_SAVED_KEY), read(GUEST_LIKED_POSTS_KEY), read(GUEST_LIKED_CATEGORIES_KEY),
+  ]);
+  saved.forEach(id => _savedWordIds.add(id));
+  likedPosts.forEach(id => _likedPostIds.add(id));
+  likedCategories.forEach(slug => _likedCategorySlugs.add(slug));
+}
+
+function clearGuestBookmarkStorage() {
+  Promise.all([
+    AsyncStorage.removeItem(GUEST_SAVED_KEY),
+    AsyncStorage.removeItem(GUEST_LIKED_POSTS_KEY),
+    AsyncStorage.removeItem(GUEST_LIKED_CATEGORIES_KEY),
+  ]).catch(() => {});
 }
 
 async function fetchProfile(userId: string, email: string): Promise<SokDakUser> {
@@ -57,6 +102,10 @@ async function fetchProfile(userId: string, email: string): Promise<SokDakUser> 
 }
 
 async function fetchBookmarks(userId: string) {
+  /* 로그인 전 게스트 상태에서 저장해 둔 항목 — 아래에서 계정으로 이관한다. */
+  const guestSaved = Array.from(_savedWordIds);
+  const guestLiked = Array.from(_likedPostIds);
+
   const [savedRes, likedRes] = await Promise.all([
     supabase.from('saved_words').select('word_id').eq('user_id', userId),
     supabase.from('post_likes').select('post_id').eq('user_id', userId),
@@ -65,6 +114,25 @@ async function fetchBookmarks(userId: string) {
   savedRes.data?.forEach(row => _savedWordIds.add(row.word_id));
   _likedPostIds.clear();
   likedRes.data?.forEach(row => _likedPostIds.add(row.post_id));
+
+  /* 게스트 저장분을 계정에 병합 (이미 있는 건 제외). 실패 시 로컬에도 반영하지 않는다. */
+  const newSaved = guestSaved.filter(id => !_savedWordIds.has(id));
+  if (newSaved.length > 0) {
+    const { error } = await supabase
+      .from('saved_words')
+      .insert(newSaved.map(word_id => ({ user_id: userId, word_id })));
+    if (!error) newSaved.forEach(id => _savedWordIds.add(id));
+  }
+  const newLiked = guestLiked.filter(id => !_likedPostIds.has(id));
+  if (newLiked.length > 0) {
+    const { error } = await supabase
+      .from('post_likes')
+      .insert(newLiked.map(post_id => ({ user_id: userId, post_id })));
+    if (!error) newLiked.forEach(id => _likedPostIds.add(id));
+  }
+
+  /* 계정으로 옮겼으니 기기에 남은 게스트 사본은 정리 */
+  clearGuestBookmarkStorage();
 }
 
 async function applySession(userId: string | undefined, email: string | undefined) {
@@ -91,10 +159,21 @@ export const authStore = {
     if (_initPromise) return _initPromise;
     _initPromise = (async () => {
       const { data } = await supabase.auth.getSession();
-      await applySession(data.session?.user.id, data.session?.user.email);
+      if (data.session) {
+        await applySession(data.session.user.id, data.session.user.email);
+      } else {
+        /* 게스트: applySession의 로그아웃 분기는 세트를 비우므로 호출하지 않고,
+         * 기기에 저장해 둔 즐겨찾기를 복원한 뒤 구독자에게 알린다. */
+        await loadGuestBookmarks();
+        notifyAuth();
+        notifyBookmarks();
+      }
       _initialized = true;
 
-      supabase.auth.onAuthStateChange((_event, session) => {
+      supabase.auth.onAuthStateChange((event, session) => {
+        /* 구독 직후 즉시 발행되는 INITIAL_SESSION은 위에서 이미 처리했다.
+         * 그대로 흘려보내면 게스트 분기에서 복원한 즐겨찾기를 로그아웃 분기가 지워버린다. */
+        if (event === 'INITIAL_SESSION') return;
         applySession(session?.user.id, session?.user.email);
       });
     })();
@@ -159,11 +238,13 @@ export const authStore = {
   /* ── 저장한 단어 ── */
   isWordSaved: (id: string) => _savedWordIds.has(id),
   toggleWordSaved(id: string) {
-    if (!_user) return;
-    const userId = _user.id;
     const wasSaved = _savedWordIds.has(id);
     if (wasSaved) _savedWordIds.delete(id); else _savedWordIds.add(id);
     notifyBookmarks();
+
+    /* 비로그인(게스트)은 세션 메모리에만 유지 — 로그인 시 fetchBookmarks가 계정으로 이관한다. */
+    if (!_user) return;
+    const userId = _user.id;
 
     const write = wasSaved
       ? supabase.from('saved_words').delete().eq('user_id', userId).eq('word_id', id)
@@ -181,11 +262,12 @@ export const authStore = {
   /* ── 좋아요 한 게시글 ── */
   isPostLiked: (id: string) => _likedPostIds.has(id),
   togglePostLiked(id: string) {
-    if (!_user) return;
-    const userId = _user.id;
     const wasLiked = _likedPostIds.has(id);
     if (wasLiked) _likedPostIds.delete(id); else _likedPostIds.add(id);
     notifyBookmarks();
+
+    if (!_user) return;
+    const userId = _user.id;
 
     const write = wasLiked
       ? supabase.from('post_likes').delete().eq('user_id', userId).eq('post_id', id)
@@ -202,7 +284,6 @@ export const authStore = {
   /* ── 좋아요 한 카테고리 (세션 전용, DB 미연동) ── */
   isCategoryLiked: (slug: string) => _likedCategorySlugs.has(slug),
   toggleCategoryLiked(slug: string) {
-    if (!_user) return;
     if (_likedCategorySlugs.has(slug)) _likedCategorySlugs.delete(slug); else _likedCategorySlugs.add(slug);
     notifyBookmarks();
   },

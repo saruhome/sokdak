@@ -15,10 +15,6 @@ import { Star, Volume2, ChevronDown, List } from 'lucide-react-native';
 const MIC_ICON = require('../../../assets/categories/icon-mic.png');
 const STAR_ICON = require('../../../assets/categories/icon-star.png');
 
-function readingOf(word: Word) {
-  return word.pronunciation ? word.pronunciation.replace(/^\[|\]$/g, '') : null;
-}
-
 /** Figma: 229:3738(즐겨찾기) — 좋아요 한 카테고리 + 저장한 단어를 함께 보여주는 화면 */
 export default function SavedWordsScreen() {
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
@@ -115,7 +111,6 @@ export default function SavedWordsScreen() {
             {words.map(word => {
               const category = getCategoryBySlug(word.category);
               const secondaryCategory = word.secondaryCategory ? getCategoryBySlug(word.secondaryCategory) : undefined;
-              const reading = readingOf(word);
               return (
                 <TouchableOpacity
                   key={word.id}
@@ -126,7 +121,7 @@ export default function SavedWordsScreen() {
                   <View style={styles.wordItemLeft}>
                     <View style={styles.wordTopRow}>
                       <Text style={styles.wordText}>{word.word}</Text>
-                      {reading && <Text style={styles.wordReading}>{reading}</Text>}
+                      <Text style={styles.wordReading}>{word.romanization}</Text>
                       {category && (
                         <View style={[styles.wordBadge, { backgroundColor: category.colorBg }]}>
                           <Text style={[styles.wordBadgeText, { color: category.colorFg }]}>{category.name}</Text>

@@ -5,7 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
-  Alert,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
@@ -58,14 +57,8 @@ export default function WordDetailScreen() {
   const examples = word.meanings.flatMap(m => m.examples);
   const reading = word.pronunciation ? word.pronunciation.replace(/^\[|\]$/g, '') : null;
 
+  /* 비로그인도 즐겨찾기 가능 — 세션 동안 유지되고 로그인 시 계정으로 이관된다(authStore) */
   const handleSave = () => {
-    if (!authStore.isLoggedIn()) {
-      Alert.alert('로그인이 필요해요', '단어를 저장하려면 먼저 로그인해주세요.', [
-        { text: '취소', style: 'cancel' },
-        { text: '로그인하러 가기', onPress: () => router.push('/auth/login') },
-      ]);
-      return;
-    }
     authStore.toggleWordSaved(word.id);
     setSaved((prev) => !prev);
   };

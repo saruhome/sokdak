@@ -1,8 +1,9 @@
 /**
  * Supabase 기반 인증/세션 상태 스토어.
  * - 로그인 상태와 프로필은 메모리 캐시로 유지하고, 실제 소스는 Supabase Auth + `profiles` 테이블.
- * - 저장한 단어/좋아요 한 게시글도 메모리 캐시(Set)로 유지하되, 실제 소스는 `saved_words`/`post_likes` 테이블.
- * - toggleWordSaved/togglePostLiked는 화면 코드에서 await 없이 호출되므로(기존 컨벤션 유지),
+ * - 저장한 단어/게시글 저장/좋아요 한 게시글도 메모리 캐시(Set)로 유지하되, 실제 소스는
+ *   `saved_words`/`saved_posts`/`post_likes` 테이블.
+ * - toggleWordSaved/togglePostLiked/togglePostSaved는 화면 코드에서 await 없이 호출되므로(기존 컨벤션 유지),
  *   먼저 로컬 캐시를 낙관적으로 갱신해 구독자에게 즉시 알리고, DB 반영은 백그라운드에서 처리한다.
  *   실패 시 롤백하고 다시 알린다.
  */
@@ -20,6 +21,7 @@ type BookmarkListener = () => void;
 
 /* 비로그인(게스트) 즐겨찾기 로컬 보관 키 — 로그인하면 DB로 이관 후 비운다. */
 const GUEST_SAVED_KEY = 'sokdak.guest.savedWords';
+const GUEST_SAVED_POSTS_KEY = 'sokdak.guest.savedPosts';
 const GUEST_LIKED_POSTS_KEY = 'sokdak.guest.likedPosts';
 const GUEST_LIKED_CATEGORIES_KEY = 'sokdak.guest.likedCategories';
 
@@ -28,6 +30,7 @@ export type SokDakUser = {
   name: string;
   email: string;
   emoji: string;
+  avatarUrl?: string | null;
   level: string;
 };
 
@@ -36,6 +39,7 @@ let _user: SokDakUser | null = null;
 const _listeners = new Set<AuthListener>();
 
 const _savedWordIds = new Set<string>();
+const _savedPostIds = new Set<string>();
 const _likedPostIds = new Set<string>();
 /** 좋아요 한 카테고리 — DB 테이블이 아직 없어 세션 동안만 유지(로그아웃/새로고침 시 초기화) */
 const _likedCategorySlugs = new Set<string>();
@@ -58,6 +62,7 @@ function persistGuestBookmarks() {
   if (_user) return;
   Promise.all([
     AsyncStorage.setItem(GUEST_SAVED_KEY, JSON.stringify(Array.from(_savedWordIds))),
+    AsyncStorage.setItem(GUEST_SAVED_POSTS_KEY, JSON.stringify(Array.from(_savedPostIds))),
     AsyncStorage.setItem(GUEST_LIKED_POSTS_KEY, JSON.stringify(Array.from(_likedPostIds))),
     AsyncStorage.setItem(GUEST_LIKED_CATEGORIES_KEY, JSON.stringify(Array.from(_likedCategorySlugs))),
   ]).catch(() => { /* 저장 실패해도 세션 내 동작에는 영향 없음 */ });
@@ -75,10 +80,14 @@ async function loadGuestBookmarks() {
       return []; /* 손상된 값이면 무시하고 빈 상태로 시작 */
     }
   };
-  const [saved, likedPosts, likedCategories] = await Promise.all([
-    read(GUEST_SAVED_KEY), read(GUEST_LIKED_POSTS_KEY), read(GUEST_LIKED_CATEGORIES_KEY),
+  const [saved, savedPosts, likedPosts, likedCategories] = await Promise.all([
+    read(GUEST_SAVED_KEY),
+    read(GUEST_SAVED_POSTS_KEY),
+    read(GUEST_LIKED_POSTS_KEY),
+    read(GUEST_LIKED_CATEGORIES_KEY),
   ]);
   saved.forEach(id => _savedWordIds.add(id));
+  savedPosts.forEach(id => _savedPostIds.add(id));
   likedPosts.forEach(id => _likedPostIds.add(id));
   likedCategories.forEach(slug => _likedCategorySlugs.add(slug));
 }
@@ -86,6 +95,7 @@ async function loadGuestBookmarks() {
 function clearGuestBookmarkStorage() {
   Promise.all([
     AsyncStorage.removeItem(GUEST_SAVED_KEY),
+    AsyncStorage.removeItem(GUEST_SAVED_POSTS_KEY),
     AsyncStorage.removeItem(GUEST_LIKED_POSTS_KEY),
     AsyncStorage.removeItem(GUEST_LIKED_CATEGORIES_KEY),
   ]).catch(() => {});
@@ -94,7 +104,7 @@ function clearGuestBookmarkStorage() {
 async function fetchProfile(userId: string, email: string): Promise<SokDakUser> {
   const { data } = await supabase
     .from('profiles')
-    .select('nickname, avatar_emoji, level')
+    .select('nickname, avatar_emoji, avatar_url, level')
     .eq('id', userId)
     .single();
 
@@ -103,6 +113,7 @@ async function fetchProfile(userId: string, email: string): Promise<SokDakUser> 
     email,
     name: data?.nickname ?? email.split('@')[0],
     emoji: data?.avatar_emoji ?? '🐦',
+    avatarUrl: data?.avatar_url ?? null,
     level: data?.level ?? '초급',
   };
 }
@@ -111,25 +122,38 @@ async function fetchBookmarks(userId: string) {
   /* 로그인 전 게스트 상태에서 저장해 둔 항목 — 아래에서 계정으로 이관한다. */
   const guestSaved = Array.from(_savedWordIds);
   const guestLiked = Array.from(_likedPostIds);
+  const guestSavedPosts = Array.from(_savedPostIds);
 
-  const [savedRes, likedRes] = await Promise.all([
+  const [savedRes, likedRes, savedPostsRes] = await Promise.all([
     supabase.from('saved_words').select('word_id').eq('user_id', userId),
     supabase.from('post_likes').select('post_id').eq('user_id', userId),
+    supabase.from('saved_posts').select('post_id').eq('user_id', userId),
   ]);
+
   _savedWordIds.clear();
   savedRes.data?.forEach(row => _savedWordIds.add(row.word_id));
   _likedPostIds.clear();
   likedRes.data?.forEach(row => _likedPostIds.add(row.post_id));
+  _savedPostIds.clear();
+  savedPostsRes.data?.forEach(row => _savedPostIds.add(row.post_id));
 
   /* 게스트 저장분을 계정에 병합 (이미 있는 건 제외). 실패 시 로컬에도 반영하지 않는다. */
   const newSaved = guestSaved.filter(id => !_savedWordIds.has(id));
+  const newSavedPosts = guestSavedPosts.filter(id => !_savedPostIds.has(id));
+  const newLiked = guestLiked.filter(id => !_likedPostIds.has(id));
+
   if (newSaved.length > 0) {
     const { error } = await supabase
       .from('saved_words')
       .insert(newSaved.map(word_id => ({ user_id: userId, word_id })));
     if (!error) newSaved.forEach(id => _savedWordIds.add(id));
   }
-  const newLiked = guestLiked.filter(id => !_likedPostIds.has(id));
+  if (newSavedPosts.length > 0) {
+    const { error } = await supabase
+      .from('saved_posts')
+      .insert(newSavedPosts.map(post_id => ({ user_id: userId, post_id })));
+    if (!error) newSavedPosts.forEach(id => _savedPostIds.add(id));
+  }
   if (newLiked.length > 0) {
     const { error } = await supabase
       .from('post_likes')
@@ -243,17 +267,23 @@ export const authStore = {
     return { error: error?.message ?? null };
   },
 
-  async updateUser(patch: Partial<{ name: string; emoji: string }>) {
+  async updateUser(patch: Partial<{ name: string; emoji: string; avatarUrl: string | null }>) {
     if (!_user) return { error: '로그인이 필요해요.' };
     const { error } = await supabase
       .from('profiles')
       .update({
         ...(patch.name !== undefined ? { nickname: patch.name } : {}),
         ...(patch.emoji !== undefined ? { avatar_emoji: patch.emoji } : {}),
+        ...(patch.avatarUrl !== undefined ? { avatar_url: patch.avatarUrl } : {}),
       })
       .eq('id', _user.id);
     if (error) return { error: error.message };
-    _user = { ..._user, ...(patch.name !== undefined ? { name: patch.name } : {}), ...(patch.emoji !== undefined ? { emoji: patch.emoji } : {}) };
+    _user = {
+      ..._user,
+      ...(patch.name !== undefined ? { name: patch.name } : {}),
+      ...(patch.emoji !== undefined ? { emoji: patch.emoji } : {}),
+      ...(patch.avatarUrl !== undefined ? { avatarUrl: patch.avatarUrl } : {}),
+    };
     notifyAuth();
     return { error: null };
   },
@@ -286,6 +316,27 @@ export const authStore = {
     });
   },
   getSavedWordIds: () => Array.from(_savedWordIds),
+
+  /* ── 저장한 게시글 ── */
+  isPostSaved: (id: string) => _savedPostIds.has(id),
+  togglePostSaved(id: string) {
+    const wasSaved = _savedPostIds.has(id);
+    if (wasSaved) _savedPostIds.delete(id); else _savedPostIds.add(id);
+    notifyBookmarks();
+
+    if (!_user) return;
+    const userId = _user.id;
+    const write = wasSaved
+      ? supabase.from('saved_posts').delete().eq('user_id', userId).eq('post_id', id)
+      : supabase.from('saved_posts').insert({ user_id: userId, post_id: id });
+
+    write.then(({ error }) => {
+      if (!error) return;
+      if (wasSaved) _savedPostIds.add(id); else _savedPostIds.delete(id);
+      notifyBookmarks();
+    });
+  },
+  getSavedPostIds: () => Array.from(_savedPostIds),
 
   /* ── 좋아요 한 게시글 ── */
   isPostLiked: (id: string) => _likedPostIds.has(id),

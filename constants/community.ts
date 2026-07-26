@@ -5,7 +5,7 @@
 import { supabase } from './supabase';
 import type { PostBoard } from './mockPosts';
 
-export type CommunityAuthor = { name: string; emoji: string; level: string };
+export type CommunityAuthor = { name: string; emoji: string; avatarUrl?: string | null; level: string };
 
 export type CommunityComment = {
   id: string;
@@ -29,10 +29,15 @@ export type CommunityPostSummary = {
 
 export type CommunityPostDetail = CommunityPostSummary & { comments: CommunityComment[] };
 
-type ProfileRow = { nickname: string; avatar_emoji: string; level: string } | null;
+type ProfileRow = { nickname: string; avatar_emoji: string; avatar_url?: string | null; level: string } | null;
 
 function toAuthor(profile: ProfileRow): CommunityAuthor {
-  return { name: profile?.nickname ?? '탈퇴한 사용자', emoji: profile?.avatar_emoji ?? '👤', level: profile?.level ?? '초급' };
+  return {
+    name: profile?.nickname ?? '탈퇴한 사용자',
+    emoji: profile?.avatar_emoji ?? '👤',
+    avatarUrl: profile?.avatar_url ?? null,
+    level: profile?.level ?? '초급',
+  };
 }
 
 function toDate(iso: string) {
@@ -40,7 +45,7 @@ function toDate(iso: string) {
 }
 
 const POST_SUMMARY_SELECT =
-  'id, board, title, content, view_count, created_at, profiles(nickname, avatar_emoji, level), post_likes(count), comments(count)';
+  'id, board, title, content, view_count, created_at, profiles(nickname, avatar_emoji, avatar_url, level), post_likes(count), comments(count)';
 
 function mapPostSummaryRow(row: any): CommunityPostSummary {
   return {
@@ -110,12 +115,12 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
   const [{ data: post, error: postError }, { data: comments }] = await Promise.all([
     supabase
       .from('posts')
-      .select('id, board, title, content, view_count, created_at, profiles(nickname, avatar_emoji, level), post_likes(count)')
+      .select('id, board, title, content, view_count, created_at, profiles(nickname, avatar_emoji, avatar_url, level), post_likes(count)')
       .eq('id', id)
       .single(),
     supabase
       .from('comments')
-      .select('id, content, created_at, parent_comment_id, profiles(nickname, avatar_emoji, level)')
+      .select('id, content, created_at, parent_comment_id, profiles(nickname, avatar_emoji, avatar_url, level)')
       .eq('post_id', id)
       .order('created_at', { ascending: true }),
   ]);
@@ -162,9 +167,17 @@ export async function createPost(params: { board: PostBoard; title: string; cont
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { data: null, error: '로그인이 필요해요.' };
 
+  const now = new Date().toISOString();
   const { data, error } = await supabase
     .from('posts')
-    .insert({ author_id: user.id, board: params.board, title: params.title, content: params.content })
+    .insert({
+      author_id: user.id,
+      board: params.board,
+      title: params.title,
+      content: params.content,
+      created_at: now,
+      view_count: 0,
+    })
     .select('id')
     .single();
 

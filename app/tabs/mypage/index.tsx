@@ -19,7 +19,7 @@ import { ChevronRight } from 'lucide-react-native';
 /** Figma: 5-1.마이페이지-2 와이어프레임(524:1871) — 저장한 단어 / 내 활동 / 자주 묻는 질문 / 제안하기.
  *  내 정보 관리는 별도 메뉴가 아니라 프로필 행(›)으로 진입. */
 const ACTIVITY_MENU = [
-  { key: 'savedWords', route: '/tabs/mypage/saved' },
+  { key: 'favoritesLabel', route: '/tabs/mypage/saved' },
   { key: 'myActivity', route: '/tabs/mypage/my-posts' },
   { key: 'suggestNewSlang', route: '/tabs/mypage/suggest' },
 ] as const;

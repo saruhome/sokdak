@@ -3,6 +3,8 @@ import {
   TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
+import ProfileAvatar from '@/components/ProfileAvatar';
+import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../../constants/Colors';
@@ -18,6 +20,7 @@ export default function ProfileScreen() {
   const [name, setName] = useState(user?.name ?? '');
   const email = user?.email ?? '';
   const [emoji, setEmoji] = useState(user?.emoji ?? '🐦');
+  const [avatarUrl, setAvatarUrl] = useState<string | null | undefined>(user?.avatarUrl ?? null);
 
   if (!user) {
     return (
@@ -33,13 +36,34 @@ export default function ProfileScreen() {
   const isValid = name.trim().length >= 1;
   const [saving, setSaving] = useState(false);
 
+  const pickPhoto = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('권한 필요', '갤러리 접근 권한이 필요합니다.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!result.canceled && result.assets[0]?.uri) {
+      setAvatarUrl(result.assets[0].uri);
+    }
+  };
+
+  const removePhoto = () => {
+    setAvatarUrl(null);
+  };
+
   const handleSave = async () => {
     if (!isValid) {
       Alert.alert('입력 확인', '닉네임을 입력해주세요.');
       return;
     }
     setSaving(true);
-    const { error } = await authStore.updateUser({ name: name.trim(), emoji });
+    const { error } = await authStore.updateUser({ name: name.trim(), emoji, avatarUrl: avatarUrl ?? null });
     setSaving(false);
     if (error) {
       Alert.alert('저장 실패', error);
@@ -69,9 +93,7 @@ export default function ProfileScreen() {
 
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.profileHeader}>
-            <View style={styles.avatarPreview}>
-              <Text style={styles.avatarPreviewText}>{emoji}</Text>
-            </View>
+            <ProfileAvatar uri={avatarUrl} emoji={emoji} size={76} style={styles.avatarPreview} />
             <View style={styles.profileNameBox}>
               <Text style={styles.fieldLabel}>닉네임</Text>
               <TextInput
@@ -116,6 +138,17 @@ export default function ProfileScreen() {
           </View>
 
           <Text style={styles.avatarHint}>프로필 아이콘 선택</Text>
+          <View style={styles.avatarActionRow}>
+            <TouchableOpacity style={styles.photoBtn} onPress={pickPhoto} activeOpacity={0.8}>
+              <Text style={styles.photoBtnText}>{avatarUrl ? '사진 바꾸기' : '사진 추가'}</Text>
+            </TouchableOpacity>
+            {avatarUrl ? (
+              <TouchableOpacity style={styles.photoRemoveBtn} onPress={removePhoto} activeOpacity={0.8}>
+                <Text style={styles.photoRemoveText}>사진 제거</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+          <Text style={styles.avatarHintSmall}>국기 이모지 또는 프로필 사진을 선택할 수 있어요.</Text>
           <View style={styles.emojiGrid}>
             {EMOJI_OPTIONS.map(e => (
               <TouchableOpacity
@@ -182,6 +215,28 @@ const styles = StyleSheet.create({
   },
 
   avatarHint: { fontSize: 12, color: Colors.textTertiary, marginBottom: 8 },
+  avatarHintSmall: { fontSize: 11, color: Colors.textTertiary, marginBottom: 14 },
+  avatarActionRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
+  photoBtn: {
+    flex: 1,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: Colors.navBar,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoBtnText: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
+  photoRemoveBtn: {
+    height: 44,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+  },
+  photoRemoveText: { fontSize: 14, color: Colors.textSecondary },
+
   emojiGrid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 10 },
   emojiOption: {
     width: 44, height: 44, borderRadius: 22,

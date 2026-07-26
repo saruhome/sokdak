@@ -137,6 +137,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_emoji: string
+          avatar_url: string | null
           created_at: string
           id: string
           level: string
@@ -144,13 +145,15 @@ export type Database = {
         }
         Insert: {
           avatar_emoji?: string
+          avatar_url?: string | null
           created_at?: string
           id: string
           level?: string
-          nickname: string
+          nickname?: string
         }
         Update: {
           avatar_emoji?: string
+          avatar_url?: string | null
           created_at?: string
           id?: string
           level?: string
@@ -187,6 +190,39 @@ export type Database = {
             columns: ["word_id"]
             isOneToOne: false
             referencedRelation: "words"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_posts: {
+        Row: {
+          created_at: string
+          user_id: string
+          post_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+          post_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
         ]

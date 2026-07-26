@@ -5,7 +5,7 @@ import {
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Colors } from '../../../constants/Colors';
+import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { CATEGORIES } from '../../../constants/categories';
 
@@ -107,17 +107,29 @@ export default function SuggestScreen() {
           <View style={styles.field}>
             <Text style={styles.fieldLabel}>카테고리</Text>
             <View style={styles.categoryGrid}>
-              {CATEGORIES.map(c => (
-                <TouchableOpacity
-                  key={c.slug}
-                  style={[styles.categoryChip, categorySlug === c.slug && styles.categoryChipActive]}
-                  onPress={() => setCategorySlug(c.slug)}
-                >
-                  <Text style={[styles.categoryChipText, categorySlug === c.slug && styles.categoryChipTextActive]}>
-                    {c.emoji} {c.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {CATEGORIES.map(c => {
+                const selected = categorySlug === c.slug;
+                return (
+                  <TouchableOpacity
+                    key={c.slug}
+                    style={[
+                      styles.categoryChip,
+                      selected && { backgroundColor: c.colorBg, borderColor: c.colorBg },
+                    ]}
+                    onPress={() => setCategorySlug(c.slug)}
+                    activeOpacity={0.8}
+                  >
+                    <Text
+                      style={[
+                        styles.categoryChipText,
+                        selected && { color: getReadableTextColor(c.colorBg) },
+                      ]}
+                    >
+                      {c.emoji} {c.name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </View>
 
@@ -193,10 +205,22 @@ const styles = StyleSheet.create({
   },
 
   categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  categoryChip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 16, borderWidth: 1, borderColor: Colors.border },
-  categoryChipActive: { backgroundColor: Colors.navBar, borderColor: Colors.navBar },
-  categoryChipText: { fontSize: 12, color: Colors.textSecondary },
-  categoryChipTextActive: { color: Colors.navBarIconActive, fontWeight: '600' },
+  categoryChip: {
+    height: 36,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.surface,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 1,
+    elevation: 1,
+  },
+  categoryChipText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textSecondary },
 
   bottomBar: {
     position: 'absolute', left: 0, right: 0, bottom: 0,

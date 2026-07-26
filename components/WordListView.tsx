@@ -154,7 +154,7 @@ export function WordListView({
               <View style={styles.wordItemLeft}>
                 <View style={styles.wordTopRow}>
                   <Text style={styles.wordText}>{item.word}</Text>
-                  <Text style={styles.wordReading}>{item.romanization}</Text>
+                  <Text style={styles.wordReading} numberOfLines={1}>{item.romanization}</Text>
                   {category && (
                     <View style={[styles.wordBadge, { backgroundColor: category.colorBg }]}>
                       <Text style={[styles.wordBadgeText, { color: getReadableTextColor(category.colorBg) }]} numberOfLines={1} ellipsizeMode="tail">{getCategoryName(category, language)}</Text>
@@ -244,10 +244,12 @@ const styles = StyleSheet.create({
   wordBottomRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   likeRow: { flexDirection: 'row', alignItems: 'center', gap: 3, marginLeft: 'auto' },
   likeCount: { fontSize: 11, color: Colors.textTertiary, fontFamily: undefined },
-  wordTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
-  wordText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar },
-  wordReading: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
-  wordBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
+  /* 태그가 항상 단어 옆 한 줄에 붙어 있도록 줄바꿈을 막고, 대신 로마자 표기가
+   * 공간이 부족할 때 먼저 줄어들게(shrink+ellipsis) 해서 카드가 항상 2줄로 고정된다 */
+  wordTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  wordText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar, flexShrink: 0 },
+  wordReading: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined, flexShrink: 1, minWidth: 0 },
+  wordBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12, flexShrink: 0 },
   wordBadgeText: { fontSize: 10, fontWeight: '600' },
   wordDesc: { flexShrink: 1, fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
   wordItemRight: { alignItems: 'center', gap: 4 },

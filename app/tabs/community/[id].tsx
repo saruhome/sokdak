@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS, getBoardLabel } from '../../../constants/mockPosts';
@@ -38,6 +38,7 @@ export default function PostDetailScreen() {
       setPost(data);
       if (data) {
         setLiked(authStore.isPostLiked(data.id));
+        setSaved(authStore.isPostSaved(data.id));
         setLikeCount(data.likes);
       }
     });
@@ -45,6 +46,13 @@ export default function PostDetailScreen() {
 
   /* 화면 재진입 시(마이페이지 좋아요 해제 등) 최신 상태로 다시 불러옴 */
   useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  useEffect(() => {
+    const unsub = authStore.subscribeBookmarks(() => {
+      if (post) setSaved(authStore.isPostSaved(post.id));
+    });
+    return unsub;
+  }, [post]);
 
   if (post === undefined) {
     return (
@@ -111,6 +119,12 @@ export default function PostDetailScreen() {
     inputRef.current?.focus();
   };
 
+  const handleToggleSave = () => {
+    if (!post) return;
+    authStore.togglePostSaved(post.id);
+    setSaved(authStore.isPostSaved(post.id));
+  };
+
   const totalComments = post.commentCount;
 
   return (
@@ -122,7 +136,7 @@ export default function PostDetailScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* ── TopAppBar – Figma: Navigation/TopAppBar/Post : 다른 사람 게시물(710:4873)/내 게시물(736:6169) — back + share + more, 뱃지 없음 */}
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backButton} onPress={() => safeGoBack()}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/tabs/community')}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <View style={styles.topBarRight}>
@@ -167,7 +181,7 @@ export default function PostDetailScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.actionBtn, saved && styles.actionBtnActive]}
-                onPress={() => setSaved(p => !p)}
+                onPress={handleToggleSave}
               >
                 <AppIcon icon={Bookmark} size={16} fill={saved ? Colors.accent : undefined} color={saved ? Colors.accent : undefined} />
                 <Text style={[styles.actionLabel, saved && { color: Colors.accent }]}>

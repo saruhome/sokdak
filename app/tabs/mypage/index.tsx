@@ -14,7 +14,7 @@ import { languageStore } from '../../../constants/languageStore';
 const JJAEKI_AVATAR = require('../../../assets/characters/jjaeki.png');
 
 import { AppIcon } from '@/components/AppIcon';
-import { Bookmark, FileText, HelpCircle, Lightbulb, Settings } from 'lucide-react-native';
+import { ChevronRight } from 'lucide-react-native';
 
 /** Figma: 5-1.마이페이지-2 와이어프레임(524:1871) — 저장한 단어 / 내 활동 / 자주 묻는 질문 / 제안하기.
  *  내 정보 관리는 별도 메뉴가 아니라 프로필 행(›)으로 진입. */
@@ -60,74 +60,72 @@ export default function MyPageScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* TopAppBar */}
+      {/* TopAppBar — Figma: 마이페이지 루트는 뒤로가기 없이 진한 올리브 배경(navBar) */}
       <View style={styles.topBar}>
         <View style={styles.backBtn} />
         <Text style={styles.topBarTitle}>{t('mypage')}</Text>
         <View style={styles.backBtn} />
       </View>
 
-      <ScrollView style={styles.scroll}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         <TouchableOpacity
           style={styles.profileRow}
           onPress={() => router.push(loggedIn ? '/tabs/mypage/profile' : '/auth/login')}
           activeOpacity={0.75}
         >
-          <View style={[styles.avatar, !loggedIn && styles.avatarGuest]}>
-            <Text style={styles.avatarText}>
-              {loggedIn && user ? user.emoji : '👤'}
-            </Text>
-          </View>
-          <View style={styles.profileInfoRow}>
+          <View style={styles.profileRowLeft}>
+            <View style={[styles.avatar, !loggedIn && styles.avatarGuest]}>
+              <Text style={styles.avatarText}>
+                {loggedIn && user ? user.emoji : '👤'}
+              </Text>
+            </View>
             <Text style={styles.profileName}>{loggedIn && user ? user.name : t('loginNeeded')}</Text>
-            <Text style={styles.profileEmail}>{loggedIn ? t('tapToLogin') : t('tapToLogin')}</Text>
           </View>
+          <AppIcon icon={ChevronRight} size={20} color={Colors.textTertiary} />
         </TouchableOpacity>
 
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionHeader}>{t('activity')}</Text>
-        </View>
-
+        <Text style={styles.sectionHeader}>{t('activity')}</Text>
         <View style={styles.activityCards}>
           {ACTIVITY_MENU.map((item, i) => (
             <TouchableOpacity
               key={item.key}
-              style={[styles.activityCard, i === ACTIVITY_MENU.length - 1 && styles.activityCardLast]}
+              style={[
+                styles.groupRow,
+                i === 0 && styles.groupRowFirst,
+                i === ACTIVITY_MENU.length - 1 && styles.groupRowLast,
+              ]}
               onPress={() => loggedIn ? router.push(item.route) : router.push('/auth/login')}
               activeOpacity={0.85}
             >
-              <Text style={styles.activityCardTitle} numberOfLines={1} ellipsizeMode="tail">
+              <Text style={styles.groupRowLabel} numberOfLines={1} ellipsizeMode="tail">
                 {languageStore.t(item.key)}
               </Text>
-              <Text style={styles.activityCardArrow}>›</Text>
+              <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
             </TouchableOpacity>
           ))}
         </View>
 
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionHeader}>{t('settings')}</Text>
-        </View>
-
+        <Text style={styles.sectionHeader}>{t('settings')}</Text>
         <View style={styles.settingsGroup}>
           <TouchableOpacity
             style={styles.settingRow}
             onPress={() => router.push('/tabs/mypage/notifications')}
             activeOpacity={0.85}
           >
-            <Text style={styles.settingLabel} numberOfLines={1} ellipsizeMode="tail">
+            <Text style={styles.groupRowLabel} numberOfLines={1} ellipsizeMode="tail">
               {t('notifications')}
             </Text>
-            <Text style={styles.settingArrow}>›</Text>
+            <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.settingRow}
             onPress={() => router.push('/tabs/mypage/settings/language')}
             activeOpacity={0.85}
           >
-            <Text style={styles.settingLabel} numberOfLines={1} ellipsizeMode="tail">
+            <Text style={styles.groupRowLabel} numberOfLines={1} ellipsizeMode="tail">
               {language === 'en' ? 'English' : '한국어'}
             </Text>
-            <Text style={styles.settingArrow}>›</Text>
+            <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
           </TouchableOpacity>
         </View>
 
@@ -138,8 +136,6 @@ export default function MyPageScreen() {
         <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.85}>
           <Text style={styles.logoutText}>{t('logout')}</Text>
         </TouchableOpacity>
-
-        <View style={{ height: 32 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -147,133 +143,68 @@ export default function MyPageScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
+
+  /* Figma: 마이페이지 루트 TopAppBar — 뒤로가기 없이 navBar 배경 */
   topBar: {
     height: 44, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    borderBottomWidth: 1, borderBottomColor: Colors.divider,
+    backgroundColor: Colors.navBar,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
+  topBarTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   scroll: { flex: 1 },
+  scrollContent: { paddingHorizontal: 24, paddingTop: 24, paddingBottom: 32 },
 
-  /* Display/UserProfile — Figma: 5-1.마이페이지-2 와이어프레임 (아바타 + 통계) */
+  /* 프로필 행 — 눌러서 내 정보 관리로 진입 */
   profileRow: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 24, paddingTop: 24, paddingBottom: 12, gap: 20,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    height: 56, paddingHorizontal: 16,
+    backgroundColor: Colors.surface, borderRadius: 10,
+    borderWidth: 1, borderColor: Colors.border,
   },
+  profileRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   avatar: {
-    width: 72, height: 72, borderRadius: 36,
-    backgroundColor: Colors.navBar,
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: Colors.navBar, borderWidth: 1, borderColor: Colors.border,
     alignItems: 'center', justifyContent: 'center',
   },
   avatarGuest: { backgroundColor: Colors.border },
-  avatarText: { fontSize: 34 },
-  profileInfo: { gap: 3 },
-  profileName: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  profileEmail: { fontSize: 13, color: Colors.textTertiary },
-  statsRow: { flex: 1, flexDirection: 'row' },
-  statItem: { flex: 1, alignItems: 'center' },
-  statValue: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
-  statLabel: { fontSize: 12, color: Colors.textTertiary, marginTop: 2 },
-  profileNameBar: {
-    fontSize: 15, fontWeight: '700', color: Colors.textPrimary,
-    paddingHorizontal: 24, marginBottom: 12,
-  },
+  avatarText: { fontSize: 18 },
+  profileName: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
 
-  sectionHeaderRow: {
-    marginTop: 24, marginHorizontal: 16,
-  },
   sectionHeader: {
-    fontSize: 16, fontWeight: '700', color: Colors.textPrimary,
-    marginBottom: 12,
+    fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary,
+    marginTop: 24, marginBottom: 12,
   },
-  profileRow: {
-    flexDirection: 'row', alignItems: 'center',
-    marginHorizontal: 16, marginTop: 20, padding: 16,
-    backgroundColor: Colors.surface, borderRadius: 16,
-    borderWidth: 1, borderColor: Colors.border,
+
+  /* 활동 3항목 — 하나의 카드로 병합(첫/끝만 라운드, 내부 구분선은 다음 행의 top border) */
+  activityCards: {},
+  groupRow: {
+    height: 48, paddingHorizontal: 16,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    backgroundColor: Colors.surface,
+    borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderColor: Colors.border,
   },
-  profileInfoRow: {
-    marginLeft: 16,
-  },
-  activityCards: {
-    marginHorizontal: 16, gap: 12,
-  },
-  activityCard: {
-    width: '100%', height: 48,
-    backgroundColor: Colors.surface, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border,
-    paddingHorizontal: 16, justifyContent: 'center',
-  },
-  activityCardLast: {},
-  activityCardTitle: { fontSize: 14, color: Colors.textPrimary, fontWeight: '600' },
-  activityCardArrow: { fontSize: 18, color: Colors.border },
-  settingsGroup: {
-    marginHorizontal: 16, gap: 8, marginTop: 8,
-  },
+  groupRowFirst: { borderTopLeftRadius: 10, borderTopRightRadius: 10 },
+  groupRowLast: { borderBottomLeftRadius: 10, borderBottomRightRadius: 10, borderBottomWidth: 1 },
+  groupRowLabel: { fontSize: 16, color: Colors.textSecondary, fontFamily: undefined },
+
+  /* 설정 2항목 — 각각 독립된 카드 */
+  settingsGroup: { gap: 8 },
   settingRow: {
-    width: '100%', height: 48,
-    backgroundColor: Colors.surface, borderRadius: 12,
+    height: 48, paddingHorizontal: 16,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    backgroundColor: Colors.surface, borderRadius: 10,
     borderWidth: 1, borderColor: Colors.border,
-    paddingHorizontal: 16, justifyContent: 'center',
   },
-  settingLabel: { fontSize: 14, color: Colors.textPrimary },
-  settingArrow: { fontSize: 18, color: Colors.border },
-  supportRow: {
-    marginHorizontal: 16, marginTop: 24,
-    paddingVertical: 16, alignItems: 'center',
-  },
-  supportLabel: { fontSize: 14, color: Colors.textPrimary, fontWeight: '600' },
+
+  supportRow: { marginTop: 24, paddingVertical: 16, alignItems: 'center' },
+  supportLabel: { fontSize: 16, color: Colors.textSecondary, fontFamily: undefined },
+
   logoutBtn: {
-    marginHorizontal: 16, marginTop: 12, height: 48, borderRadius: 12,
-    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    marginTop: 12, height: 48, borderRadius: 10,
+    backgroundColor: Colors.divider, borderWidth: 1, borderColor: Colors.border,
     alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 1,
   },
-  logoutText: { fontSize: 15, color: Colors.textPrimary, fontWeight: '600' },
-
-  /* 비로그인 배너 */
-  loginBanner: {
-    marginHorizontal: 16, marginBottom: 12, padding: 16,
-    backgroundColor: Colors.navBar, borderRadius: 14,
-    flexDirection: 'row', alignItems: 'center',
-  },
-  loginBannerLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  loginBannerAvatar: { width: 40, height: 40, borderRadius: 20 },
-  loginBannerTitle: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
-  loginBannerSub: { fontSize: 12, color: Colors.navBarIconMuted, marginTop: 3 },
-  loginBannerArrow: { fontSize: 22, color: Colors.navBarIconMuted },
-
-  /* 메뉴 섹션 */
-  section: { paddingHorizontal: 16, marginTop: 8 },
-  sectionLabel: { fontSize: 11, fontWeight: '700', color: Colors.textTertiary, marginBottom: 6, paddingLeft: 4 },
-  menuGroup: {
-    backgroundColor: Colors.surface, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border, overflow: 'hidden',
-  },
-  menuItem: { flexDirection: 'row', alignItems: 'center', height: 52, paddingHorizontal: 16, gap: 12 },
-  menuItemBorder: { borderBottomWidth: 1, borderBottomColor: Colors.divider },
-  menuIconWrap: { width: 26 },
-  menuLabel: { flex: 1, fontSize: 14, color: Colors.textPrimary },
-  menuArrow: { fontSize: 18, color: Colors.border },
-
-  /* 하단 링크 */
-  footerLinks: {
-    flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'center', gap: 6, marginTop: 20, marginBottom: 16,
-  },
-  footerLink: { fontSize: 12, color: Colors.textTertiary },
-  footerDot: { fontSize: 12, color: Colors.border },
-
-  /* Controls/Buttons/Text Button_02 (320×52) */
-  logoutBtn: {
-    marginHorizontal: 24, height: 52, borderRadius: 12,
-    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  logoutText: { fontSize: 15, color: Colors.error, fontWeight: '600' },
-  loginBtn: {
-    marginHorizontal: 24, height: 52, borderRadius: 12,
-    backgroundColor: Colors.navBar,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  loginBtnText: { fontSize: 15, color: Colors.navBarIconActive, fontWeight: '700' },
+  logoutText: { fontSize: 16, color: Colors.textSecondary, fontFamily: undefined },
 });

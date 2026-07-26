@@ -138,10 +138,11 @@ const styles = StyleSheet.create({
 
   scroll: { paddingHorizontal: 24, paddingBottom: 40 },
 
-  searchBarWrap: { paddingHorizontal: 20, paddingVertical: 12 },
+  /* 카테고리 화면 검색바(Controls/Search Bar)와 동일한 디자인 */
+  searchBarWrap: { paddingVertical: 12 },
   searchBar: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
-    height: 44, borderRadius: 12, paddingHorizontal: 14,
+    height: 36, borderRadius: 8, paddingHorizontal: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
   searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary },

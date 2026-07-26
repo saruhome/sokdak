@@ -3,6 +3,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useState } from 'react';
 import { Colors, getCategoryLabelColor } from '@/constants/Colors';
 import { CATEGORIES, getCategoryBySlug } from '@/constants/categories';
+import { SCREEN_WIDTH } from '@/constants/layout';
 import { type Word } from '@/constants/mockWords';
 import { AppIcon } from '@/components/AppIcon';
 import { ChevronDown, List, X, RotateCcw } from 'lucide-react-native';
@@ -133,11 +134,13 @@ export function WordFilterBar({
             </View>
 
             <ScrollView contentContainerStyle={styles.chipGrid}>
-              <Text style={styles.chipGridTitle}>카테고리</Text>
-              <Text style={styles.chipCount}>
-                {categorySlugs.length}
-                <Text style={styles.chipCountTotal}>/{CATEGORIES.length}</Text>
-              </Text>
+              <View style={styles.chipGridHeader}>
+                <Text style={styles.chipGridTitle}>카테고리</Text>
+                <Text style={styles.chipCount}>
+                  {categorySlugs.length}
+                  <Text style={styles.chipCountTotal}>/{CATEGORIES.length}</Text>
+                </Text>
+              </View>
               <View style={styles.chipGridRow}>
                 {CATEGORIES.map(c => {
                   const on = categorySlugs.includes(c.slug);
@@ -213,8 +216,14 @@ const styles = StyleSheet.create({
   consonantChipText: { fontSize: 13, color: Colors.textSecondary, fontFamily: undefined },
   consonantChipTextActive: { color: Colors.navBarIconActive, fontWeight: '700' },
 
-  /* Figma 인터랙션: 배경 검정 25% + 바깥 탭으로 닫기 */
-  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.25)', justifyContent: 'flex-end' },
+  /* Figma 인터랙션: 배경 검정 25% + 바깥 탭으로 닫기.
+   * RN Modal은 웹에서 DeviceFrame(360px 고정 프레임) 밖 document.body로 그대로 포탈되므로
+   * width를 SCREEN_WIDTH로 잡고 가운데 정렬해야 프레임과 같은 폭으로 보인다(네이티브에선
+   * SCREEN_WIDTH가 실제 기기 폭이라 기존과 동일하게 꽉 채운다). */
+  modalBackdrop: {
+    flex: 1, width: '100%', maxWidth: SCREEN_WIDTH, alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.25)', justifyContent: 'flex-end',
+  },
   modalSheet: {
     backgroundColor: Colors.background,
     borderTopLeftRadius: 24, borderTopRightRadius: 24,
@@ -236,6 +245,7 @@ const styles = StyleSheet.create({
   modalHintText: { fontSize: 14, color: Colors.textPrimary, fontFamily: undefined, textAlign: 'center' },
 
   chipGrid: { paddingHorizontal: 24, paddingTop: 16, gap: 12 },
+  chipGridHeader: { flexDirection: 'row', alignItems: 'baseline', gap: 6 },
   chipGridTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   chipCount: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   chipCountTotal: { color: Colors.textTertiary },

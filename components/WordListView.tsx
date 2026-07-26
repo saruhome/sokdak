@@ -82,6 +82,8 @@ export function WordListView({
       <FlatList
         data={visible}
         keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         ListHeaderComponent={
           <>
             {/* ── 검색바 ── */}

@@ -12,9 +12,9 @@ import { authStore } from '../../../constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
 import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
 
-const HORANG_ICON = require('../../../assets/characters/horang.png');
+const HORANG_ICON = require('../../../assets/Callout Card/image 146.png');
 const MIC_ICON = require('../../../assets/categories/icon-mic.png');
-const STAR_ICON = require('../../../assets/categories/icon-star.png');
+const ACTIVE_STAR_COLOR = '#FACC15';
 
 type SortMode = '인기순' | '가나다순';
 
@@ -87,7 +87,7 @@ export default function CategoryScreen() {
             >
               <View style={styles.recommendTextWrap}>
                 <Text style={styles.recommendLabel}>요즘 핫한 카테고리예요!</Text>
-                <Text style={styles.recommendName}>&quot;{topCategory.name}&quot;</Text>
+                <Text style={styles.recommendName} numberOfLines={2}>&quot;{topCategory.name}&quot;</Text>
                 <Text style={styles.recommendClick}>Click &gt;</Text>
               </View>
               <Image source={HORANG_ICON} style={styles.recommendImg} resizeMode="contain" />
@@ -119,22 +119,34 @@ export default function CategoryScreen() {
               activeOpacity={0.85}
             >
               <ImageBackground source={item.image} style={styles.cardBg} imageStyle={styles.cardBgImage}>
+                <View style={styles.cardOverlay} />
                 <View style={styles.cardTopRow}>
                   <Image source={MIC_ICON} style={styles.micIcon} />
-                  <TouchableOpacity style={styles.likeBtn} onPress={() => handleToggleLike(item)} hitSlop={8}>
-                    {/* Figma(Selection/Card/Category.svg)에서 추출한 실제 별 아이콘 에셋 —
-                     * 활성 상태는 이 노란 별 PNG를 그대로 쓰고, 비활성은 윤곽선 아이콘으로 표시 */}
-                    {liked ? (
-                      <Image source={STAR_ICON} style={styles.likeIcon} />
-                    ) : (
-                      <AppIcon icon={Star} size={24} color={labelColor} fill="none" />
-                    )}
+                  <TouchableOpacity
+                  style={styles.likeBtn}
+                  onPress={e => {
+                    e.stopPropagation?.();
+                    handleToggleLike(item);
+                  }}
+                  hitSlop={8}
+                >
+                    <AppIcon
+                      icon={Star}
+                      size={24}
+                      color={Colors.textEmphasis}
+                      fill={liked ? ACTIVE_STAR_COLOR : 'none'}
+                    />
                   </TouchableOpacity>
                 </View>
-                {/* 사진 위 글자 가독성 확보용 반투명 스크림 */}
-                <View style={styles.cardScrim} />
                 <View style={styles.cardTextWrap}>
-                  <Text style={styles.categoryName} numberOfLines={2}>{item.name}</Text>
+                  <Text
+                    style={styles.categoryName}
+                    numberOfLines={2}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.6}
+                  >
+                    {item.name}
+                  </Text>
                 </View>
               </ImageBackground>
             </TouchableOpacity>
@@ -199,13 +211,11 @@ const styles = StyleSheet.create({
   sortLabel: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
 
   grid: { paddingHorizontal: 24, paddingBottom: 24 },
-  row: { gap: 12, marginBottom: 12 },
-  /* Figma: Selection/Card/Category (158×104) — 카드 배경은 카테고리별 일러스트.
-   * 설명을 없애고 제목을 2배(28px)로 키우면서 "자주 쓰는 신조어"처럼 2줄이 되는
-   * 이름이 상단 아이콘 줄과 겹치지 않도록 원래 104px보다 카드를 늘렸다. */
+  row: { gap: 12, marginBottom: 12, justifyContent: 'space-between' },
+  /* Figma: Selection/Card/Category (150×104) — 카드 배경은 카테고리별 일러스트. */
   categoryCard: {
-    flex: 1,
-    height: 144,
+    width: 150,
+    height: 104,
     borderRadius: 10,
     borderWidth: 1, borderColor: Colors.border,
     overflow: 'hidden',
@@ -216,6 +226,10 @@ const styles = StyleSheet.create({
    * 크기를 잡아 카드가 화면 밖으로 늘어난다(flex: 0 0 auto라 줄어들지도 않음). */
   cardBg: { flex: 1, width: '100%', height: '100%' },
   cardBgImage: { resizeMode: 'cover' },
+  cardOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  },
   cardTopRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingLeft: 12, paddingTop: 6, paddingRight: 4,
@@ -223,12 +237,7 @@ const styles = StyleSheet.create({
   micIcon: { width: 16, height: 16, tintColor: '#1A1A1A' },
   likeBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   likeIcon: { width: 24, height: 24 },
-  cardScrim: {
-    position: 'absolute', left: 0, right: 0, bottom: 0, height: 78,
-    backgroundColor: 'rgba(248,248,248,0.88)',
-  },
   cardTextWrap: { position: 'absolute', left: 12, right: 12, bottom: 10 },
-  /* 스크림이 항상 거의 흰색(rgba(248,248,248,0.88))이라 카테고리별 색 대신
-   * 고정된 짙은 색을 써야 어떤 카테고리든 대비가 보장된다 */
-  categoryName: { fontSize: 28, lineHeight: 32, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
+  /* 카드 텍스트는 기존 대비 더 작게 보여야 하므로 70% 크기로 조정. */
+  categoryName: { fontSize: 20, lineHeight: 24, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
 });

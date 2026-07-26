@@ -14,7 +14,7 @@ import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
 
 const HORANG_ICON = require('../../../assets/characters/horang.png');
 const MIC_ICON = require('../../../assets/categories/icon-mic.png');
-const ACTIVE_STAR_COLOR = '#FACC15';
+const STAR_ICON = require('../../../assets/categories/icon-star.png');
 
 type SortMode = '인기순' | '가나다순';
 
@@ -122,13 +122,13 @@ export default function CategoryScreen() {
                 <View style={styles.cardTopRow}>
                   <Image source={MIC_ICON} style={styles.micIcon} />
                   <TouchableOpacity style={styles.likeBtn} onPress={() => handleToggleLike(item)} hitSlop={8}>
-                    {/* 활성 시 즐겨찾기 색(Colors.error)으로 채워 별 모양으로 상태를 보여준다 */}
-                    <AppIcon
-                      icon={Star}
-                      size={18}
-                      color={liked ? ACTIVE_STAR_COLOR : labelColor}
-                      fill={liked ? ACTIVE_STAR_COLOR : 'none'}
-                    />
+                    {/* Figma(Selection/Card/Category.svg)에서 추출한 실제 별 아이콘 에셋 —
+                     * 활성 상태는 이 노란 별 PNG를 그대로 쓰고, 비활성은 윤곽선 아이콘으로 표시 */}
+                    {liked ? (
+                      <Image source={STAR_ICON} style={styles.likeIcon} />
+                    ) : (
+                      <AppIcon icon={Star} size={24} color={labelColor} fill="none" />
+                    )}
                   </TouchableOpacity>
                 </View>
                 {/* 사진 위 글자 가독성 확보용 반투명 스크림 */}
@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
   },
   micIcon: { width: 16, height: 16, tintColor: '#1A1A1A' },
   likeBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  likeIcon: { width: 24, height: 24 },
   cardScrim: {
     position: 'absolute', left: 0, right: 0, bottom: 0, height: 78,
     backgroundColor: 'rgba(248,248,248,0.88)',

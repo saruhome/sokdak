@@ -7,7 +7,13 @@
  *   실패 시 롤백하고 다시 알린다.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Linking from 'expo-linking';
 import { supabase } from './supabase';
+
+/** 이메일 인증·비밀번호 재설정 링크가 돌아올 주소.
+ *  네이티브는 앱 스킴(sokdak://), 웹은 현재 오리진으로 자동 해석된다.
+ *  Supabase 대시보드 Authentication > URL Configuration의 Redirect URLs에도 등록돼 있어야 한다. */
+const AUTH_REDIRECT_URL = Linking.createURL('/auth/callback');
 
 type AuthListener = (loggedIn: boolean) => void;
 type BookmarkListener = () => void;
@@ -176,6 +182,23 @@ export const authStore = {
         if (event === 'INITIAL_SESSION') return;
         applySession(session?.user.id, session?.user.email);
       });
+
+      /* 이메일 인증·비밀번호 재설정 링크로 앱이 열렸을 때 세션 넘겨받기.
+       * 네이티브에는 URL을 자동으로 읽어주는 주체가 없어(detectSessionInUrl: false)
+       * 링크에 담겨 온 토큰을 직접 setSession에 넘겨야 로그인 상태가 된다. */
+      const consumeAuthLink = async (url: string | null) => {
+        if (!url) return;
+        const fragment = url.split('#')[1];
+        if (!fragment) return;
+        const params = new URLSearchParams(fragment);
+        const access_token = params.get('access_token');
+        const refresh_token = params.get('refresh_token');
+        if (access_token && refresh_token) {
+          await supabase.auth.setSession({ access_token, refresh_token });
+        }
+      };
+      consumeAuthLink(await Linking.getInitialURL());
+      Linking.addEventListener('url', ({ url }) => { consumeAuthLink(url); });
     })();
     return _initPromise;
   },
@@ -193,7 +216,12 @@ export const authStore = {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { nickname, avatar_emoji: '🐦' } },
+      options: {
+        data: { nickname, avatar_emoji: '🐦' },
+        /* 지정하지 않으면 Supabase 기본 Site URL(웹)로 리다이렉트돼 폰에서 인증 후 앱으로
+         * 돌아올 방법이 없다. 앱 스킴(sokdak://) 딥링크로 되돌려 세션을 넘겨받는다. */
+        emailRedirectTo: AUTH_REDIRECT_URL,
+      },
     });
     return {
       error: error?.message ?? null,
@@ -211,7 +239,7 @@ export const authStore = {
   },
 
   async requestPasswordReset(email: string) {
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: AUTH_REDIRECT_URL });
     return { error: error?.message ?? null };
   },
 

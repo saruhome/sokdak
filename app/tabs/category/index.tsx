@@ -1,5 +1,5 @@
 import {
-  StyleSheet, View, SafeAreaView, Image,
+  StyleSheet, View, SafeAreaView, Image, ImageBackground,
   FlatList, TouchableOpacity, Alert,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
@@ -13,6 +13,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { Search, Mic, Bell, Heart, ChevronDown } from 'lucide-react-native';
 
 const HORANG_ICON = require('../../../assets/characters/horang.png');
+const MIC_ICON = require('../../../assets/categories/icon-mic.png');
 
 type SortMode = '인기순' | '가나다순';
 
@@ -113,29 +114,26 @@ export default function CategoryScreen() {
           const liked = authStore.isCategoryLiked(item.slug);
           return (
             <TouchableOpacity
-              style={[styles.categoryCard, { backgroundColor: item.colorBg }]}
+              style={styles.categoryCard}
               onPress={() => router.push(`/tabs/category/${item.slug}`)}
               activeOpacity={0.85}
             >
-              <View style={styles.cardTopRow}>
-                <Text style={styles.cardEmoji}>{item.emoji}</Text>
-                <TouchableOpacity
-                  style={styles.likeBtn}
-                  onPress={() => handleToggleLike(item)}
-                  hitSlop={8}
-                >
-                  <AppIcon
-                    icon={Heart}
-                    size={18}
-                    color={item.colorFg}
-                    fill={liked ? item.colorFg : 'none'}
-                  />
-                </TouchableOpacity>
-              </View>
-              <Text style={[styles.categoryName, { color: item.colorFg }]}>{item.name}</Text>
-              <Text style={[styles.categoryDesc, { color: item.colorFg }]} numberOfLines={2}>
-                {item.description}
-              </Text>
+              <ImageBackground source={item.image} style={styles.cardBg} imageStyle={styles.cardBgImage}>
+                <View style={styles.cardTopRow}>
+                  <Image source={MIC_ICON} style={styles.micIcon} />
+                  <TouchableOpacity style={styles.likeBtn} onPress={() => handleToggleLike(item)} hitSlop={8}>
+                    <AppIcon icon={Heart} size={18} color={item.colorFg} fill={liked ? item.colorFg : 'none'} />
+                  </TouchableOpacity>
+                </View>
+                {/* 사진 위 글자 가독성 확보용 반투명 스크림 */}
+                <View style={styles.cardScrim} />
+                <View style={styles.cardTextWrap}>
+                  <Text style={[styles.categoryName, { color: item.colorFg }]}>{item.name}</Text>
+                  <Text style={[styles.categoryDesc, { color: item.colorFg }]} numberOfLines={1}>
+                    {item.description}
+                  </Text>
+                </View>
+              </ImageBackground>
             </TouchableOpacity>
           );
         }}
@@ -199,18 +197,29 @@ const styles = StyleSheet.create({
 
   grid: { paddingHorizontal: 24, paddingBottom: 24 },
   row: { gap: 12, marginBottom: 12 },
+  /* Figma: Selection/Card/Category (158×104) — 카드 배경은 카테고리별 일러스트 */
   categoryCard: {
     flex: 1,
-    minHeight: 104,
+    height: 104,
     borderRadius: 10,
-    paddingHorizontal: 16, paddingVertical: 12,
+    borderWidth: 1, borderColor: Colors.border,
+    overflow: 'hidden',
     shadowColor: '#000', shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.15, shadowRadius: 6, elevation: 3,
-    gap: 4,
   },
-  cardTopRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  cardEmoji: { fontSize: 20 },
-  likeBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center', marginRight: -8 },
+  cardBg: { flex: 1 },
+  cardBgImage: { resizeMode: 'cover' },
+  cardTopRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingLeft: 12, paddingTop: 6, paddingRight: 4,
+  },
+  micIcon: { width: 16, height: 16, tintColor: '#1A1A1A' },
+  likeBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  cardScrim: {
+    position: 'absolute', left: 0, right: 0, bottom: 0, height: 44,
+    backgroundColor: 'rgba(248,248,248,0.88)',
+  },
+  cardTextWrap: { position: 'absolute', left: 12, right: 12, bottom: 10, gap: 2 },
   categoryName: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold' },
-  categoryDesc: { fontSize: 12, lineHeight: 16, opacity: 0.85, fontFamily: undefined },
+  categoryDesc: { fontSize: 11, opacity: 0.85, fontFamily: undefined },
 });

@@ -23,3 +23,9 @@ expo-env.d.ts
 # Separate nested repo (its own GitHub remote: saruhome/sokdak-landing-page) —
 # never add here as an embedded git repository.
 sokdak-landing-page/
+
+# 디자인 원본(Figma export). 앱이 실제로 쓰는 에셋은 여기서 추출해
+# assets/ 아래에 최적화한 형태로 커밋하므로, 원본 자체는 레포에 넣지 않는다(64MB).
+SokDak 화면/
+assets/Filter/
+assets/Selection/

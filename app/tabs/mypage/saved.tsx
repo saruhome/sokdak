@@ -10,7 +10,10 @@ import { MOCK_WORDS, type Word } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
 import { getCategoryBySlug, type Category } from '../../../constants/categories';
 import { AppIcon } from '@/components/AppIcon';
-import { Star, Volume2, ChevronDown, List } from 'lucide-react-native';
+import {
+  WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
+} from '@/components/WordFilterBar';
+import { Star, Volume2 } from 'lucide-react-native';
 
 const MIC_ICON = require('../../../assets/categories/icon-mic.png');
 const STAR_ICON = require('../../../assets/categories/icon-star.png');
@@ -20,6 +23,10 @@ export default function SavedWordsScreen() {
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
   const [likedCategorySlugs, setLikedCategorySlugs] = useState<string[]>(authStore.getLikedCategorySlugs());
   const [showAllCategories, setShowAllCategories] = useState(false);
+  /* 정렬·카테고리 필터는 사전 화면과 동일하게 동작한다 (WordFilterBar 공유) */
+  const [sortIndex, setSortIndex] = useState(0);
+  const [consonant, setConsonant] = useState<string>('전체');
+  const [filterSlugs, setFilterSlugs] = useState<string[]>([]);
 
   const sync = useCallback(() => {
     setSavedIds(authStore.getSavedWordIds());
@@ -32,9 +39,14 @@ export default function SavedWordsScreen() {
     return () => { unsub(); };
   }, [sync]);
 
-  const words = savedIds
+  const savedWords = savedIds
     .map(id => MOCK_WORDS.find(w => w.id === id))
     .filter((w): w is Word => !!w);
+
+  const filteredWords = sortWords(savedWords.filter(w => matchesCategories(w, filterSlugs)), sortIndex);
+  const words = sortIndex === 2 && consonant !== '전체'
+    ? filteredWords.filter(w => getInitialConsonant(w.word) === consonant)
+    : filteredWords;
 
   const likedCategories = likedCategorySlugs
     .map(slug => getCategoryBySlug(slug))
@@ -58,19 +70,16 @@ export default function SavedWordsScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* ── 총 단어 수 + 정렬/카테고리 트리거 ── */}
-        <View style={styles.filterBar}>
-          <Text style={styles.totalCount}>총 {words.length} 단어</Text>
-          <View style={styles.filterTriggers}>
-            <View style={styles.sortTrigger}>
-              <Text style={styles.sortTriggerText}>인기순</Text>
-              <AppIcon icon={ChevronDown} size={14} color={Colors.textSecondary} />
-            </View>
-            <TouchableOpacity style={styles.categoryTrigger} onPress={() => router.push('/tabs/category')}>
-              <Text style={styles.categoryTriggerText}>카테고리</Text>
-              <AppIcon icon={List} size={12} color={Colors.textSecondary} />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <WordFilterBar
+          total={words.length}
+          sortIndex={sortIndex}
+          onCycleSort={() => setSortIndex(p => (p + 1) % SORT_TABS.length)}
+          categorySlugs={filterSlugs}
+          onToggleCategory={slug => setFilterSlugs(prev => prev.includes(slug) ? prev.filter(s => s !== slug) : [...prev, slug])}
+          onClearCategories={() => setFilterSlugs([])}
+          consonant={consonant}
+          onSelectConsonant={setConsonant}
+        />
 
         {/* ── 좋아요 한 카테고리 ── */}
         {likedCategories.length > 0 && (
@@ -179,20 +188,6 @@ const styles = StyleSheet.create({
 
   content: { paddingBottom: 40 },
 
-  filterBar: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 24, marginTop: 16, marginBottom: 12,
-  },
-  totalCount: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  filterTriggers: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  sortTrigger: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  sortTriggerText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  categoryTrigger: {
-    flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: Colors.divider, borderWidth: 1, borderColor: Colors.border,
-    borderRadius: 8, paddingHorizontal: 8, paddingVertical: 6,
-  },
-  categoryTriggerText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
 
   section: { paddingHorizontal: 24, marginTop: 12, gap: 12 },
   sectionTitle: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },

@@ -1,0 +1,262 @@
+import { StyleSheet, View, Modal, ScrollView, TouchableOpacity } from 'react-native';
+import { AppText as Text } from '@/components/AppText';
+import { useState } from 'react';
+import { Colors, getCategoryLabelColor } from '@/constants/Colors';
+import { CATEGORIES, getCategoryBySlug } from '@/constants/categories';
+import { type Word } from '@/constants/mockWords';
+import { AppIcon } from '@/components/AppIcon';
+import { ChevronDown, List, X, RotateCcw } from 'lucide-react-native';
+
+export const SORT_TABS = ['인기순', '최신순', 'ㄱㄴㄷ순'] as const;
+
+/** 기본(단자음) 초성 14개 — 겹자음(ㄲㄸㅃㅆㅉ)은 필터 UI에 없어 아래 매핑으로 기본 자음에 합친다 */
+export const CONSONANT_FILTERS = ['전체', 'ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'] as const;
+const CHOSEONG = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+const DOUBLED_TO_BASE: Record<string, string> = { 'ㄲ': 'ㄱ', 'ㄸ': 'ㄷ', 'ㅃ': 'ㅂ', 'ㅆ': 'ㅅ', 'ㅉ': 'ㅈ' };
+
+/** 완성형 한글 음절이면 초성을, 낱자음(ㅋㅋ 같은 초성체 단어)이면 첫 글자 자체를 기본 자음으로 정규화해 반환 */
+export function getInitialConsonant(word: string): string | null {
+  if (!word) return null;
+  const code = word.charCodeAt(0);
+  if (code >= 0xAC00 && code <= 0xD7A3) {
+    const cho = CHOSEONG[Math.floor((code - 0xAC00) / (21 * 28))];
+    return DOUBLED_TO_BASE[cho] ?? cho;
+  }
+  const ch = word[0];
+  return DOUBLED_TO_BASE[ch] ?? ch;
+}
+
+/** 단어가 선택된 카테고리들 중 하나라도 속하는지 (주/보조 카테고리 모두 검사) */
+export function matchesCategories(word: Word, slugs: string[]) {
+  if (slugs.length === 0) return true;
+  return slugs.includes(word.category) || (!!word.secondaryCategory && slugs.includes(word.secondaryCategory));
+}
+
+/** SORT_TABS 인덱스에 맞춰 정렬한 새 배열 반환 */
+export function sortWords(list: Word[], sortIndex: number): Word[] {
+  const base = [...list];
+  if (sortIndex === 0) return base.sort((a, b) => b.likes - a.likes);
+  if (sortIndex === 1) return base.sort((a, b) => Number(b.id) - Number(a.id));
+  return base.sort((a, b) => a.word.localeCompare(b.word, 'ko'));
+}
+
+/**
+ * 단어 목록 화면들이 공유하는 필터 바 — "총 N 단어 / 정렬 / 카테고리" 행,
+ * 적용된 카테고리 칩, 카테고리 선택 모달, ㄱㄴㄷ순일 때의 초성 필터까지 담당한다.
+ * 사전·카테고리 상세·즐겨찾기가 같은 동작을 하도록 한 곳에 모았다.
+ */
+export function WordFilterBar({
+  total,
+  sortIndex,
+  onCycleSort,
+  categorySlugs,
+  onToggleCategory,
+  onClearCategories,
+  consonant,
+  onSelectConsonant,
+}: {
+  total: number;
+  sortIndex: number;
+  onCycleSort: () => void;
+  categorySlugs: string[];
+  onToggleCategory: (slug: string) => void;
+  onClearCategories: () => void;
+  consonant: string;
+  onSelectConsonant: (c: string) => void;
+}) {
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const showConsonantRow = sortIndex === 2;
+
+  return (
+    <>
+      <View style={styles.filterBar}>
+        <Text style={styles.totalCount}>
+          총 <Text style={styles.totalCountNumber}>{total}</Text> 단어
+        </Text>
+        <View style={styles.filterTriggers}>
+          <TouchableOpacity style={styles.sortTrigger} onPress={onCycleSort}>
+            <Text style={styles.sortTriggerText}>{SORT_TABS[sortIndex]}</Text>
+            <AppIcon icon={ChevronDown} size={14} color={Colors.textSecondary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.categoryTrigger} onPress={() => setPickerOpen(true)}>
+            <Text style={styles.categoryTriggerText}>카테고리</Text>
+            <AppIcon icon={List} size={12} color={Colors.textSecondary} />
+            {/* Figma: 필터가 걸려 있으면 버튼에 활성 점 표시 */}
+            {categorySlugs.length > 0 && <View style={styles.filterDot} />}
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* 적용된 카테고리 칩 (× 로 개별 해제) */}
+      {categorySlugs.length > 0 && (
+        <View style={styles.chipRow}>
+          {categorySlugs.map(slug => {
+            const c = getCategoryBySlug(slug);
+            if (!c) return null;
+            return (
+              <TouchableOpacity key={slug} style={styles.chip} onPress={() => onToggleCategory(slug)}>
+                <Text style={styles.chipText}>{c.name}</Text>
+                <AppIcon icon={X} size={12} color={Colors.textTertiary} />
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      )}
+
+      {showConsonantRow && (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.consonantRow}>
+          {CONSONANT_FILTERS.map(c => (
+            <TouchableOpacity
+              key={c}
+              style={[styles.consonantChip, consonant === c && styles.consonantChipActive]}
+              onPress={() => onSelectConsonant(c)}
+            >
+              <Text style={[styles.consonantChipText, consonant === c && styles.consonantChipTextActive]}>{c}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
+
+      {/* Figma: Filter/Category/Bottom sheet — 아래에서 올라오고, 바깥을 누르면 닫힌다 */}
+      <Modal visible={pickerOpen} transparent animationType="slide" onRequestClose={() => setPickerOpen(false)}>
+        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setPickerOpen(false)}>
+          <TouchableOpacity style={styles.modalSheet} activeOpacity={1}>
+            <View style={styles.grabHandle} />
+            <Text style={styles.modalTitle}>카테고리 필터</Text>
+            <View style={styles.modalHint}>
+              <Text style={styles.modalHintText}>선택한 카테고리에 해당하는 단어만 보여드려요</Text>
+            </View>
+
+            <ScrollView contentContainerStyle={styles.chipGrid}>
+              <Text style={styles.chipGridTitle}>카테고리</Text>
+              <Text style={styles.chipCount}>
+                {categorySlugs.length}
+                <Text style={styles.chipCountTotal}>/{CATEGORIES.length}</Text>
+              </Text>
+              <View style={styles.chipGridRow}>
+                {CATEGORIES.map(c => {
+                  const on = categorySlugs.includes(c.slug);
+                  return (
+                    <TouchableOpacity
+                      key={c.slug}
+                      style={[styles.pickChip, on && { backgroundColor: c.colorBg, borderColor: c.colorBg }]}
+                      onPress={() => onToggleCategory(c.slug)}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={[styles.pickChipText, { color: getCategoryLabelColor(c.colorBg, c.colorFg) }]}>
+                        {c.name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <TouchableOpacity style={styles.modalReset} onPress={onClearCategories}>
+                <AppIcon icon={RotateCcw} size={16} color={Colors.textTertiary} />
+                <Text style={styles.modalResetText}>초기화</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalApply} onPress={() => setPickerOpen(false)}>
+                <Text style={styles.modalApplyText}>총 {categorySlugs.length}개 적용하기</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+    </>
+  );
+}
+
+const styles = StyleSheet.create({
+  filterBar: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    marginHorizontal: 24, marginTop: 24, marginBottom: 12,
+  },
+  totalCount: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  totalCountNumber: { fontSize: 12, color: Colors.textPrimary, fontWeight: '700', fontFamily: undefined },
+  filterTriggers: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  sortTrigger: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  sortTriggerText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  categoryTrigger: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: Colors.divider, borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 8, paddingHorizontal: 8, paddingVertical: 6,
+  },
+  categoryTriggerText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  filterDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: Colors.point1 },
+
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginHorizontal: 24, marginBottom: 12 },
+  chip: {
+    flexDirection: 'row', alignItems: 'center', gap: 2,
+    paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+  },
+  chipText: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+
+  consonantRow: { gap: 8, paddingHorizontal: 24, paddingBottom: 12 },
+  consonantChip: {
+    width: 32, height: 32, borderRadius: 16,
+    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+  },
+  consonantChipActive: { backgroundColor: Colors.navBar, borderColor: Colors.navBar },
+  consonantChipText: { fontSize: 13, color: Colors.textSecondary, fontFamily: undefined },
+  consonantChipTextActive: { color: Colors.navBarIconActive, fontWeight: '700' },
+
+  /* Figma 인터랙션: 배경 검정 25% + 바깥 탭으로 닫기 */
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.25)', justifyContent: 'flex-end' },
+  modalSheet: {
+    backgroundColor: Colors.background,
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    borderWidth: 1, borderColor: Colors.border,
+    paddingTop: 16, maxHeight: '80%',
+  },
+  grabHandle: {
+    alignSelf: 'center', width: 96, height: 4, borderRadius: 2,
+    backgroundColor: Colors.border, marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary,
+    textAlign: 'center', marginBottom: 16,
+  },
+  modalHint: {
+    paddingHorizontal: 40, paddingVertical: 8, alignItems: 'center',
+    borderTopWidth: 1, borderBottomWidth: 1, borderColor: Colors.border,
+  },
+  modalHintText: { fontSize: 14, color: Colors.textPrimary, fontFamily: undefined, textAlign: 'center' },
+
+  chipGrid: { paddingHorizontal: 24, paddingTop: 16, gap: 12 },
+  chipGridTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
+  chipCount: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
+  chipCountTotal: { color: Colors.textTertiary },
+  chipGridRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  pickChip: {
+    height: 36, paddingHorizontal: 16, borderRadius: 20,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.surface,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15, shadowRadius: 1, elevation: 1,
+  },
+  pickChipText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold' },
+
+  modalFooter: {
+    flexDirection: 'row', alignItems: 'center', gap: 16,
+    paddingHorizontal: 24, paddingTop: 16, paddingBottom: 24,
+    borderTopWidth: 1, borderTopColor: Colors.border,
+  },
+  modalReset: {
+    width: 56, height: 48, borderRadius: 12,
+    alignItems: 'center', justifyContent: 'center', gap: 2,
+    backgroundColor: Colors.divider, borderWidth: 1, borderColor: Colors.border,
+  },
+  modalResetText: { fontSize: 10, color: Colors.textTertiary, fontFamily: undefined },
+  modalApply: {
+    flex: 1, height: 48, borderRadius: 10,
+    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.navBar,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15, shadowRadius: 1, elevation: 2,
+  },
+  modalApplyText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
+});

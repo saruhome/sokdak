@@ -1,43 +1,21 @@
 import {
-  StyleSheet, View, Image, Modal,
-  TextInput, FlatList, ScrollView, TouchableOpacity,
+  StyleSheet, View, Image,
+  TextInput, FlatList, TouchableOpacity,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { MOCK_WORDS, type Word } from '@/constants/mockWords';
-import { CATEGORIES, getCategoryBySlug } from '@/constants/categories';
+import { getCategoryBySlug } from '@/constants/categories';
 import { authStore } from '@/constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
-import { Search, Star, Volume2, Mic, ChevronDown, List, X, Check, Heart } from 'lucide-react-native';
+import {
+  WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
+} from '@/components/WordFilterBar';
+import { Search, Star, Volume2, Mic, Heart } from 'lucide-react-native';
 
 const JJAEKI_ICON = require('../assets/characters/jjaeki-full.png');
-
-const SORT_TABS = ['인기순', '최신순', 'ㄱㄴㄷ순'] as const;
-
-/** 기본(단자음) 초성 14개 — 겹자음(ㄲㄸㅃㅆㅉ)은 필터 UI에 없어 아래 매핑으로 기본 자음에 합친다 */
-const CONSONANT_FILTERS = ['전체', 'ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'] as const;
-const CHOSEONG = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
-const DOUBLED_TO_BASE: Record<string, string> = { 'ㄲ': 'ㄱ', 'ㄸ': 'ㄷ', 'ㅃ': 'ㅂ', 'ㅆ': 'ㅅ', 'ㅉ': 'ㅈ' };
-
-/** 완성형 한글 음절이면 초성을, 낱자음(ㅋㅋ 같은 초성체 단어)이면 첫 글자 자체를 기본 자음으로 정규화해 반환 */
-function getInitialConsonant(word: string): string | null {
-  if (!word) return null;
-  const code = word.charCodeAt(0);
-  if (code >= 0xAC00 && code <= 0xD7A3) {
-    const cho = CHOSEONG[Math.floor((code - 0xAC00) / (21 * 28))];
-    return DOUBLED_TO_BASE[cho] ?? cho;
-  }
-  const ch = word[0];
-  return DOUBLED_TO_BASE[ch] ?? ch;
-}
-
-/** 단어가 선택된 카테고리들 중 하나라도 속하는지 (주/보조 카테고리 모두 검사) */
-function matchesCategories(word: Word, slugs: string[]) {
-  if (slugs.length === 0) return true;
-  return slugs.includes(word.category) || (!!word.secondaryCategory && slugs.includes(word.secondaryCategory));
-}
 
 /**
  * 사전 화면과 카테고리 상세 화면이 공유하는 단어 목록 뷰.
@@ -58,7 +36,6 @@ export function WordListView({
   const [query, setQuery] = useState('');
   const [consonant, setConsonant] = useState<string>('전체');
   const [categorySlugs, setCategorySlugs] = useState<string[]>(initialCategorySlugs);
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
 
   /* 카테고리 상세에서 다른 카테고리로 이동하면 필터를 새 slug로 리셋 */
@@ -81,9 +58,7 @@ export function WordListView({
     const base = MOCK_WORDS
       .filter(w => matchesCategories(w, categorySlugs))
       .filter(w => !q || w.word.includes(q) || w.shortDesc.includes(q) || w.category.toLowerCase().includes(q));
-    if (sortIndex === 0) return base.sort((a, b) => b.likes - a.likes);
-    if (sortIndex === 1) return base.sort((a, b) => Number(b.id) - Number(a.id));
-    return base.sort((a, b) => a.word.localeCompare(b.word, 'ko'));
+    return sortWords(base, sortIndex);
   }, [sortIndex, query, categorySlugs]);
 
   const showConsonantRow = sortIndex === 2;
@@ -140,60 +115,16 @@ export function WordListView({
               </TouchableOpacity>
             )}
 
-            {/* ── 총 단어 수 + 정렬/카테고리 트리거 ── */}
-            <View style={styles.filterBar}>
-              <Text style={styles.totalCount}>
-                총 <Text style={styles.totalCountNumber}>{filtered.length}</Text> 단어
-              </Text>
-              <View style={styles.filterTriggers}>
-                <TouchableOpacity
-                  style={styles.sortTrigger}
-                  onPress={() => setSortIndex(p => (p + 1) % SORT_TABS.length)}
-                >
-                  <Text style={styles.sortTriggerText}>{SORT_TABS[sortIndex]}</Text>
-                  <AppIcon icon={ChevronDown} size={14} color={Colors.textSecondary} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.categoryTrigger} onPress={() => setPickerOpen(true)}>
-                  <Text style={styles.categoryTriggerText}>카테고리</Text>
-                  <AppIcon icon={List} size={12} color={Colors.textSecondary} />
-                  {/* Figma: 필터가 걸려 있으면 버튼에 활성 점 표시 */}
-                  {categorySlugs.length > 0 && <View style={styles.filterDot} />}
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* ── 적용된 카테고리 칩 (× 로 개별 해제) ── */}
-            {categorySlugs.length > 0 && (
-              <View style={styles.chipRow}>
-                {categorySlugs.map(slug => {
-                  const c = getCategoryBySlug(slug);
-                  if (!c) return null;
-                  return (
-                    <TouchableOpacity key={slug} style={styles.chip} onPress={() => toggleCategory(slug)}>
-                      <Text style={styles.chipText}>{c.name}</Text>
-                      <AppIcon icon={X} size={12} color={Colors.textTertiary} />
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            )}
-
-            {/* ── ㄱㄴㄷ순 초성 필터 ── */}
-            {showConsonantRow && (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.consonantRow}>
-                {CONSONANT_FILTERS.map(c => (
-                  <TouchableOpacity
-                    key={c}
-                    style={[styles.consonantChip, consonant === c && styles.consonantChipActive]}
-                    onPress={() => setConsonant(c)}
-                  >
-                    <Text style={[styles.consonantChipText, consonant === c && styles.consonantChipTextActive]}>
-                      {c}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            )}
+            <WordFilterBar
+              total={filtered.length}
+              sortIndex={sortIndex}
+              onCycleSort={() => setSortIndex(p => (p + 1) % SORT_TABS.length)}
+              categorySlugs={categorySlugs}
+              onToggleCategory={toggleCategory}
+              onClearCategories={() => setCategorySlugs([])}
+              consonant={consonant}
+              onSelectConsonant={setConsonant}
+            />
           </>
         }
         renderItem={({ item, index }) => {
@@ -261,39 +192,6 @@ export function WordListView({
         contentContainerStyle={visible.length === 0 ? { flexGrow: 1 } : styles.listContent}
       />
 
-      {/* ── 카테고리 선택 모달 ── */}
-      <Modal visible={pickerOpen} transparent animationType="fade" onRequestClose={() => setPickerOpen(false)}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setPickerOpen(false)}>
-          <TouchableOpacity style={styles.modalSheet} activeOpacity={1}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>카테고리</Text>
-              <AppIcon icon={X} size={20} onPress={() => setPickerOpen(false)} hitSlop={8} />
-            </View>
-            <ScrollView style={styles.modalList}>
-              {CATEGORIES.map(c => {
-                const on = categorySlugs.includes(c.slug);
-                return (
-                  <TouchableOpacity key={c.slug} style={styles.modalRow} onPress={() => toggleCategory(c.slug)}>
-                    <View style={[styles.modalSwatch, { backgroundColor: c.colorBg }]}>
-                      <Text style={styles.modalEmoji}>{c.emoji}</Text>
-                    </View>
-                    <Text style={styles.modalRowText}>{c.name}</Text>
-                    {on && <AppIcon icon={Check} size={18} color={Colors.textPrimary} />}
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-            <View style={styles.modalFooter}>
-              <TouchableOpacity style={styles.modalReset} onPress={() => setCategorySlugs([])}>
-                <Text style={styles.modalResetText}>초기화</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modalApply} onPress={() => setPickerOpen(false)}>
-                <Text style={styles.modalApplyText}>적용</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
     </>
   );
 }
@@ -324,40 +222,8 @@ const styles = StyleSheet.create({
   tipClick: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
   tipImg: { width: 93, height: 107, marginRight: 8 },
 
-  filterBar: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    marginHorizontal: 24, marginTop: 24, marginBottom: 12,
-  },
-  totalCount: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  totalCountNumber: { fontSize: 12, color: Colors.textPrimary, fontWeight: '700', fontFamily: undefined },
-  filterTriggers: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  sortTrigger: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  sortTriggerText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  categoryTrigger: {
-    flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: Colors.divider, borderWidth: 1, borderColor: Colors.border,
-    borderRadius: 8, paddingHorizontal: 8, paddingVertical: 6,
-  },
-  categoryTriggerText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  filterDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: Colors.point1 },
 
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginHorizontal: 24, marginBottom: 12 },
-  chip: {
-    flexDirection: 'row', alignItems: 'center', gap: 2,
-    paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,
-    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
-  },
-  chipText: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
 
-  consonantRow: { gap: 8, paddingHorizontal: 24, paddingBottom: 12 },
-  consonantChip: {
-    width: 32, height: 32, borderRadius: 16,
-    alignItems: 'center', justifyContent: 'center',
-    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
-  },
-  consonantChipActive: { backgroundColor: Colors.navBar, borderColor: Colors.navBar },
-  consonantChipText: { fontSize: 13, color: Colors.textSecondary, fontFamily: undefined },
-  consonantChipTextActive: { color: Colors.navBarIconActive, fontWeight: '700' },
 
   wordItem: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', height: 80,
@@ -386,35 +252,4 @@ const styles = StyleSheet.create({
   emptyText: { fontSize: 14, color: Colors.textTertiary },
 
   /* 카테고리 선택 모달 */
-  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end' },
-  modalSheet: {
-    backgroundColor: Colors.background,
-    borderTopLeftRadius: 16, borderTopRightRadius: 16,
-    paddingTop: 16, maxHeight: '70%',
-  },
-  modalHeader: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 24, paddingBottom: 12,
-  },
-  modalTitle: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
-  modalList: { paddingHorizontal: 24 },
-  modalRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
-    paddingVertical: 10,
-    borderBottomWidth: 1, borderBottomColor: Colors.divider,
-  },
-  modalSwatch: { width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
-  modalEmoji: { fontSize: 16 },
-  modalRowText: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontFamily: undefined },
-  modalFooter: { flexDirection: 'row', gap: 8, padding: 24 },
-  modalReset: {
-    flex: 1, height: 44, borderRadius: 8, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
-  },
-  modalResetText: { fontSize: 14, color: Colors.textSecondary, fontFamily: undefined },
-  modalApply: {
-    flex: 2, height: 44, borderRadius: 8, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: Colors.navBar,
-  },
-  modalApplyText: { fontSize: 14, fontWeight: '600', color: Colors.navBarIconActive, fontFamily: undefined },
 });

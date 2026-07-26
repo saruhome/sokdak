@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Image, Platform, StyleSheet, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
 // 배럴(index.js)에서 import하면 두 웨이트만 써도 metro 웹 번들에 8개 웨이트(91MB)가
@@ -10,6 +10,8 @@ import { NotoSerifKR_600SemiBold } from '@expo-google-fonts/noto-serif-kr/600Sem
 import { Colors } from '../constants/Colors';
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../constants/layout';
 import { authStore } from '../constants/authStore';
+
+const SPLASH = require('../assets/splash-screen.png');
 
 /** 웹 프리뷰 전용: 브라우저 창 크기와 무관하게 앱을 360×800 프레임에 고정.
  *  네이티브(안드로이드/iOS)에서는 그대로 전체 화면을 사용한다. */
@@ -42,13 +44,21 @@ export default function RootLayout() {
     NotoSerifKR_600SemiBold,
   });
   const [authReady, setAuthReady] = useState(authStore.isInitialized());
+  /* 폰트·세션 로딩이 빨리 끝나도 스플래시가 깜빡이고 사라지지 않도록 최소 노출 시간 확보 */
+  const [splashDone, setSplashDone] = useState(false);
 
   useEffect(() => {
     authStore.initialize().then(() => setAuthReady(true));
+    const t = setTimeout(() => setSplashDone(true), 1500);
+    return () => clearTimeout(t);
   }, []);
 
-  if (!fontsLoaded || !authReady) {
-    return <View style={{ flex: 1, backgroundColor: Colors.background }} />;
+  if (!fontsLoaded || !authReady || !splashDone) {
+    return (
+      <DeviceFrame>
+        <Image source={SPLASH} style={{ flex: 1, width: '100%', backgroundColor: Colors.background }} resizeMode="contain" />
+      </DeviceFrame>
+    );
   }
 
   return (

@@ -55,7 +55,13 @@ export default function WordDetailScreen() {
 
   const englishGloss = word.translations.find(t => t.lang.includes('EN'))?.text;
   const examples = word.meanings.flatMap(m => m.examples);
-  const reading = word.pronunciation ? word.pronunciation.replace(/^\[|\]$/g, '') : null;
+  /* 초성체(ㅋㅋ)·알파벳 신조어(TMI)는 글자만 봐선 읽는 법을 알 수 없어
+   * 영문 로마자와 한글 발음을 함께 보여준다. 완성형 한글이 있는 단어는 로마자만. */
+  const koreanReading = word.pronunciation ? word.pronunciation.replace(/^\[|\]$/g, '') : null;
+  const hasHangulSyllable = /[가-힣]/.test(word.word);
+  const reading = hasHangulSyllable || !koreanReading
+    ? word.romanization
+    : `${word.romanization} · ${koreanReading}`;
 
   /* 비로그인도 즐겨찾기 가능 — 세션 동안 유지되고 로그인 시 계정으로 이관된다(authStore) */
   const handleSave = () => {

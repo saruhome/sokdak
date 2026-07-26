@@ -8,8 +8,9 @@ import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { BOARD_COLORS } from '../../../constants/mockPosts';
+import { BOARD_COLORS, getBoardLabel } from '../../../constants/mockPosts';
 import { authStore } from '../../../constants/authStore';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { fetchPost, createComment, type CommunityComment, type CommunityPostDetail } from '../../../constants/community';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye } from 'lucide-react-native';
@@ -17,6 +18,8 @@ import { Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye } from 'lucide
 const ACTIVE_STAR_COLOR = '#FACC15';
 
 export default function PostDetailScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const { id } = useLocalSearchParams<{ id: string }>();
   const [post, setPost] = useState<CommunityPostDetail | null | undefined>(undefined);
   const [liked, setLiked] = useState(false);
@@ -25,6 +28,8 @@ export default function PostDetailScreen() {
   const [commentText, setCommentText] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [sendingComment, setSendingComment] = useState(false);
+  /* 댓글은 서버에서 등록순(오래된 순)으로 오므로, 최신순은 그냥 뒤집어서 보여준다 */
+  const [commentSort, setCommentSort] = useState<'oldest' | 'newest'>('oldest');
   const inputRef = useRef<TextInput>(null);
 
   const load = useCallback(() => {
@@ -52,9 +57,9 @@ export default function PostDetailScreen() {
   if (!post) {
     return (
       <SafeAreaView style={styles.notFound}>
-        <Text style={styles.notFoundText}>게시글을 찾을 수 없어요</Text>
-        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backBtnText}>돌아가기</Text>
+        <Text style={styles.notFoundText}>{t('postNotFound')}</Text>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.push('/tabs/community')}>
+          <Text style={styles.backBtnText}>{t('goBack')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -64,9 +69,9 @@ export default function PostDetailScreen() {
 
   const handleLike = () => {
     if (!authStore.isLoggedIn()) {
-      Alert.alert('로그인이 필요해요', '좋아요를 누르려면 먼저 로그인해주세요.', [
-        { text: '취소', style: 'cancel' },
-        { text: '로그인하러 가기', onPress: () => router.push('/auth/login') },
+      Alert.alert(t('loginRequiredTitle'), t('loginRequiredLike'), [
+        { text: t('cancelLabel'), style: 'cancel' },
+        { text: t('goToLogin'), onPress: () => router.push('/auth/login') },
       ]);
       return;
     }
@@ -78,9 +83,9 @@ export default function PostDetailScreen() {
   const handleSend = async () => {
     if (!commentText.trim()) return;
     if (!authStore.isLoggedIn()) {
-      Alert.alert('로그인이 필요해요', '댓글을 작성하려면 먼저 로그인해주세요.', [
-        { text: '취소', style: 'cancel' },
-        { text: '로그인하러 가기', onPress: () => router.push('/auth/login') },
+      Alert.alert(t('loginRequiredTitle'), t('loginRequiredComment'), [
+        { text: t('cancelLabel'), style: 'cancel' },
+        { text: t('goToLogin'), onPress: () => router.push('/auth/login') },
       ]);
       return;
     }
@@ -92,7 +97,7 @@ export default function PostDetailScreen() {
     });
     setSendingComment(false);
     if (error) {
-      Alert.alert('댓글 등록 실패', error);
+      Alert.alert(t('commentFailedTitle'), error);
       return;
     }
     setCommentText('');
@@ -130,7 +135,7 @@ export default function PostDetailScreen() {
           {/* ── 게시글 본문 영역 ── */}
           <View style={styles.postSection}>
             <View style={[styles.boardBadge, styles.boardBadgeStandalone, { backgroundColor: boardColor.bg }]}>
-              <Text style={[styles.boardBadgeText, { color: boardColor.fg }]}>{post.board}</Text>
+              <Text style={[styles.boardBadgeText, { color: boardColor.fg }]}>{getBoardLabel(post.board, language)}</Text>
             </View>
 
             {/* Display/UserInfo (327×40) */}
@@ -166,33 +171,47 @@ export default function PostDetailScreen() {
               >
                 <AppIcon icon={Bookmark} size={16} fill={saved ? Colors.accent : undefined} color={saved ? Colors.accent : undefined} />
                 <Text style={[styles.actionLabel, saved && { color: Colors.accent }]}>
-                  {saved ? '저장됨' : '저장'}
+                  {saved ? t('savedLabel') : t('saveLabel')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionBtn}>
                 <AppIcon icon={Share2} size={16} />
-                <Text style={styles.actionLabel}>공유</Text>
+                <Text style={styles.actionLabel}>{t('shareLabel')}</Text>
               </TouchableOpacity>
             </View>
 
             {/* Group 189 – 조회·좋아요·댓글 메타 */}
             <View style={styles.metaRow}>
-              <IconStat icon={Eye} value={`조회 ${post.views}`} textStyle={styles.metaItem} />
+              <IconStat icon={Eye} value={`${t('viewsLabel')} ${post.views}`} textStyle={styles.metaItem} />
               <Text style={styles.metaDot}>·</Text>
-              <IconStat icon={Star} value={`좋아요 ${likeCount}`} textStyle={styles.metaItem} />
+              <IconStat icon={Star} value={`${t('likesCount')} ${likeCount}`} textStyle={styles.metaItem} />
               <Text style={styles.metaDot}>·</Text>
-              <IconStat icon={MessageCircle} value={`댓글 ${totalComments}`} textStyle={styles.metaItem} />
+              <IconStat icon={MessageCircle} value={`${t('commentsLabel')} ${totalComments}`} textStyle={styles.metaItem} />
             </View>
           </View>
 
-          {/* ── Display/List Header – 댓글 헤더 */}
+          {/* ── Display/List Header – 댓글 헤더 + 정렬(등록순/최신순) ── */}
           <View style={styles.commentHeader}>
-            <Text style={styles.commentHeaderTitle}>댓글 {totalComments}개</Text>
+            <Text style={styles.commentHeaderTitle}>
+              {language === 'ko' ? `댓글 ${totalComments}개` : `${totalComments} ${t('commentsLabel')}`}
+            </Text>
+            <View style={styles.commentSortRow}>
+              <TouchableOpacity onPress={() => setCommentSort('oldest')}>
+                <Text style={[styles.commentSortText, commentSort === 'oldest' && styles.commentSortTextActive]}>
+                  {t('sortOldest')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setCommentSort('newest')}>
+                <Text style={[styles.commentSortText, commentSort === 'newest' && styles.commentSortTextActive]}>
+                  {t('sortNewest')}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* ── Controls/TextField/Comment/대댓글 O – 댓글 목록 */}
           <View style={styles.commentList}>
-            {post.comments.map(comment => (
+            {(commentSort === 'newest' ? [...post.comments].reverse() : post.comments).map(comment => (
               <View key={comment.id}>
                 <CommentItem
                   comment={comment}
@@ -219,7 +238,7 @@ export default function PostDetailScreen() {
         <View style={styles.commentInputWrap}>
           {replyingTo && (
             <View style={styles.replyingBanner}>
-              <Text style={styles.replyingText}>답글 작성 중</Text>
+              <Text style={styles.replyingText}>{t('replyingLabel')}</Text>
               <TouchableOpacity onPress={() => { setReplyingTo(null); setCommentText(''); }}>
                 <Text style={styles.replyingClose}>✕</Text>
               </TouchableOpacity>
@@ -229,7 +248,7 @@ export default function PostDetailScreen() {
             <TextInput
               ref={inputRef}
               style={styles.commentInput}
-              placeholder="댓글을 입력하세요"
+              placeholder={t('commentPlaceholder')}
               placeholderTextColor={Colors.textTertiary}
               value={commentText}
               onChangeText={setCommentText}
@@ -241,7 +260,7 @@ export default function PostDetailScreen() {
               onPress={handleSend}
               disabled={!commentText.trim() || sendingComment}
             >
-              <Text style={styles.sendBtnText}>{sendingComment ? '전송 중…' : '전송'}</Text>
+              <Text style={styles.sendBtnText}>{sendingComment ? t('sendingLabel') : t('sendLabel')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -278,7 +297,7 @@ function CommentItem({
           </TouchableOpacity>
           {!isReply && (
             <TouchableOpacity style={styles.commentAction} onPress={onReply}>
-              <Text style={styles.commentActionText}>답글</Text>
+              <Text style={styles.commentActionText}>{languageStore.t('replyLabel')}</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -356,14 +375,17 @@ const styles = StyleSheet.create({
   metaItem: { fontSize: 12, color: Colors.textTertiary },
   metaDot: { fontSize: 12, color: Colors.border },
 
-  /* 댓글 헤더 – Display/List Header (375×42) */
+  /* 댓글 헤더 – Display/List Header (375×42) + 정렬(등록순/최신순) */
   commentHeader: {
-    height: 42, justifyContent: 'center',
+    height: 42, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20,
-    borderBottomWidth: 1, borderBottomColor: Colors.divider,
-    backgroundColor: Colors.background,
+    borderTopWidth: 1, borderBottomWidth: 1, borderColor: Colors.divider,
+    backgroundColor: Colors.surface,
   },
   commentHeaderTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
+  commentSortRow: { flexDirection: 'row', gap: 12 },
+  commentSortText: { fontSize: 11, color: Colors.textTertiary },
+  commentSortTextActive: { color: Colors.textPrimary, fontWeight: '700' },
 
   /* 댓글 목록 */
   commentList: {},

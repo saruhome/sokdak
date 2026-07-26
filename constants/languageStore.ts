@@ -371,6 +371,8 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     collapseLabel: 'Show less',
     noFavoritesYet: "You haven't favorited any words or categories yet",
     browseDictionary: 'Browse the dictionary',
+    sortOldest: 'Oldest',
+    sortNewest: 'Newest',
   },
 };
 

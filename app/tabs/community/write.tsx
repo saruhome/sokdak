@@ -7,7 +7,8 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { BOARD_COLORS, type PostBoard } from '../../../constants/mockPosts';
+import { BOARD_COLORS, getBoardLabel, type PostBoard } from '../../../constants/mockPosts';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { Camera, Link2, Type } from 'lucide-react-native';
 import { authStore } from '../../../constants/authStore';
@@ -17,12 +18,14 @@ const BOARD_OPTIONS: PostBoard[] = ['궁금해요', 'Q&A', '질문하기'];
 
 /** Figma: Controls/Icon/Icon Group — 하단 툴바 아이콘 */
 const TOOLBAR_ITEMS = [
-  { icon: Camera, label: '사진' },
-  { icon: Link2, label: '링크' },
-  { icon: Type, label: '서식' },
+  { icon: Camera, key: '사진', labelKey: 'toolbarPhoto' } as const,
+  { icon: Link2, key: '링크', labelKey: 'toolbarLink' } as const,
+  { icon: Type, key: '서식', labelKey: 'toolbarFormat' } as const,
 ];
 
 export default function WritePostScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [board, setBoard]       = useState<PostBoard>('궁금해요');
   const [accordionOpen, setAccordionOpen] = useState(false);
   const [title, setTitle]       = useState('');
@@ -32,9 +35,9 @@ export default function WritePostScreen() {
   if (!authStore.isLoggedIn()) {
     return (
       <SafeAreaView style={styles.notFound}>
-        <Text style={styles.notFoundText}>로그인이 필요해요</Text>
+        <Text style={styles.notFoundText}>{t('loginRequiredTitle')}</Text>
         <TouchableOpacity style={styles.notFoundBtn} onPress={() => router.replace('/auth/login')}>
-          <Text style={styles.notFoundBtnText}>로그인하러 가기</Text>
+          <Text style={styles.notFoundBtnText}>{t('goToLogin')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -44,17 +47,14 @@ export default function WritePostScreen() {
 
   const handleSubmit = async () => {
     if (!isValid) {
-      Alert.alert(
-        '작성 조건 확인',
-        '제목은 2자 이상, 내용은 10자 이상 입력해주세요.',
-      );
+      Alert.alert(t('validationTitle'), t('validationMessage'));
       return;
     }
     setSubmitting(true);
     const { data, error } = await createPost({ board, title: title.trim(), content: content.trim() });
     setSubmitting(false);
     if (error || !data) {
-      Alert.alert('등록 실패', error ?? '알 수 없는 오류가 발생했어요.');
+      Alert.alert(t('submitFailedTitle'), error ?? t('unknownError'));
       return;
     }
     router.replace(`/tabs/community/${data.id}`);
@@ -63,15 +63,15 @@ export default function WritePostScreen() {
   const handleCancel = () => {
     if (title.trim() || content.trim()) {
       Alert.alert(
-        '작성 취소',
-        '작성 중인 내용이 사라집니다. 취소할까요?',
+        t('cancelWriteTitle'),
+        t('cancelWriteMessage'),
         [
-          { text: '계속 작성', style: 'cancel' },
-          { text: '취소', style: 'destructive', onPress: () => safeGoBack() },
+          { text: t('keepWriting'), style: 'cancel' },
+          { text: t('cancelLabel'), style: 'destructive', onPress: () => router.replace('/tabs/community') },
         ],
       );
     } else {
-      safeGoBack();
+      router.replace('/tabs/community');
     }
   };
 
@@ -86,14 +86,14 @@ export default function WritePostScreen() {
           <TouchableOpacity style={styles.backBtn} onPress={handleCancel}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
-          <Text style={styles.topBarTitle}>글쓰기</Text>
+          <Text style={styles.topBarTitle}>{t('writeTitle')}</Text>
           <TouchableOpacity
             style={styles.submitBtn}
             onPress={handleSubmit}
             disabled={!isValid || submitting}
           >
             <Text style={[styles.submitText, isValid && !submitting && styles.submitTextActive]}>
-              {submitting ? '등록 중…' : '작성 완료'}
+              {submitting ? t('submitting') : t('submitComplete')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -106,9 +106,9 @@ export default function WritePostScreen() {
             activeOpacity={0.8}
           >
             <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[board].bg }]}>
-              <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[board].fg }]}>{board}</Text>
+              <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[board].fg }]}>{getBoardLabel(board, language)}</Text>
             </View>
-            <Text style={styles.accordionLabel}>게시판 선택</Text>
+            <Text style={styles.accordionLabel}>{t('boardSelectLabel')}</Text>
             <Text style={styles.accordionArrow}>{accordionOpen ? '▲' : '▼'}</Text>
           </TouchableOpacity>
 
@@ -124,12 +124,12 @@ export default function WritePostScreen() {
                   onPress={() => { setBoard(opt); setAccordionOpen(false); }}
                 >
                   <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[opt].bg }]}>
-                    <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[opt].fg }]}>{opt}</Text>
+                    <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[opt].fg }]}>{getBoardLabel(opt, language)}</Text>
                   </View>
                   <Text style={styles.boardOptionDesc}>
-                    {opt === '궁금해요' && '한국어 신조어가 궁금할 때'}
-                    {opt === 'Q&A'      && '질문과 답변을 주고받을 때'}
-                    {opt === '질문하기' && '자유롭게 의견을 나눌 때'}
+                    {opt === '궁금해요' && t('boardDescCurious')}
+                    {opt === 'Q&A'      && t('boardDescQA')}
+                    {opt === '질문하기' && t('boardDescAsk')}
                   </Text>
                   {board === opt && <Text style={{ fontSize: 14, color: BOARD_COLORS[opt].fg }}>✓</Text>}
                 </TouchableOpacity>
@@ -140,7 +140,7 @@ export default function WritePostScreen() {
           {/* ── Controls/Text Field/Title_02 (375×44) */}
           <TextInput
             style={styles.titleInput}
-            placeholder="제목을 입력하세요 (2자 이상)"
+            placeholder={t('titlePlaceholder')}
             placeholderTextColor={Colors.textTertiary}
             value={title}
             onChangeText={setTitle}
@@ -152,7 +152,7 @@ export default function WritePostScreen() {
           {/* ── 내용 입력 (Frame 28) */}
           <TextInput
             style={styles.contentInput}
-            placeholder={'내용을 입력해주세요 (10자 이상)\n\n예) "안녕하세요, 속닥속닥 배우는 교과서에는 없던 진짜 국어!"'}
+            placeholder={t('contentPlaceholder')}
             placeholderTextColor={Colors.textTertiary}
             value={content}
             onChangeText={setContent}
@@ -169,20 +169,23 @@ export default function WritePostScreen() {
 
         {/* ── Controls/Icon/Icon Group (375×52) – 하단 툴바 */}
         <View style={styles.toolbar}>
-          {TOOLBAR_ITEMS.map(({ icon, label }) => (
-            <TouchableOpacity
-              key={label}
-              style={styles.toolbarBtn}
-              onPress={() => Alert.alert(label, `${label} 기능은 준비 중이에요.`)}
-            >
-              <AppIcon icon={icon} size={16} />
-              <Text style={styles.toolbarLabel}>{label}</Text>
-            </TouchableOpacity>
-          ))}
+          {TOOLBAR_ITEMS.map(({ icon, key, labelKey }) => {
+            const label = t(labelKey);
+            return (
+              <TouchableOpacity
+                key={key}
+                style={styles.toolbarBtn}
+                onPress={() => Alert.alert(label, `${label} ${t('featureComingSoon')}`)}
+              >
+                <AppIcon icon={icon} size={16} />
+                <Text style={styles.toolbarLabel}>{label}</Text>
+              </TouchableOpacity>
+            );
+          })}
           <View style={styles.toolbarDivider} />
           <View style={styles.charCountCompact}>
             <Text style={[styles.charCount, !isValid && { color: Colors.error }]}>
-              {title.trim().length < 2 ? '제목 필요' : content.trim().length < 10 ? '내용 필요' : '작성 완료 ✓'}
+              {title.trim().length < 2 ? t('titleNeeded') : content.trim().length < 10 ? t('contentNeeded') : t('readyToPost')}
             </Text>
           </View>
         </View>

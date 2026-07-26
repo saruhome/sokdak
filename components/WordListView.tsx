@@ -308,7 +308,8 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border, borderRadius: 8,
     paddingHorizontal: 12,
   },
-  searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontFamily: undefined },
+  /* TextInput은 AppText를 안 거쳐 기본 서체가 시스템 산세리프라 카테고리 검색창과 달랐음 — 명시 지정 */
+  searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontFamily: 'NotoSerifKR_400Regular' },
 
   tipCard: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',

@@ -12,7 +12,9 @@ import { BOARD_COLORS } from '../../../constants/mockPosts';
 import { authStore } from '../../../constants/authStore';
 import { fetchPost, createComment, type CommunityComment, type CommunityPostDetail } from '../../../constants/community';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Heart, MessageCircle, Bookmark, Share2, MoreVertical, Eye } from 'lucide-react-native';
+import { Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye } from 'lucide-react-native';
+
+const ACTIVE_STAR_COLOR = '#FACC15';
 
 export default function PostDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -151,7 +153,7 @@ export default function PostDetailScreen() {
             {/* 액션 버튼들 */}
             <View style={styles.actionRow}>
               <TouchableOpacity style={[styles.actionBtn, liked && styles.actionBtnActive]} onPress={handleLike}>
-                <AppIcon icon={Heart} size={16} fill={liked ? Colors.error : undefined} color={liked ? Colors.error : undefined} />
+                <AppIcon icon={Star} size={16} fill={liked ? ACTIVE_STAR_COLOR : undefined} color={liked ? ACTIVE_STAR_COLOR : undefined} />
                 <Text style={[styles.actionLabel, liked && { color: Colors.error }]}>{likeCount}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionBtn}>
@@ -177,7 +179,7 @@ export default function PostDetailScreen() {
             <View style={styles.metaRow}>
               <IconStat icon={Eye} value={`조회 ${post.views}`} textStyle={styles.metaItem} />
               <Text style={styles.metaDot}>·</Text>
-              <IconStat icon={Heart} value={`좋아요 ${likeCount}`} textStyle={styles.metaItem} />
+              <IconStat icon={Star} value={`좋아요 ${likeCount}`} textStyle={styles.metaItem} />
               <Text style={styles.metaDot}>·</Text>
               <IconStat icon={MessageCircle} value={`댓글 ${totalComments}`} textStyle={styles.metaItem} />
             </View>
@@ -271,7 +273,7 @@ function CommentItem({
             style={styles.commentAction}
             onPress={() => setLiked(p => !p)}
           >
-            <AppIcon icon={Heart} size={13} fill={liked ? Colors.error : undefined} color={liked ? Colors.error : undefined} />
+            <AppIcon icon={Star} size={13} fill={liked ? ACTIVE_STAR_COLOR : undefined} color={liked ? ACTIVE_STAR_COLOR : undefined} />
             <Text style={styles.commentActionText}>{liked ? 1 : 0}</Text>
           </TouchableOpacity>
           {!isReply && (

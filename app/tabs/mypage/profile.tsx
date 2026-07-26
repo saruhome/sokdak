@@ -68,45 +68,69 @@ export default function ProfileScreen() {
         </View>
 
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <View style={styles.avatarSection}>
+          <View style={styles.profileHeader}>
             <View style={styles.avatarPreview}>
               <Text style={styles.avatarPreviewText}>{emoji}</Text>
             </View>
-            <Text style={styles.avatarHint}>프로필 아이콘 선택</Text>
-            <View style={styles.emojiGrid}>
-              {EMOJI_OPTIONS.map(e => (
-                <TouchableOpacity
-                  key={e}
-                  style={[styles.emojiOption, e === emoji && styles.emojiOptionActive]}
-                  onPress={() => setEmoji(e)}
-                >
-                  <Text style={styles.emojiOptionText}>{e}</Text>
-                </TouchableOpacity>
-              ))}
+            <View style={styles.profileNameBox}>
+              <Text style={styles.fieldLabel}>닉네임</Text>
+              <TextInput
+                style={[styles.fieldInput, styles.nameInput]}
+                value={name}
+                onChangeText={setName}
+                placeholder="닉네임을 입력하세요"
+                placeholderTextColor={Colors.textTertiary}
+                maxLength={20}
+              />
             </View>
           </View>
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>닉네임</Text>
-            <TextInput
-              style={styles.fieldInput}
-              value={name}
-              onChangeText={setName}
-              placeholder="닉네임을 입력하세요"
-              placeholderTextColor={Colors.textTertiary}
-              maxLength={20}
-            />
+          <Text style={styles.sectionTitle}>계정 정보</Text>
+
+          <View style={styles.cardGroup}>
+            <View style={styles.cardItem}>
+              <View>
+                <Text style={styles.cardLabel}>이메일 Email</Text>
+                <Text style={styles.cardText}>{email}</Text>
+              </View>
+            </View>
+            <View style={styles.cardItem}>
+              <View>
+                <Text style={styles.cardLabel}>비밀번호 Password</Text>
+                <Text style={styles.cardText}>******</Text>
+              </View>
+            </View>
+            <View style={styles.cardItem}>
+              <View>
+                <Text style={styles.cardLabel}>휴대폰 번호 Phone Number</Text>
+                <Text style={styles.cardText}>+43 680 1224 7685</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={[styles.cardItem, styles.cardItemButton]} activeOpacity={0.8} onPress={() => {}}>
+              <View>
+                <Text style={styles.cardLabel}>시간대 Time Zone</Text>
+                <Text style={styles.cardText}>Europe/Berlin</Text>
+              </View>
+              <View style={styles.cardArrow} />
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.field}>
-            <Text style={styles.fieldLabel}>이메일</Text>
-            <TextInput
-              style={[styles.fieldInput, styles.fieldInputDisabled]}
-              value={email}
-              editable={false}
-            />
-            <Text style={styles.fieldHint}>이메일 변경은 아직 지원하지 않아요.</Text>
+          <Text style={styles.avatarHint}>프로필 아이콘 선택</Text>
+          <View style={styles.emojiGrid}>
+            {EMOJI_OPTIONS.map(e => (
+              <TouchableOpacity
+                key={e}
+                style={[styles.emojiOption, e === emoji && styles.emojiOptionActive]}
+                onPress={() => setEmoji(e)}
+              >
+                <Text style={styles.emojiOptionText}>{e}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
+
+          <TouchableOpacity style={styles.logoutBtn} onPress={() => authStore.logout()}>
+            <Text style={styles.logoutText}>로그아웃</Text>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -127,17 +151,38 @@ const styles = StyleSheet.create({
   saveBtn: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 16, backgroundColor: Colors.border, marginRight: 4 },
   saveBtnText: { fontSize: 14, fontWeight: '700', color: Colors.textTertiary },
 
-  scroll: { padding: 24, gap: 8 },
+  scroll: { paddingHorizontal: 24, paddingVertical: 24, gap: 20 },
 
-  avatarSection: { alignItems: 'center', marginBottom: 24, gap: 8 },
+  profileHeader: {
+    width: '100%', flexDirection: 'row', alignItems: 'center', gap: 16,
+    marginBottom: 12,
+  },
   avatarPreview: {
     width: 76, height: 76, borderRadius: 38,
     backgroundColor: Colors.navBar, alignItems: 'center', justifyContent: 'center',
-    marginBottom: 4,
   },
   avatarPreviewText: { fontSize: 36 },
-  avatarHint: { fontSize: 12, color: Colors.textTertiary, marginBottom: 4 },
-  emojiGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
+  profileNameBox: { flex: 1, gap: 8 },
+
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
+  cardGroup: { width: '100%', gap: 12 },
+  cardItem: {
+    width: '100%', minHeight: 80,
+    paddingHorizontal: 16, paddingVertical: 14,
+    backgroundColor: Colors.surface, borderRadius: 10,
+    borderWidth: 1, borderColor: Colors.border,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+  },
+  cardItemButton: { backgroundColor: Colors.surface },
+  cardLabel: { fontSize: 11, color: Colors.textTertiary, marginBottom: 6 },
+  cardText: { fontSize: 15, color: Colors.textPrimary, lineHeight: 22 },
+  cardArrow: {
+    width: 10, height: 10, borderLeftWidth: 1, borderBottomWidth: 1,
+    borderColor: Colors.textTertiary, transform: [{ rotate: '45deg' }],
+  },
+
+  avatarHint: { fontSize: 12, color: Colors.textTertiary, marginBottom: 8 },
+  emojiGrid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 10 },
   emojiOption: {
     width: 44, height: 44, borderRadius: 22,
     alignItems: 'center', justifyContent: 'center',
@@ -146,13 +191,20 @@ const styles = StyleSheet.create({
   emojiOptionActive: { borderColor: Colors.accent, backgroundColor: Colors.accent + '15' },
   emojiOptionText: { fontSize: 20 },
 
-  field: { marginBottom: 20, gap: 8 },
+  logoutBtn: {
+    width: '100%', height: 48,
+    borderRadius: 10, backgroundColor: Colors.divider,
+    alignItems: 'center', justifyContent: 'center', marginTop: 16,
+  },
+  logoutText: { fontSize: 15, color: Colors.textSecondary },
+
   fieldLabel: { fontSize: 13, fontWeight: '700', color: Colors.textSecondary },
   fieldInput: {
     height: 48, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, paddingHorizontal: 14,
     fontSize: 15, color: Colors.textPrimary,
   },
+  nameInput: { width: '100%' },
   fieldInputDisabled: { backgroundColor: Colors.divider, color: Colors.textTertiary },
   fieldHint: { fontSize: 11, color: Colors.textTertiary },
 

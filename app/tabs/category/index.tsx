@@ -10,10 +10,11 @@ import { CATEGORIES, type Category } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
-import { Search, Mic, Bell, Heart, ChevronDown } from 'lucide-react-native';
+import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
 
 const HORANG_ICON = require('../../../assets/characters/horang.png');
 const MIC_ICON = require('../../../assets/categories/icon-mic.png');
+const ACTIVE_STAR_COLOR = '#FACC15';
 
 type SortMode = '인기순' | '가나다순';
 
@@ -119,12 +120,12 @@ export default function CategoryScreen() {
                 <View style={styles.cardTopRow}>
                   <Image source={MIC_ICON} style={styles.micIcon} />
                   <TouchableOpacity style={styles.likeBtn} onPress={() => handleToggleLike(item)} hitSlop={8}>
-                    {/* 활성 시 좋아요 색(Colors.error)으로 채워 단어 별(노랑)과 같은 방식으로 상태를 보여준다 */}
+                    {/* 활성 시 즐겨찾기 색(Colors.error)으로 채워 별 모양으로 상태를 보여준다 */}
                     <AppIcon
-                      icon={Heart}
+                      icon={Star}
                       size={18}
-                      color={liked ? Colors.error : labelColor}
-                      fill={liked ? Colors.error : 'none'}
+                      color={liked ? ACTIVE_STAR_COLOR : labelColor}
+                      fill={liked ? ACTIVE_STAR_COLOR : 'none'}
                     />
                   </TouchableOpacity>
                 </View>

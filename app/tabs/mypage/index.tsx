@@ -9,6 +9,7 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { authStore } from '../../../constants/authStore';
+import { languageStore } from '../../../constants/languageStore';
 
 const JJAEKI_AVATAR = require('../../../assets/characters/jjaeki.png');
 
@@ -17,18 +18,19 @@ import { Bookmark, FileText, HelpCircle, Lightbulb, Settings } from 'lucide-reac
 
 /** Figma: 5-1.마이페이지-2 와이어프레임(524:1871) — 저장한 단어 / 내 활동 / 자주 묻는 질문 / 제안하기.
  *  내 정보 관리는 별도 메뉴가 아니라 프로필 행(›)으로 진입. */
-const MAIN_MENU = [
-  { label: '저장한 단어',    icon: Bookmark,   route: '/tabs/mypage/saved' },
-  { label: '내 활동',        icon: FileText,   route: '/tabs/mypage/my-posts' },
-  { label: '자주 묻는 질문', icon: HelpCircle, route: '/tabs/mypage/support' },
-  { label: '제안하기',       icon: Lightbulb,  route: '/tabs/mypage/suggest' },
-];
+const ACTIVITY_MENU = [
+  { key: 'savedWords', route: '/tabs/mypage/saved' },
+  { key: 'myActivity', route: '/tabs/mypage/my-posts' },
+  { key: 'suggestNewSlang', route: '/tabs/mypage/suggest' },
+] as const;
 
 export default function MyPageScreen() {
   const [loggedIn, setLoggedIn] = useState(authStore.isLoggedIn());
   const [savedCount, setSavedCount] = useState(authStore.getSavedWordIds().length);
   const [likedCount, setLikedCount] = useState(authStore.getLikedPostIds().length);
+  const [language, setLanguage] = useState(languageStore.getLanguage());
   const user = authStore.getUser();
+  const t = (key: Parameters<typeof languageStore.t>[0]) => languageStore.t(key);
 
   /* 화면 포커스 때마다 로그인 상태 갱신 */
   useFocusEffect(
@@ -46,7 +48,9 @@ export default function MyPageScreen() {
       setSavedCount(authStore.getSavedWordIds().length);
       setLikedCount(authStore.getLikedPostIds().length);
     });
-    return () => { unsub(); unsubBookmarks(); };
+    const unsubLanguage = languageStore.subscribe(setLanguage);
+    languageStore.initialize().then(() => setLanguage(languageStore.getLanguage()));
+    return () => { unsub(); unsubBookmarks(); unsubLanguage(); };
   }, []);
 
   const handleLogout = () => {
@@ -59,17 +63,11 @@ export default function MyPageScreen() {
       {/* TopAppBar */}
       <View style={styles.topBar}>
         <View style={styles.backBtn} />
-        <Text style={styles.topBarTitle}>마이페이지</Text>
-        <AppIcon
-          icon={Settings}
-          size={20}
-          style={styles.backBtn}
-          onPress={() => router.push('/tabs/mypage/settings')}
-        />
+        <Text style={styles.topBarTitle}>{t('mypage')}</Text>
+        <View style={styles.backBtn} />
       </View>
 
       <ScrollView style={styles.scroll}>
-        {/* ── 프로필 + 통계 ── Figma: 5-1.마이페이지-2 와이어프레임 — 로그인 시 › 로 내 정보 관리 진입 */}
         <TouchableOpacity
           style={styles.profileRow}
           onPress={() => router.push(loggedIn ? '/tabs/mypage/profile' : '/auth/login')}
@@ -80,99 +78,66 @@ export default function MyPageScreen() {
               {loggedIn && user ? user.emoji : '👤'}
             </Text>
           </View>
-          {loggedIn ? (
-            <View style={styles.statsRow}>
-              <TouchableOpacity
-                style={styles.statItem}
-                onPress={() => router.push('/tabs/mypage/saved')}
-              >
-                <Text style={styles.statValue}>{savedCount}</Text>
-                <Text style={styles.statLabel}>저장한 단어</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.statItem}
-                onPress={() => router.push('/tabs/mypage/my-posts')}
-              >
-                <Text style={styles.statValue}>{likedCount}</Text>
-                <Text style={styles.statLabel}>좋아요 한 글</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>로그인이 필요해요</Text>
-              <Text style={styles.profileEmail}>탭하여 로그인 →</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-        {loggedIn && user && (
-          <Text style={styles.profileNameBar}>{user.name}</Text>
-        )}
-
-        {/* ── 비로그인 배너 ── Figma: 로그인 전 상태 */}
-        {!loggedIn && (
-          <TouchableOpacity
-            style={styles.loginBanner}
-            onPress={() => router.push('/auth/login')}
-            activeOpacity={0.85}
-          >
-            <View style={styles.loginBannerLeft}>
-              <Image source={JJAEKI_AVATAR} style={styles.loginBannerAvatar} resizeMode="cover" />
-              <View>
-                <Text style={styles.loginBannerTitle}>속닥과 함께 시작해요!</Text>
-                <Text style={styles.loginBannerSub}>로그인하면 단어 저장·커뮤니티 이용 가능</Text>
-              </View>
-            </View>
-            <Text style={styles.loginBannerArrow}>›</Text>
-          </TouchableOpacity>
-        )}
-
-        {/* ── 메인 메뉴 (플랫 4항목) ── Figma: 5-1.마이페이지 와이어프레임 */}
-        <View style={styles.section}>
-          <View style={styles.menuGroup}>
-            {MAIN_MENU.map((item, i) => (
-              <TouchableOpacity
-                key={item.label}
-                style={[
-                  styles.menuItem,
-                  i < MAIN_MENU.length - 1 && styles.menuItemBorder,
-                ]}
-                onPress={() => loggedIn
-                  ? router.push(item.route as any)
-                  : router.push('/auth/login')
-                }
-              >
-                <AppIcon icon={item.icon} size={18} style={styles.menuIconWrap} />
-                <Text style={styles.menuLabel}>{item.label}</Text>
-                <Text style={styles.menuArrow}>›</Text>
-              </TouchableOpacity>
-            ))}
+          <View style={styles.profileInfoRow}>
+            <Text style={styles.profileName}>{loggedIn && user ? user.name : t('loginNeeded')}</Text>
+            <Text style={styles.profileEmail}>{loggedIn ? t('tapToLogin') : t('tapToLogin')}</Text>
           </View>
+        </TouchableOpacity>
+
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionHeader}>{t('activity')}</Text>
         </View>
 
-        <View style={styles.footerLinks}>
-          <TouchableOpacity>
-            <Text style={styles.footerLink}>이용약관</Text>
-          </TouchableOpacity>
-          <Text style={styles.footerDot}>·</Text>
-          <TouchableOpacity>
-            <Text style={styles.footerLink}>개인정보처리방침</Text>
-          </TouchableOpacity>
+        <View style={styles.activityCards}>
+          {ACTIVITY_MENU.map((item, i) => (
+            <TouchableOpacity
+              key={item.key}
+              style={[styles.activityCard, i === ACTIVITY_MENU.length - 1 && styles.activityCardLast]}
+              onPress={() => loggedIn ? router.push(item.route) : router.push('/auth/login')}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.activityCardTitle} numberOfLines={1} ellipsizeMode="tail">
+                {languageStore.t(item.key)}
+              </Text>
+              <Text style={styles.activityCardArrow}>›</Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
-        {/* ── Controls/Buttons/Text Button_02 (320×52) ── 로그인/로그아웃 */}
-        {loggedIn ? (
-          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-            <Text style={styles.logoutText}>로그아웃</Text>
-          </TouchableOpacity>
-        ) : (
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionHeader}>{t('settings')}</Text>
+        </View>
+
+        <View style={styles.settingsGroup}>
           <TouchableOpacity
-            style={styles.loginBtn}
-            onPress={() => router.push('/auth/login')}
+            style={styles.settingRow}
+            onPress={() => router.push('/tabs/mypage/notifications')}
             activeOpacity={0.85}
           >
-            <Text style={styles.loginBtnText}>로그인하기</Text>
+            <Text style={styles.settingLabel} numberOfLines={1} ellipsizeMode="tail">
+              {t('notifications')}
+            </Text>
+            <Text style={styles.settingArrow}>›</Text>
           </TouchableOpacity>
-        )}
+          <TouchableOpacity
+            style={styles.settingRow}
+            onPress={() => router.push('/tabs/mypage/settings/language')}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.settingLabel} numberOfLines={1} ellipsizeMode="tail">
+              {language === 'en' ? 'English' : '한국어'}
+            </Text>
+            <Text style={styles.settingArrow}>›</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity style={styles.supportRow} onPress={() => router.push('/tabs/mypage/support')} activeOpacity={0.8}>
+          <Text style={styles.supportLabel}>고객센터</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.85}>
+          <Text style={styles.logoutText}>{t('logout')}</Text>
+        </TouchableOpacity>
 
         <View style={{ height: 32 }} />
       </ScrollView>
@@ -213,6 +178,57 @@ const styles = StyleSheet.create({
     fontSize: 15, fontWeight: '700', color: Colors.textPrimary,
     paddingHorizontal: 24, marginBottom: 12,
   },
+
+  sectionHeaderRow: {
+    marginTop: 24, marginHorizontal: 16,
+  },
+  sectionHeader: {
+    fontSize: 16, fontWeight: '700', color: Colors.textPrimary,
+    marginBottom: 12,
+  },
+  profileRow: {
+    flexDirection: 'row', alignItems: 'center',
+    marginHorizontal: 16, marginTop: 20, padding: 16,
+    backgroundColor: Colors.surface, borderRadius: 16,
+    borderWidth: 1, borderColor: Colors.border,
+  },
+  profileInfoRow: {
+    marginLeft: 16,
+  },
+  activityCards: {
+    marginHorizontal: 16, gap: 12,
+  },
+  activityCard: {
+    width: '100%', height: 48,
+    backgroundColor: Colors.surface, borderRadius: 12,
+    borderWidth: 1, borderColor: Colors.border,
+    paddingHorizontal: 16, justifyContent: 'center',
+  },
+  activityCardLast: {},
+  activityCardTitle: { fontSize: 14, color: Colors.textPrimary, fontWeight: '600' },
+  activityCardArrow: { fontSize: 18, color: Colors.border },
+  settingsGroup: {
+    marginHorizontal: 16, gap: 8, marginTop: 8,
+  },
+  settingRow: {
+    width: '100%', height: 48,
+    backgroundColor: Colors.surface, borderRadius: 12,
+    borderWidth: 1, borderColor: Colors.border,
+    paddingHorizontal: 16, justifyContent: 'center',
+  },
+  settingLabel: { fontSize: 14, color: Colors.textPrimary },
+  settingArrow: { fontSize: 18, color: Colors.border },
+  supportRow: {
+    marginHorizontal: 16, marginTop: 24,
+    paddingVertical: 16, alignItems: 'center',
+  },
+  supportLabel: { fontSize: 14, color: Colors.textPrimary, fontWeight: '600' },
+  logoutBtn: {
+    marginHorizontal: 16, marginTop: 12, height: 48, borderRadius: 12,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  logoutText: { fontSize: 15, color: Colors.textPrimary, fontWeight: '600' },
 
   /* 비로그인 배너 */
   loginBanner: {

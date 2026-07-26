@@ -57,11 +57,7 @@ export default function WritePostScreen() {
       Alert.alert('등록 실패', error ?? '알 수 없는 오류가 발생했어요.');
       return;
     }
-    Alert.alert(
-      '게시글 등록',
-      '게시글이 등록됐어요!',
-      [{ text: '확인', onPress: () => router.replace(`/tabs/community/${data.id}`) }],
-    );
+    router.replace(`/tabs/community/${data.id}`);
   };
 
   const handleCancel = () => {

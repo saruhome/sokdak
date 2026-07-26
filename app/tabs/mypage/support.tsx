@@ -1,13 +1,13 @@
 import {
   StyleSheet, View, SafeAreaView, ScrollView,
-  TouchableOpacity, Linking, Alert,
+  TouchableOpacity, Linking, Alert, TextInput,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { AppIcon } from '@/components/AppIcon';
-import { Mail, ChevronDown, ChevronRight } from 'lucide-react-native';
+import { Mail, ChevronDown, ChevronRight, Search, Mic } from 'lucide-react-native';
 
 const FAQ_CATEGORIES = ['전체', '이용 방법', '회원정보', '제안하기', '커뮤니티'] as const;
 type FaqCategory = (typeof FAQ_CATEGORIES)[number];
@@ -24,10 +24,18 @@ const FAQ_ITEMS: { category: Exclude<FaqCategory, '전체'>; q: string; a: strin
 export default function SupportScreen() {
   const [activeCategory, setActiveCategory] = useState<FaqCategory>('전체');
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [query, setQuery] = useState('');
 
-  const visibleItems = activeCategory === '전체'
-    ? FAQ_ITEMS
-    : FAQ_ITEMS.filter(item => item.category === activeCategory);
+  const visibleItems = useMemo(() => {
+    const filteredByCategory = activeCategory === '전체'
+      ? FAQ_ITEMS
+      : FAQ_ITEMS.filter(item => item.category === activeCategory);
+    if (!query.trim()) return filteredByCategory;
+    const search = query.trim().toLowerCase();
+    return filteredByCategory.filter(item =>
+      item.q.toLowerCase().includes(search) || item.a.toLowerCase().includes(search)
+    );
+  }, [activeCategory, query]);
 
   const handleContact = () => {
     const url = 'mailto:support@sokdak.app?subject=%5B속닥%5D%20문의하기';
@@ -47,6 +55,20 @@ export default function SupportScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <View style={styles.searchBarWrap}>
+          <View style={styles.searchBar}>
+            <AppIcon icon={Search} size={15} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="질문 검색"
+              placeholderTextColor={Colors.textTertiary}
+              value={query}
+              onChangeText={setQuery}
+              returnKeyType="search"
+            />
+            <AppIcon icon={Mic} size={15} />
+          </View>
+        </View>
         {/* ── 카테고리 필터 ── */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryRow}>
           {FAQ_CATEGORIES.map(cat => (
@@ -114,9 +136,17 @@ const styles = StyleSheet.create({
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   topBarTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
 
-  scroll: { paddingBottom: 40 },
+  scroll: { paddingHorizontal: 24, paddingBottom: 40 },
 
-  categoryRow: { gap: 6, paddingHorizontal: 24, paddingVertical: 16 },
+  searchBarWrap: { paddingHorizontal: 20, paddingVertical: 12 },
+  searchBar: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    height: 44, borderRadius: 12, paddingHorizontal: 14,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+  },
+  searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary },
+
+  categoryRow: { gap: 6, paddingVertical: 16 },
   categoryChip: {
     paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
@@ -125,9 +155,9 @@ const styles = StyleSheet.create({
   categoryChipText: { fontSize: 12, color: Colors.textPrimary, fontFamily: undefined },
   categoryChipTextActive: { color: Colors.navBarIconActive },
 
-  faqGroup: { marginHorizontal: 24 },
+  faqGroup: { width: '100%', gap: 12 },
   faqQuestionRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingVertical: 14, gap: 12,
     borderBottomWidth: 1, borderBottomColor: Colors.border,
   },

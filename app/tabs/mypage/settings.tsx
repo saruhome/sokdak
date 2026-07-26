@@ -3,25 +3,35 @@ import {
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { AppIcon } from '@/components/AppIcon';
 import { Bell, Globe } from 'lucide-react-native';
+import { languageStore } from '../../../constants/languageStore';
 
 const SETTINGS_MENU = [
-  { label: '알림설정', icon: Bell, route: '/tabs/mypage/notifications' as const },
-  { label: '언어 설정', icon: Globe, route: null },
-];
+  { key: 'notifications', icon: Bell, route: '/tabs/mypage/notifications' as const },
+  { key: 'languageSettings', icon: Globe, route: '/tabs/mypage/settings/language' as const },
+] as const;
 
 /** Figma: 5-1.마이페이지-2 와이어프레임의 설정(⚙️) 아이콘 진입점 */
 export default function MyPageSettingsScreen() {
+  const [language, setLanguage] = useState(languageStore.getLanguage());
+
+  useEffect(() => {
+    languageStore.initialize().then(() => setLanguage(languageStore.getLanguage()));
+    const unsub = languageStore.subscribe(setLanguage);
+    return () => unsub();
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>설정</Text>
+        <Text style={styles.topBarTitle}>{languageStore.t('settings')}</Text>
         <View style={styles.backBtn} />
       </View>
 
@@ -29,20 +39,19 @@ export default function MyPageSettingsScreen() {
         <View style={styles.menuGroup}>
           {SETTINGS_MENU.map((item, i) => (
             <TouchableOpacity
-              key={item.label}
+              key={item.key}
               style={[
                 styles.menuItem,
                 i < SETTINGS_MENU.length - 1 && styles.menuItemBorder,
               ]}
-              onPress={() => item.route && router.push(item.route)}
-              disabled={!item.route}
+              onPress={() => router.push(item.route)}
             >
               <AppIcon icon={item.icon} size={18} style={styles.menuIconWrap} />
-              <Text style={styles.menuLabel}>{item.label}</Text>
-              {item.route ? (
-                <Text style={styles.menuArrow}>›</Text>
+              <Text style={styles.menuLabel}>{languageStore.t(item.key)}</Text>
+              {item.key === 'languageSettings' ? (
+                <Text style={styles.menuValue}>{language === 'en' ? 'English' : '한국어'}</Text>
               ) : (
-                <Text style={styles.menuSoon}>준비 중</Text>
+                <Text style={styles.menuArrow}>›</Text>
               )}
             </TouchableOpacity>
           ))}
@@ -73,5 +82,6 @@ const styles = StyleSheet.create({
   menuIconWrap: { width: 26 },
   menuLabel: { flex: 1, fontSize: 14, color: Colors.textPrimary },
   menuArrow: { fontSize: 18, color: Colors.border },
+  menuValue: { fontSize: 14, color: Colors.textSecondary },
   menuSoon: { fontSize: 12, color: Colors.textTertiary },
 });

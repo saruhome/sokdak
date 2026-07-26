@@ -15,8 +15,9 @@ import {
 } from '@/components/WordFilterBar';
 import { Star, Volume2 } from 'lucide-react-native';
 
+const ACTIVE_STAR_COLOR = '#FACC15';
+
 const MIC_ICON = require('../../../assets/categories/icon-mic.png');
-const STAR_ICON = require('../../../assets/categories/icon-star.png');
 
 /** Figma: 229:3738(즐겨찾기) — 좋아요 한 카테고리 + 저장한 단어를 함께 보여주는 화면 */
 export default function SavedWordsScreen() {
@@ -58,6 +59,11 @@ export default function SavedWordsScreen() {
     sync();
   };
 
+  const handleToggleCategory = (slug: string) => {
+    authStore.toggleCategoryLiked(slug);
+    sync();
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
@@ -95,7 +101,15 @@ export default function SavedWordsScreen() {
                 >
                   <ImageBackground source={category.image} style={styles.categoryCardBg} imageStyle={styles.categoryCardBgImage}>
                     <Image source={MIC_ICON} style={styles.micIcon} />
-                    <Image source={STAR_ICON} style={[styles.starIcon, { tintColor: category.colorFg }]} />
+                    <AppIcon
+                      icon={Star}
+                      size={18}
+                      fill={ACTIVE_STAR_COLOR}
+                      color={ACTIVE_STAR_COLOR}
+                      onPress={() => handleToggleCategory(category.slug)}
+                      hitSlop={8}
+                      style={[styles.starIcon, styles.iconBtn]}
+                    />
                     <View style={styles.categoryScrim} />
                     <View style={styles.categoryTextWrap}>
                       <Text style={styles.categoryName}>{category.name}</Text>
@@ -146,7 +160,7 @@ export default function SavedWordsScreen() {
                   </View>
                   <View style={styles.wordItemRight}>
                     <AppIcon
-                      icon={Star} size={18} fill="#FACC15" color="#FACC15"
+                      icon={Star} size={18} fill={ACTIVE_STAR_COLOR} color={ACTIVE_STAR_COLOR}
                       style={styles.iconBtn} hitSlop={6}
                       onPress={() => handleRemoveWord(word.id)}
                     />
@@ -202,7 +216,7 @@ const styles = StyleSheet.create({
   categoryCardBg: { flex: 1, width: '100%', height: '100%' },
   categoryCardBgImage: { resizeMode: 'cover' },
   micIcon: { position: 'absolute', left: 12, top: 12, width: 16, height: 16, tintColor: '#1A1A1A' },
-  starIcon: { position: 'absolute', right: 12, top: 12, width: 16, height: 16 },
+  starIcon: { position: 'absolute', right: 12, top: 12 },
   categoryScrim: {
     position: 'absolute', left: 0, right: 0, bottom: 0, height: 44,
     backgroundColor: 'rgba(248,248,248,0.88)',

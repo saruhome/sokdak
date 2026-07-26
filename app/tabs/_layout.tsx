@@ -1,7 +1,9 @@
-import { Tabs } from 'expo-router';
-import { View } from 'react-native';
+import { Tabs, useRouter } from 'expo-router';
+import { TouchableOpacity, View } from 'react-native';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Colors } from '../../constants/Colors';
 import { TabIcon, type TabIconName } from '@/components/icons/TabIcon';
+import { languageStore } from '../../constants/languageStore';
 
 /**
  * Figma(Navigation/BottomBar.svg): 아이콘·라벨 색은 활성/비활성 상태와 무관하게
@@ -15,7 +17,60 @@ function TabBarIcon({ name, focused }: { name: TabIconName; focused: boolean }) 
   );
 }
 
+function DoubleTapTabButton({
+  children,
+  onPress,
+  onLongPress,
+  accessibilityState,
+  rootRoute,
+}: {
+  children: ReactNode;
+  onPress?: () => void;
+  onLongPress?: () => void;
+  accessibilityState?: { selected?: boolean };
+  rootRoute: string;
+}) {
+  const router = useRouter();
+  const [lastPress, setLastPress] = useState<number>(0);
+
+  const handlePress = () => {
+    const now = Date.now();
+    if (accessibilityState?.selected && now - lastPress < 400) {
+      router.replace(rootRoute);
+    }
+    setLastPress(now);
+    onPress?.();
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.tabButton}
+      activeOpacity={0.7}
+      onPress={handlePress}
+      onLongPress={onLongPress}
+    >
+      {children}
+    </TouchableOpacity>
+  );
+}
+
+const ROOT_TAB_ROUTE: Record<string, string> = {
+  index: '/tabs',
+  category: '/tabs/category',
+  dictionary: '/tabs/dictionary',
+  community: '/tabs/community',
+  mypage: '/tabs/mypage',
+};
+
 export default function TabLayout() {
+  const [language, setLanguage] = useState(languageStore.getLanguage());
+
+  useEffect(() => {
+    languageStore.initialize().then(() => setLanguage(languageStore.getLanguage()));
+    const unsub = languageStore.subscribe(setLanguage);
+    return () => unsub();
+  }, []);
+
   return (
     <Tabs
       screenOptions={{
@@ -29,59 +84,69 @@ export default function TabLayout() {
           elevation: 0,
           shadowOpacity: 0,
         },
+        tabBarShowLabel: false,
         tabBarActiveTintColor:   Colors.navBarIconActive,  // #F6F2EA — Figma는 활성/비활성 라벨색 동일
         tabBarInactiveTintColor: Colors.navBarIconActive,
-        tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: '500',
-          marginBottom: 4,
-          fontFamily: undefined,
-        },
       }}
     >
       {/* 1. 홈 */}
       <Tabs.Screen
         name="index"
-        options={{
-          title: '홈',
+        options={({ route }) => ({
+          title: languageStore.t('home'),
           tabBarIcon: ({ focused }) => <TabBarIcon name="home" focused={focused} />,
-        }}
+          tabBarButton: props => (
+            <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.index} />
+          ),
+        })}
       />
 
       {/* 2. 카테고리 */}
       <Tabs.Screen
         name="category"
-        options={{
-          title: '카테고리',
+        options={({ route }) => ({
+          title: languageStore.t('category'),
           tabBarIcon: ({ focused }) => <TabBarIcon name="category" focused={focused} />,
-        }}
+          tabBarButton: props => (
+            <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.category} />
+          ),
+        })}
       />
 
       {/* 3. 사전 */}
       <Tabs.Screen
         name="dictionary"
-        options={{
-          title: '사전',
+        options={({ route }) => ({
+          title: languageStore.t('dictionary'),
           tabBarIcon: ({ focused }) => <TabBarIcon name="dictionary" focused={focused} />,
-        }}
+          tabBarButton: props => (
+            <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.dictionary} />
+          ),
+        })}
       />
 
       {/* 4. 커뮤니티 */}
       <Tabs.Screen
         name="community"
-        options={{
-          title: '커뮤니티',
+        options={({ route }) => ({
+          title: languageStore.t('community'),
           tabBarIcon: ({ focused }) => <TabBarIcon name="community" focused={focused} />,
-        }}
+          tabBarButton: props => (
+            <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.community} />
+          ),
+        })}
       />
 
       {/* 5. 마이페이지 */}
       <Tabs.Screen
         name="mypage"
-        options={{
-          title: '마이페이지',
+        options={({ route }) => ({
+          title: languageStore.t('mypage'),
           tabBarIcon: ({ focused }) => <TabBarIcon name="mypage" focused={focused} />,
-        }}
+          tabBarButton: props => (
+            <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.mypage} />
+          ),
+        })}
       />
     </Tabs>
   );
@@ -94,5 +159,10 @@ const styles = {
   } as const,
   iconWrapActive: {
     backgroundColor: '#333333',
+  } as const,
+  tabButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   } as const,
 };

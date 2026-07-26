@@ -109,7 +109,7 @@ export default function EmailLoginScreen() {
       );
       return;
     }
-    safeGoBack();
+    router.replace('/tabs/mypage');
   };
 
   const [resetPending, setResetPending] = useState(false);

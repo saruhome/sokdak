@@ -5,9 +5,10 @@ import {
 import { AppText as Text } from '@/components/AppText';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { router, useFocusEffect } from 'expo-router';
-import { Colors } from '@/constants/Colors';
+import { Colors, getReadableTextColor } from '@/constants/Colors';
 import { MOCK_WORDS, type Word } from '@/constants/mockWords';
-import { getCategoryBySlug } from '@/constants/categories';
+import { getCategoryBySlug, getCategoryName } from '@/constants/categories';
+import { languageStore, useLanguage } from '@/constants/languageStore';
 import { authStore } from '@/constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
 import {
@@ -32,6 +33,8 @@ export function WordListView({
   initialCategorySlugs?: string[];
   showTipCard?: boolean;
 }) {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [sortIndex, setSortIndex] = useState(0);
   const [query, setQuery] = useState('');
   const [consonant, setConsonant] = useState<string>('전체');
@@ -109,7 +112,7 @@ export function WordListView({
                 activeOpacity={0.85}
               >
                 <View style={styles.tipTextWrap}>
-                  <Text style={styles.tipHint}>이 표현 알아? 유행 따라가야지</Text>
+                  <Text style={styles.tipHint}>{t('tipHint')}</Text>
                   <Text style={styles.tipWord}>&quot;{tipWord.word}&quot;</Text>
                   <Text style={styles.tipClick}>Click &gt;</Text>
                 </View>
@@ -154,12 +157,12 @@ export function WordListView({
                   <Text style={styles.wordReading}>{item.romanization}</Text>
                   {category && (
                     <View style={[styles.wordBadge, { backgroundColor: category.colorBg }]}>
-                      <Text style={[styles.wordBadgeText, { color: category.colorFg }]}>{category.name}</Text>
+                      <Text style={[styles.wordBadgeText, { color: getReadableTextColor(category.colorBg) }]} numberOfLines={1} ellipsizeMode="tail">{getCategoryName(category, language)}</Text>
                     </View>
                   )}
                   {secondaryCategory && (
                     <View style={[styles.wordBadge, { backgroundColor: secondaryCategory.colorBg }]}>
-                      <Text style={[styles.wordBadgeText, { color: secondaryCategory.colorFg }]}>{secondaryCategory.name}</Text>
+                      <Text style={[styles.wordBadgeText, { color: getReadableTextColor(secondaryCategory.colorBg) }]} numberOfLines={1} ellipsizeMode="tail">{getCategoryName(secondaryCategory, language)}</Text>
                     </View>
                   )}
                 </View>
@@ -188,7 +191,7 @@ export function WordListView({
         }}
         ListEmptyComponent={
           <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>검색 결과가 없어요</Text>
+            <Text style={styles.emptyText}>{t('noSearchResults')}</Text>
           </View>
         }
         contentContainerStyle={visible.length === 0 ? { flexGrow: 1 } : styles.listContent}

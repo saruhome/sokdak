@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^npx tsc --noEmit --skipLibCheck$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

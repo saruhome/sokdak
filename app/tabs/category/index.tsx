@@ -6,10 +6,10 @@ import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors, getCategoryLabelColor } from '../../../constants/Colors';
-import { SCREEN_WIDTH } from '../../../constants/layout';
-import { CATEGORIES, type Category } from '../../../constants/categories';
+import { CATEGORIES, getCategoryName, type Category } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { CalloutBubble } from '@/components/icons/CalloutBubble';
 import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
@@ -17,13 +17,18 @@ import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
 const HORANG_ICON = require('../../../assets/Callout Card/image 146.png');
 const MIC_ICON = require('../../../assets/categories/icon-mic.png');
 const ACTIVE_STAR_COLOR = '#FACC15';
-/* grid contentContainerStyle의 paddingHorizontal(24) 두 배만큼 뺀 실제 카드 폭 */
-const RECOMMEND_CARD_WIDTH = SCREEN_WIDTH - 48;
+/* Bubble_호랭.svg 원본 비율(228:95)을 유지한 실제 렌더 크기 — 카드 폭까지 늘리면
+ * 말풍선 꼬리가 비율대로 밀려나 우측 호랭이와 겹친다. 카드 높이(108)에 맞춰
+ * 원본 비율로만 키우고, 왼쪽에 붙여서 꼬리가 항상 호랭이 쪽에 오도록 고정한다. */
+const RECOMMEND_BUBBLE_HEIGHT = 108;
+const RECOMMEND_BUBBLE_WIDTH = RECOMMEND_BUBBLE_HEIGHT * (228 / 95);
 
 type SortMode = '인기순' | '가나다순';
 
 /** Figma: 229:2528 — 카테고리 그리드 */
 export default function CategoryScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [sortMode, setSortMode] = useState<SortMode>('인기순');
   const [, forceUpdate] = useState(0);
 
@@ -38,7 +43,7 @@ export default function CategoryScreen() {
   const sortedCategories = [...CATEGORIES].sort((a, b) =>
     sortMode === '인기순'
       ? (countBySlug[b.slug] ?? 0) - (countBySlug[a.slug] ?? 0)
-      : a.name.localeCompare(b.name, 'ko')
+      : getCategoryName(a, language).localeCompare(getCategoryName(b, language), language)
   );
 
   /* 단어 즐겨찾기(별)와 동일하게 비로그인도 허용 — 세션/로컬에 유지되고 로그인 시 계정으로 이관된다.
@@ -53,7 +58,7 @@ export default function CategoryScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar – Figma: Navigation/TopAppBar/Category (375×44, bg #52514e) */}
       <View style={styles.topBar}>
-        <Text style={styles.topBarTitle}>카테고리</Text>
+        <Text style={styles.topBarTitle}>{t('category')}</Text>
         <View style={styles.topBarBell}>
           <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
           <View style={styles.notifDot} />
@@ -89,12 +94,12 @@ export default function CategoryScreen() {
               onPress={() => router.push(`/tabs/category/${topCategory.slug}`)}
               activeOpacity={0.85}
             >
-              <View style={StyleSheet.absoluteFill}>
-                <CalloutBubble width={RECOMMEND_CARD_WIDTH} height={108} />
+              <View style={styles.bubbleLayer} pointerEvents="none">
+                <CalloutBubble width={RECOMMEND_BUBBLE_WIDTH} height={RECOMMEND_BUBBLE_HEIGHT} />
               </View>
               <View style={styles.recommendTextWrap}>
-                <Text style={styles.recommendLabel}>요즘 핫한 카테고리예요!</Text>
-                <Text style={styles.recommendName} numberOfLines={2}>&quot;{topCategory.name}&quot;</Text>
+                <Text style={styles.recommendLabel}>{t('recommendHint')}</Text>
+                <Text style={styles.recommendName} numberOfLines={2}>&quot;{getCategoryName(topCategory, language)}&quot;</Text>
                 <Text style={styles.recommendClick}>Click &gt;</Text>
               </View>
               <Image source={HORANG_ICON} style={styles.recommendImg} resizeMode="contain" />
@@ -103,14 +108,14 @@ export default function CategoryScreen() {
             {/* ── 정렬/카운트 행 ── */}
             <View style={styles.filterRow}>
               <Text style={styles.countLabel}>
-                총 <Text style={styles.countNumber}>{CATEGORIES.length}</Text> 카테고리
+                {t('totalPrefix')} <Text style={styles.countNumber}>{CATEGORIES.length}</Text> {t('categoriesSuffix')}
               </Text>
               <TouchableOpacity
                 style={styles.sortBtn}
                 onPress={() => setSortMode(m => (m === '인기순' ? '가나다순' : '인기순'))}
                 activeOpacity={0.7}
               >
-                <Text style={styles.sortLabel}>{sortMode}</Text>
+                <Text style={styles.sortLabel}>{sortMode === '인기순' ? t('sortPopular') : t('sortAlphabetical')}</Text>
                 <AppIcon icon={ChevronDown} size={14} color={Colors.textSecondary} />
               </TouchableOpacity>
             </View>
@@ -152,7 +157,7 @@ export default function CategoryScreen() {
                     adjustsFontSizeToFit
                     minimumFontScale={0.6}
                   >
-                    {item.name}
+                    {getCategoryName(item, language)}
                   </Text>
                 </View>
               </ImageBackground>
@@ -201,6 +206,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingLeft: 16,
   },
+  /* 카드 폭 전체로 늘리면 꼬리 비율이 밀려 호랭이와 겹쳐서, 원본 비율 그대로 왼쪽에만 붙인다 */
+  bubbleLayer: { position: 'absolute', left: 0, top: 0 },
   recommendTextWrap: { gap: 8, flexShrink: 1 },
   recommendLabel: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },
   recommendName: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },

@@ -1,6 +1,13 @@
 /** 속닥 커뮤니티 Mock 데이터 */
+import type { Language } from './languageStore';
 
 export type PostBoard = '궁금해요' | 'Q&A' | '질문하기';
+
+/** 게시판 값 자체(Q&A 등)는 데이터 키라 그대로 두고, 화면에 보이는 라벨만 언어에 맞게 바꾼다 */
+export function getBoardLabel(board: PostBoard, language: Language): string {
+  if (language === 'ko' || board === 'Q&A') return board;
+  return board === '궁금해요' ? 'Curious' : 'Ask a Question';
+}
 
 export type Comment = {
   id: string;

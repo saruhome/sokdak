@@ -6,9 +6,10 @@ import { AppText as Text } from '@/components/AppText';
 import { router, useFocusEffect } from 'expo-router';
 import { useState, useMemo, useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
-import { BOARD_COLORS, type PostBoard } from '../../../constants/mockPosts';
+import { BOARD_COLORS, getBoardLabel, type PostBoard } from '../../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../../constants/community';
 import { authStore } from '../../../constants/authStore';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle, Pencil, Inbox, Bell } from 'lucide-react-native';
 
@@ -16,6 +17,8 @@ type BoardTab = '전체' | PostBoard;
 const BOARD_TABS: BoardTab[] = ['전체', '궁금해요', 'Q&A', '질문하기'];
 
 export default function CommunityScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [activeTab, setActiveTab] = useState<BoardTab>('전체');
   const [posts, setPosts] = useState<CommunityPostSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +43,7 @@ export default function CommunityScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar – Figma: Navigation/TopAppBar/Default/Default (375×44, bg #52514e) */}
       <View style={styles.topBar}>
-        <Text style={styles.topBarTitle}>커뮤니티</Text>
+        <Text style={styles.topBarTitle}>{t('community')}</Text>
         <View style={styles.topBarBell}>
           <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
           <View style={styles.notifDot} />
@@ -54,7 +57,7 @@ export default function CommunityScreen() {
           <>
             {/* ── 화제의 게시글 – Figma: Card/Post/Preview 220×144 가로 스크롤 */}
             <View style={styles.featuredSection}>
-              <Text style={styles.sectionTitle}>화제의 게시글</Text>
+              <Text style={styles.sectionTitle}>{t('hotPosts')}</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {featured.map(post => (
                   <TouchableOpacity
@@ -65,7 +68,7 @@ export default function CommunityScreen() {
                   >
                     <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[post.board].bg }]}>
                       <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[post.board].fg }]}>
-                        {post.board}
+                        {getBoardLabel(post.board, language)}
                       </Text>
                     </View>
                     <View style={styles.featuredCardBody}>
@@ -105,7 +108,7 @@ export default function CommunityScreen() {
                       fontWeight: '700',
                     },
                   ]}>
-                    {tab}
+                    {tab === '전체' ? t('allLabel') : getBoardLabel(tab as PostBoard, language)}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -116,7 +119,7 @@ export default function CommunityScreen() {
               {(['궁금해요', 'Q&A', '질문하기'] as PostBoard[]).map(b => (
                 <TouchableOpacity key={b} onPress={() => setActiveTab(b)}>
                   <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[b].bg }]}>
-                    <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[b].fg }]}>{b}</Text>
+                    <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[b].fg }]}>{getBoardLabel(b, language)}</Text>
                   </View>
                 </TouchableOpacity>
               ))}
@@ -134,7 +137,7 @@ export default function CommunityScreen() {
               <View style={styles.postTopRow}>
                 <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[item.board].bg }]}>
                   <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[item.board].fg }]}>
-                    {item.board}
+                    {getBoardLabel(item.board, language)}
                   </Text>
                 </View>
               </View>
@@ -160,7 +163,7 @@ export default function CommunityScreen() {
           ) : (
             <View style={styles.emptyWrap}>
               <AppIcon icon={Inbox} size={36} color={Colors.textTertiary} />
-              <Text style={styles.emptyText}>아직 게시글이 없어요</Text>
+              <Text style={styles.emptyText}>{t('noPostsYet')}</Text>
             </View>
           )
         }

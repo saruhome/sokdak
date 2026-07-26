@@ -4,7 +4,8 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { useMemo } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { getCategoryBySlug } from '../../../constants/categories';
+import { getCategoryBySlug, getCategoryName } from '../../../constants/categories';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { WordListView } from '@/components/WordListView';
 import { Bell, ChevronLeft } from 'lucide-react-native';
@@ -13,6 +14,8 @@ import { Bell, ChevronLeft } from 'lucide-react-native';
  *  "카테고리로 걸러진 단어 목록"이라는 점에서 사전 화면과 동일해 WordListView를 공유하고,
  *  진입한 카테고리를 초기 필터로 넘긴다. 필터 칩의 ×로 해제하면 전체 단어가 보인다. */
 export default function CategoryDetailScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const category = getCategoryBySlug(slug);
 
@@ -22,9 +25,9 @@ export default function CategoryDetailScreen() {
   if (!category) {
     return (
       <SafeAreaView style={styles.notFound}>
-        <Text style={styles.notFoundText}>카테고리를 찾을 수 없어요</Text>
+        <Text style={styles.notFoundText}>{t('categoryNotFound')}</Text>
         <TouchableOpacity style={styles.notFoundBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.notFoundBtnText}>돌아가기</Text>
+          <Text style={styles.notFoundBtnText}>{t('goBack')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -37,7 +40,7 @@ export default function CategoryDetailScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <AppIcon icon={ChevronLeft} size={22} color={Colors.navBarIconActive} />
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>{category.name}</Text>
+        <Text style={styles.topBarTitle}>{getCategoryName(category, language)}</Text>
         <View style={styles.topBarBell}>
           <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
           <View style={styles.notifDot} />

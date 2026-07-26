@@ -10,8 +10,10 @@ import { Colors } from '../../constants/Colors';
 import { MOCK_WORDS } from '../../constants/mockWords';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
-import { getCategoryBySlug } from '../../constants/categories';
+import { getCategoryBySlug, getCategoryName } from '../../constants/categories';
+import { getBoardLabel } from '../../constants/mockPosts';
 import { SCREEN_WIDTH } from '../../constants/layout';
+import { languageStore, useLanguage } from '../../constants/languageStore';
 import { SokDakLogo } from '@/components/icons/SokDakLogo';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Search, Bell, Eye, Heart, MessageCircle } from 'lucide-react-native';
@@ -25,6 +27,8 @@ const NEW_SLANG_WORDS = MOCK_WORDS.filter(w => w.category === 'new-slang');
 const HERO_AUTOPLAY_INTERVAL = 4000;
 
 export default function HomeScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [heroIndex, setHeroIndex] = useState(0);
   const [communityPosts, setCommunityPosts] = useState<CommunityPostSummary[]>([]);
   const heroScrollRef = useRef<ScrollView>(null);
@@ -96,7 +100,7 @@ export default function HomeScreen() {
                   <View style={styles.heroContent}>
                     {category && (
                       <View style={[styles.heroBadge, { backgroundColor: category.colorBg }]}>
-                        <Text style={[styles.heroBadgeText, { color: category.colorFg }]}>{category.name}</Text>
+                        <Text style={[styles.heroBadgeText, { color: category.colorFg }]}>{getCategoryName(category, language)}</Text>
                       </View>
                     )}
                     <Text style={styles.heroWord}>{word.word}</Text>
@@ -116,11 +120,11 @@ export default function HomeScreen() {
         {/* ── 새로운 신조어 ── */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>새로운 신조어</Text>
+            <Text style={styles.sectionTitle}>{t('newSlangSection')}</Text>
             <View style={styles.sectionSubRow}>
-              <Text style={styles.sectionSub}>새롭게 등장한 신조어를 확인해보세요</Text>
+              <Text style={styles.sectionSub}>{t('newSlangSub')}</Text>
               <TouchableOpacity style={styles.moreLink} onPress={() => router.push('/tabs/dictionary')}>
-                <Text style={styles.moreLinkText}>더보기</Text>
+                <Text style={styles.moreLinkText}>{t('moreLink')}</Text>
                 <Text style={styles.moreLinkArrow}>›</Text>
               </TouchableOpacity>
             </View>
@@ -148,11 +152,11 @@ export default function HomeScreen() {
         {/* ── 커뮤니티 ── */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>커뮤니티</Text>
+            <Text style={styles.sectionTitle}>{t('community')}</Text>
             <View style={styles.sectionSubRow}>
-              <Text style={styles.sectionSub}>새로운 게시글을 확인하세요</Text>
+              <Text style={styles.sectionSub}>{t('communitySub')}</Text>
               <TouchableOpacity style={styles.moreLink} onPress={() => router.push('/tabs/community')}>
-                <Text style={styles.moreLinkText}>더보기</Text>
+                <Text style={styles.moreLinkText}>{t('moreLink')}</Text>
                 <Text style={styles.moreLinkArrow}>›</Text>
               </TouchableOpacity>
             </View>
@@ -168,7 +172,7 @@ export default function HomeScreen() {
               <View style={styles.postItemLeft}>
                 <View style={[styles.postBadge, { backgroundColor: BOARD_COLORS[post.board].bg }]}>
                   <Text style={[styles.postBadgeText, { color: BOARD_COLORS[post.board].fg }]}>
-                    {post.board}
+                    {getBoardLabel(post.board, language)}
                   </Text>
                 </View>
                 <Text style={styles.postTitle} numberOfLines={1}>{post.title}</Text>

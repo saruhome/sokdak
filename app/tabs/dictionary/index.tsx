@@ -2,6 +2,7 @@ import { StyleSheet, View, SafeAreaView } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { Colors } from '../../../constants/Colors';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { WordListView } from '@/components/WordListView';
 import { Bell } from 'lucide-react-native';
@@ -9,11 +10,13 @@ import { Bell } from 'lucide-react-native';
 /** Figma: 229:2824 — 사전(단어 목록). 검색·정렬·카테고리 필터·단어 행은
  *  카테고리 상세 화면과 완전히 동일해 WordListView로 공유한다. */
 export default function DictionaryScreen() {
+  useLanguage();
+  const t = languageStore.t;
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar (375×44, bg #52514e) */}
       <View style={styles.topBar}>
-        <Text style={styles.topBarTitle}>사전</Text>
+        <Text style={styles.topBarTitle}>{t('dictionary')}</Text>
         <View style={styles.topBarBell}>
           <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
           <View style={styles.notifDot} />

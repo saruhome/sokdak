@@ -7,7 +7,8 @@ import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { CATEGORIES } from '../../../constants/categories';
+import { CATEGORIES, getCategoryName } from '../../../constants/categories';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { JjaekiQuestion } from '@/components/icons/JjaekiQuestion';
 import { AppIcon } from '@/components/AppIcon';
 import { Search, Mic, Clock } from 'lucide-react-native';
@@ -16,6 +17,8 @@ const RECOMMENDED_SLUGS = ['consonant', 'kpop', 'exclamation'];
 
 /** Figma: 798:7553 — 카테고리 검색 (최근 검색/추천 카테고리/검색 결과 없음) */
 export default function CategorySearchScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
   const [recent, setRecent] = useState<string[]>(['K-POP', '드라마/영화', '자주 쓰는 신조어']);
@@ -45,8 +48,8 @@ export default function CategorySearchScreen() {
   const results = useMemo(() => {
     const q = submittedQuery?.trim().toLowerCase() ?? '';
     if (!q) return [];
-    return CATEGORIES.filter(c => c.name.toLowerCase().includes(q) || c.description.includes(q));
-  }, [submittedQuery]);
+    return CATEGORIES.filter(c => getCategoryName(c, language).toLowerCase().includes(q) || c.description.includes(q));
+  }, [submittedQuery, language]);
 
   const showResults = submittedQuery !== null;
   const showNoResults = showResults && results.length === 0;
@@ -58,7 +61,7 @@ export default function CategorySearchScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>카테고리 검색</Text>
+        <Text style={styles.topBarTitle}>{t('categorySearchTitle')}</Text>
         <View style={styles.backBtn} />
       </View>
 
@@ -86,10 +89,10 @@ export default function CategorySearchScreen() {
           <View style={styles.noResultsWrap}>
             <JjaekiQuestion size={96} />
             <Text style={styles.noResultsText}>
-              '{submittedQuery}'에 대한 검색 결과가 없습니다.{'\n'}단어를 다시 한번 확인해 주세요.
+              '{submittedQuery}' {t('noCategoryResultsPrefix')}{'\n'}{t('noCategoryResultsSuffix')}
             </Text>
             <TouchableOpacity onPress={() => router.push('/tabs/mypage/suggest')}>
-              <Text style={styles.suggestLink}>운영진에게 제안하기 ›</Text>
+              <Text style={styles.suggestLink}>{t('suggestToTeam')}</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -106,7 +109,7 @@ export default function CategorySearchScreen() {
                   <Text style={styles.resultEmoji}>{item.emoji}</Text>
                 </View>
                 <View style={styles.resultText}>
-                  <Text style={styles.resultName}>{item.name}</Text>
+                  <Text style={styles.resultName}>{getCategoryName(item, language)}</Text>
                   <Text style={styles.resultDesc} numberOfLines={1}>{item.description}</Text>
                 </View>
                 <Text style={styles.resultArrow}>›</Text>
@@ -119,10 +122,10 @@ export default function CategorySearchScreen() {
         <ScrollView contentContainerStyle={styles.stateScroll} keyboardShouldPersistTaps="handled">
           <View style={styles.section}>
             <View style={styles.sectionHeaderRow}>
-              <Text style={styles.sectionTitle}>최근 검색</Text>
+              <Text style={styles.sectionTitle}>{t('recentSearches')}</Text>
               {recent.length > 0 && (
                 <TouchableOpacity onPress={() => setRecent([])}>
-                  <Text style={styles.sectionAction}>모두 지우기</Text>
+                  <Text style={styles.sectionAction}>{t('clearAll')}</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -130,8 +133,8 @@ export default function CategorySearchScreen() {
             {recent.length === 0 ? (
               <View style={styles.noHistoryWrap}>
                 <JjaekiQuestion size={72} />
-                <Text style={styles.noHistoryText}>최근 검색어 내역이 없습니다.</Text>
-                <Text style={styles.noHistorySub}>궁금한 카테고리를 검색해 보세요</Text>
+                <Text style={styles.noHistoryText}>{t('noRecentSearches')}</Text>
+                <Text style={styles.noHistorySub}>{t('trySearchingCategory')}</Text>
               </View>
             ) : (
               recent.map(term => (
@@ -153,17 +156,17 @@ export default function CategorySearchScreen() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>추천 카테고리</Text>
+            <Text style={styles.sectionTitle}>{t('recommendedCategories')}</Text>
             <View style={styles.chipWrap}>
               {recommended.map(item => item && (
                 <TouchableOpacity
                   key={item.slug}
                   style={[styles.chip, { backgroundColor: item.colorBg }]}
-                  onPress={() => handleSubmit(item.name)}
+                  onPress={() => handleSubmit(getCategoryName(item, language))}
                   activeOpacity={0.8}
                 >
                   <Text style={[styles.chipText, { color: getReadableTextColor(item.colorBg) }]}>
-                    {item.name}
+                    {getCategoryName(item, language)}
                   </Text>
                 </TouchableOpacity>
               ))}

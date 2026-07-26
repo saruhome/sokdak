@@ -4,11 +4,12 @@ import {
 import { AppText as Text } from '@/components/AppText';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { Colors } from '../../../constants/Colors';
+import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { MOCK_WORDS, type Word } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
-import { getCategoryBySlug, type Category } from '../../../constants/categories';
+import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
@@ -21,6 +22,8 @@ const MIC_ICON = require('../../../assets/categories/icon-mic.png');
 
 /** Figma: 229:3738(즐겨찾기) — 좋아요 한 카테고리 + 저장한 단어를 함께 보여주는 화면 */
 export default function SavedWordsScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
   const [likedCategorySlugs, setLikedCategorySlugs] = useState<string[]>(authStore.getLikedCategorySlugs());
   const [showAllCategories, setShowAllCategories] = useState(false);
@@ -70,7 +73,7 @@ export default function SavedWordsScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>즐겨찾기</Text>
+        <Text style={styles.topBarTitle}>{t('favoritesTitle')}</Text>
         <View style={styles.backBtn} />
       </View>
 
@@ -90,7 +93,9 @@ export default function SavedWordsScreen() {
         {/* ── 좋아요 한 카테고리 ── */}
         {likedCategories.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>카테고리 {likedCategories.length}개</Text>
+            <Text style={styles.sectionTitle}>
+              {language === 'ko' ? `${t('categoriesSuffix')} ${likedCategories.length}개` : `${likedCategories.length} ${t('categoriesSuffix')}`}
+            </Text>
             <View style={styles.categoryRow}>
               {visibleCategories.map(category => (
                 <TouchableOpacity
@@ -100,19 +105,27 @@ export default function SavedWordsScreen() {
                   activeOpacity={0.85}
                 >
                   <ImageBackground source={category.image} style={styles.categoryCardBg} imageStyle={styles.categoryCardBgImage}>
+                    <View style={StyleSheet.absoluteFill}>
+                      <View style={styles.categoryCardOverlay} />
+                    </View>
                     <Image source={MIC_ICON} style={styles.micIcon} />
-                    <AppIcon
-                      icon={Star}
-                      size={18}
-                      fill={ACTIVE_STAR_COLOR}
-                      color={ACTIVE_STAR_COLOR}
-                      onPress={() => handleToggleCategory(category.slug)}
+                    <TouchableOpacity
+                      style={styles.likeBtn}
+                      onPress={e => {
+                        e.stopPropagation?.();
+                        handleToggleCategory(category.slug);
+                      }}
                       hitSlop={8}
-                      style={[styles.starIcon, styles.iconBtn]}
-                    />
-                    <View style={styles.categoryScrim} />
+                    >
+                      <AppIcon
+                        icon={Star}
+                        size={18}
+                        fill={ACTIVE_STAR_COLOR}
+                        color={ACTIVE_STAR_COLOR}
+                      />
+                    </TouchableOpacity>
                     <View style={styles.categoryTextWrap}>
-                      <Text style={styles.categoryName}>{category.name}</Text>
+                      <Text style={styles.categoryName} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.7}>{getCategoryName(category, language)}</Text>
                       <Text style={styles.categoryDesc} numberOfLines={1}>{category.description}</Text>
                     </View>
                   </ImageBackground>
@@ -121,15 +134,17 @@ export default function SavedWordsScreen() {
             </View>
             {likedCategories.length > 2 && (
               <TouchableOpacity onPress={() => setShowAllCategories(p => !p)} style={styles.moreBtn}>
-                <Text style={styles.moreBtnText}>{showAllCategories ? '접기' : '더보기'}</Text>
+                <Text style={styles.moreBtnText}>{showAllCategories ? t('collapseLabel') : t('moreLink')}</Text>
               </TouchableOpacity>
             )}
           </View>
         )}
 
-        {/* ── 저장한 단어 ── */}
+        {/* ── 즐겨찾기 단어 ── */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>단어 {words.length}개</Text>
+          <Text style={styles.sectionTitle}>
+            {language === 'ko' ? `${t('favoritesLabel')} ${words.length}개` : `${words.length} ${t('favoritesLabel')}`}
+          </Text>
           <View style={styles.wordList}>
             {words.map(word => {
               const category = getCategoryBySlug(word.category);
@@ -147,12 +162,12 @@ export default function SavedWordsScreen() {
                       <Text style={styles.wordReading}>{word.romanization}</Text>
                       {category && (
                         <View style={[styles.wordBadge, { backgroundColor: category.colorBg }]}>
-                          <Text style={[styles.wordBadgeText, { color: category.colorFg }]}>{category.name}</Text>
+                          <Text style={[styles.wordBadgeText, { color: getReadableTextColor(category.colorBg) }]} numberOfLines={1} ellipsizeMode="tail">{getCategoryName(category, language)}</Text>
                         </View>
                       )}
                       {secondaryCategory && (
                         <View style={[styles.wordBadge, { backgroundColor: secondaryCategory.colorBg }]}>
-                          <Text style={[styles.wordBadgeText, { color: secondaryCategory.colorFg }]}>{secondaryCategory.name}</Text>
+                          <Text style={[styles.wordBadgeText, { color: getReadableTextColor(secondaryCategory.colorBg) }]} numberOfLines={1} ellipsizeMode="tail">{getCategoryName(secondaryCategory, language)}</Text>
                         </View>
                       )}
                     </View>
@@ -174,13 +189,13 @@ export default function SavedWordsScreen() {
 
         {words.length === 0 && likedCategories.length === 0 && (
           <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>아직 즐겨찾기한 단어나 카테고리가 없어요</Text>
+            <Text style={styles.emptyText}>{t('noFavoritesYet')}</Text>
             <TouchableOpacity
               style={styles.emptyCta}
               onPress={() => router.push('/tabs/dictionary')}
               activeOpacity={0.85}
             >
-              <Text style={styles.emptyCtaText}>사전 둘러보기</Text>
+              <Text style={styles.emptyCtaText}>{t('browseDictionary')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -215,8 +230,16 @@ const styles = StyleSheet.create({
   /* width/height 미지정 시 ImageBackground가 이미지 원본 폭 기준으로 커져 카드가 넘친다 */
   categoryCardBg: { flex: 1, width: '100%', height: '100%' },
   categoryCardBgImage: { resizeMode: 'cover' },
+  categoryCardOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  },
   micIcon: { position: 'absolute', left: 12, top: 12, width: 16, height: 16, tintColor: '#1A1A1A' },
   starIcon: { position: 'absolute', right: 12, top: 12 },
+  likeBtn: {
+    position: 'absolute', right: 4, top: 4, width: 28, height: 28,
+    alignItems: 'center', justifyContent: 'center',
+  },
   categoryScrim: {
     position: 'absolute', left: 0, right: 0, bottom: 0, height: 44,
     backgroundColor: 'rgba(248,248,248,0.88)',

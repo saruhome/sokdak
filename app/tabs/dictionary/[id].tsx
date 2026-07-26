@@ -12,7 +12,8 @@ import { useCallback, useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { MOCK_WORDS } from '../../../constants/mockWords';
-import { getCategoryBySlug, type Category } from '../../../constants/categories';
+import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { authStore } from '../../../constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
 import { Star, Volume2, MessageCircle } from 'lucide-react-native';
@@ -24,6 +25,8 @@ const AVATAR_JJAEKI = require('../../../assets/characters/jjaeki.png');
 
 /** Figma node 683:3679(속닥 Sokdak) — Selection/Chip/Dictionary/Combined */
 export default function WordDetailScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const { id } = useLocalSearchParams<{ id: string }>();
   const word = MOCK_WORDS.find((w) => w.id === id);
 
@@ -40,9 +43,9 @@ export default function WordDetailScreen() {
   if (!word) {
     return (
       <SafeAreaView style={styles.notFound}>
-        <Text style={styles.notFoundText}>단어를 찾을 수 없어요</Text>
+        <Text style={styles.notFoundText}>{t('wordNotFound')}</Text>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backBtnText}>돌아가기</Text>
+          <Text style={styles.backBtnText}>{t('goBack')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -104,7 +107,7 @@ export default function WordDetailScreen() {
                     style={[styles.tab, active ? styles.tabActive : styles.tabInactive]}
                     onPress={() => setActiveTab(cat.slug)}
                   >
-                    <Text style={[styles.tabText, active && styles.tabTextActive]}>{cat.name}</Text>
+                    <Text style={[styles.tabText, active && styles.tabTextActive]}>{getCategoryName(cat, language)}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -127,7 +130,7 @@ export default function WordDetailScreen() {
                   {categories.map(cat => (
                     <View key={cat.slug} style={[styles.badge, { backgroundColor: cat.colorBg }]}>
                       <Text style={[styles.badgeText, { color: getReadableTextColor(cat.colorBg) }]}>
-                        {cat.name}
+                        {getCategoryName(cat, language)}
                       </Text>
                     </View>
                   ))}
@@ -138,8 +141,8 @@ export default function WordDetailScreen() {
             {/* 의미 Meaning */}
             <View style={styles.meaningBlock}>
               <View style={styles.sectionHeaderRow}>
-                <Text style={styles.sectionTitle}>의미</Text>
-                <Text style={styles.sectionTitleEn}>Meaning</Text>
+                <Text style={styles.sectionTitle}>{t('meaning')}</Text>
+                {language === 'ko' && <Text style={styles.sectionTitleEn}>Meaning</Text>}
               </View>
               <Text style={styles.definitionText}>{word.meanings[0]?.definition}</Text>
               {englishGloss && <Text style={styles.definitionEng}>{englishGloss}</Text>}
@@ -149,8 +152,8 @@ export default function WordDetailScreen() {
             {word.usage && (
               <View style={styles.contextCard}>
                 <View style={styles.sectionHeaderRowSm}>
-                  <Text style={styles.sectionTitleSm}>문화적 배경</Text>
-                  <Text style={styles.sectionTitleEnSm}>Cultural Context</Text>
+                  <Text style={styles.sectionTitleSm}>{t('culturalContext')}</Text>
+                  {language === 'ko' && <Text style={styles.sectionTitleEnSm}>Cultural Context</Text>}
                 </View>
                 <Text style={styles.contextBody}>{word.usage}</Text>
                 {word.usageEn && <Text style={styles.contextBodyEn}>{word.usageEn}</Text>}
@@ -161,8 +164,8 @@ export default function WordDetailScreen() {
             {examples.length > 0 && (
               <View style={styles.conversationBlock}>
                 <View style={styles.sectionHeaderRow}>
-                  <Text style={styles.sectionTitle}>대화 예시</Text>
-                  <Text style={styles.sectionTitleEn}>Conversation</Text>
+                  <Text style={styles.sectionTitle}>{t('conversationExample')}</Text>
+                  {language === 'ko' && <Text style={styles.sectionTitleEn}>Conversation</Text>}
                 </View>
                 <View style={styles.chatWrap}>
                   {examples.map((ex, idx) => {
@@ -206,8 +209,8 @@ export default function WordDetailScreen() {
             <View style={styles.tipCard}>
               <View style={styles.tipHeaderRow}>
                 <FocusIcon size={16} color={Colors.point1} />
-                <Text style={styles.tipTitle}>추가 정보</Text>
-                <Text style={styles.tipTitleEn}>Additional Tip</Text>
+                <Text style={styles.tipTitle}>{t('additionalInfo')}</Text>
+                {language === 'ko' && <Text style={styles.tipTitleEn}>Additional Tip</Text>}
               </View>
               <Text style={styles.contextBody}>{word.origin}</Text>
               {word.originEn && <Text style={styles.contextBodyEn}>{word.originEn}</Text>}
@@ -217,7 +220,7 @@ export default function WordDetailScreen() {
           {/* ── 관련 단어 ── */}
           {word.relatedWords.length > 0 && (
             <View style={styles.relatedCard}>
-              <Text style={styles.sectionTitle}>관련 단어</Text>
+              <Text style={styles.sectionTitle}>{t('relatedWords')}</Text>
               <View style={styles.relatedRow}>
                 {word.relatedWords.map((rw) => {
                   const target = MOCK_WORDS.find((w) => w.word === rw);
@@ -242,10 +245,10 @@ export default function WordDetailScreen() {
           <TouchableOpacity style={styles.communityBanner} onPress={() => router.push('/tabs/community')}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <AppIcon icon={MessageCircle} size={15} color={Colors.navBarIconActive} />
-              <Text style={styles.communityBannerTitle}>이 단어로 커뮤니티에 물어보기</Text>
+              <Text style={styles.communityBannerTitle}>{t('askInCommunity')}</Text>
             </View>
             <Text style={styles.communityBannerSub}>
-              {word.word}에 대해 더 궁금한 점이 있으신가요?
+              {language === 'ko' ? `${word.word}에 대해 더 궁금한 점이 있으신가요?` : `"${word.word}"${t('askInCommunityQuestion')}`}
             </Text>
           </TouchableOpacity>
         </View>

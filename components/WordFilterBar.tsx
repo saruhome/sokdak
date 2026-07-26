@@ -2,7 +2,8 @@ import { StyleSheet, View, Modal, ScrollView, TouchableOpacity } from 'react-nat
 import { AppText as Text } from '@/components/AppText';
 import { useState } from 'react';
 import { Colors, getCategoryLabelColor, getReadableTextColor } from '@/constants/Colors';
-import { CATEGORIES, getCategoryBySlug } from '@/constants/categories';
+import { CATEGORIES, getCategoryBySlug, getCategoryName } from '@/constants/categories';
+import { languageStore, useLanguage } from '@/constants/languageStore';
 import { SCREEN_WIDTH } from '@/constants/layout';
 import { type Word } from '@/constants/mockWords';
 import { AppIcon } from '@/components/AppIcon';
@@ -65,22 +66,25 @@ export function WordFilterBar({
   consonant: string;
   onSelectConsonant: (c: string) => void;
 }) {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [pickerOpen, setPickerOpen] = useState(false);
   const showConsonantRow = sortIndex === 2;
+  const sortLabel = sortIndex === 0 ? t('sortPopular') : sortIndex === 1 ? t('sortRecent') : t('sortConsonant');
 
   return (
     <>
       <View style={styles.filterBar}>
         <Text style={styles.totalCount}>
-          총 <Text style={styles.totalCountNumber}>{total}</Text> 단어
+          {t('totalPrefix')} <Text style={styles.totalCountNumber}>{total}</Text> {t('wordsSuffix')}
         </Text>
         <View style={styles.filterTriggers}>
           <TouchableOpacity style={styles.sortTrigger} onPress={onCycleSort}>
-            <Text style={styles.sortTriggerText}>{SORT_TABS[sortIndex]}</Text>
+            <Text style={styles.sortTriggerText}>{sortLabel}</Text>
             <AppIcon icon={ChevronDown} size={14} color={Colors.textSecondary} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.categoryTrigger} onPress={() => setPickerOpen(true)}>
-            <Text style={styles.categoryTriggerText}>카테고리</Text>
+            <Text style={styles.categoryTriggerText}>{t('categoryFilterLabel')}</Text>
             <AppIcon icon={List} size={12} color={Colors.textSecondary} />
             {/* Figma: 필터가 걸려 있으면 버튼에 활성 점 표시 */}
             {categorySlugs.length > 0 && <View style={styles.filterDot} />}
@@ -96,7 +100,7 @@ export function WordFilterBar({
             if (!c) return null;
             return (
               <TouchableOpacity key={slug} style={styles.chip} onPress={() => onToggleCategory(slug)}>
-                <Text style={styles.chipText}>{c.name}</Text>
+                <Text style={styles.chipText}>{getCategoryName(c, language)}</Text>
                 <AppIcon icon={X} size={12} color={Colors.textTertiary} />
               </TouchableOpacity>
             );
@@ -117,7 +121,9 @@ export function WordFilterBar({
               style={[styles.consonantChip, consonant === c && styles.consonantChipActive]}
               onPress={() => onSelectConsonant(c)}
             >
-              <Text style={[styles.consonantChipText, consonant === c && styles.consonantChipTextActive]}>{c}</Text>
+              <Text style={[styles.consonantChipText, consonant === c && styles.consonantChipTextActive]}>
+                {c === '전체' ? t('allLabel') : c}
+              </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -129,12 +135,12 @@ export function WordFilterBar({
           <TouchableOpacity style={styles.modalSheet} activeOpacity={1}>
             <View style={styles.grabHandle} />
             <View style={styles.modalHint}>
-              <Text style={styles.modalHintText} numberOfLines={1}>선택한 카테고리에 해당하는 단어만 보여드려요</Text>
+              <Text style={styles.modalHintText} numberOfLines={1}>{t('modalHint')}</Text>
             </View>
 
             <ScrollView contentContainerStyle={styles.chipGrid}>
               <View style={styles.chipGridHeader}>
-                <Text style={styles.chipGridTitle}>카테고리</Text>
+                <Text style={styles.chipGridTitle}>{t('categoryFilterLabel')}</Text>
                 <Text style={styles.chipCount}>
                   {categorySlugs.length}
                   <Text style={styles.chipCountTotal}>/{CATEGORIES.length}</Text>
@@ -156,7 +162,7 @@ export function WordFilterBar({
                           { color: on ? getReadableTextColor(c.colorBg) : getCategoryLabelColor(c.colorBg, c.colorFg) },
                         ]}
                       >
-                        {c.name}
+                        {getCategoryName(c, language)}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -167,10 +173,12 @@ export function WordFilterBar({
             <View style={styles.modalFooter}>
               <TouchableOpacity style={styles.modalReset} onPress={onClearCategories}>
                 <AppIcon icon={RotateCcw} size={16} color={Colors.textTertiary} />
-                <Text style={styles.modalResetText}>초기화</Text>
+                <Text style={styles.modalResetText}>{t('resetLabel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.modalApply} onPress={() => setPickerOpen(false)}>
-                <Text style={styles.modalApplyText}>총 {categorySlugs.length}개 적용하기</Text>
+                <Text style={styles.modalApplyText}>
+                  {language === 'ko' ? `총 ${categorySlugs.length}개 적용하기` : `${t('applyLabel')} ${categorySlugs.length}`}
+                </Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>

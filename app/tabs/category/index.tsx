@@ -6,15 +6,19 @@ import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors, getCategoryLabelColor } from '../../../constants/Colors';
+import { SCREEN_WIDTH } from '../../../constants/layout';
 import { CATEGORIES, type Category } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
+import { CalloutBubble } from '@/components/icons/CalloutBubble';
 import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
 
 const HORANG_ICON = require('../../../assets/Callout Card/image 146.png');
 const MIC_ICON = require('../../../assets/categories/icon-mic.png');
 const ACTIVE_STAR_COLOR = '#FACC15';
+/* grid contentContainerStyle의 paddingHorizontal(24) 두 배만큼 뺀 실제 카드 폭 */
+const RECOMMEND_CARD_WIDTH = SCREEN_WIDTH - 48;
 
 type SortMode = '인기순' | '가나다순';
 
@@ -79,12 +83,15 @@ export default function CategoryScreen() {
               </View>
             </TouchableOpacity>
 
-            {/* ── 추천 카테고리 – Figma: Callout Card/Recommend_호랭 */}
+            {/* ── 추천 카테고리 – Figma: Callout Card/Recommend_호랭 (말풍선 배경 + 호랭) */}
             <TouchableOpacity
               style={styles.recommendCard}
               onPress={() => router.push(`/tabs/category/${topCategory.slug}`)}
               activeOpacity={0.85}
             >
+              <View style={StyleSheet.absoluteFill}>
+                <CalloutBubble width={RECOMMEND_CARD_WIDTH} height={108} />
+              </View>
               <View style={styles.recommendTextWrap}>
                 <Text style={styles.recommendLabel}>요즘 핫한 카테고리예요!</Text>
                 <Text style={styles.recommendName} numberOfLines={2}>&quot;{topCategory.name}&quot;</Text>
@@ -186,19 +193,18 @@ const styles = StyleSheet.create({
   },
   searchPlaceholder: { flex: 1, fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
 
-  /* Figma: Callout Card/Recommend_호랭 — 실사 이미지 대신 앱 마스코트(호랭) 재사용,
-   * 원본의 gray→zinc-800 그라디언트는 expo-linear-gradient 미설치라 단색으로 단순화 */
+  /* Figma: Callout Card/Recommend_호랭 — 배경은 Bubble_호랭.svg를 그대로 그린 CalloutBubble,
+   * 실사 이미지 대신 앱 마스코트(호랭)를 꼬리 쪽에 재사용 */
   recommendCard: {
     marginTop: 8, marginBottom: 16,
-    height: 108, borderRadius: 10,
-    backgroundColor: Colors.pageBackground,
+    height: 108,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingLeft: 16, overflow: 'hidden',
+    paddingLeft: 16,
   },
-  recommendTextWrap: { gap: 4, flexShrink: 1 },
-  recommendLabel: { fontSize: 13, color: Colors.textPrimary, fontFamily: undefined },
-  recommendName: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
-  recommendClick: { fontSize: 11, color: Colors.textTertiary, fontFamily: undefined },
+  recommendTextWrap: { gap: 8, flexShrink: 1 },
+  recommendLabel: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },
+  recommendName: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
+  recommendClick: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
   recommendImg: { width: 93, height: 107, marginRight: 8 },
 
   filterRow: {
@@ -227,7 +233,7 @@ const styles = StyleSheet.create({
   cardBg: { flex: 1, width: '100%', height: '100%' },
   cardBgImage: { resizeMode: 'cover' },
   cardOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(255,255,255,0.3)',
   },
   cardTopRow: {

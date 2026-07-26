@@ -59,6 +59,8 @@ export default function CategoryScreen() {
       <FlatList
         data={sortedCategories}
         keyExtractor={item => item.slug}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         numColumns={2}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.grid}
@@ -132,10 +134,7 @@ export default function CategoryScreen() {
                 {/* 사진 위 글자 가독성 확보용 반투명 스크림 */}
                 <View style={styles.cardScrim} />
                 <View style={styles.cardTextWrap}>
-                  <Text style={[styles.categoryName, { color: labelColor }]}>{item.name}</Text>
-                  <Text style={[styles.categoryDesc, { color: labelColor }]} numberOfLines={1}>
-                    {item.description}
-                  </Text>
+                  <Text style={styles.categoryName} numberOfLines={2}>{item.name}</Text>
                 </View>
               </ImageBackground>
             </TouchableOpacity>
@@ -201,10 +200,12 @@ const styles = StyleSheet.create({
 
   grid: { paddingHorizontal: 24, paddingBottom: 24 },
   row: { gap: 12, marginBottom: 12 },
-  /* Figma: Selection/Card/Category (158×104) — 카드 배경은 카테고리별 일러스트 */
+  /* Figma: Selection/Card/Category (158×104) — 카드 배경은 카테고리별 일러스트.
+   * 설명을 없애고 제목을 2배(28px)로 키우면서 "자주 쓰는 신조어"처럼 2줄이 되는
+   * 이름이 상단 아이콘 줄과 겹치지 않도록 원래 104px보다 카드를 늘렸다. */
   categoryCard: {
     flex: 1,
-    height: 104,
+    height: 144,
     borderRadius: 10,
     borderWidth: 1, borderColor: Colors.border,
     overflow: 'hidden',
@@ -222,10 +223,11 @@ const styles = StyleSheet.create({
   micIcon: { width: 16, height: 16, tintColor: '#1A1A1A' },
   likeBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   cardScrim: {
-    position: 'absolute', left: 0, right: 0, bottom: 0, height: 44,
+    position: 'absolute', left: 0, right: 0, bottom: 0, height: 78,
     backgroundColor: 'rgba(248,248,248,0.88)',
   },
-  cardTextWrap: { position: 'absolute', left: 12, right: 12, bottom: 10, gap: 2 },
-  categoryName: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold' },
-  categoryDesc: { fontSize: 11, opacity: 0.85, fontFamily: undefined },
+  cardTextWrap: { position: 'absolute', left: 12, right: 12, bottom: 10 },
+  /* 스크림이 항상 거의 흰색(rgba(248,248,248,0.88))이라 카테고리별 색 대신
+   * 고정된 짙은 색을 써야 어떤 카테고리든 대비가 보장된다 */
+  categoryName: { fontSize: 28, lineHeight: 32, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
 });

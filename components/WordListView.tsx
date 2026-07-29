@@ -112,9 +112,9 @@ export function WordListView({
                 activeOpacity={0.85}
               >
                 <View style={styles.tipTextWrap}>
-                  {t('tipHint').split('\n').map(line => (
-                    <Text key={line} style={styles.tipHint} numberOfLines={1} adjustsFontSizeToFit>{line}</Text>
-                  ))}
+                  <Text style={styles.tipHint} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
+                    {t('tipHint').replace('\n', ' ')}
+                  </Text>
                   <Text style={styles.tipWord}>&quot;{tipWord.word}&quot;</Text>
                   <Text style={styles.tipClick}>Click &gt;</Text>
                 </View>

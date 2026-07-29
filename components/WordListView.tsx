@@ -112,7 +112,9 @@ export function WordListView({
                 activeOpacity={0.85}
               >
                 <View style={styles.tipTextWrap}>
-                  <Text style={styles.tipHint}>{t('tipHint')}</Text>
+                  {t('tipHint').split('\n').map(line => (
+                    <Text key={line} style={styles.tipHint} numberOfLines={1} adjustsFontSizeToFit>{line}</Text>
+                  ))}
                   <Text style={styles.tipWord}>&quot;{tipWord.word}&quot;</Text>
                   <Text style={styles.tipClick}>Click &gt;</Text>
                 </View>
@@ -221,7 +223,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.pageBackground,
     borderRadius: 10, overflow: 'hidden',
   },
-  tipTextWrap: { flexShrink: 1, gap: 4 },
+  /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 캐릭터와 겹친다 */
+  tipTextWrap: { flexShrink: 1, minWidth: 0, gap: 4 },
   tipHint: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },
   tipWord: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
   tipClick: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },

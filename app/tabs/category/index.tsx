@@ -208,7 +208,8 @@ const styles = StyleSheet.create({
   },
   /* 카드 폭 전체로 늘리면 꼬리 비율이 밀려 호랭이와 겹쳐서, 원본 비율 그대로 왼쪽에만 붙인다 */
   bubbleLayer: { position: 'absolute', left: 0, top: 0 },
-  recommendTextWrap: { gap: 8, flexShrink: 1 },
+  /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 호랭이와 겹친다 */
+  recommendTextWrap: { gap: 8, flexShrink: 1, minWidth: 0 },
   recommendLabel: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },
   recommendName: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
   recommendClick: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },

@@ -44,8 +44,11 @@ function toDate(iso: string) {
   return iso.slice(0, 10);
 }
 
+/* profiles!posts_author_id_fkey — posts→profiles 경로가 direct FK와 post_likes 경유 두 가지라
+ * PostgREST가 어느 쪽인지 못 정하고 에러(PGRST201)를 내서 fetchPosts가 항상 빈 배열을 반환했다.
+ * FK 이름으로 명시해 direct FK 쪽으로 고정. */
 const POST_SUMMARY_SELECT =
-  'id, board, title, content, view_count, created_at, profiles(nickname, avatar_emoji, avatar_url, level), post_likes(count), comments(count)';
+  'id, board, title, content, view_count, created_at, profiles!posts_author_id_fkey(nickname, avatar_emoji, avatar_url, level), post_likes(count), comments(count)';
 
 function mapPostSummaryRow(row: any): CommunityPostSummary {
   return {
@@ -115,7 +118,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
   const [{ data: post, error: postError }, { data: comments }] = await Promise.all([
     supabase
       .from('posts')
-      .select('id, board, title, content, view_count, created_at, profiles(nickname, avatar_emoji, avatar_url, level), post_likes(count)')
+      .select('id, board, title, content, view_count, created_at, profiles!posts_author_id_fkey(nickname, avatar_emoji, avatar_url, level), post_likes(count)')
       .eq('id', id)
       .single(),
     supabase

@@ -17,6 +17,7 @@ export type CommunityComment = {
 
 export type CommunityPostSummary = {
   id: string;
+  authorId: string;
   board: PostBoard;
   title: string;
   content: string;
@@ -48,11 +49,12 @@ function toDate(iso: string) {
  * PostgREST가 어느 쪽인지 못 정하고 에러(PGRST201)를 내서 fetchPosts가 항상 빈 배열을 반환했다.
  * FK 이름으로 명시해 direct FK 쪽으로 고정. */
 const POST_SUMMARY_SELECT =
-  'id, board, title, content, view_count, created_at, profiles!posts_author_id_fkey(nickname, avatar_emoji, avatar_url, level), post_likes(count), comments(count)';
+  'id, author_id, board, title, content, view_count, created_at, profiles!posts_author_id_fkey(nickname, avatar_emoji, avatar_url, level), post_likes(count), comments(count)';
 
 function mapPostSummaryRow(row: any): CommunityPostSummary {
   return {
     id: row.id,
+    authorId: row.author_id,
     board: row.board as PostBoard,
     title: row.title,
     content: row.content,
@@ -118,7 +120,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
   const [{ data: post, error: postError }, { data: comments }] = await Promise.all([
     supabase
       .from('posts')
-      .select('id, board, title, content, view_count, created_at, profiles!posts_author_id_fkey(nickname, avatar_emoji, avatar_url, level), post_likes(count)')
+      .select('id, author_id, board, title, content, view_count, created_at, profiles!posts_author_id_fkey(nickname, avatar_emoji, avatar_url, level), post_likes(count)')
       .eq('id', id)
       .single(),
     supabase
@@ -154,6 +156,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
 
   return {
     id: post.id,
+    authorId: post.author_id,
     board: post.board as PostBoard,
     title: post.title,
     content: post.content,
@@ -185,6 +188,21 @@ export async function createPost(params: { board: PostBoard; title: string; cont
     .single();
 
   return { data, error: error?.message ?? null };
+}
+
+/** 게시글 수정 — RLS(authors can update their own posts)가 작성자 본인만 허용 */
+export async function updatePost(id: string, params: { board: PostBoard; title: string; content: string }) {
+  const { error } = await supabase
+    .from('posts')
+    .update({ board: params.board, title: params.title, content: params.content })
+    .eq('id', id);
+  return { error: error?.message ?? null };
+}
+
+/** 게시글 삭제 — RLS(authors can delete their own posts)가 작성자 본인만 허용 */
+export async function deletePost(id: string) {
+  const { error } = await supabase.from('posts').delete().eq('id', id);
+  return { error: error?.message ?? null };
 }
 
 export async function createComment(params: { postId: string; content: string; parentCommentId?: string | null }) {

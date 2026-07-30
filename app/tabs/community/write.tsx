@@ -3,8 +3,8 @@ import {
   TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS, getBoardLabel, type PostBoard } from '../../../constants/mockPosts';
@@ -12,7 +12,7 @@ import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { Camera, Link2, Type } from 'lucide-react-native';
 import { authStore } from '../../../constants/authStore';
-import { createPost } from '../../../constants/community';
+import { createPost, fetchPost, updatePost } from '../../../constants/community';
 
 const BOARD_OPTIONS: PostBoard[] = ['궁금해요', 'Q&A', '질문하기'];
 
@@ -26,11 +26,23 @@ const TOOLBAR_ITEMS = [
 export default function WritePostScreen() {
   const language = useLanguage();
   const t = languageStore.t;
+  const { editId } = useLocalSearchParams<{ editId?: string }>();
   const [board, setBoard]       = useState<PostBoard>('궁금해요');
   const [accordionOpen, setAccordionOpen] = useState(false);
   const [title, setTitle]       = useState('');
   const [content, setContent]   = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  /* 수정 진입 — editId로 열리면 기존 글을 불러와 채워둔다 */
+  useEffect(() => {
+    if (!editId) return;
+    fetchPost(editId).then(post => {
+      if (!post) return;
+      setBoard(post.board);
+      setTitle(post.title);
+      setContent(post.content);
+    });
+  }, [editId]);
 
   if (!authStore.isLoggedIn()) {
     return (
@@ -51,15 +63,19 @@ export default function WritePostScreen() {
       return;
     }
     setSubmitting(true);
-    const { data, error } = await createPost({ board, title: title.trim(), content: content.trim() });
+    const params = { board, title: title.trim(), content: content.trim() };
+    const { error, id } = editId
+      ? await updatePost(editId, params).then(res => ({ ...res, id: editId }))
+      : await createPost(params).then(res => ({ error: res.error, id: res.data?.id }));
     setSubmitting(false);
-    if (error || !data) {
+    if (error || !id) {
       Alert.alert(t('submitFailedTitle'), error ?? t('unknownError'));
       return;
     }
-    router.replace(`/tabs/community/${data.id}`);
+    router.replace(`/tabs/community/${id}`);
   };
 
+  const cancelDestination = editId ? `/tabs/community/${editId}` : '/tabs/community';
   const handleCancel = () => {
     if (title.trim() || content.trim()) {
       Alert.alert(
@@ -67,11 +83,11 @@ export default function WritePostScreen() {
         t('cancelWriteMessage'),
         [
           { text: t('keepWriting'), style: 'cancel' },
-          { text: t('cancelLabel'), style: 'destructive', onPress: () => router.replace('/tabs/community') },
+          { text: t('cancelLabel'), style: 'destructive', onPress: () => router.replace(cancelDestination) },
         ],
       );
     } else {
-      router.replace('/tabs/community');
+      router.replace(cancelDestination);
     }
   };
 

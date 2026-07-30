@@ -1,5 +1,5 @@
 import {
-  StyleSheet, View, SafeAreaView, ScrollView,
+  StyleSheet, View, SafeAreaView, ScrollView, Modal,
   TouchableOpacity, TextInput, KeyboardAvoidingView,
   Platform, Alert, ActivityIndicator,
 } from 'react-native';
@@ -11,9 +11,12 @@ import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS, getBoardLabel } from '../../../constants/mockPosts';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
-import { fetchPost, createComment, type CommunityComment, type CommunityPostDetail } from '../../../constants/community';
+import { fetchPost, deletePost, createComment, type CommunityComment, type CommunityPostDetail } from '../../../constants/community';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye } from 'lucide-react-native';
+import {
+  Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye,
+  Pencil, Trash2, Flag, Ban,
+} from 'lucide-react-native';
 
 const ACTIVE_STAR_COLOR = '#FACC15';
 
@@ -30,6 +33,7 @@ export default function PostDetailScreen() {
   const [sendingComment, setSendingComment] = useState(false);
   /* 댓글은 서버에서 등록순(오래된 순)으로 오므로, 최신순은 그냥 뒤집어서 보여준다 */
   const [commentSort, setCommentSort] = useState<'oldest' | 'newest'>('oldest');
+  const [menuOpen, setMenuOpen] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
   const load = useCallback(() => {
@@ -125,6 +129,39 @@ export default function PostDetailScreen() {
     setSaved(authStore.isPostSaved(post.id));
   };
 
+  const isOwner = authStore.getUser()?.id === post.authorId;
+
+  const handleEdit = () => {
+    setMenuOpen(false);
+    router.push(`/tabs/community/write?editId=${post.id}`);
+  };
+
+  const handleDelete = () => {
+    setMenuOpen(false);
+    Alert.alert('게시글 삭제', '정말 삭제하시겠어요? 되돌릴 수 없어요.', [
+      { text: t('cancelLabel'), style: 'cancel' },
+      {
+        text: '삭제',
+        style: 'destructive',
+        onPress: async () => {
+          const { error } = await deletePost(post.id);
+          if (error) { Alert.alert('삭제 실패', error); return; }
+          router.replace('/tabs/community');
+        },
+      },
+    ]);
+  };
+
+  const handleReport = () => {
+    setMenuOpen(false);
+    Alert.alert('신고 접수', '신고가 접수됐어요. 운영팀이 확인할게요.');
+  };
+
+  const handleBlock = () => {
+    setMenuOpen(false);
+    Alert.alert('사용자 차단', `${post.author.name}님을 차단했어요.`);
+  };
+
   const totalComments = post.commentCount;
 
   return (
@@ -141,9 +178,42 @@ export default function PostDetailScreen() {
           </TouchableOpacity>
           <View style={styles.topBarRight}>
             <AppIcon icon={Share2} size={20} style={styles.iconButton} onPress={() => {}} />
-            <AppIcon icon={MoreVertical} size={20} style={styles.iconButton} onPress={() => {}} />
+            <AppIcon icon={MoreVertical} size={20} style={styles.iconButton} onPress={() => setMenuOpen(true)} />
           </View>
         </View>
+
+        {/* ── 케밥 메뉴 – 내 글: 수정/삭제, 다른 사람 글: 신고/차단 ── */}
+        <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
+          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setMenuOpen(false)}>
+            <View style={styles.menuSheet}>
+              {isOwner ? (
+                <>
+                  <TouchableOpacity style={styles.menuItem} onPress={handleEdit}>
+                    <AppIcon icon={Pencil} size={14} color={Colors.textPrimary} />
+                    <Text style={styles.menuItemText}>수정</Text>
+                  </TouchableOpacity>
+                  <View style={styles.menuDivider} />
+                  <TouchableOpacity style={styles.menuItem} onPress={handleDelete}>
+                    <AppIcon icon={Trash2} size={14} color={Colors.textPrimary} />
+                    <Text style={styles.menuItemText}>삭제</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <TouchableOpacity style={styles.menuItem} onPress={handleReport}>
+                    <AppIcon icon={Flag} size={14} color={Colors.textPrimary} />
+                    <Text style={styles.menuItemText}>신고</Text>
+                  </TouchableOpacity>
+                  <View style={styles.menuDivider} />
+                  <TouchableOpacity style={styles.menuItem} onPress={handleBlock}>
+                    <AppIcon icon={Ban} size={14} color={Colors.textPrimary} />
+                    <Text style={styles.menuItemText}>차단</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          </TouchableOpacity>
+        </Modal>
 
         <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
           {/* ── 게시글 본문 영역 ── */}
@@ -339,6 +409,22 @@ const styles = StyleSheet.create({
   iconButton: { width: 40, height: 44, alignItems: 'center', justifyContent: 'center' },
   shareIcon: { fontSize: 17 },
   moreIcon: { fontSize: 20, color: Colors.textSecondary },
+
+  /* 케밥 메뉴 — Figma: 80×72, 라운드 카드 두 줄 (2글자 라벨이 안 줄바꿈되게 92px로 살짝 넓힘) */
+  menuBackdrop: { flex: 1 },
+  menuSheet: {
+    position: 'absolute', top: 44, right: 6, width: 92,
+    borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.surface, overflow: 'hidden',
+    shadowColor: '#909090', shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.25, shadowRadius: 4, elevation: 4,
+  },
+  menuItem: {
+    height: 36, flexDirection: 'row', alignItems: 'center', gap: 6,
+    paddingHorizontal: 12,
+  },
+  menuItemText: { fontSize: 13, color: Colors.textPrimary, fontFamily: undefined, flexShrink: 0 },
+  menuDivider: { height: 1, backgroundColor: Colors.border },
   boardBadge: {
     paddingHorizontal: 12, paddingVertical: 4,
     borderRadius: 12,

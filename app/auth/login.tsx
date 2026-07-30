@@ -1,45 +1,21 @@
 import {
   StyleSheet, View, Image, SafeAreaView,
-  TouchableOpacity, ScrollView, Alert,
+  TouchableOpacity, ScrollView,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
-import { BackIcon, FacebookLogo, GoogleLogo, AppleLogo } from '@/components/icons/SocialIcons';
+import { BackIcon } from '@/components/icons/SocialIcons';
 import { SokDakLogo } from '@/components/icons/SokDakLogo';
 
 const AVATAR_JJAEKI = require('../../assets/characters/jjaeki-full.png');
 const AVATAR_HORANG = require('../../assets/characters/horang-full.png');
 
-/** Figma: Continue with Facebook/Google/Apple / Centre / Fixed */
-function SocialButton({
-  icon, label, bg, textColor, shadow, onPress,
-}: {
-  icon: React.ReactNode; label: string;
-  bg: string; textColor: string; shadow?: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <TouchableOpacity
-      style={[styles.socialBtn, { backgroundColor: bg }, shadow && styles.socialBtnShadow]}
-      onPress={onPress}
-      activeOpacity={0.85}
-    >
-      {icon}
-      <Text style={[styles.socialBtnLabel, { color: textColor }]}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-
 /** Figma node 1288:16671(속닥 Sokdak) — 로그인 페이지
  *  소셜 로그인(Facebook/Google/Apple)은 Supabase 쪽 OAuth 프로바이더 설정(클라이언트 ID·
- *  리다이렉트 URI 등)이 별도로 필요해 이번 백엔드 연동 범위 밖 — 실제 인증은 이메일 로그인으로. */
+ *  리다이렉트 URI 등)이 별도로 필요해 이번 백엔드 연동 범위 밖이라 일단 숨김 — 실제 인증은 이메일 로그인으로. */
 export default function LoginScreen() {
-  const handleSocialLogin = (provider: string) => {
-    Alert.alert(`${provider} 로그인`, '소셜 로그인은 준비 중이에요. 이메일로 로그인해주세요.');
-  };
-
   const handleEmailLogin = () => {
     router.push('/auth/email-login');
   };
@@ -70,33 +46,8 @@ export default function LoginScreen() {
           <Image source={AVATAR_HORANG} style={styles.horangImg} resizeMode="contain" />
         </View>
 
-        {/* ── 소셜 로그인 버튼 ── Figma: Continue with Facebook/Google/Apple */}
+        {/* 소셜 로그인(Facebook/Google/Apple)은 일단 숨김 — 이메일 로그인만 남긴다 */}
         <View style={styles.socialSection}>
-          <SocialButton
-            icon={<FacebookLogo size={20} />}
-            label="Log In with Facebook"
-            bg="#1877F2"
-            textColor="#fff"
-            onPress={() => handleSocialLogin('Facebook')}
-          />
-          <SocialButton
-            icon={<GoogleLogo size={20} />}
-            label="Log In with Google"
-            bg="#fff"
-            textColor="rgba(0,0,0,0.54)"
-            shadow
-            onPress={() => handleSocialLogin('Google')}
-          />
-          <SocialButton
-            icon={<AppleLogo size={20} />}
-            label="Log In with Apple"
-            bg="#000"
-            textColor="#fff"
-            shadow
-            onPress={() => handleSocialLogin('Apple')}
-          />
-
-          {/* 이메일로 로그인 */}
           <TouchableOpacity style={styles.emailLoginBtn} onPress={handleEmailLogin} activeOpacity={0.85}>
             <Text style={styles.emailLoginText}>이메일로 로그인</Text>
           </TouchableOpacity>
@@ -138,18 +89,7 @@ const styles = StyleSheet.create({
   jjaekiImg: { width: 69, height: 91, transform: [{ scaleX: -1 }] },
   horangImg: { width: 102, height: 158 },
 
-  /* ── 소셜 버튼 ── */
   socialSection: { width: '100%', maxWidth: 282, alignSelf: 'center', marginTop: 40, gap: 16 },
-  socialBtn: {
-    height: 44, borderRadius: 8,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 12,
-  },
-  socialBtnShadow: {
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.17, shadowRadius: 1.5, elevation: 2,
-  },
-  socialBtnLabel: { fontSize: 16, fontWeight: '500', fontFamily: undefined },
 
   emailLoginBtn: {
     height: 44, borderRadius: 8,

@@ -100,7 +100,7 @@ export function WordFilterBar({
             if (!c) return null;
             return (
               <TouchableOpacity key={slug} style={styles.chip} onPress={() => onToggleCategory(slug)}>
-                <Text style={styles.chipText}>{getCategoryName(c, language)}</Text>
+                <Text style={styles.chipText} numberOfLines={1}>{getCategoryName(c, language)}</Text>
                 <AppIcon icon={X} size={12} color={Colors.textTertiary} />
               </TouchableOpacity>
             );
@@ -161,6 +161,7 @@ export function WordFilterBar({
                           styles.pickChipText,
                           { color: on ? getReadableTextColor(c.colorBg) : getCategoryLabelColor(c.colorBg, c.colorFg) },
                         ]}
+                        numberOfLines={1}
                       >
                         {getCategoryName(c, language)}
                       </Text>

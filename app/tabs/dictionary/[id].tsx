@@ -107,7 +107,7 @@ export default function WordDetailScreen() {
                     style={[styles.tab, active ? styles.tabActive : styles.tabInactive]}
                     onPress={() => setActiveTab(cat.slug)}
                   >
-                    <Text style={[styles.tabText, active && styles.tabTextActive]}>{getCategoryName(cat, language)}</Text>
+                    <Text style={[styles.tabText, active && styles.tabTextActive]} numberOfLines={1}>{getCategoryName(cat, language)}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -129,7 +129,7 @@ export default function WordDetailScreen() {
                 <View style={styles.badgeRow}>
                   {categories.map(cat => (
                     <View key={cat.slug} style={[styles.badge, { backgroundColor: cat.colorBg }]}>
-                      <Text style={[styles.badgeText, { color: getReadableTextColor(cat.colorBg) }]}>
+                      <Text style={[styles.badgeText, { color: getReadableTextColor(cat.colorBg) }]} numberOfLines={1}>
                         {getCategoryName(cat, language)}
                       </Text>
                     </View>

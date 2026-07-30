@@ -165,7 +165,7 @@ export default function CategorySearchScreen() {
                   onPress={() => handleSubmit(getCategoryName(item, language))}
                   activeOpacity={0.8}
                 >
-                  <Text style={[styles.chipText, { color: getReadableTextColor(item.colorBg) }]}>
+                  <Text style={[styles.chipText, { color: getReadableTextColor(item.colorBg) }]} numberOfLines={1}>
                     {getCategoryName(item, language)}
                   </Text>
                 </TouchableOpacity>

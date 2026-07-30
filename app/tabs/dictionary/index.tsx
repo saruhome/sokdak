@@ -1,6 +1,6 @@
 import { StyleSheet, View, SafeAreaView } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../../constants/Colors';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
@@ -12,6 +12,8 @@ import { Bell } from 'lucide-react-native';
 export default function DictionaryScreen() {
   useLanguage();
   const t = languageStore.t;
+  /* 홈 "새로운 신조어" 더보기 → ?sort=recent 로 진입하면 최신순(SORT_TABS 인덱스 1)으로 시작 */
+  const { sort } = useLocalSearchParams<{ sort?: string }>();
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar (375×44, bg #52514e) */}
@@ -23,7 +25,7 @@ export default function DictionaryScreen() {
         </View>
       </View>
 
-      <WordListView />
+      <WordListView initialSortIndex={sort === 'recent' ? 1 : 0} />
     </SafeAreaView>
   );
 }

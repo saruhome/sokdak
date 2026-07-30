@@ -7,7 +7,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors, getReadableTextColor } from '@/constants/Colors';
 import { MOCK_WORDS, type Word } from '@/constants/mockWords';
-import { getCategoryBySlug, getCategoryName } from '@/constants/categories';
+import { getCategoryBySlug, getCategoryName, pickLeastPopular } from '@/constants/categories';
 import { languageStore, useLanguage } from '@/constants/languageStore';
 import { authStore } from '@/constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
@@ -30,17 +30,20 @@ const TIP_BUBBLE_WIDTH = TIP_BUBBLE_HEIGHT * CALLOUT_BUBBLE_ASPECT;
  *
  * @param initialCategorySlugs 진입 시 미리 적용할 카테고리 필터 (카테고리 상세에서 사용)
  * @param showTipCard 추천 단어 배너 노출 여부
+ * @param initialSortIndex 진입 시 미리 적용할 정렬 (홈 "새로운 신조어" 더보기 → 최신순 진입 등에 사용)
  */
 export function WordListView({
   initialCategorySlugs = [],
   showTipCard = true,
+  initialSortIndex = 0,
 }: {
   initialCategorySlugs?: string[];
   showTipCard?: boolean;
+  initialSortIndex?: number;
 }) {
   const language = useLanguage();
   const t = languageStore.t;
-  const [sortIndex, setSortIndex] = useState(0);
+  const [sortIndex, setSortIndex] = useState(initialSortIndex);
   const [query, setQuery] = useState('');
   const [consonant, setConsonant] = useState<string>('전체');
   const [categorySlugs, setCategorySlugs] = useState<string[]>(initialCategorySlugs);
@@ -55,10 +58,11 @@ export function WordListView({
     return () => { unsub(); };
   }, []);
 
-  /** 추천 배너 단어 — 필터가 걸려 있으면 그 안에서, 없으면 무야호 */
+  /* 추천 배너 단어 — 항상 인기 단어 대신, (필터가 걸려 있으면 그 안에서) 좋아요가 적어
+   * 잘 안 찾아보는 단어부터 랜덤하게 고른다. 필터가 바뀔 때만 다시 뽑는다. */
   const tipWord = useMemo(() => {
     const pool = MOCK_WORDS.filter(w => matchesCategories(w, categorySlugs));
-    return pool.find(w => w.word === '무야호') ?? pool[0] ?? MOCK_WORDS[0];
+    return pool.length > 0 ? pickLeastPopular(pool, w => w.likes) : MOCK_WORDS[0];
   }, [categorySlugs]);
 
   const filtered = useMemo(() => {

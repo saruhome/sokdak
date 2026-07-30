@@ -100,7 +100,7 @@ export default function HomeScreen() {
                   <View style={styles.heroContent}>
                     {category && (
                       <View style={[styles.heroBadge, { backgroundColor: category.colorBg }]}>
-                        <Text style={[styles.heroBadgeText, { color: category.colorFg }]}>{getCategoryName(category, language)}</Text>
+                        <Text style={[styles.heroBadgeText, { color: category.colorFg }]} numberOfLines={1}>{getCategoryName(category, language)}</Text>
                       </View>
                     )}
                     <Text style={styles.heroWord}>{word.word}</Text>
@@ -123,7 +123,10 @@ export default function HomeScreen() {
             <Text style={styles.sectionTitle}>{t('newSlangSection')}</Text>
             <View style={styles.sectionSubRow}>
               <Text style={styles.sectionSub}>{t('newSlangSub')}</Text>
-              <TouchableOpacity style={styles.moreLink} onPress={() => router.push('/tabs/dictionary')}>
+              <TouchableOpacity
+                style={styles.moreLink}
+                onPress={() => router.push({ pathname: '/tabs/dictionary', params: { sort: 'recent' } })}
+              >
                 <Text style={styles.moreLinkText}>{t('moreLink')}</Text>
                 <Text style={styles.moreLinkArrow}>›</Text>
               </TouchableOpacity>

@@ -11,7 +11,7 @@ import { MOCK_WORDS } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
-import { CalloutBubble } from '@/components/icons/CalloutBubble';
+import { CalloutBubble, CALLOUT_BUBBLE_ASPECT } from '@/components/icons/CalloutBubble';
 import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
 
 const HORANG_ICON = require('../../../assets/Callout Card/image 146.png');
@@ -21,7 +21,7 @@ const ACTIVE_STAR_COLOR = '#FACC15';
  * 말풍선 꼬리가 비율대로 밀려나 우측 호랭이와 겹친다. 카드 높이(108)에 맞춰
  * 원본 비율로만 키우고, 왼쪽에 붙여서 꼬리가 항상 호랭이 쪽에 오도록 고정한다. */
 const RECOMMEND_BUBBLE_HEIGHT = 108;
-const RECOMMEND_BUBBLE_WIDTH = RECOMMEND_BUBBLE_HEIGHT * (228 / 95);
+const RECOMMEND_BUBBLE_WIDTH = RECOMMEND_BUBBLE_HEIGHT * CALLOUT_BUBBLE_ASPECT;
 
 type SortMode = '인기순' | '가나다순';
 
@@ -98,8 +98,12 @@ export default function CategoryScreen() {
                 <CalloutBubble width={RECOMMEND_BUBBLE_WIDTH} height={RECOMMEND_BUBBLE_HEIGHT} />
               </View>
               <View style={styles.recommendTextWrap}>
-                <Text style={styles.recommendLabel}>{t('recommendHint')}</Text>
-                <Text style={styles.recommendName} numberOfLines={2}>&quot;{getCategoryName(topCategory, language)}&quot;</Text>
+                <Text style={styles.recommendLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
+                  {t('recommendHint')}
+                </Text>
+                <Text style={styles.recommendName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
+                  &quot;{getCategoryName(topCategory, language)}&quot;
+                </Text>
                 <Text style={styles.recommendClick}>Click &gt;</Text>
               </View>
               <Image source={HORANG_ICON} style={styles.recommendImg} resizeMode="contain" />

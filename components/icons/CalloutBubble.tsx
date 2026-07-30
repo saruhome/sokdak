@@ -1,6 +1,9 @@
 import Svg, { Path } from 'react-native-svg';
 import { Colors } from '@/constants/Colors';
 
+/** CalloutBubble viewBox(228×95) 비율 — 카드 높이에 맞춰 폭을 구할 때 재사용 */
+export const CALLOUT_BUBBLE_ASPECT = 228 / 95;
+
 /** Figma: assets/Callout Card/Callout Card/Bubble_호랭.svg — 말풍선 모양 카드 배경(우측에 마스코트를 향한 꼬리) */
 export function CalloutBubble({ width, height }: { width: number; height: number }) {
   return (

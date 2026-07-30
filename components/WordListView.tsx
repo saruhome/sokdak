@@ -14,9 +14,14 @@ import { AppIcon } from '@/components/AppIcon';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
 } from '@/components/WordFilterBar';
+import { CalloutBubble, CALLOUT_BUBBLE_ASPECT } from '@/components/icons/CalloutBubble';
 import { Search, Star, Volume2, Mic, Heart } from 'lucide-react-native';
 
 const JJAEKI_ICON = require('../assets/characters/jjaeki-full.png');
+/* 카테고리 추천 카드(Callout Card/Recommend_호랭)와 같은 말풍선 배경을 재사용 —
+ * 카드 높이(108)에 맞춰 원본 비율로만 키우고 왼쪽에 붙여, 꼬리가 항상 짹이 쪽에 오도록 고정한다. */
+const TIP_BUBBLE_HEIGHT = 108;
+const TIP_BUBBLE_WIDTH = TIP_BUBBLE_HEIGHT * CALLOUT_BUBBLE_ASPECT;
 
 /**
  * 사전 화면과 카테고리 상세 화면이 공유하는 단어 목록 뷰.
@@ -111,11 +116,16 @@ export function WordListView({
                 onPress={() => router.push(`/tabs/dictionary/${tipWord.id}`)}
                 activeOpacity={0.85}
               >
+                <View style={styles.bubbleLayer} pointerEvents="none">
+                  <CalloutBubble width={TIP_BUBBLE_WIDTH} height={TIP_BUBBLE_HEIGHT} />
+                </View>
                 <View style={styles.tipTextWrap}>
                   <Text style={styles.tipHint} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
                     {t('tipHint').replace('\n', ' ')}
                   </Text>
-                  <Text style={styles.tipWord}>&quot;{tipWord.word}&quot;</Text>
+                  <Text style={styles.tipWord} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
+                    &quot;{tipWord.word}&quot;
+                  </Text>
                   <Text style={styles.tipClick}>Click &gt;</Text>
                 </View>
                 <Image source={JJAEKI_ICON} style={styles.tipImg} resizeMode="contain" />
@@ -220,9 +230,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     marginHorizontal: 24, marginTop: 16, paddingLeft: 16,
     height: 108,
-    backgroundColor: Colors.pageBackground,
-    borderRadius: 10, overflow: 'hidden',
   },
+  /* 카드 폭 전체로 늘리면 꼬리 비율이 밀려 짹이와 겹쳐서, 원본 비율 그대로 왼쪽에만 붙인다 */
+  bubbleLayer: { position: 'absolute', left: 0, top: 0 },
   /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 캐릭터와 겹친다 */
   tipTextWrap: { flexShrink: 1, minWidth: 0, gap: 4 },
   tipHint: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },

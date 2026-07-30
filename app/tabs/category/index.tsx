@@ -9,7 +9,7 @@ import { Colors, getCategoryLabelColor } from '../../../constants/Colors';
 import { CATEGORIES, getCategoryName, pickLeastPopular, type Category } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
-import { languageStore, useLanguage } from '../../../constants/languageStore';
+import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { CalloutBubble, CALLOUT_BUBBLE_ASPECT } from '@/components/icons/CalloutBubble';
 import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
@@ -22,6 +22,12 @@ const ACTIVE_STAR_COLOR = '#FACC15';
  * 원본 비율로만 키우고, 왼쪽에 붙여서 꼬리가 항상 호랭이 쪽에 오도록 고정한다. */
 const RECOMMEND_BUBBLE_HEIGHT = 108;
 const RECOMMEND_BUBBLE_WIDTH = RECOMMEND_BUBBLE_HEIGHT * CALLOUT_BUBBLE_ASPECT;
+
+/** 호랭이 성격 — 책 읽는 걸 좋아하는 붙임성 있는 서생 톤. 매 방문마다 하나를 랜덤으로 골라 보여준다. */
+const HORANG_HINTS: Record<Language, string[]> = {
+  ko: ['아직 안 가본 카테고리예요!', '오늘은 여기부터 볼까요?', '이 카테고리도 궁금하지 않아요?', '한번 둘러보고 가요!'],
+  en: ["A category you haven't explored yet!", 'How about starting here today?', 'Curious about this one too?', 'Take a look around!'],
+};
 
 type SortMode = '인기순' | '가나다순';
 
@@ -42,6 +48,8 @@ export default function CategoryScreen() {
     () => pickLeastPopular(CATEGORIES, c => countBySlug[c.slug] ?? 0),
     [],
   );
+  /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
+  const [hintIndex] = useState(() => Math.floor(Math.random() * HORANG_HINTS.ko.length));
 
   const sortedCategories = [...CATEGORIES].sort((a, b) =>
     sortMode === '인기순'
@@ -102,7 +110,7 @@ export default function CategoryScreen() {
               </View>
               <View style={styles.recommendTextWrap}>
                 <Text style={styles.recommendLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
-                  {t('recommendHint')}
+                  {HORANG_HINTS[language][hintIndex]}
                 </Text>
                 <Text style={styles.recommendName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
                   &quot;{getCategoryName(topCategory, language)}&quot;

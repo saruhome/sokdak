@@ -8,7 +8,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { Colors, getReadableTextColor } from '@/constants/Colors';
 import { MOCK_WORDS, type Word } from '@/constants/mockWords';
 import { getCategoryBySlug, getCategoryName, pickLeastPopular } from '@/constants/categories';
-import { languageStore, useLanguage } from '@/constants/languageStore';
+import { languageStore, useLanguage, type Language } from '@/constants/languageStore';
 import { authStore } from '@/constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
 import {
@@ -22,6 +22,12 @@ const JJAEKI_ICON = require('../assets/characters/jjaeki-full.png');
  * 카드 높이(108)에 맞춰 원본 비율로만 키우고 왼쪽에 붙여, 꼬리가 항상 짹이 쪽에 오도록 고정한다. */
 const TIP_BUBBLE_HEIGHT = 108;
 const TIP_BUBBLE_WIDTH = TIP_BUBBLE_HEIGHT * CALLOUT_BUBBLE_ASPECT;
+
+/** 짹이 성격 — 안 친절하고 까칠한 톤. 매 방문마다 하나를 랜덤으로 골라 보여준다. */
+const JJAEKI_HINTS: Record<Language, string[]> = {
+  ko: ['이것도 몰라? 뭐, 보든가', '이거 모르면 안 되는데', '설마 이것도 모르는 거 아니지?', '알아두면 좋을걸. 몰라도 말고'],
+  en: ["Don't know this either? Fine, take a look.", 'You really should know this one.', "Don't tell me you don't know this too.", 'Might wanna know this. Or not, whatever.'],
+};
 
 /**
  * 사전 화면과 카테고리 상세 화면이 공유하는 단어 목록 뷰.
@@ -48,6 +54,8 @@ export function WordListView({
   const [consonant, setConsonant] = useState<string>('전체');
   const [categorySlugs, setCategorySlugs] = useState<string[]>(initialCategorySlugs);
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
+  /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
+  const [hintIndex] = useState(() => Math.floor(Math.random() * JJAEKI_HINTS.ko.length));
 
   /* 카테고리 상세에서 다른 카테고리로 이동하면 필터를 새 slug로 리셋 */
   useEffect(() => { setCategorySlugs(initialCategorySlugs); }, [initialCategorySlugs.join(',')]);
@@ -125,7 +133,7 @@ export function WordListView({
                 </View>
                 <View style={styles.tipTextWrap}>
                   <Text style={styles.tipHint} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
-                    {t('tipHint').replace('\n', ' ')}
+                    {JJAEKI_HINTS[language][hintIndex]}
                   </Text>
                   <Text style={styles.tipWord} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
                     &quot;{tipWord.word}&quot;

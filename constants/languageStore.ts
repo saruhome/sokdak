@@ -35,7 +35,6 @@ type TranslationKey =
   | 'moreLink'
   | 'communitySub'
   // 카테고리 그리드
-  | 'recommendHint'
   | 'totalPrefix'
   | 'categoriesSuffix'
   | 'wordsSuffix'
@@ -47,7 +46,6 @@ type TranslationKey =
   | 'categoryFilterLabel'
   | 'allLabel'
   | 'noSearchResults'
-  | 'tipHint'
   | 'modalHint'
   | 'resetLabel'
   | 'applyLabel'
@@ -159,7 +157,6 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     moreLink: '더보기',
     communitySub: '새로운 게시글을 확인하세요',
 
-    recommendHint: '아직 안 가본 카테고리예요!',
     totalPrefix: '총',
     categoriesSuffix: '카테고리',
     wordsSuffix: '단어',
@@ -171,7 +168,6 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     categoryFilterLabel: '카테고리',
     allLabel: '전체',
     noSearchResults: '검색 결과가 없어요',
-    tipHint: '아직 안 본 표현이에요\n한번 볼까요?',
     modalHint: '선택한 카테고리에 해당하는 단어만 보여드려요',
     resetLabel: '초기화',
     applyLabel: '적용하기',
@@ -282,7 +278,6 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     moreLink: 'More',
     communitySub: 'Check out new posts',
 
-    recommendHint: "A category you haven't explored yet!",
     totalPrefix: 'Total',
     categoriesSuffix: 'categories',
     wordsSuffix: 'words',
@@ -294,7 +289,6 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     categoryFilterLabel: 'Category',
     allLabel: 'All',
     noSearchResults: 'No results found',
-    tipHint: "Haven't seen this one?\nTake a look!",
     modalHint: "We'll only show words in the categories you pick",
     resetLabel: 'Reset',
     applyLabel: 'Apply',

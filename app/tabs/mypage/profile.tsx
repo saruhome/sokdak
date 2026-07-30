@@ -86,7 +86,6 @@ export default function ProfileScreen() {
   const [name, setName] = useState(user?.name ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
   const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState(user?.phone ?? '');
   const [timezone, setTimezone] = useState(user?.timezone ?? 'UTC');
   const [emoji, setEmoji] = useState(user?.emoji ?? '🇰🇷');
   const [countryQuery, setCountryQuery] = useState('');
@@ -141,7 +140,7 @@ export default function ProfileScreen() {
     setSaving(true);
     const { error } = await authStore.updateUser({
       name: name.trim(), emoji, avatarUrl: avatarUrl ?? null,
-      phone: phone.trim() || null, timezone: timezone.trim() || 'UTC',
+      timezone: timezone.trim() || 'UTC',
     });
     if (!error && email.trim() !== user.email) {
       const res = await authStore.updateEmail(email.trim());
@@ -238,17 +237,6 @@ export default function ProfileScreen() {
                 placeholder="변경할 때만 입력하세요"
                 placeholderTextColor={Colors.textTertiary}
                 secureTextEntry
-              />
-            </View>
-            <View style={styles.cardItem}>
-              <Text style={styles.cardLabel}>휴대폰 번호 Phone Number</Text>
-              <TextInput
-                style={styles.cardInput}
-                value={phone}
-                onChangeText={setPhone}
-                placeholder="휴대폰 번호를 입력하세요"
-                placeholderTextColor={Colors.textTertiary}
-                keyboardType="phone-pad"
               />
             </View>
             <View style={styles.cardItem}>

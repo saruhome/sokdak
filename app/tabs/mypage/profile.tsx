@@ -11,7 +11,73 @@ import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { authStore } from '../../../constants/authStore';
 
-const EMOJI_OPTIONS = ['🐦', '🐯', '🇰🇷', '🇺🇸', '🇯🇵', '🇨🇳', '🇫🇷', '🇩🇪', '🇧🇷', '✨'];
+/** featured: 기본으로 노출 — 한국·일본 다음으로 한국어 학습 인구가 많은 8개국 (세종학당 수강생 통계 기준) */
+const COUNTRY_OPTIONS = [
+  { flag: '🇰🇷', en: 'South Korea', ko: '대한민국', featured: true },
+  { flag: '🇯🇵', en: 'Japan', ko: '일본', featured: true },
+  { flag: '🇨🇳', en: 'China', ko: '중국', featured: true },
+  { flag: '🇹🇼', en: 'Taiwan', ko: '대만' },
+  { flag: '🇭🇰', en: 'Hong Kong', ko: '홍콩' },
+  { flag: '🇻🇳', en: 'Vietnam', ko: '베트남', featured: true },
+  { flag: '🇹🇭', en: 'Thailand', ko: '태국', featured: true },
+  { flag: '🇵🇭', en: 'Philippines', ko: '필리핀', featured: true },
+  { flag: '🇮🇩', en: 'Indonesia', ko: '인도네시아', featured: true },
+  { flag: '🇲🇾', en: 'Malaysia', ko: '말레이시아' },
+  { flag: '🇸🇬', en: 'Singapore', ko: '싱가포르' },
+  { flag: '🇮🇳', en: 'India', ko: '인도' },
+  { flag: '🇲🇳', en: 'Mongolia', ko: '몽골', featured: true },
+  { flag: '🇰🇭', en: 'Cambodia', ko: '캄보디아' },
+  { flag: '🇲🇲', en: 'Myanmar', ko: '미얀마' },
+  { flag: '🇱🇦', en: 'Laos', ko: '라오스' },
+  { flag: '🇳🇵', en: 'Nepal', ko: '네팔' },
+  { flag: '🇧🇩', en: 'Bangladesh', ko: '방글라데시' },
+  { flag: '🇵🇰', en: 'Pakistan', ko: '파키스탄' },
+  { flag: '🇺🇿', en: 'Uzbekistan', ko: '우즈베키스탄', featured: true },
+  { flag: '🇰🇿', en: 'Kazakhstan', ko: '카자흐스탄' },
+  { flag: '🇸🇦', en: 'Saudi Arabia', ko: '사우디아라비아' },
+  { flag: '🇦🇪', en: 'United Arab Emirates', ko: '아랍에미리트' },
+  { flag: '🇮🇱', en: 'Israel', ko: '이스라엘' },
+  { flag: '🇹🇷', en: 'Turkey', ko: '튀르키예' },
+  { flag: '🇮🇷', en: 'Iran', ko: '이란' },
+  { flag: '🇮🇶', en: 'Iraq', ko: '이라크' },
+  { flag: '🇪🇬', en: 'Egypt', ko: '이집트' },
+  { flag: '🇬🇧', en: 'United Kingdom', ko: '영국' },
+  { flag: '🇫🇷', en: 'France', ko: '프랑스' },
+  { flag: '🇩🇪', en: 'Germany', ko: '독일' },
+  { flag: '🇮🇹', en: 'Italy', ko: '이탈리아' },
+  { flag: '🇪🇸', en: 'Spain', ko: '스페인' },
+  { flag: '🇵🇹', en: 'Portugal', ko: '포르투갈' },
+  { flag: '🇳🇱', en: 'Netherlands', ko: '네덜란드' },
+  { flag: '🇧🇪', en: 'Belgium', ko: '벨기에' },
+  { flag: '🇨🇭', en: 'Switzerland', ko: '스위스' },
+  { flag: '🇦🇹', en: 'Austria', ko: '오스트리아' },
+  { flag: '🇸🇪', en: 'Sweden', ko: '스웨덴' },
+  { flag: '🇳🇴', en: 'Norway', ko: '노르웨이' },
+  { flag: '🇩🇰', en: 'Denmark', ko: '덴마크' },
+  { flag: '🇫🇮', en: 'Finland', ko: '핀란드' },
+  { flag: '🇵🇱', en: 'Poland', ko: '폴란드' },
+  { flag: '🇨🇿', en: 'Czechia', ko: '체코' },
+  { flag: '🇬🇷', en: 'Greece', ko: '그리스' },
+  { flag: '🇭🇺', en: 'Hungary', ko: '헝가리' },
+  { flag: '🇷🇴', en: 'Romania', ko: '루마니아' },
+  { flag: '🇺🇦', en: 'Ukraine', ko: '우크라이나' },
+  { flag: '🇷🇺', en: 'Russia', ko: '러시아' },
+  { flag: '🇮🇪', en: 'Ireland', ko: '아일랜드' },
+  { flag: '🇺🇸', en: 'United States', ko: '미국', featured: true },
+  { flag: '🇨🇦', en: 'Canada', ko: '캐나다' },
+  { flag: '🇲🇽', en: 'Mexico', ko: '멕시코' },
+  { flag: '🇧🇷', en: 'Brazil', ko: '브라질' },
+  { flag: '🇦🇷', en: 'Argentina', ko: '아르헨티나' },
+  { flag: '🇨🇱', en: 'Chile', ko: '칠레' },
+  { flag: '🇨🇴', en: 'Colombia', ko: '콜롬비아' },
+  { flag: '🇵🇪', en: 'Peru', ko: '페루' },
+  { flag: '🇦🇺', en: 'Australia', ko: '호주' },
+  { flag: '🇳🇿', en: 'New Zealand', ko: '뉴질랜드' },
+  { flag: '🇿🇦', en: 'South Africa', ko: '남아프리카공화국' },
+  { flag: '🇳🇬', en: 'Nigeria', ko: '나이지리아' },
+  { flag: '🇰🇪', en: 'Kenya', ko: '케냐' },
+  { flag: '🇲🇦', en: 'Morocco', ko: '모로코' },
+];
 
 /** Figma: 229:3295 — 내 정보 관리 (닉네임·이메일·프로필 이미지 수정) */
 export default function ProfileScreen() {
@@ -19,7 +85,14 @@ export default function ProfileScreen() {
 
   const [name, setName] = useState(user?.name ?? '');
   const email = user?.email ?? '';
-  const [emoji, setEmoji] = useState(user?.emoji ?? '🐦');
+  const [emoji, setEmoji] = useState(user?.emoji ?? '🇰🇷');
+  const [countryQuery, setCountryQuery] = useState('');
+  const filteredCountries = countryQuery.trim()
+    ? COUNTRY_OPTIONS.filter(c =>
+        c.en.toLowerCase().includes(countryQuery.trim().toLowerCase()) ||
+        c.ko.includes(countryQuery.trim()),
+      )
+    : COUNTRY_OPTIONS.filter(c => c.featured);
   const [avatarUrl, setAvatarUrl] = useState<string | null | undefined>(user?.avatarUrl ?? null);
 
   if (!user) {
@@ -149,14 +222,21 @@ export default function ProfileScreen() {
             ) : null}
           </View>
           <Text style={styles.avatarHintSmall}>국기 이모지 또는 프로필 사진을 선택할 수 있어요.</Text>
+          <TextInput
+            style={styles.countrySearchInput}
+            value={countryQuery}
+            onChangeText={setCountryQuery}
+            placeholder="국가 검색 (한국어/영어)"
+            placeholderTextColor={Colors.textTertiary}
+          />
           <View style={styles.emojiGrid}>
-            {EMOJI_OPTIONS.map(e => (
+            {filteredCountries.map(c => (
               <TouchableOpacity
-                key={e}
-                style={[styles.emojiOption, e === emoji && styles.emojiOptionActive]}
-                onPress={() => setEmoji(e)}
+                key={c.flag}
+                style={[styles.emojiOption, c.flag === emoji && styles.emojiOptionActive]}
+                onPress={() => setEmoji(c.flag)}
               >
-                <Text style={styles.emojiOptionText}>{e}</Text>
+                <Text style={styles.emojiOptionText}>{c.flag}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -237,6 +317,11 @@ const styles = StyleSheet.create({
   },
   photoRemoveText: { fontSize: 14, color: Colors.textSecondary },
 
+  countrySearchInput: {
+    height: 40, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.surface, paddingHorizontal: 12,
+    fontSize: 14, color: Colors.textPrimary, marginBottom: 10,
+  },
   emojiGrid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 10 },
   emojiOption: {
     width: 44, height: 44, borderRadius: 22,

@@ -4,9 +4,9 @@ import {
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Colors, getCategoryLabelColor } from '../../../constants/Colors';
-import { CATEGORIES, getCategoryName, type Category } from '../../../constants/categories';
+import { CATEGORIES, getCategoryName, pickLeastPopular, type Category } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
@@ -36,8 +36,11 @@ export default function CategoryScreen() {
     CATEGORIES.map(c => [c.slug, MOCK_WORDS.filter(w => w.category === c.slug).length])
   );
 
-  const topCategory = CATEGORIES.reduce((a, b) =>
-    (countBySlug[a.slug] ?? 0) >= (countBySlug[b.slug] ?? 0) ? a : b
+  /* 항상 같은(가장 인기 있는) 카테고리 대신, 잘 안 찾아보는 카테고리부터 랜덤하게 추천 —
+   * 화면을 다시 열 때마다 바뀌도록 마운트당 한 번만 뽑고, 좋아요 토글 등 재렌더로는 안 바뀌게 고정한다. */
+  const topCategory = useMemo(
+    () => pickLeastPopular(CATEGORIES, c => countBySlug[c.slug] ?? 0),
+    [],
   );
 
   const sortedCategories = [...CATEGORIES].sort((a, b) =>
@@ -257,5 +260,5 @@ const styles = StyleSheet.create({
   likeIcon: { width: 24, height: 24 },
   cardTextWrap: { position: 'absolute', left: 12, right: 12, bottom: 10 },
   /* 카드 텍스트는 기존 대비 더 작게 보여야 하므로 70% 크기로 조정. */
-  categoryName: { fontSize: 20, lineHeight: 24, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
+  categoryName: { fontSize: 26, lineHeight: 31, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
 });

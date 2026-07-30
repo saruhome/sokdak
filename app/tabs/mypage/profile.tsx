@@ -84,7 +84,10 @@ export default function ProfileScreen() {
   const user = authStore.getUser();
 
   const [name, setName] = useState(user?.name ?? '');
-  const email = user?.email ?? '';
+  const [email, setEmail] = useState(user?.email ?? '');
+  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState(user?.phone ?? '');
+  const [timezone, setTimezone] = useState(user?.timezone ?? 'UTC');
   const [emoji, setEmoji] = useState(user?.emoji ?? '🇰🇷');
   const [countryQuery, setCountryQuery] = useState('');
   const filteredCountries = countryQuery.trim()
@@ -136,13 +139,44 @@ export default function ProfileScreen() {
       return;
     }
     setSaving(true);
-    const { error } = await authStore.updateUser({ name: name.trim(), emoji, avatarUrl: avatarUrl ?? null });
+    const { error } = await authStore.updateUser({
+      name: name.trim(), emoji, avatarUrl: avatarUrl ?? null,
+      phone: phone.trim() || null, timezone: timezone.trim() || 'UTC',
+    });
+    if (!error && email.trim() !== user.email) {
+      const res = await authStore.updateEmail(email.trim());
+      if (res.error) { setSaving(false); Alert.alert('저장 실패', res.error); return; }
+    }
+    if (!error && password) {
+      const res = await authStore.updatePassword(password);
+      if (res.error) { setSaving(false); Alert.alert('저장 실패', res.error); return; }
+      setPassword('');
+    }
     setSaving(false);
     if (error) {
       Alert.alert('저장 실패', error);
       return;
     }
     Alert.alert('저장 완료', '내 정보가 수정됐어요.', [{ text: '확인', onPress: () => safeGoBack() }]);
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      '회원탈퇴',
+      '정말 탈퇴하시겠어요? 저장한 단어, 작성한 글 등 모든 정보가 삭제되며 되돌릴 수 없어요.',
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '탈퇴하기',
+          style: 'destructive',
+          onPress: async () => {
+            const { error } = await authStore.deleteAccount();
+            if (error) { Alert.alert('탈퇴 실패', error); return; }
+            router.replace('/tabs');
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -184,30 +218,50 @@ export default function ProfileScreen() {
 
           <View style={styles.cardGroup}>
             <View style={styles.cardItem}>
-              <View>
-                <Text style={styles.cardLabel}>이메일 Email</Text>
-                <Text style={styles.cardText}>{email}</Text>
-              </View>
+              <Text style={styles.cardLabel}>이메일 Email</Text>
+              <TextInput
+                style={styles.cardInput}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="이메일을 입력하세요"
+                placeholderTextColor={Colors.textTertiary}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
             </View>
             <View style={styles.cardItem}>
-              <View>
-                <Text style={styles.cardLabel}>비밀번호 Password</Text>
-                <Text style={styles.cardText}>******</Text>
-              </View>
+              <Text style={styles.cardLabel}>비밀번호 Password</Text>
+              <TextInput
+                style={styles.cardInput}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="변경할 때만 입력하세요"
+                placeholderTextColor={Colors.textTertiary}
+                secureTextEntry
+              />
             </View>
             <View style={styles.cardItem}>
-              <View>
-                <Text style={styles.cardLabel}>휴대폰 번호 Phone Number</Text>
-                <Text style={styles.cardText}>+43 680 1224 7685</Text>
-              </View>
+              <Text style={styles.cardLabel}>휴대폰 번호 Phone Number</Text>
+              <TextInput
+                style={styles.cardInput}
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="휴대폰 번호를 입력하세요"
+                placeholderTextColor={Colors.textTertiary}
+                keyboardType="phone-pad"
+              />
             </View>
-            <TouchableOpacity style={[styles.cardItem, styles.cardItemButton]} activeOpacity={0.8} onPress={() => {}}>
-              <View>
-                <Text style={styles.cardLabel}>시간대 Time Zone</Text>
-                <Text style={styles.cardText}>Europe/Berlin</Text>
-              </View>
-              <View style={styles.cardArrow} />
-            </TouchableOpacity>
+            <View style={styles.cardItem}>
+              <Text style={styles.cardLabel}>시간대 Time Zone</Text>
+              <TextInput
+                style={styles.cardInput}
+                value={timezone}
+                onChangeText={setTimezone}
+                placeholder="예: Asia/Seoul"
+                placeholderTextColor={Colors.textTertiary}
+                autoCapitalize="none"
+              />
+            </View>
           </View>
 
           <Text style={styles.avatarHint}>프로필 아이콘 선택</Text>
@@ -241,8 +295,8 @@ export default function ProfileScreen() {
             ))}
           </View>
 
-          <TouchableOpacity style={styles.logoutBtn} onPress={() => authStore.logout()}>
-            <Text style={styles.logoutText}>로그아웃</Text>
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleDeleteAccount}>
+            <Text style={styles.logoutText}>회원탈퇴</Text>
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
@@ -280,19 +334,14 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
   cardGroup: { width: '100%', gap: 12 },
   cardItem: {
-    width: '100%', minHeight: 80,
+    width: '100%',
     paddingHorizontal: 16, paddingVertical: 14,
     backgroundColor: Colors.surface, borderRadius: 10,
     borderWidth: 1, borderColor: Colors.border,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    gap: 6,
   },
-  cardItemButton: { backgroundColor: Colors.surface },
-  cardLabel: { fontSize: 11, color: Colors.textTertiary, marginBottom: 6 },
-  cardText: { fontSize: 15, color: Colors.textPrimary, lineHeight: 22 },
-  cardArrow: {
-    width: 10, height: 10, borderLeftWidth: 1, borderBottomWidth: 1,
-    borderColor: Colors.textTertiary, transform: [{ rotate: '45deg' }],
-  },
+  cardLabel: { fontSize: 11, color: Colors.textTertiary },
+  cardInput: { fontSize: 15, color: Colors.textPrimary, padding: 0 },
 
   avatarHint: { fontSize: 12, color: Colors.textTertiary, marginBottom: 8 },
   avatarHintSmall: { fontSize: 11, color: Colors.textTertiary, marginBottom: 14 },

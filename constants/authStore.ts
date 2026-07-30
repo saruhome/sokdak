@@ -31,6 +31,8 @@ export type SokDakUser = {
   email: string;
   emoji: string;
   avatarUrl?: string | null;
+  phone?: string | null;
+  timezone: string;
   level: string;
 };
 
@@ -104,7 +106,7 @@ function clearGuestBookmarkStorage() {
 async function fetchProfile(userId: string, email: string): Promise<SokDakUser> {
   const { data } = await supabase
     .from('profiles')
-    .select('nickname, avatar_emoji, avatar_url, level')
+    .select('nickname, avatar_emoji, avatar_url, phone, timezone, level')
     .eq('id', userId)
     .single();
 
@@ -114,6 +116,8 @@ async function fetchProfile(userId: string, email: string): Promise<SokDakUser> 
     name: data?.nickname ?? email.split('@')[0],
     emoji: data?.avatar_emoji ?? '🐦',
     avatarUrl: data?.avatar_url ?? null,
+    phone: data?.phone ?? null,
+    timezone: data?.timezone ?? 'UTC',
     level: data?.level ?? '초급',
   };
 }
@@ -267,7 +271,9 @@ export const authStore = {
     return { error: error?.message ?? null };
   },
 
-  async updateUser(patch: Partial<{ name: string; emoji: string; avatarUrl: string | null }>) {
+  async updateUser(patch: Partial<{
+    name: string; emoji: string; avatarUrl: string | null; phone: string | null; timezone: string;
+  }>) {
     if (!_user) return { error: '로그인이 필요해요.' };
     const { error } = await supabase
       .from('profiles')
@@ -275,6 +281,8 @@ export const authStore = {
         ...(patch.name !== undefined ? { nickname: patch.name } : {}),
         ...(patch.emoji !== undefined ? { avatar_emoji: patch.emoji } : {}),
         ...(patch.avatarUrl !== undefined ? { avatar_url: patch.avatarUrl } : {}),
+        ...(patch.phone !== undefined ? { phone: patch.phone } : {}),
+        ...(patch.timezone !== undefined ? { timezone: patch.timezone } : {}),
       })
       .eq('id', _user.id);
     if (error) return { error: error.message };
@@ -283,8 +291,31 @@ export const authStore = {
       ...(patch.name !== undefined ? { name: patch.name } : {}),
       ...(patch.emoji !== undefined ? { emoji: patch.emoji } : {}),
       ...(patch.avatarUrl !== undefined ? { avatarUrl: patch.avatarUrl } : {}),
+      ...(patch.phone !== undefined ? { phone: patch.phone } : {}),
+      ...(patch.timezone !== undefined ? { timezone: patch.timezone } : {}),
     };
     notifyAuth();
+    return { error: null };
+  },
+
+  /** 이메일 변경 — Supabase가 새 주소로 확인 메일을 보내고, 확인 후에 실제로 바뀐다. */
+  async updateEmail(email: string) {
+    const { error } = await supabase.auth.updateUser({ email });
+    return { error: error?.message ?? null };
+  },
+
+  /** 비밀번호 변경 — 재로그인 없이 현재 세션으로 바로 변경된다. */
+  async updatePassword(password: string) {
+    const { error } = await supabase.auth.updateUser({ password });
+    return { error: error?.message ?? null };
+  },
+
+  /** 회원탈퇴 — DB의 delete_own_account()가 auth.users를 지우면 profiles/저장한 단어/게시글 등이
+   *  전부 CASCADE로 함께 삭제된다. 성공하면 로컬 세션도 정리. */
+  async deleteAccount() {
+    const { error } = await supabase.rpc('delete_own_account');
+    if (error) return { error: error.message };
+    await supabase.auth.signOut();
     return { error: null };
   },
 

@@ -142,6 +142,8 @@ export type Database = {
           id: string
           level: string
           nickname: string
+          phone: string | null
+          timezone: string
         }
         Insert: {
           avatar_emoji?: string
@@ -149,7 +151,9 @@ export type Database = {
           created_at?: string
           id: string
           level?: string
-          nickname?: string
+          nickname: string
+          phone?: string | null
+          timezone?: string
         }
         Update: {
           avatar_emoji?: string
@@ -158,6 +162,8 @@ export type Database = {
           id?: string
           level?: string
           nickname?: string
+          phone?: string | null
+          timezone?: string
         }
         Relationships: []
       }
@@ -190,39 +196,6 @@ export type Database = {
             columns: ["word_id"]
             isOneToOne: false
             referencedRelation: "words"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      saved_posts: {
-        Row: {
-          created_at: string
-          user_id: string
-          post_id: string
-        }
-        Insert: {
-          created_at?: string
-          user_id: string
-          post_id: string
-        }
-        Update: {
-          created_at?: string
-          user_id?: string
-          post_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "saved_posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "saved_posts_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
         ]
@@ -292,7 +265,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_own_account: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

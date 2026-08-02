@@ -341,8 +341,6 @@ export default function PostDetailScreen() {
               placeholderTextColor={Colors.textTertiary}
               value={commentText}
               onChangeText={setCommentText}
-              multiline
-              maxLength={500}
             />
             <TouchableOpacity
               style={[styles.sendBtn, (!commentText.trim() || sendingComment) && styles.sendBtnDisabled]}
@@ -538,18 +536,21 @@ const styles = StyleSheet.create({
   replyingText: { flex: 1, fontSize: 12, color: Colors.navBar, fontWeight: '600' },
   replyingClose: { fontSize: 14, color: Colors.textTertiary, padding: 4 },
   commentInputRow: {
-    flexDirection: 'row', alignItems: 'flex-end',
-    paddingHorizontal: 12, paddingVertical: 8, gap: 8, minHeight: 57,
+    flexDirection: 'row', alignItems: 'center',
+    paddingHorizontal: 12, paddingVertical: 8, gap: 8,
   },
+  /* 입력창 높이를 전송 버튼과 똑같이 고정 — multiline을 빼서 줄바꿈으로 커지는 대신
+   * 한 줄 안에서 가로로 계속 이어 쓸 수 있게 했다(웹/네이티브 모두 높이가 안 바뀐다) */
   commentInput: {
-    flex: 1, maxHeight: 100,
+    flex: 1, height: 36,
     backgroundColor: Colors.surface,
-    borderRadius: 20, borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 18, borderWidth: 1, borderColor: Colors.border,
     paddingHorizontal: 14, paddingVertical: 8,
     fontSize: 14, color: Colors.textPrimary,
   },
   sendBtn: {
-    paddingHorizontal: 14, paddingVertical: 8,
+    height: 36, paddingHorizontal: 14,
+    alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.navBar, borderRadius: 18,
   },
   sendBtnDisabled: { backgroundColor: Colors.border },

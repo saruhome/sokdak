@@ -3,7 +3,14 @@
  * mockPosts.ts의 Post/Comment 타입과 최대한 비슷한 모양으로 매핑해 화면 쪽 변경을 최소화한다.
  */
 import { supabase } from './supabase';
+import { authStore } from './authStore';
 import type { PostBoard } from './mockPosts';
+
+/** 차단한 유저의 글은 목록에서 뺀다 — 모든 목록 조회가 이 한 곳을 거치게 해서 한 번만 처리 */
+function excludeBlocked(posts: CommunityPostSummary[]): CommunityPostSummary[] {
+  const blocked = new Set(authStore.getBlockedUserIds());
+  return blocked.size === 0 ? posts : posts.filter(p => !blocked.has(p.authorId));
+}
 
 export type CommunityAuthor = { name: string; emoji: string; avatarUrl?: string | null; level: string };
 
@@ -76,7 +83,7 @@ export async function fetchPosts(board?: PostBoard): Promise<CommunityPostSummar
 
   const { data, error } = await query;
   if (error || !data) return [];
-  return data.map(mapPostSummaryRow);
+  return excludeBlocked(data.map(mapPostSummaryRow));
 }
 
 /** 특정 id 목록의 게시글들 (예: 저장/좋아요 한 게시글) — 요청한 순서를 보존해 반환 */
@@ -85,7 +92,8 @@ export async function fetchPostsByIds(ids: string[]): Promise<CommunityPostSumma
   const { data, error } = await supabase.from('posts').select(POST_SUMMARY_SELECT).in('id', ids);
   if (error || !data) return [];
   const byId = new Map(data.map(row => [row.id, mapPostSummaryRow(row)]));
-  return ids.map(id => byId.get(id)).filter((p): p is CommunityPostSummary => !!p);
+  const ordered = ids.map(id => byId.get(id)).filter((p): p is CommunityPostSummary => !!p);
+  return excludeBlocked(ordered);
 }
 
 /** 내가 작성한 게시글 */
@@ -202,6 +210,20 @@ export async function updatePost(id: string, params: { board: PostBoard; title: 
 /** 게시글 삭제 — RLS(authors can delete their own posts)가 작성자 본인만 허용 */
 export async function deletePost(id: string) {
   const { error } = await supabase.from('posts').delete().eq('id', id);
+  return { error: error?.message ?? null };
+}
+
+/** 게시글 신고 — 신고자/사유/신고당한 유저를 reports 테이블에 남긴다. 운영팀은 Supabase 대시보드에서 확인 */
+export async function reportPost(params: { postId: string; reportedUserId: string; reason: string }) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: '로그인이 필요해요.' };
+
+  const { error } = await supabase.from('reports').insert({
+    reporter_id: user.id,
+    reported_user_id: params.reportedUserId,
+    post_id: params.postId,
+    reason: params.reason,
+  });
   return { error: error?.message ?? null };
 }
 

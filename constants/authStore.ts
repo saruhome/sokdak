@@ -45,6 +45,8 @@ const _savedPostIds = new Set<string>();
 const _likedPostIds = new Set<string>();
 /** 좋아요 한 카테고리 — DB 테이블이 아직 없어 세션 동안만 유지(로그아웃/새로고침 시 초기화) */
 const _likedCategorySlugs = new Set<string>();
+/** 차단한 유저 — 로그인 계정에만 의미가 있어 게스트 이관 로직 없이 로그인 시에만 채운다 */
+const _blockedUserIds = new Set<string>();
 const _bookmarkListeners = new Set<BookmarkListener>();
 
 let _initialized = false;
@@ -169,6 +171,12 @@ async function fetchBookmarks(userId: string) {
   clearGuestBookmarkStorage();
 }
 
+async function fetchBlockedUsers(userId: string) {
+  const { data } = await supabase.from('blocked_users').select('blocked_id').eq('blocker_id', userId);
+  _blockedUserIds.clear();
+  data?.forEach(row => _blockedUserIds.add(row.blocked_id));
+}
+
 async function applySession(userId: string | undefined, email: string | undefined) {
   if (!userId || !email) {
     _isLoggedIn = false;
@@ -176,13 +184,14 @@ async function applySession(userId: string | undefined, email: string | undefine
     _savedWordIds.clear();
     _likedPostIds.clear();
     _likedCategorySlugs.clear();
+    _blockedUserIds.clear();
     notifyAuth();
     notifyBookmarks();
     return;
   }
   _user = await fetchProfile(userId, email);
   _isLoggedIn = true;
-  await fetchBookmarks(userId);
+  await Promise.all([fetchBookmarks(userId), fetchBlockedUsers(userId)]);
   notifyAuth();
   notifyBookmarks();
 }
@@ -398,6 +407,18 @@ export const authStore = {
     notifyBookmarks();
   },
   getLikedCategorySlugs: () => Array.from(_likedCategorySlugs),
+
+  /* ── 차단한 유저 — 차단하면 그 유저 글이 목록에서 안 보인다(constants/community.ts에서 필터링) ── */
+  isUserBlocked: (userId: string) => _blockedUserIds.has(userId),
+  async blockUser(userId: string) {
+    if (!_user) return { error: '로그인이 필요해요.' };
+    _blockedUserIds.add(userId);
+    notifyBookmarks();
+    const { error } = await supabase.from('blocked_users').insert({ blocker_id: _user.id, blocked_id: userId });
+    if (error) { _blockedUserIds.delete(userId); notifyBookmarks(); return { error: error.message }; }
+    return { error: null };
+  },
+  getBlockedUserIds: () => Array.from(_blockedUserIds),
 
   subscribeBookmarks(fn: BookmarkListener) {
     _bookmarkListeners.add(fn);

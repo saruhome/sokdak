@@ -12,7 +12,7 @@ import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS, getBoardLabel } from '../../../constants/mockPosts';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
-import { fetchPost, deletePost, createComment, type CommunityComment, type CommunityPostDetail } from '../../../constants/community';
+import { fetchPost, deletePost, reportPost, createComment, type CommunityComment, type CommunityPostDetail } from '../../../constants/community';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import {
   Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye,
@@ -35,6 +35,9 @@ export default function PostDetailScreen() {
   /* 댓글은 서버에서 등록순(오래된 순)으로 오므로, 최신순은 그냥 뒤집어서 보여준다 */
   const [commentSort, setCommentSort] = useState<'oldest' | 'newest'>('oldest');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [reporting, setReporting] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
   const load = useCallback(() => {
@@ -160,12 +163,41 @@ export default function PostDetailScreen() {
 
   const handleReport = () => {
     setMenuOpen(false);
+    setReportReason('');
+    setReportOpen(true);
+  };
+
+  const handleSubmitReport = async () => {
+    if (!reportReason.trim()) {
+      Alert.alert('신고 사유 필요', '신고 사유를 입력해주세요.');
+      return;
+    }
+    setReporting(true);
+    const { error } = await reportPost({
+      postId: post.id,
+      reportedUserId: post.authorId,
+      reason: reportReason.trim(),
+    });
+    setReporting(false);
+    if (error) { Alert.alert('신고 실패', error); return; }
+    setReportOpen(false);
     Alert.alert('신고 접수', '신고가 접수됐어요. 운영팀이 확인할게요.');
   };
 
   const handleBlock = () => {
     setMenuOpen(false);
-    Alert.alert('사용자 차단', `${post.author.name}님을 차단했어요.`);
+    Alert.alert('사용자 차단', `${post.author.name}님을 차단하면 이 유저의 글이 더 이상 보이지 않아요.`, [
+      { text: t('cancelLabel'), style: 'cancel' },
+      {
+        text: '차단',
+        style: 'destructive',
+        onPress: async () => {
+          const { error } = await authStore.blockUser(post.authorId);
+          if (error) { Alert.alert('차단 실패', error); return; }
+          router.replace('/tabs/community');
+        },
+      },
+    ]);
   };
 
   const totalComments = post.commentCount;
@@ -218,6 +250,37 @@ export default function PostDetailScreen() {
                 </>
               )}
             </View>
+          </TouchableOpacity>
+        </Modal>
+
+        {/* ── 신고 사유 입력 ── */}
+        <Modal visible={reportOpen} transparent animationType="fade" onRequestClose={() => setReportOpen(false)}>
+          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setReportOpen(false)}>
+            <TouchableOpacity style={styles.reportSheet} activeOpacity={1}>
+              <Text style={styles.reportTitle}>게시글 신고</Text>
+              <Text style={styles.reportSub}>신고 사유를 알려주세요. 운영팀이 확인 후 조치할게요.</Text>
+              <TextInput
+                style={styles.reportInput}
+                value={reportReason}
+                onChangeText={setReportReason}
+                placeholder="신고 사유를 입력하세요"
+                placeholderTextColor={Colors.textTertiary}
+                multiline
+                maxLength={300}
+              />
+              <View style={styles.reportActions}>
+                <TouchableOpacity style={styles.reportCancelBtn} onPress={() => setReportOpen(false)}>
+                  <Text style={styles.reportCancelText}>{t('cancelLabel')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.reportSubmitBtn, (!reportReason.trim() || reporting) && styles.sendBtnDisabled]}
+                  onPress={handleSubmitReport}
+                  disabled={!reportReason.trim() || reporting}
+                >
+                  <Text style={styles.reportSubmitText}>{reporting ? '접수 중…' : '신고하기'}</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
           </TouchableOpacity>
         </Modal>
 
@@ -415,7 +478,7 @@ const styles = StyleSheet.create({
   moreIcon: { fontSize: 20, color: Colors.textSecondary },
 
   /* 케밥 메뉴 — Figma: 80×72, 라운드 카드 두 줄 (2글자 라벨이 안 줄바꿈되게 92px로 살짝 넓힘) */
-  menuBackdrop: { flex: 1 },
+  menuBackdrop: { flex: 1, justifyContent: 'center' },
   menuSheet: {
     position: 'absolute', top: 44, right: 6, width: 92,
     borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
@@ -429,6 +492,34 @@ const styles = StyleSheet.create({
   },
   menuItemText: { fontSize: 13, color: Colors.textPrimary, fontFamily: undefined, flexShrink: 0 },
   menuDivider: { height: 1, backgroundColor: Colors.border },
+
+  /* 신고 사유 입력 시트 */
+  reportSheet: {
+    marginHorizontal: 24,
+    padding: 20, borderRadius: 14,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    gap: 10,
+  },
+  reportTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  reportSub: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17 },
+  reportInput: {
+    minHeight: 80, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.background, padding: 12,
+    fontSize: 14, color: Colors.textPrimary, textAlignVertical: 'top',
+  },
+  reportActions: { flexDirection: 'row', gap: 8, marginTop: 4 },
+  reportCancelBtn: {
+    flex: 1, height: 40, borderRadius: 10,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: Colors.border,
+  },
+  reportCancelText: { fontSize: 14, color: Colors.textSecondary },
+  reportSubmitBtn: {
+    flex: 1, height: 40, borderRadius: 10,
+    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.navBar,
+  },
+  reportSubmitText: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
   boardBadge: {
     paddingHorizontal: 12, paddingVertical: 4,
     borderRadius: 12,

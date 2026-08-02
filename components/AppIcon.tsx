@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
+import { Pressable, View, type GestureResponderEvent, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import type { LucideIcon } from 'lucide-react-native';
 import { AppText as Text } from '@/components/AppText';
 import { Colors } from '@/constants/Colors';
@@ -34,7 +34,7 @@ export function AppIcon({
   hoverColor?: string;
   /** 저장됨/좋아요 등 활성 상태 표현용 채움색 (외곽선은 유지) */
   fill?: string;
-  onPress?: () => void;
+  onPress?: (event: GestureResponderEvent) => void;
   hitSlop?: number;
   style?: StyleProp<ViewStyle>;
 }) {

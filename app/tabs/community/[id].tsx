@@ -1,7 +1,7 @@
 import {
   StyleSheet, View, SafeAreaView, ScrollView, Modal, Share,
   TouchableOpacity, TextInput, KeyboardAvoidingView,
-  Platform, ActivityIndicator,
+  Platform, ActivityIndicator, type GestureResponderEvent,
 } from 'react-native';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
@@ -40,6 +40,9 @@ export default function PostDetailScreen() {
   const [commentSort, setCommentSort] = useState<'oldest' | 'newest'>('oldest');
   type MenuTarget = { kind: 'post' } | { kind: 'comment'; comment: CommunityComment };
   const [menuTarget, setMenuTarget] = useState<MenuTarget | null>(null);
+  /* 케밥 메뉴는 항상 눌린 케밥 버튼 바로 아래에 뜬다 — 버튼 X는 모두 고정(menuSheet의 right)이라
+   * 눌렀을 때의 세로 위치(pageY)만 잡아서 top으로 넘긴다 */
+  const [menuAnchorTop, setMenuAnchorTop] = useState(44);
   const [reportTarget, setReportTarget] = useState<MenuTarget | null>(null);
   const [reportReason, setReportReason] = useState('');
   const [reporting, setReporting] = useState(false);
@@ -291,14 +294,17 @@ export default function PostDetailScreen() {
           </TouchableOpacity>
           <View style={styles.topBarRight}>
             <AppIcon icon={Share2} size={20} style={styles.iconButton} onPress={handleShare} />
-            <AppIcon icon={MoreVertical} size={20} style={styles.iconButton} onPress={() => setMenuTarget({ kind: 'post' })} />
+            <AppIcon
+              icon={MoreVertical} size={20} style={styles.iconButton}
+              onPress={() => { setMenuAnchorTop(44); setMenuTarget({ kind: 'post' }); }}
+            />
           </View>
         </View>
 
         {/* ── 케밥 메뉴 – 내 글/댓글: 수정/삭제, 다른 사람 글/댓글: 신고/차단 ── */}
         <Modal visible={!!menuTarget} transparent animationType="fade" onRequestClose={() => setMenuTarget(null)}>
           <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setMenuTarget(null)}>
-            <View style={menuTarget?.kind === 'comment' ? styles.commentMenuSheet : styles.menuSheet}>
+            <View style={[styles.menuSheet, { top: menuAnchorTop }]}>
               {menuIsOwner ? (
                 <>
                   <TouchableOpacity
@@ -478,7 +484,7 @@ export default function PostDetailScreen() {
                 <CommentItem
                   comment={comment}
                   onReply={() => handleReply(comment)}
-                  onMenuPress={() => setMenuTarget({ kind: 'comment', comment })}
+                  onMenuPress={pageY => { setMenuAnchorTop(pageY + 16); setMenuTarget({ kind: 'comment', comment }); }}
                   isEditing={editingCommentId === comment.id}
                   editText={editingText}
                   onChangeEditText={setEditingText}
@@ -494,7 +500,7 @@ export default function PostDetailScreen() {
                       comment={reply}
                       isReply
                       onReply={() => handleReply(comment)}
-                      onMenuPress={() => setMenuTarget({ kind: 'comment', comment: reply })}
+                      onMenuPress={pageY => { setMenuAnchorTop(pageY + 16); setMenuTarget({ kind: 'comment', comment: reply }); }}
                       isEditing={editingCommentId === reply.id}
                       editText={editingText}
                       onChangeEditText={setEditingText}
@@ -551,7 +557,7 @@ function CommentItem({
   comment: CommunityComment;
   isReply?: boolean;
   onReply: () => void;
-  onMenuPress: () => void;
+  onMenuPress: (pageY: number) => void;
   isEditing: boolean;
   editText: string;
   onChangeEditText: (text: string) => void;
@@ -571,7 +577,6 @@ function CommentItem({
           <Text style={styles.commentAuthor}>{comment.author.name}</Text>
           <Text style={styles.commentLevel}>{comment.author.level}</Text>
           <Text style={styles.commentDate}>{comment.createdAt}</Text>
-          <AppIcon icon={MoreVertical} size={14} color={Colors.textTertiary} style={styles.commentMenuBtn} onPress={onMenuPress} />
         </View>
         {isEditing ? (
           <View style={styles.commentEditWrap}>
@@ -612,6 +617,11 @@ function CommentItem({
           )}
         </View>
       </View>
+      <AppIcon
+        icon={MoreVertical} size={14} color={Colors.textTertiary}
+        style={styles.commentMenuBtn}
+        onPress={(e: GestureResponderEvent) => onMenuPress(e.nativeEvent.pageY)}
+      />
     </View>
   );
 }
@@ -636,10 +646,12 @@ const styles = StyleSheet.create({
   shareIcon: { fontSize: 17 },
   moreIcon: { fontSize: 20, color: Colors.textSecondary },
 
-  /* 케밥 메뉴 — Figma: 80×72, 라운드 카드 두 줄 (2글자 라벨이 안 줄바꿈되게 92px로 살짝 넓힘) */
+  /* 케밥 메뉴 — Figma: 80×72, 라운드 카드 두 줄 (2글자 라벨이 안 줄바꿈되게 92px로 살짝 넓힘)
+   * top은 눌린 케밥 버튼 위치에 따라 인라인으로 넘어온다 — right는 모든 케밥 버튼(게시글/댓글)이
+   * commentMenuBtn과 동일한 X에 고정돼 있어 여기서는 항상 같은 값 하나만 쓴다 */
   menuBackdrop: { flex: 1, justifyContent: 'center' },
   menuSheet: {
-    position: 'absolute', top: 44, right: 6, width: 92,
+    position: 'absolute', right: 6, width: 92,
     borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, overflow: 'hidden',
     shadowColor: '#909090', shadowOffset: { width: 2, height: 2 },
@@ -651,15 +663,6 @@ const styles = StyleSheet.create({
   },
   menuItemText: { fontSize: 13, color: Colors.textPrimary, fontFamily: undefined, flexShrink: 0 },
   menuDivider: { height: 1, backgroundColor: Colors.border },
-
-  /* 댓글 케밥 메뉴 — 댓글마다 화면 위치가 달라 top-right 고정 대신 화면 중앙에 띄운다 */
-  commentMenuSheet: {
-    alignSelf: 'center', width: 92,
-    borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.surface, overflow: 'hidden',
-    shadowColor: '#909090', shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.25, shadowRadius: 4, elevation: 4,
-  },
 
   /* 신고 사유 입력 시트 */
   reportSheet: {
@@ -752,7 +755,10 @@ const styles = StyleSheet.create({
 
   /* 댓글 목록 */
   commentList: {},
+  /* flex:1 — replyWrap(row) 안에서도 항상 남은 너비를 다 채우게 해서, position:relative 기준
+   * 박스가 화면 우측 끝까지 이어지고 commentMenuBtn의 절대 위치(X)가 항상 동일하게 나온다 */
   commentItem: {
+    flex: 1, position: 'relative',
     flexDirection: 'row', paddingHorizontal: 20,
     paddingVertical: 14, gap: 10,
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
@@ -772,7 +778,12 @@ const styles = StyleSheet.create({
     borderRadius: 6, borderWidth: 1, borderColor: Colors.accent + '50',
   },
   commentDate: { fontSize: 11, color: Colors.textTertiary, marginLeft: 'auto' },
-  commentMenuBtn: { width: 22, height: 22, marginLeft: 2, alignItems: 'center', justifyContent: 'center' },
+  /* right:17 — topBar 케밥(paddingHorizontal:8 + iconButton 40 폭의 중심)과 아이콘 중심 X가
+   * 일치하도록 계산한 값. 댓글마다 화면 위치가 달라도 X는 무조건 이 값 하나로 고정된다 */
+  commentMenuBtn: {
+    position: 'absolute', top: 14, right: 17,
+    width: 22, height: 22, alignItems: 'center', justifyContent: 'center',
+  },
   commentContent: { fontSize: 14, color: Colors.textPrimary, lineHeight: 21 },
   commentActions: { flexDirection: 'row', gap: 14 },
   commentAction: { flexDirection: 'row', alignItems: 'center', gap: 4 },

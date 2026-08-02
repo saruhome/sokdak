@@ -1,5 +1,5 @@
 import {
-  StyleSheet, View, SafeAreaView, ScrollView, Modal,
+  StyleSheet, View, SafeAreaView, ScrollView, Modal, Share,
   TouchableOpacity, TextInput, KeyboardAvoidingView,
   Platform, ActivityIndicator,
 } from 'react-native';
@@ -153,6 +153,11 @@ export default function PostDetailScreen() {
     ]);
   };
 
+  /* OS 네이티브 공유 시트만 띄운다 — 브라우저나 다른 화면으로 나가지 않고 앱 안에 그대로 머문다 */
+  const handleShare = () => {
+    Share.share({ title: post.title, message: `${post.title}\n\n${post.content}` }).catch(() => {});
+  };
+
   const handleReport = () => {
     setMenuOpen(false);
     Alert.alert('신고 접수', '신고가 접수됐어요. 운영팀이 확인할게요.');
@@ -178,7 +183,7 @@ export default function PostDetailScreen() {
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <View style={styles.topBarRight}>
-            <AppIcon icon={Share2} size={20} style={styles.iconButton} onPress={() => {}} />
+            <AppIcon icon={Share2} size={20} style={styles.iconButton} onPress={handleShare} />
             <AppIcon icon={MoreVertical} size={20} style={styles.iconButton} onPress={() => setMenuOpen(true)} />
           </View>
         </View>
@@ -259,7 +264,7 @@ export default function PostDetailScreen() {
                   {saved ? t('savedLabel') : t('saveLabel')}
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.actionBtn}>
+              <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
                 <AppIcon icon={Share2} size={16} />
                 <Text style={styles.actionLabel}>{t('shareLabel')}</Text>
               </TouchableOpacity>
@@ -337,8 +342,6 @@ export default function PostDetailScreen() {
               placeholderTextColor={Colors.textTertiary}
               value={commentText}
               onChangeText={setCommentText}
-              multiline
-              maxLength={500}
             />
             <TouchableOpacity
               style={[styles.sendBtn, (!commentText.trim() || sendingComment) && styles.sendBtnDisabled]}
@@ -534,18 +537,21 @@ const styles = StyleSheet.create({
   replyingText: { flex: 1, fontSize: 12, color: Colors.navBar, fontWeight: '600' },
   replyingClose: { fontSize: 14, color: Colors.textTertiary, padding: 4 },
   commentInputRow: {
-    flexDirection: 'row', alignItems: 'flex-end',
-    paddingHorizontal: 12, paddingVertical: 8, gap: 8, minHeight: 57,
+    flexDirection: 'row', alignItems: 'center',
+    paddingHorizontal: 12, paddingVertical: 8, gap: 8,
   },
+  /* 입력창 높이를 전송 버튼과 똑같이 고정 — multiline을 빼서 줄바꿈으로 커지는 대신
+   * 한 줄 안에서 가로로 계속 이어 쓸 수 있게 했다(웹/네이티브 모두 높이가 안 바뀐다) */
   commentInput: {
-    flex: 1, maxHeight: 100,
+    flex: 1, height: 36,
     backgroundColor: Colors.surface,
-    borderRadius: 20, borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 18, borderWidth: 1, borderColor: Colors.border,
     paddingHorizontal: 14, paddingVertical: 8,
     fontSize: 14, color: Colors.textPrimary,
   },
   sendBtn: {
-    paddingHorizontal: 14, paddingVertical: 8,
+    height: 36, paddingHorizontal: 14,
+    alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.navBar, borderRadius: 18,
   },
   sendBtnDisabled: { backgroundColor: Colors.border },

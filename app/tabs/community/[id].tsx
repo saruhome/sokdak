@@ -442,10 +442,6 @@ export default function PostDetailScreen() {
                   {saved ? t('savedLabel') : t('saveLabel')}
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
-                <AppIcon icon={Share2} size={16} />
-                <Text style={styles.actionLabel}>{t('shareLabel')}</Text>
-              </TouchableOpacity>
             </View>
 
             {/* Group 189 – 조회·좋아요·댓글 메타 */}
@@ -575,7 +571,6 @@ function CommentItem({
       <View style={styles.commentBody}>
         <View style={styles.commentAuthorRow}>
           <Text style={styles.commentAuthor}>{comment.author.name}</Text>
-          <Text style={styles.commentLevel}>{comment.author.level}</Text>
           <Text style={styles.commentDate}>{comment.createdAt}</Text>
         </View>
         {isEditing ? (
@@ -770,13 +765,10 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   commentBody: { flex: 1, gap: 5 },
-  commentAuthorRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  /* paddingRight — commentMenuBtn(절대 위치, right:17~39)이 이 줄과 같은 높이라
+   * marginLeft:'auto'로 오른쪽 끝까지 붙는 날짜가 케밥 버튼과 겹치지 않게 그만큼 비워둔다 */
+  commentAuthorRow: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingRight: 24 },
   commentAuthor: { fontSize: 12, fontWeight: '700', color: Colors.textPrimary },
-  commentLevel: {
-    fontSize: 10, color: Colors.accent,
-    paddingHorizontal: 5, paddingVertical: 1,
-    borderRadius: 6, borderWidth: 1, borderColor: Colors.accent + '50',
-  },
   commentDate: { fontSize: 11, color: Colors.textTertiary, marginLeft: 'auto' },
   /* right:17 — topBar 케밥(paddingHorizontal:8 + iconButton 40 폭의 중심)과 아이콘 중심 X가
    * 일치하도록 계산한 값. 댓글마다 화면 위치가 달라도 X는 무조건 이 값 하나로 고정된다 */

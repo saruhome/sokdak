@@ -189,7 +189,6 @@ export default function HomeScreen() {
                   </View>
                 </View>
               </View>
-              <View style={styles.postThumb} />
             </TouchableOpacity>
           ))}
         </View>
@@ -294,10 +293,4 @@ const styles = StyleSheet.create({
   postDate: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
   postStats: { flexDirection: 'row', gap: 8 },
   postStat: { fontSize: 12, color: Colors.textTertiary },
-  /* Figma: size-16(64px) — 게시글 실사 이미지 필드가 아직 없어 자리표시 박스로 대체 */
-  postThumb: {
-    width: 64, height: 64, borderRadius: 8,
-    borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.pageBackground,
-  },
 });

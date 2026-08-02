@@ -10,7 +10,7 @@ import { Colors } from '../../constants/Colors';
 import { MOCK_WORDS } from '../../constants/mockWords';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
-import { MOCK_NOTIFICATIONS } from '../../constants/mockNotifications';
+import { fetchUnreadNotificationCount } from '../../constants/notifications';
 import { getCategoryBySlug, getCategoryName } from '../../constants/categories';
 import { getBoardLabel } from '../../constants/mockPosts';
 import { SCREEN_WIDTH } from '../../constants/layout';
@@ -46,11 +46,13 @@ export default function HomeScreen() {
   const t = languageStore.t;
   const [heroIndex, setHeroIndex] = useState(0);
   const [communityPosts, setCommunityPosts] = useState<CommunityPostSummary[]>([]);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const heroScrollRef = useRef<ScrollView>(null);
   const heroPausedRef = useRef(false);
 
   useFocusEffect(useCallback(() => {
     fetchPosts().then(data => setCommunityPosts(data.slice(0, 3)));
+    fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
   }, []));
 
   /* 히어로 캐러셀 자동 재생 — 오른쪽에서 왼쪽으로 넘어가도록 다음 인덱스로 스크롤.
@@ -86,7 +88,7 @@ export default function HomeScreen() {
           <AppIcon icon={Search} size={22} color={Colors.navBarIconActive} style={styles.iconBtn} onPress={() => router.push('/search')} />
           <View style={styles.iconBtn}>
             <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
-            {MOCK_NOTIFICATIONS.length > 0 && <View style={styles.notifDot} />}
+            {hasUnreadNotifications && <View style={styles.notifDot} />}
           </View>
         </View>
       </View>

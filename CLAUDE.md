@@ -219,7 +219,14 @@ mypage.tsx를 mypage/index.tsx + Stack(_layout.tsx)으로 전환하고 6개 서�
 - ✅ (부분) 게시글 좋아요 상태 — 위와 동일, 세션 동안만 유지.
 - ✅ 홈 화면 오늘의 단어 로직 (날짜 기반 랜덤) — `app/tabs/index.tsx`의 `pickDailyWords`,
   날짜 문자열을 시드로 결정적 난수 선택(같은 날엔 항상 같은 3개, 자정 지나면 갱신).
-- 앱 아이콘 / 스플래시 스크린 커스텀
+- ✅ 앱 아이콘 / 스플래시 스크린 커스텀 — `assets/icon.png`(호랭이 마스코트) +
+  `app/_layout.tsx`의 커스텀 페이드 스플래시로 이미 구현되어 있었음(문서만 안 갱신됨).
+- ✅ 알림(댓글·좋아요) 실제 백엔드 — `notifications` 테이블 + DB 트리거
+  (`notify_on_comment`/`notify_on_like`, 자기 자신에게는 알림 안 감)로 실제 생성.
+  `constants/notifications.ts`에서 조회/읽음 처리, 홈 배지·`app/notifications/index.tsx`
+  둘 다 연결. `constants/mockNotifications.ts`는 삭제.
+- 새로운 신조어 mock 데이터 5개로 보강(`new-slang` 카테고리, `constants/mockWords.ts`) —
+  실제 신조어 개수가 늘면 계속 추가 권장.
 
 ---
 

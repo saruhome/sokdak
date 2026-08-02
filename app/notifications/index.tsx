@@ -1,14 +1,25 @@
 import { StyleSheet, View, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
+import { useCallback, useEffect, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
-import { MOCK_NOTIFICATIONS } from '../../constants/mockNotifications';
+import { fetchNotifications, markAllNotificationsRead, type AppNotification } from '../../constants/notifications';
 import { AppIcon } from '@/components/AppIcon';
 import { ChevronLeft } from 'lucide-react-native';
 
-/** Figma: Navigation/알림 — 상단 벨 아이콘에서 진입하는 알림 목록 (댓글·좋아요 등)
- *  실제 알림 생성 백엔드(댓글/좋아요 트리거)가 아직 없어 mock 데이터로 구성 — constants/mockNotifications.ts */
+/** Figma: Navigation/알림 — 상단 벨 아이콘에서 진입하는 알림 목록 (댓글·좋아요)
+ * notifications 테이블 + DB 트리거(notify_on_comment/notify_on_like)로 실제 생성됨 */
 export default function NotificationsScreen() {
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+
+  useFocusEffect(useCallback(() => {
+    fetchNotifications().then(setNotifications);
+  }, []));
+
+  /* 화면을 열람하는 것 자체를 "확인함"으로 간주 — 홈 배지가 다음 방문 때 꺼진다 */
+  useEffect(() => { markAllNotificationsRead(); }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
@@ -20,10 +31,18 @@ export default function NotificationsScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionTitle}>오늘</Text>
+        <Text style={styles.sectionTitle}>알림</Text>
 
-        {MOCK_NOTIFICATIONS.map((n, i) => (
-          <View key={n.id} style={[styles.item, i > 0 && styles.itemBorder]}>
+        {notifications.length === 0 && (
+          <Text style={styles.empty}>아직 알림이 없어요</Text>
+        )}
+
+        {notifications.map((n, i) => (
+          <TouchableOpacity
+            key={n.id}
+            style={[styles.item, i > 0 && styles.itemBorder]}
+            onPress={() => router.push(`/tabs/community/${n.postId}`)}
+          >
             <View style={styles.itemText}>
               <Text style={styles.message}>
                 <Text style={styles.actorName}>{n.actorName}</Text>
@@ -31,7 +50,7 @@ export default function NotificationsScreen() {
               </Text>
               <Text style={styles.timeAgo}>{n.timeAgo}</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -53,6 +72,7 @@ const styles = StyleSheet.create({
 
   content: { paddingHorizontal: 24, paddingTop: 20, paddingBottom: 40 },
   sectionTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, marginBottom: 16 },
+  empty: { fontSize: 13, color: Colors.textTertiary, textAlign: 'center', paddingVertical: 40 },
 
   item: { paddingVertical: 16, gap: 8 },
   itemBorder: { borderTopWidth: 1, borderTopColor: Colors.divider },

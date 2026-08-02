@@ -227,6 +227,33 @@ export const MOCK_WORDS: Word[] = [
     relatedWords: ['스불재', '공유', '정보 과잉'], likes: 445, saves: 178,
     translations: [{ lang: '🇺🇸 EN', text: 'Too Much Information (TMI)' }, { lang: '🇯🇵 JA', text: 'TMI' }, { lang: '🇨🇳 ZH', text: '信息过量' }],
   },
+  {
+    id: '29', word: '갓생', romanization: 'Gat-Saeng', category: 'new-slang',
+    pronunciation: '[갇-쌩]', shortDesc: '계획적이고 부지런한 삶 — 갓(God)+인생',
+    meanings: [{ type: '명사', definition: "'갓'(God)과 '인생'의 합성어. 아침 일찍 일어나 운동·공부 등 자기관리를 철저히 하는 부지런하고 생산적인 삶.", examples: [{ kor: '오늘부터 갓생 산다, 6시 기상!', eng: "Starting today I'm living my best disciplined life — up at 6!" }, { kor: '방학 동안 갓생 챌린지 같이 할래?', eng: 'Want to do a "disciplined life" challenge together this break?' }] }],
+    origin: "'갓'(God) + '인생'의 합성",
+    usage: 'SNS 챌린지·다이어리 꾸미기(다꾸)와 함께 유행.',
+    relatedWords: ['미라클모닝', '자기관리', '루틴'], likes: 512, saves: 201,
+    translations: [{ lang: '🇺🇸 EN', text: 'Living your best disciplined life' }, { lang: '🇯🇵 JA', text: '意識高い系の生活' }, { lang: '🇨🇳 ZH', text: '自律精致的生活' }],
+  },
+  {
+    id: '30', word: '뇌절', romanization: 'Noe-Jeol', category: 'new-slang',
+    pronunciation: '[뇌-절]', shortDesc: '이미 재미없어진 걸 계속 우려먹는 것',
+    meanings: [{ type: '명사/동사', definition: '한 번으로 끝났어야 할 농담이나 드립을 질릴 때까지 반복해서 오히려 재미가 없어지는 상태.', examples: [{ kor: '그 드립 벌써 뇌절이야, 그만해.', eng: "That joke's already been beaten to death, stop." }, { kor: '시즌2까지 가는 건 좀 뇌절 아니야?', eng: "Isn't dragging it to season 2 a bit much?" }] }],
+    origin: '온라인 커뮤니티(디시인사이드 등)에서 파생, 원래는 게임 은어',
+    usage: '유머·밈이 과하게 반복될 때 지적하는 용도로 사용.',
+    relatedWords: ['우려먹기', 'TMI', '억까'], likes: 298, saves: 92,
+    translations: [{ lang: '🇺🇸 EN', text: 'Beating a joke to death' }, { lang: '🇯🇵 JA', text: 'しつこい繰り返し' }, { lang: '🇨🇳 ZH', text: '过度重复的梗' }],
+  },
+  {
+    id: '31', word: '핑프', romanization: 'Ping-Peu', category: 'new-slang',
+    pronunciation: '[핑-프]', shortDesc: '검색 대신 남에게 물어보는 사람 — 핑거프린세스',
+    meanings: [{ type: '명사', definition: "'핑거프린세스(finger princess)'의 줄임말. 검색 한 번이면 알 수 있는 것도 직접 찾지 않고 남에게 물어보는 사람.", examples: [{ kor: '그건 검색하면 바로 나오는데, 핑프처럼 왜 물어봐.', eng: "That shows up with one search, why ask like a finger princess?" }] }],
+    origin: "영어 'finger princess'를 한국식으로 줄여 만든 신조어",
+    usage: '온라인 커뮤니티·오픈채팅에서 다소 놀리는 뉘앙스로 사용.',
+    relatedWords: ['TMI', '뇌절', '검색좀'], likes: 276, saves: 84,
+    translations: [{ lang: '🇺🇸 EN', text: '"Finger princess" (too lazy to search)' }, { lang: '🇯🇵 JA', text: '調べずすぐ聞く人' }, { lang: '🇨🇳 ZH', text: '不搜索就问的人' }],
+  },
 
   // ── 자주 쓰는 신조어 ──
   {

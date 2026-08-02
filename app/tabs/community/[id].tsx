@@ -38,6 +38,8 @@ export default function PostDetailScreen() {
   const [reportOpen, setReportOpen] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [reporting, setReporting] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
   const load = useCallback(() => {
@@ -142,18 +144,16 @@ export default function PostDetailScreen() {
 
   const handleDelete = () => {
     setMenuOpen(false);
-    Alert.alert('게시글 삭제', '정말 삭제하시겠어요? 되돌릴 수 없어요.', [
-      { text: t('cancelLabel'), style: 'cancel' },
-      {
-        text: '삭제',
-        style: 'destructive',
-        onPress: async () => {
-          const { error } = await deletePost(post.id);
-          if (error) { Alert.alert('삭제 실패', error); return; }
-          router.replace('/tabs/community');
-        },
-      },
-    ]);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    setDeleting(true);
+    const { error } = await deletePost(post.id);
+    setDeleting(false);
+    if (error) { Alert.alert('삭제 실패', error); return; }
+    setDeleteConfirmOpen(false);
+    router.replace('/tabs/community');
   };
 
   /* OS 네이티브 공유 시트만 띄운다 — 브라우저나 다른 화면으로 나가지 않고 앱 안에 그대로 머문다 */
@@ -278,6 +278,28 @@ export default function PostDetailScreen() {
                   disabled={!reportReason.trim() || reporting}
                 >
                   <Text style={styles.reportSubmitText}>{reporting ? '접수 중…' : '신고하기'}</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </Modal>
+
+        {/* ── 삭제 확인 ── */}
+        <Modal visible={deleteConfirmOpen} transparent animationType="fade" onRequestClose={() => setDeleteConfirmOpen(false)}>
+          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setDeleteConfirmOpen(false)}>
+            <TouchableOpacity style={styles.reportSheet} activeOpacity={1}>
+              <Text style={styles.reportTitle}>게시글 삭제</Text>
+              <Text style={styles.reportSub}>정말 삭제하시겠어요? 되돌릴 수 없어요.</Text>
+              <View style={styles.reportActions}>
+                <TouchableOpacity style={styles.reportCancelBtn} onPress={() => setDeleteConfirmOpen(false)}>
+                  <Text style={styles.reportCancelText}>{t('cancelLabel')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.reportSubmitBtn, deleting && styles.sendBtnDisabled]}
+                  onPress={handleConfirmDelete}
+                  disabled={deleting}
+                >
+                  <Text style={styles.reportSubmitText}>{deleting ? '삭제 중…' : '삭제'}</Text>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>

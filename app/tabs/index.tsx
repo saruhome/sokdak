@@ -10,6 +10,7 @@ import { Colors } from '../../constants/Colors';
 import { MOCK_WORDS } from '../../constants/mockWords';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
+import { MOCK_NOTIFICATIONS } from '../../constants/mockNotifications';
 import { getCategoryBySlug, getCategoryName } from '../../constants/categories';
 import { getBoardLabel } from '../../constants/mockPosts';
 import { SCREEN_WIDTH } from '../../constants/layout';
@@ -18,8 +19,22 @@ import { SokDakLogo } from '@/components/icons/SokDakLogo';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Search, Bell, Eye, Heart, MessageCircle } from 'lucide-react-native';
 
-/** Figma: Card/Recommend2 — 좋아요 상위 3개 단어로 구성된 캐러셀 */
-const HERO_WORDS = [...MOCK_WORDS].sort((a, b) => b.likes - a.likes).slice(0, 3);
+/** 날짜(YYYY-MM-DD)를 시드로 결정적 난수를 뽑아 오늘 하루 동안은 항상 같은 3개가 나오게 한다 */
+function pickDailyWords(words: typeof MOCK_WORDS, count: number, seed: string) {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  const pool = [...words];
+  const picked: typeof MOCK_WORDS = [];
+  while (picked.length < count && pool.length > 0) {
+    h = (h * 1664525 + 1013904223) >>> 0;
+    const idx = h % pool.length;
+    picked.push(pool.splice(idx, 1)[0]);
+  }
+  return picked;
+}
+
+/** Figma: Card/Recommend2 — 오늘의 단어 캐러셀 (날짜 기반 랜덤 3개, 매일 자정 기준으로 바뀜) */
+const HERO_WORDS = pickDailyWords(MOCK_WORDS, 3, new Date().toISOString().slice(0, 10));
 /** Figma: 새로운 신조어 섹션 — new-slang 카테고리 단어 미리보기 */
 const NEW_SLANG_WORDS = MOCK_WORDS.filter(w => w.category === 'new-slang');
 
@@ -71,7 +86,7 @@ export default function HomeScreen() {
           <AppIcon icon={Search} size={22} color={Colors.navBarIconActive} style={styles.iconBtn} onPress={() => router.push('/search')} />
           <View style={styles.iconBtn}>
             <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
-            <View style={styles.notifDot} />
+            {MOCK_NOTIFICATIONS.length > 0 && <View style={styles.notifDot} />}
           </View>
         </View>
       </View>
@@ -165,6 +180,9 @@ export default function HomeScreen() {
             </View>
           </View>
 
+          {communityPosts.length === 0 && (
+            <Text style={styles.communityEmpty}>{t('noPostsYet')}</Text>
+          )}
           {communityPosts.map((post, i) => (
             <TouchableOpacity
               key={post.id}
@@ -282,6 +300,7 @@ const styles = StyleSheet.create({
   wordCardDesc: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16, fontFamily: undefined },
 
   /* 커뮤니티 리스트 */
+  communityEmpty: { fontSize: 13, color: Colors.textTertiary, paddingVertical: 24, textAlign: 'center' },
   postItem: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 16, gap: 12 },
   postItemBorder: { borderTopWidth: 1, borderTopColor: Colors.divider },
   postItemLeft: { flex: 1, gap: 8 },

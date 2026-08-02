@@ -1,7 +1,8 @@
 import {
   StyleSheet, View, SafeAreaView, TextInput,
-  TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform,
+  TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform,
 } from 'react-native';
+import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';

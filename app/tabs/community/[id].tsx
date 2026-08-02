@@ -1,8 +1,9 @@
 import {
   StyleSheet, View, SafeAreaView, ScrollView, Modal,
   TouchableOpacity, TextInput, KeyboardAvoidingView,
-  Platform, Alert, ActivityIndicator,
+  Platform, ActivityIndicator,
 } from 'react-native';
+import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState, useRef } from 'react';

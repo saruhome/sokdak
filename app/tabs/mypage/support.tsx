@@ -1,7 +1,8 @@
 import {
   StyleSheet, View, SafeAreaView, ScrollView,
-  TouchableOpacity, Linking, Alert, TextInput,
+  TouchableOpacity, Linking, TextInput,
 } from 'react-native';
+import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import { useState, useMemo } from 'react';
 import { Colors } from '../../../constants/Colors';

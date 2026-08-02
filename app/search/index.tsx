@@ -1,7 +1,8 @@
 import {
   StyleSheet, View, SafeAreaView,
-  TextInput, FlatList, ScrollView, TouchableOpacity, Alert,
+  TextInput, FlatList, ScrollView, TouchableOpacity,
 } from 'react-native';
+import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import { router, useFocusEffect } from 'expo-router';

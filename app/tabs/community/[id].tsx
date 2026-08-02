@@ -1,5 +1,5 @@
 import {
-  StyleSheet, View, SafeAreaView, ScrollView, Modal,
+  StyleSheet, View, SafeAreaView, ScrollView, Modal, Share,
   TouchableOpacity, TextInput, KeyboardAvoidingView,
   Platform, Alert, ActivityIndicator,
 } from 'react-native';
@@ -152,6 +152,11 @@ export default function PostDetailScreen() {
     ]);
   };
 
+  /* OS 네이티브 공유 시트만 띄운다 — 브라우저나 다른 화면으로 나가지 않고 앱 안에 그대로 머문다 */
+  const handleShare = () => {
+    Share.share({ title: post.title, message: `${post.title}\n\n${post.content}` }).catch(() => {});
+  };
+
   const handleReport = () => {
     setMenuOpen(false);
     Alert.alert('신고 접수', '신고가 접수됐어요. 운영팀이 확인할게요.');
@@ -177,7 +182,7 @@ export default function PostDetailScreen() {
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <View style={styles.topBarRight}>
-            <AppIcon icon={Share2} size={20} style={styles.iconButton} onPress={() => {}} />
+            <AppIcon icon={Share2} size={20} style={styles.iconButton} onPress={handleShare} />
             <AppIcon icon={MoreVertical} size={20} style={styles.iconButton} onPress={() => setMenuOpen(true)} />
           </View>
         </View>
@@ -258,7 +263,7 @@ export default function PostDetailScreen() {
                   {saved ? t('savedLabel') : t('saveLabel')}
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.actionBtn}>
+              <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
                 <AppIcon icon={Share2} size={16} />
                 <Text style={styles.actionLabel}>{t('shareLabel')}</Text>
               </TouchableOpacity>

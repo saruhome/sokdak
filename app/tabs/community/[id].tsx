@@ -12,7 +12,11 @@ import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS, getBoardLabel } from '../../../constants/mockPosts';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
-import { fetchPost, deletePost, reportPost, createComment, type CommunityComment, type CommunityPostDetail } from '../../../constants/community';
+import {
+  fetchPost, deletePost, reportPost, createComment,
+  updateComment, deleteComment, reportComment,
+  type CommunityComment, type CommunityPostDetail,
+} from '../../../constants/community';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import {
   Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye,
@@ -34,12 +38,18 @@ export default function PostDetailScreen() {
   const [sendingComment, setSendingComment] = useState(false);
   /* 댓글은 서버에서 등록순(오래된 순)으로 오므로, 최신순은 그냥 뒤집어서 보여준다 */
   const [commentSort, setCommentSort] = useState<'oldest' | 'newest'>('oldest');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [reportOpen, setReportOpen] = useState(false);
+  type MenuTarget = { kind: 'post' } | { kind: 'comment'; comment: CommunityComment };
+  const [menuTarget, setMenuTarget] = useState<MenuTarget | null>(null);
+  const [reportTarget, setReportTarget] = useState<MenuTarget | null>(null);
   const [reportReason, setReportReason] = useState('');
   const [reporting, setReporting] = useState(false);
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    title: string; message: string; confirmLabel: string; onConfirm: () => Promise<void>;
+  } | null>(null);
+  const [confirmBusy, setConfirmBusy] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState('');
+  const [savingEdit, setSavingEdit] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
   const load = useCallback(() => {
@@ -135,25 +145,28 @@ export default function PostDetailScreen() {
     setSaved(authStore.isPostSaved(post.id));
   };
 
-  const isOwner = authStore.getUser()?.id === post.authorId;
+  const myId = authStore.getUser()?.id;
+  const isOwner = myId === post.authorId;
+  const menuIsOwner = menuTarget?.kind === 'comment' ? myId === menuTarget.comment.authorId : isOwner;
 
   const handleEdit = () => {
-    setMenuOpen(false);
+    setMenuTarget(null);
     router.push(`/tabs/community/write?editId=${post.id}`);
   };
 
   const handleDelete = () => {
-    setMenuOpen(false);
-    setDeleteConfirmOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    setDeleting(true);
-    const { error } = await deletePost(post.id);
-    setDeleting(false);
-    if (error) { Alert.alert('삭제 실패', error); return; }
-    setDeleteConfirmOpen(false);
-    router.replace('/tabs/community');
+    setMenuTarget(null);
+    setConfirmDialog({
+      title: '게시글 삭제',
+      message: '정말 삭제하시겠어요? 되돌릴 수 없어요.',
+      confirmLabel: '삭제',
+      onConfirm: async () => {
+        const { error } = await deletePost(post.id);
+        if (error) { Alert.alert('삭제 실패', error); return; }
+        setConfirmDialog(null);
+        router.replace('/tabs/community');
+      },
+    });
   };
 
   /* OS 네이티브 공유 시트만 띄운다 — 브라우저나 다른 화면으로 나가지 않고 앱 안에 그대로 머문다 */
@@ -162,42 +175,104 @@ export default function PostDetailScreen() {
   };
 
   const handleReport = () => {
-    setMenuOpen(false);
+    setMenuTarget(null);
     setReportReason('');
-    setReportOpen(true);
+    setReportTarget({ kind: 'post' });
+  };
+
+  const handleBlock = () => {
+    setMenuTarget(null);
+    setConfirmDialog({
+      title: '사용자 차단',
+      message: `${post.author.name}님을 차단하면 이 유저의 글이 더 이상 보이지 않아요.`,
+      confirmLabel: '차단',
+      onConfirm: async () => {
+        const { error } = await authStore.blockUser(post.authorId);
+        if (error) { Alert.alert('차단 실패', error); return; }
+        setConfirmDialog(null);
+        router.replace('/tabs/community');
+      },
+    });
+  };
+
+  /* ── 댓글 케밥 메뉴 액션 — 게시글과 동일한 패턴, 대상만 댓글로 바뀜 ── */
+  const handleEditComment = (comment: CommunityComment) => {
+    setMenuTarget(null);
+    setEditingCommentId(comment.id);
+    setEditingText(comment.content);
+  };
+
+  const handleSaveCommentEdit = async () => {
+    if (!editingCommentId || !editingText.trim()) return;
+    setSavingEdit(true);
+    const { error } = await updateComment(editingCommentId, editingText.trim());
+    setSavingEdit(false);
+    if (error) { Alert.alert('수정 실패', error); return; }
+    setEditingCommentId(null);
+    load();
+  };
+
+  const handleDeleteComment = (comment: CommunityComment) => {
+    setMenuTarget(null);
+    setConfirmDialog({
+      title: '댓글 삭제',
+      message: '정말 삭제하시겠어요? 되돌릴 수 없어요.',
+      confirmLabel: '삭제',
+      onConfirm: async () => {
+        const { error } = await deleteComment(comment.id);
+        if (error) { Alert.alert('삭제 실패', error); return; }
+        setConfirmDialog(null);
+        load();
+      },
+    });
+  };
+
+  const handleReportComment = (comment: CommunityComment) => {
+    setMenuTarget(null);
+    setReportReason('');
+    setReportTarget({ kind: 'comment', comment });
+  };
+
+  const handleBlockComment = (comment: CommunityComment) => {
+    setMenuTarget(null);
+    setConfirmDialog({
+      title: '사용자 차단',
+      message: `${comment.author.name}님을 차단하면 이 유저의 글이 더 이상 보이지 않아요.`,
+      confirmLabel: '차단',
+      onConfirm: async () => {
+        const { error } = await authStore.blockUser(comment.authorId);
+        if (error) { Alert.alert('차단 실패', error); return; }
+        setConfirmDialog(null);
+        load();
+      },
+    });
   };
 
   const handleSubmitReport = async () => {
-    if (!reportReason.trim()) {
+    if (!reportTarget || !reportReason.trim()) {
       Alert.alert('신고 사유 필요', '신고 사유를 입력해주세요.');
       return;
     }
     setReporting(true);
-    const { error } = await reportPost({
-      postId: post.id,
-      reportedUserId: post.authorId,
-      reason: reportReason.trim(),
-    });
+    const { error } = reportTarget.kind === 'post'
+      ? await reportPost({ postId: post.id, reportedUserId: post.authorId, reason: reportReason.trim() })
+      : await reportComment({
+          commentId: reportTarget.comment.id,
+          postId: post.id,
+          reportedUserId: reportTarget.comment.authorId,
+          reason: reportReason.trim(),
+        });
     setReporting(false);
     if (error) { Alert.alert('신고 실패', error); return; }
-    setReportOpen(false);
+    setReportTarget(null);
     Alert.alert('신고 접수', '신고가 접수됐어요. 운영팀이 확인할게요.');
   };
 
-  const handleBlock = () => {
-    setMenuOpen(false);
-    Alert.alert('사용자 차단', `${post.author.name}님을 차단하면 이 유저의 글이 더 이상 보이지 않아요.`, [
-      { text: t('cancelLabel'), style: 'cancel' },
-      {
-        text: '차단',
-        style: 'destructive',
-        onPress: async () => {
-          const { error } = await authStore.blockUser(post.authorId);
-          if (error) { Alert.alert('차단 실패', error); return; }
-          router.replace('/tabs/community');
-        },
-      },
-    ]);
+  const handleConfirm = async () => {
+    if (!confirmDialog) return;
+    setConfirmBusy(true);
+    await confirmDialog.onConfirm();
+    setConfirmBusy(false);
   };
 
   const totalComments = post.commentCount;
@@ -216,34 +291,46 @@ export default function PostDetailScreen() {
           </TouchableOpacity>
           <View style={styles.topBarRight}>
             <AppIcon icon={Share2} size={20} style={styles.iconButton} onPress={handleShare} />
-            <AppIcon icon={MoreVertical} size={20} style={styles.iconButton} onPress={() => setMenuOpen(true)} />
+            <AppIcon icon={MoreVertical} size={20} style={styles.iconButton} onPress={() => setMenuTarget({ kind: 'post' })} />
           </View>
         </View>
 
-        {/* ── 케밥 메뉴 – 내 글: 수정/삭제, 다른 사람 글: 신고/차단 ── */}
-        <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
-          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setMenuOpen(false)}>
-            <View style={styles.menuSheet}>
-              {isOwner ? (
+        {/* ── 케밥 메뉴 – 내 글/댓글: 수정/삭제, 다른 사람 글/댓글: 신고/차단 ── */}
+        <Modal visible={!!menuTarget} transparent animationType="fade" onRequestClose={() => setMenuTarget(null)}>
+          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setMenuTarget(null)}>
+            <View style={menuTarget?.kind === 'comment' ? styles.commentMenuSheet : styles.menuSheet}>
+              {menuIsOwner ? (
                 <>
-                  <TouchableOpacity style={styles.menuItem} onPress={handleEdit}>
+                  <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => menuTarget?.kind === 'comment' ? handleEditComment(menuTarget.comment) : handleEdit()}
+                  >
                     <AppIcon icon={Pencil} size={14} color={Colors.textPrimary} />
                     <Text style={styles.menuItemText}>수정</Text>
                   </TouchableOpacity>
                   <View style={styles.menuDivider} />
-                  <TouchableOpacity style={styles.menuItem} onPress={handleDelete}>
+                  <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => menuTarget?.kind === 'comment' ? handleDeleteComment(menuTarget.comment) : handleDelete()}
+                  >
                     <AppIcon icon={Trash2} size={14} color={Colors.textPrimary} />
                     <Text style={styles.menuItemText}>삭제</Text>
                   </TouchableOpacity>
                 </>
               ) : (
                 <>
-                  <TouchableOpacity style={styles.menuItem} onPress={handleReport}>
+                  <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => menuTarget?.kind === 'comment' ? handleReportComment(menuTarget.comment) : handleReport()}
+                  >
                     <AppIcon icon={Flag} size={14} color={Colors.textPrimary} />
                     <Text style={styles.menuItemText}>신고</Text>
                   </TouchableOpacity>
                   <View style={styles.menuDivider} />
-                  <TouchableOpacity style={styles.menuItem} onPress={handleBlock}>
+                  <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => menuTarget?.kind === 'comment' ? handleBlockComment(menuTarget.comment) : handleBlock()}
+                  >
                     <AppIcon icon={Ban} size={14} color={Colors.textPrimary} />
                     <Text style={styles.menuItemText}>차단</Text>
                   </TouchableOpacity>
@@ -253,11 +340,11 @@ export default function PostDetailScreen() {
           </TouchableOpacity>
         </Modal>
 
-        {/* ── 신고 사유 입력 ── */}
-        <Modal visible={reportOpen} transparent animationType="fade" onRequestClose={() => setReportOpen(false)}>
-          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setReportOpen(false)}>
+        {/* ── 신고 사유 입력 (게시글/댓글 공용) ── */}
+        <Modal visible={!!reportTarget} transparent animationType="fade" onRequestClose={() => setReportTarget(null)}>
+          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setReportTarget(null)}>
             <TouchableOpacity style={styles.reportSheet} activeOpacity={1}>
-              <Text style={styles.reportTitle}>게시글 신고</Text>
+              <Text style={styles.reportTitle}>{reportTarget?.kind === 'comment' ? '댓글 신고' : '게시글 신고'}</Text>
               <Text style={styles.reportSub}>신고 사유를 알려주세요. 운영팀이 확인 후 조치할게요.</Text>
               <TextInput
                 style={styles.reportInput}
@@ -269,7 +356,7 @@ export default function PostDetailScreen() {
                 maxLength={300}
               />
               <View style={styles.reportActions}>
-                <TouchableOpacity style={styles.reportCancelBtn} onPress={() => setReportOpen(false)}>
+                <TouchableOpacity style={styles.reportCancelBtn} onPress={() => setReportTarget(null)}>
                   <Text style={styles.reportCancelText}>{t('cancelLabel')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -284,22 +371,22 @@ export default function PostDetailScreen() {
           </TouchableOpacity>
         </Modal>
 
-        {/* ── 삭제 확인 ── */}
-        <Modal visible={deleteConfirmOpen} transparent animationType="fade" onRequestClose={() => setDeleteConfirmOpen(false)}>
-          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setDeleteConfirmOpen(false)}>
+        {/* ── 삭제/차단 확인 (게시글/댓글 공용) ── */}
+        <Modal visible={!!confirmDialog} transparent animationType="fade" onRequestClose={() => setConfirmDialog(null)}>
+          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setConfirmDialog(null)}>
             <TouchableOpacity style={styles.reportSheet} activeOpacity={1}>
-              <Text style={styles.reportTitle}>게시글 삭제</Text>
-              <Text style={styles.reportSub}>정말 삭제하시겠어요? 되돌릴 수 없어요.</Text>
+              <Text style={styles.reportTitle}>{confirmDialog?.title}</Text>
+              <Text style={styles.reportSub}>{confirmDialog?.message}</Text>
               <View style={styles.reportActions}>
-                <TouchableOpacity style={styles.reportCancelBtn} onPress={() => setDeleteConfirmOpen(false)}>
+                <TouchableOpacity style={styles.reportCancelBtn} onPress={() => setConfirmDialog(null)}>
                   <Text style={styles.reportCancelText}>{t('cancelLabel')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.reportSubmitBtn, deleting && styles.sendBtnDisabled]}
-                  onPress={handleConfirmDelete}
-                  disabled={deleting}
+                  style={[styles.reportSubmitBtn, confirmBusy && styles.sendBtnDisabled]}
+                  onPress={handleConfirm}
+                  disabled={confirmBusy}
                 >
-                  <Text style={styles.reportSubmitText}>{deleting ? '삭제 중…' : '삭제'}</Text>
+                  <Text style={styles.reportSubmitText}>{confirmBusy ? '처리 중…' : confirmDialog?.confirmLabel}</Text>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -391,6 +478,13 @@ export default function PostDetailScreen() {
                 <CommentItem
                   comment={comment}
                   onReply={() => handleReply(comment)}
+                  onMenuPress={() => setMenuTarget({ kind: 'comment', comment })}
+                  isEditing={editingCommentId === comment.id}
+                  editText={editingText}
+                  onChangeEditText={setEditingText}
+                  onSaveEdit={handleSaveCommentEdit}
+                  onCancelEdit={() => setEditingCommentId(null)}
+                  savingEdit={savingEdit}
                 />
                 {/* 대댓글 (들여쓰기) */}
                 {comment.replies?.map(reply => (
@@ -400,6 +494,13 @@ export default function PostDetailScreen() {
                       comment={reply}
                       isReply
                       onReply={() => handleReply(comment)}
+                      onMenuPress={() => setMenuTarget({ kind: 'comment', comment: reply })}
+                      isEditing={editingCommentId === reply.id}
+                      editText={editingText}
+                      onChangeEditText={setEditingText}
+                      onSaveEdit={handleSaveCommentEdit}
+                      onCancelEdit={() => setEditingCommentId(null)}
+                      savingEdit={savingEdit}
                     />
                   </View>
                 ))}
@@ -444,8 +545,20 @@ export default function PostDetailScreen() {
 
 /* ── 댓글 단일 아이템 컴포넌트 ── */
 function CommentItem({
-  comment, isReply = false, onReply,
-}: { comment: CommunityComment; isReply?: boolean; onReply: () => void }) {
+  comment, isReply = false, onReply, onMenuPress,
+  isEditing, editText, onChangeEditText, onSaveEdit, onCancelEdit, savingEdit,
+}: {
+  comment: CommunityComment;
+  isReply?: boolean;
+  onReply: () => void;
+  onMenuPress: () => void;
+  isEditing: boolean;
+  editText: string;
+  onChangeEditText: (text: string) => void;
+  onSaveEdit: () => void;
+  onCancelEdit: () => void;
+  savingEdit: boolean;
+}) {
   const [liked, setLiked] = useState(false);
 
   return (
@@ -458,8 +571,32 @@ function CommentItem({
           <Text style={styles.commentAuthor}>{comment.author.name}</Text>
           <Text style={styles.commentLevel}>{comment.author.level}</Text>
           <Text style={styles.commentDate}>{comment.createdAt}</Text>
+          <AppIcon icon={MoreVertical} size={14} color={Colors.textTertiary} style={styles.commentMenuBtn} onPress={onMenuPress} />
         </View>
-        <Text style={styles.commentContent}>{comment.content}</Text>
+        {isEditing ? (
+          <View style={styles.commentEditWrap}>
+            <TextInput
+              style={styles.commentEditInput}
+              value={editText}
+              onChangeText={onChangeEditText}
+              autoFocus
+            />
+            <View style={styles.commentEditActions}>
+              <TouchableOpacity style={styles.commentEditCancelBtn} onPress={onCancelEdit}>
+                <Text style={styles.commentEditCancelText}>{languageStore.t('cancelLabel')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.commentEditSaveBtn, (!editText.trim() || savingEdit) && styles.sendBtnDisabled]}
+                onPress={onSaveEdit}
+                disabled={!editText.trim() || savingEdit}
+              >
+                <Text style={styles.commentEditSaveText}>{savingEdit ? '저장 중…' : '저장'}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <Text style={styles.commentContent}>{comment.content}</Text>
+        )}
         <View style={styles.commentActions}>
           <TouchableOpacity
             style={styles.commentAction}
@@ -514,6 +651,15 @@ const styles = StyleSheet.create({
   },
   menuItemText: { fontSize: 13, color: Colors.textPrimary, fontFamily: undefined, flexShrink: 0 },
   menuDivider: { height: 1, backgroundColor: Colors.border },
+
+  /* 댓글 케밥 메뉴 — 댓글마다 화면 위치가 달라 top-right 고정 대신 화면 중앙에 띄운다 */
+  commentMenuSheet: {
+    alignSelf: 'center', width: 92,
+    borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.surface, overflow: 'hidden',
+    shadowColor: '#909090', shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.25, shadowRadius: 4, elevation: 4,
+  },
 
   /* 신고 사유 입력 시트 */
   reportSheet: {
@@ -626,11 +772,33 @@ const styles = StyleSheet.create({
     borderRadius: 6, borderWidth: 1, borderColor: Colors.accent + '50',
   },
   commentDate: { fontSize: 11, color: Colors.textTertiary, marginLeft: 'auto' },
+  commentMenuBtn: { width: 22, height: 22, marginLeft: 2, alignItems: 'center', justifyContent: 'center' },
   commentContent: { fontSize: 14, color: Colors.textPrimary, lineHeight: 21 },
   commentActions: { flexDirection: 'row', gap: 14 },
   commentAction: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   commentActionIcon: { fontSize: 13 },
   commentActionText: { fontSize: 12, color: Colors.textTertiary },
+
+  /* 댓글 인라인 수정 */
+  commentEditWrap: { gap: 8 },
+  commentEditInput: {
+    borderRadius: 8, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.surface, paddingHorizontal: 10, paddingVertical: 8,
+    fontSize: 14, color: Colors.textPrimary,
+  },
+  commentEditActions: { flexDirection: 'row', gap: 8 },
+  commentEditCancelBtn: {
+    flex: 1, height: 32, borderRadius: 8,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: Colors.border,
+  },
+  commentEditCancelText: { fontSize: 12, color: Colors.textSecondary },
+  commentEditSaveBtn: {
+    flex: 1, height: 32, borderRadius: 8,
+    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.navBar,
+  },
+  commentEditSaveText: { fontSize: 12, fontWeight: '700', color: Colors.navBarIconActive },
 
   /* 대댓글 들여쓰기 */
   replyWrap: { flexDirection: 'row' },

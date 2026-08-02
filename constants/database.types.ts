@@ -202,6 +202,7 @@ export type Database = {
       }
       reports: {
         Row: {
+          comment_id: string | null
           created_at: string
           id: string
           post_id: string | null
@@ -210,6 +211,7 @@ export type Database = {
           reporter_id: string
         }
         Insert: {
+          comment_id?: string | null
           created_at?: string
           id?: string
           post_id?: string | null
@@ -218,6 +220,7 @@ export type Database = {
           reporter_id: string
         }
         Update: {
+          comment_id?: string | null
           created_at?: string
           id?: string
           post_id?: string | null
@@ -226,6 +229,13 @@ export type Database = {
           reporter_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "reports_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "reports_post_id_fkey"
             columns: ["post_id"]

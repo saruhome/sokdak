@@ -12,10 +12,20 @@ function excludeBlocked(posts: CommunityPostSummary[]): CommunityPostSummary[] {
   return blocked.size === 0 ? posts : posts.filter(p => !blocked.has(p.authorId));
 }
 
+/** 차단한 유저의 댓글(과 그 대댓글)도 같은 방식으로 뺀다 */
+function excludeBlockedComments(comments: CommunityComment[]): CommunityComment[] {
+  const blocked = new Set(authStore.getBlockedUserIds());
+  if (blocked.size === 0) return comments;
+  return comments
+    .filter(c => !blocked.has(c.authorId))
+    .map(c => ({ ...c, replies: c.replies?.filter(r => !blocked.has(r.authorId)) }));
+}
+
 export type CommunityAuthor = { name: string; emoji: string; avatarUrl?: string | null; level: string };
 
 export type CommunityComment = {
   id: string;
+  authorId: string;
   author: CommunityAuthor;
   content: string;
   createdAt: string;
@@ -133,7 +143,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
       .single(),
     supabase
       .from('comments')
-      .select('id, content, created_at, parent_comment_id, profiles(nickname, avatar_emoji, avatar_url, level)')
+      .select('id, author_id, content, created_at, parent_comment_id, profiles(nickname, avatar_emoji, avatar_url, level)')
       .eq('post_id', id)
       .order('created_at', { ascending: true }),
   ]);
@@ -144,6 +154,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
   const byId = new Map<string, CommunityComment>();
   rows.forEach(r => byId.set(r.id, {
     id: r.id,
+    authorId: r.author_id,
     author: toAuthor(r.profiles as ProfileRow),
     content: r.content,
     createdAt: toDate(r.created_at),
@@ -173,7 +184,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
     views: post.view_count + 1,
     likes: (post.post_likes as { count: number }[])[0]?.count ?? 0,
     commentCount: rows.length,
-    comments: topLevel,
+    comments: excludeBlockedComments(topLevel),
   };
 }
 
@@ -236,6 +247,33 @@ export async function createComment(params: { postId: string; content: string; p
     author_id: user.id,
     content: params.content,
     parent_comment_id: params.parentCommentId ?? null,
+  });
+  return { error: error?.message ?? null };
+}
+
+/** 댓글 수정 — RLS(authors can update their own comments)가 작성자 본인만 허용 */
+export async function updateComment(id: string, content: string) {
+  const { error } = await supabase.from('comments').update({ content }).eq('id', id);
+  return { error: error?.message ?? null };
+}
+
+/** 댓글 삭제 — RLS(authors can delete their own comments)가 작성자 본인만 허용 */
+export async function deleteComment(id: string) {
+  const { error } = await supabase.from('comments').delete().eq('id', id);
+  return { error: error?.message ?? null };
+}
+
+/** 댓글 신고 — 게시글 신고와 같은 reports 테이블, comment_id로 구분 */
+export async function reportComment(params: { commentId: string; postId: string; reportedUserId: string; reason: string }) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: '로그인이 필요해요.' };
+
+  const { error } = await supabase.from('reports').insert({
+    reporter_id: user.id,
+    reported_user_id: params.reportedUserId,
+    post_id: params.postId,
+    comment_id: params.commentId,
+    reason: params.reason,
   });
   return { error: error?.message ?? null };
 }

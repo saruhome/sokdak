@@ -10,6 +10,7 @@ import { BOARD_COLORS, getBoardLabel, type PostBoard } from '../../../constants/
 import { fetchPosts, type CommunityPostSummary } from '../../../constants/community';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
+import { fetchUnreadNotificationCount } from '../../../constants/notifications';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle, Pencil, Inbox, Bell } from 'lucide-react-native';
 
@@ -22,6 +23,7 @@ export default function CommunityScreen() {
   const [activeTab, setActiveTab] = useState<BoardTab>('전체');
   const [posts, setPosts] = useState<CommunityPostSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
   useFocusEffect(useCallback(() => {
     let cancelled = false;
@@ -29,6 +31,7 @@ export default function CommunityScreen() {
     fetchPosts().then(data => {
       if (!cancelled) { setPosts(data); setLoading(false); }
     });
+    fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
     return () => { cancelled = true; };
   }, []));
 
@@ -46,7 +49,7 @@ export default function CommunityScreen() {
         <Text style={styles.topBarTitle}>{t('community')}</Text>
         <View style={styles.topBarBell}>
           <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
-          <View style={styles.notifDot} />
+          {hasUnreadNotifications && <View style={styles.notifDot} />}
         </View>
       </View>
 

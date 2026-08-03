@@ -76,6 +76,7 @@ type TranslationKey =
   | 'categoryFilterLabel'
   | 'allLabel'
   | 'noSearchResults'
+  | 'wordSearchPlaceholder'
   | 'modalHint'
   | 'resetLabel'
   | 'applyLabel'
@@ -267,6 +268,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     categoryFilterLabel: '카테고리',
     allLabel: '전체',
     noSearchResults: '검색 결과가 없어요',
+    wordSearchPlaceholder: '단어 검색',
     modalHint: '선택한 카테고리에 해당하는 단어만 보여드려요',
     resetLabel: '초기화',
     applyLabel: '적용하기',
@@ -457,6 +459,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     categoryFilterLabel: 'Category',
     allLabel: 'All',
     noSearchResults: 'No results found',
+    wordSearchPlaceholder: 'Search words',
     modalHint: "We'll only show words in the categories you pick",
     resetLabel: 'Reset',
     applyLabel: 'Apply',

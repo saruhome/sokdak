@@ -272,7 +272,6 @@ const styles = StyleSheet.create({
   iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   backIcon: { fontSize: 28, color: Colors.navBarIconActive, lineHeight: 34, marginTop: -2 },
   topBarTitle: { flex: 1, fontSize: 18, fontWeight: '600', color: Colors.navBarIconActive, textAlign: 'center' },
-  starIcon: { fontSize: 20, color: Colors.navBarIconActive },
 
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 32 },
@@ -307,7 +306,6 @@ const styles = StyleSheet.create({
   wordTitle: { fontSize: 26, fontWeight: '700', color: Colors.textPrimary },
   reading: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
   soundBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 5 },
-  soundIcon: { fontSize: 16 },
   badgeRow: { flexDirection: 'row', gap: 8 },
   badge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
   badgeText: { fontSize: 10, fontWeight: '600' },

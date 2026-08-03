@@ -111,7 +111,7 @@ export function WordListView({
               <AppIcon icon={Search} size={15} />
               <TextInput
                 style={styles.searchInput}
-                placeholder="Search"
+                placeholder={t('wordSearchPlaceholder')}
                 placeholderTextColor={Colors.textTertiary}
                 value={query}
                 onChangeText={setQuery}

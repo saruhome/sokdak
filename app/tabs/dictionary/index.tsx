@@ -1,8 +1,10 @@
 import { StyleSheet, View, SafeAreaView } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
+import { fetchUnreadNotificationCount } from '../../../constants/notifications';
 import { AppIcon } from '@/components/AppIcon';
 import { WordListView } from '@/components/WordListView';
 import { Bell } from 'lucide-react-native';
@@ -12,8 +14,14 @@ import { Bell } from 'lucide-react-native';
 export default function DictionaryScreen() {
   useLanguage();
   const t = languageStore.t;
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   /* 홈 "새로운 신조어" 더보기 → ?sort=recent 로 진입하면 최신순(SORT_TABS 인덱스 1)으로 시작 */
   const { sort } = useLocalSearchParams<{ sort?: string }>();
+
+  useFocusEffect(useCallback(() => {
+    fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
+  }, []));
+
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar (375×44, bg #52514e) */}
@@ -21,7 +29,7 @@ export default function DictionaryScreen() {
         <Text style={styles.topBarTitle}>{t('dictionary')}</Text>
         <View style={styles.topBarBell}>
           <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
-          <View style={styles.notifDot} />
+          {hasUnreadNotifications && <View style={styles.notifDot} />}
         </View>
       </View>
 

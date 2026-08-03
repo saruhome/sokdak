@@ -3,13 +3,14 @@ import {
   FlatList, TouchableOpacity,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { router } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
 import { Colors, getCategoryLabelColor } from '../../../constants/Colors';
 import { CATEGORIES, getCategoryName, pickLeastPopular, type Category } from '../../../constants/categories';
 import { MOCK_WORDS } from '../../../constants/mockWords';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
+import { fetchUnreadNotificationCount } from '../../../constants/notifications';
 import { AppIcon } from '@/components/AppIcon';
 import { CalloutBubble, CALLOUT_BUBBLE_ASPECT } from '@/components/icons/CalloutBubble';
 import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
@@ -37,6 +38,11 @@ export default function CategoryScreen() {
   const t = languageStore.t;
   const [sortMode, setSortMode] = useState<SortMode>('인기순');
   const [, forceUpdate] = useState(0);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+
+  useFocusEffect(useCallback(() => {
+    fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
+  }, []));
 
   const countBySlug = Object.fromEntries(
     CATEGORIES.map(c => [c.slug, MOCK_WORDS.filter(w => w.category === c.slug).length])
@@ -72,7 +78,7 @@ export default function CategoryScreen() {
         <Text style={styles.topBarTitle}>{t('category')}</Text>
         <View style={styles.topBarBell}>
           <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
-          <View style={styles.notifDot} />
+          {hasUnreadNotifications && <View style={styles.notifDot} />}
         </View>
       </View>
 

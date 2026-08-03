@@ -8,7 +8,7 @@ import { getCategoryBySlug, getCategoryName } from '../../../constants/categorie
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { WordListView } from '@/components/WordListView';
-import { Bell, ChevronLeft } from 'lucide-react-native';
+import { Bell } from 'lucide-react-native';
 
 /** Figma: 229:11360 — 카테고리 상세.
  *  "카테고리로 걸러진 단어 목록"이라는 점에서 사전 화면과 동일해 WordListView를 공유하고,
@@ -38,7 +38,7 @@ export default function CategoryDetailScreen() {
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar (375×44, bg #52514e) */}
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <AppIcon icon={ChevronLeft} size={22} color={Colors.navBarIconActive} />
+          <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{getCategoryName(category, language)}</Text>
         <View style={styles.topBarBell}>
@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
   },
   topBarTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   backBtn: { position: 'absolute', left: 6, width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  backIcon: { fontSize: 28, color: Colors.navBarIconActive, lineHeight: 34 },
   topBarBell: { position: 'absolute', right: 6, width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   /* Figma: data-badge="on" — 벨 아이콘 우측 상단 알림 점 */
   notifDot: {

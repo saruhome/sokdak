@@ -332,3 +332,13 @@ get_design_context(fileKey: 'RbDWZdCLT0xXbH0ZW25jPi', nodeId: '229:3738')
 - GitHub API 한글 설명은 영어로 작성 (JSON 인코딩 이슈)
 - `backgroundColor` prop은 Expo StatusBar에 없음 → style 속성만 사용
 - `useFocusEffect` callback에서 cleanup 함수 반환 시 타입 에러 → `useEffect` + subscribe로 처리
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).

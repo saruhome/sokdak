@@ -19,6 +19,8 @@ expo-env.d.ts
 .claude/proven-config.json
 .claude/.proven-config-version
 .claude-flow/
+.venv/
+graphify-out/
 
 # Separate nested repo (its own GitHub remote: saruhome/sokdak-landing-page) —
 # never add here as an embedded git repository.

@@ -1,5 +1,5 @@
 import {
-  StyleSheet, View, Image, SafeAreaView,
+  StyleSheet, View, SafeAreaView,
   ScrollView, TouchableOpacity,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
@@ -10,9 +10,7 @@ import { useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { authStore } from '../../../constants/authStore';
 import { languageStore } from '../../../constants/languageStore';
-
-const JJAEKI_AVATAR = require('../../../assets/characters/jjaeki.png');
-
+import ProfileAvatar from '@/components/ProfileAvatar';
 import { AppIcon } from '@/components/AppIcon';
 import { ChevronRight } from 'lucide-react-native';
 
@@ -74,11 +72,11 @@ export default function MyPageScreen() {
           activeOpacity={0.75}
         >
           <View style={styles.profileRowLeft}>
-            <View style={[styles.avatar, !loggedIn && styles.avatarGuest]}>
-              <Text style={styles.avatarText}>
-                {loggedIn && user ? user.emoji : '👤'}
-              </Text>
-            </View>
+            <ProfileAvatar
+              uri={loggedIn ? user?.avatarUrl : null}
+              emoji={loggedIn && user ? user.emoji : '👤'}
+              size={40}
+            />
             <Text style={styles.profileName}>{loggedIn && user ? user.name : t('loginNeeded')}</Text>
           </View>
           <AppIcon icon={ChevronRight} size={20} color={Colors.textTertiary} />
@@ -130,7 +128,7 @@ export default function MyPageScreen() {
         </View>
 
         <TouchableOpacity style={styles.supportRow} onPress={() => router.push('/tabs/mypage/support')} activeOpacity={0.8}>
-          <Text style={styles.supportLabel}>고객센터</Text>
+          <Text style={styles.supportLabel}>{t('customerService')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.85}>
@@ -162,13 +160,6 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border,
   },
   profileRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  avatar: {
-    width: 40, height: 40, borderRadius: 20,
-    backgroundColor: Colors.navBar, borderWidth: 1, borderColor: Colors.border,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  avatarGuest: { backgroundColor: Colors.border },
-  avatarText: { fontSize: 18 },
   profileName: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
 
   sectionHeader: {

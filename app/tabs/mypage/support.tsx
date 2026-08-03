@@ -7,41 +7,59 @@ import { AppText as Text } from '@/components/AppText';
 import { useState, useMemo } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
+import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { Mail, ChevronDown, ChevronRight, Search, Mic } from 'lucide-react-native';
 
-const FAQ_CATEGORIES = ['전체', '이용 방법', '회원정보', '제안하기', '커뮤니티'] as const;
-type FaqCategory = (typeof FAQ_CATEGORIES)[number];
+type FaqCategorySlug = 'all' | 'howTo' | 'account' | 'suggest' | 'community';
+const FAQ_CATEGORY_SLUGS: FaqCategorySlug[] = ['all', 'howTo', 'account', 'suggest', 'community'];
+const FAQ_CATEGORY_LABELS: Record<Language, Record<FaqCategorySlug, string>> = {
+  ko: { all: '전체', howTo: '이용 방법', account: '회원정보', suggest: '제안하기', community: '커뮤니티' },
+  en: { all: 'All', howTo: 'How to use', account: 'Account', suggest: 'Suggestions', community: 'Community' },
+};
 
-const FAQ_ITEMS: { category: Exclude<FaqCategory, '전체'>; q: string; a: string }[] = [
-  { category: '이용 방법', q: '속닥은 어떤 앱인가요?', a: '한국 거주 외국인 중·고급 학습자를 위한 한국어 신조어 학습 앱이에요. 교과서에는 없는 진짜 생활 한국어를 배울 수 있어요.' },
-  { category: '이용 방법', q: '단어는 어떻게 저장하나요?', a: "단어 상세 화면에서 '저장' 버튼을 누르면 마이페이지 > 즐겨찾기에서 모아볼 수 있어요." },
-  { category: '제안하기', q: '신조어를 제안하고 싶어요.', a: "마이페이지 > 신조어 제안하기 메뉴에서 원하는 단어와 뜻을 제안할 수 있어요. 검토 후 사전에 반영돼요." },
-  { category: '회원정보', q: '로그인 없이도 이용할 수 있나요?', a: '사전 검색과 커뮤니티 글 읽기는 로그인 없이 가능해요. 단어 저장, 글쓰기, 댓글 작성은 로그인이 필요해요.' },
-  { category: '커뮤니티', q: '커뮤니티 이용 규칙이 궁금해요.', a: '서로 존중하는 학습 커뮤니티를 지향해요. 욕설, 광고, 혐오 표현은 제재될 수 있어요.' },
-];
+type FaqItem = { category: Exclude<FaqCategorySlug, 'all'>; q: string; a: string };
+const FAQ_ITEMS: Record<Language, FaqItem[]> = {
+  ko: [
+    { category: 'howTo', q: '속닥은 어떤 앱인가요?', a: '한국 거주 외국인 중·고급 학습자를 위한 한국어 신조어 학습 앱이에요. 교과서에는 없는 진짜 생활 한국어를 배울 수 있어요.' },
+    { category: 'howTo', q: '단어는 어떻게 저장하나요?', a: "단어 상세 화면에서 '저장' 버튼을 누르면 마이페이지 > 즐겨찾기에서 모아볼 수 있어요." },
+    { category: 'suggest', q: '신조어를 제안하고 싶어요.', a: "마이페이지 > 신조어 제안하기 메뉴에서 원하는 단어와 뜻을 제안할 수 있어요. 검토 후 사전에 반영돼요." },
+    { category: 'account', q: '로그인 없이도 이용할 수 있나요?', a: '사전 검색과 커뮤니티 글 읽기는 로그인 없이 가능해요. 단어 저장, 글쓰기, 댓글 작성은 로그인이 필요해요.' },
+    { category: 'community', q: '커뮤니티 이용 규칙이 궁금해요.', a: '서로 존중하는 학습 커뮤니티를 지향해요. 욕설, 광고, 혐오 표현은 제재될 수 있어요.' },
+  ],
+  en: [
+    { category: 'howTo', q: 'What kind of app is SokDak?', a: 'A Korean slang-learning app for intermediate-advanced foreign residents of Korea. Learn real, everyday Korean you won’t find in textbooks.' },
+    { category: 'howTo', q: 'How do I save a word?', a: "Tap 'Save' on a word's detail screen — saved words show up under My Page > Saved Words." },
+    { category: 'suggest', q: 'I want to suggest a new slang word.', a: "Use My Page > Suggest New Slang to submit a word and its meaning. It'll be added to the dictionary after review." },
+    { category: 'account', q: 'Can I use the app without logging in?', a: 'Dictionary search and reading community posts don’t require login. Saving words, writing posts, and commenting do.' },
+    { category: 'community', q: 'What are the community rules?', a: 'We aim for a respectful learning community. Profanity, ads, and hate speech may be moderated.' },
+  ],
+};
 
 /** Figma: 229:3352 — 고객센터 (카테고리 필터 + FAQ 아코디언 + 문의하기) */
 export default function SupportScreen() {
-  const [activeCategory, setActiveCategory] = useState<FaqCategory>('전체');
+  const language = useLanguage();
+  const t = languageStore.t;
+  const [activeCategory, setActiveCategory] = useState<FaqCategorySlug>('all');
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [query, setQuery] = useState('');
 
+  const items = FAQ_ITEMS[language];
   const visibleItems = useMemo(() => {
-    const filteredByCategory = activeCategory === '전체'
-      ? FAQ_ITEMS
-      : FAQ_ITEMS.filter(item => item.category === activeCategory);
+    const filteredByCategory = activeCategory === 'all'
+      ? items
+      : items.filter(item => item.category === activeCategory);
     if (!query.trim()) return filteredByCategory;
     const search = query.trim().toLowerCase();
     return filteredByCategory.filter(item =>
       item.q.toLowerCase().includes(search) || item.a.toLowerCase().includes(search)
     );
-  }, [activeCategory, query]);
+  }, [items, activeCategory, query]);
 
   const handleContact = () => {
     const url = 'mailto:support@sokdak.app?subject=%5B속닥%5D%20문의하기';
     Linking.openURL(url).catch(() => {
-      Alert.alert('메일 앱을 열 수 없어요', 'support@sokdak.app 으로 직접 문의해주세요.');
+      Alert.alert(t('contactMailUnavailableTitle'), t('contactMailUnavailableBody'));
     });
   };
 
@@ -51,7 +69,7 @@ export default function SupportScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <AppIcon icon={ChevronRight} size={20} color={Colors.navBarIconActive} style={{ transform: [{ rotate: '180deg' }] }} />
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>고객센터</Text>
+        <Text style={styles.topBarTitle}>{t('customerService')}</Text>
         <View style={styles.backBtn} />
       </View>
 
@@ -61,7 +79,7 @@ export default function SupportScreen() {
             <AppIcon icon={Search} size={15} />
             <TextInput
               style={styles.searchInput}
-              placeholder="질문 검색"
+              placeholder={t('faqSearchPlaceholder')}
               placeholderTextColor={Colors.textTertiary}
               value={query}
               onChangeText={setQuery}
@@ -72,14 +90,14 @@ export default function SupportScreen() {
         </View>
         {/* ── 카테고리 필터 ── */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryRow}>
-          {FAQ_CATEGORIES.map(cat => (
+          {FAQ_CATEGORY_SLUGS.map(slug => (
             <TouchableOpacity
-              key={cat}
-              style={[styles.categoryChip, activeCategory === cat && styles.categoryChipActive]}
-              onPress={() => { setActiveCategory(cat); setOpenIndex(null); }}
+              key={slug}
+              style={[styles.categoryChip, activeCategory === slug && styles.categoryChipActive]}
+              onPress={() => { setActiveCategory(slug); setOpenIndex(null); }}
             >
-              <Text style={[styles.categoryChipText, activeCategory === cat && styles.categoryChipTextActive]}>
-                {cat}
+              <Text style={[styles.categoryChipText, activeCategory === slug && styles.categoryChipTextActive]}>
+                {FAQ_CATEGORY_LABELS[language][slug]}
               </Text>
             </TouchableOpacity>
           ))}
@@ -118,7 +136,7 @@ export default function SupportScreen() {
         <TouchableOpacity style={styles.contactCard} onPress={handleContact} activeOpacity={0.85}>
           <View style={styles.contactTitleRow}>
             <AppIcon icon={Mail} size={16} color={Colors.textPrimary} />
-            <Text style={styles.contactTitle}>직접 문의하기</Text>
+            <Text style={styles.contactTitle}>{t('contactDirectly')}</Text>
           </View>
           <Text style={styles.contactSub}>support@sokdak.app</Text>
         </TouchableOpacity>

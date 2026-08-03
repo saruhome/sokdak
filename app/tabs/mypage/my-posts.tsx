@@ -6,26 +6,29 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { BOARD_COLORS } from '../../../constants/mockPosts';
+import { BOARD_COLORS, getBoardLabel } from '../../../constants/mockPosts';
 import { fetchMyPosts, fetchPostsCommentedByMe, fetchPostsByIds, type CommunityPostSummary } from '../../../constants/community';
 import { authStore } from '../../../constants/authStore';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle, Pencil } from 'lucide-react-native';
 
 type ActivityTab = 'written' | 'commented' | 'liked';
 
-/** Figma: Selection/Tab/02 (722:3448) — state=게시물/댓글/좋아요 */
-const TABS: { key: ActivityTab; label: string }[] = [
-  { key: 'written',   label: '게시물' },
-  { key: 'commented', label: '댓글' },
-  { key: 'liked',     label: '좋아요' },
-];
-
 /** Figma: 229:3620~3679 — 내 활동 게시물 (쓴 글 / 댓글 단 글 / 좋아요 한 글) */
 export default function MyPostsScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [tab, setTab] = useState<ActivityTab>('written');
   const [data, setData] = useState<CommunityPostSummary[]>([]);
   const [loading, setLoading] = useState(true);
+
+  /* Figma: Selection/Tab/02 (722:3448) — state=게시물/댓글/좋아요 */
+  const TABS: { key: ActivityTab; label: string }[] = [
+    { key: 'written',   label: t('myPostsTab') },
+    { key: 'commented', label: t('myCommentedTab') },
+    { key: 'liked',     label: t('myLikedTab') },
+  ];
 
   useFocusEffect(
     useCallback(() => {
@@ -42,9 +45,9 @@ export default function MyPostsScreen() {
   );
 
   const emptyContent = {
-    written:   { icon: Pencil,       text: '아직 작성한 글이 없어요', ctaLabel: '글쓰기', ctaRoute: '/tabs/community/write' as const },
-    commented: { icon: MessageCircle, text: '아직 댓글을 단 글이 없어요', ctaLabel: '커뮤니티 둘러보기', ctaRoute: '/tabs/community' as const },
-    liked:     { icon: Heart,        text: '아직 좋아요 한 글이 없어요', ctaLabel: '커뮤니티 둘러보기', ctaRoute: '/tabs/community' as const },
+    written:   { icon: Pencil,       text: t('noWrittenPostsYet'),   ctaLabel: t('writeTitle'),       ctaRoute: '/tabs/community/write' as const },
+    commented: { icon: MessageCircle, text: t('noCommentedPostsYet'), ctaLabel: t('browseCommunity'), ctaRoute: '/tabs/community' as const },
+    liked:     { icon: Heart,        text: t('noLikedPostsYet'),     ctaLabel: t('browseCommunity'), ctaRoute: '/tabs/community' as const },
   }[tab];
 
   return (
@@ -53,18 +56,18 @@ export default function MyPostsScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>내 활동</Text>
+        <Text style={styles.topBarTitle}>{t('myActivity')}</Text>
         <View style={styles.backBtn} />
       </View>
 
       <View style={styles.tabs}>
-        {TABS.map(t => (
+        {TABS.map(tabItem => (
           <TouchableOpacity
-            key={t.key}
-            style={[styles.tab, tab === t.key && styles.tabActive]}
-            onPress={() => setTab(t.key)}
+            key={tabItem.key}
+            style={[styles.tab, tab === tabItem.key && styles.tabActive]}
+            onPress={() => setTab(tabItem.key)}
           >
-            <Text style={[styles.tabText, tab === t.key && styles.tabTextActive]}>{t.label}</Text>
+            <Text style={[styles.tabText, tab === tabItem.key && styles.tabTextActive]}>{tabItem.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -81,7 +84,7 @@ export default function MyPostsScreen() {
             <View style={styles.postTopRow}>
               <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[item.board].bg }]}>
                 <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[item.board].fg }]}>
-                  {item.board}
+                  {getBoardLabel(item.board, language)}
                 </Text>
               </View>
               <Text style={styles.postDate}>{item.createdAt}</Text>

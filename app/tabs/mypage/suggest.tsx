@@ -2,25 +2,49 @@ import {
   StyleSheet, View, SafeAreaView, TextInput,
   TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform,
 } from 'react-native';
+import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { CATEGORIES } from '../../../constants/categories';
+import { CATEGORIES, getCategoryName } from '../../../constants/categories';
+import { authStore } from '../../../constants/authStore';
+import { submitWordSuggestion } from '../../../constants/suggestions';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 
-/** Figma: 229:3332(입력 전) / 229:3342(입력 후) — 신조어 제안 폼 */
+/** Figma: 229:3332(입력 전) / 229:3342(입력 후) — 신조어 제안 폼
+ * word_suggestions 테이블에 실제로 저장됨 — 운영팀은 Supabase 대시보드에서 검토 */
 export default function SuggestScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [word, setWord] = useState('');
   const [categorySlug, setCategorySlug] = useState<string | null>(null);
   const [definition, setDefinition] = useState('');
   const [example, setExample] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const isValid = word.trim().length >= 1 && !!categorySlug && definition.trim().length >= 5;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isValid) return;
+    if (!authStore.isLoggedIn()) {
+      Alert.alert(t('loginRequiredTitle'), t('loginRequiredSuggest'), [
+        { text: t('cancelLabel'), style: 'cancel' },
+        { text: t('goToLogin'), onPress: () => router.push('/auth/login') },
+      ]);
+      return;
+    }
+    setSubmitting(true);
+    const { error } = await submitWordSuggestion({
+      word: word.trim(),
+      categorySlug: categorySlug!,
+      definition: definition.trim(),
+      example: example.trim(),
+    });
+    setSubmitting(false);
+    if (error) { Alert.alert(t('suggestFailedTitle'), error); return; }
     setSubmitted(true);
   };
 
@@ -40,35 +64,37 @@ export default function SuggestScreen() {
           <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
-          <Text style={styles.topBarTitle}>신조어 제안하기</Text>
+          <Text style={styles.topBarTitle}>{t('suggestTitle')}</Text>
           <View style={styles.backBtn} />
         </View>
 
         <View style={styles.doneWrap}>
           <Text style={styles.doneEmoji}>🎉</Text>
-          <Text style={styles.doneTitle}>제안 감사해요!</Text>
+          <Text style={styles.doneTitle}>{t('suggestDoneTitle')}</Text>
           <Text style={styles.doneDesc}>
-            '{word}' 제안을 잘 받았어요.{'\n'}검토 후 사전에 반영될 수 있어요.
+            {t('suggestDoneDescPrefix')}{word}{t('suggestDoneDescSuffix')}
           </Text>
 
           <View style={styles.donePreviewCard}>
             <View style={styles.donePreviewTop}>
               <Text style={styles.donePreviewWord}>{word}</Text>
-              {categorySlug && (
-                <Text style={styles.donePreviewCategory}>
-                  {CATEGORIES.find(c => c.slug === categorySlug)?.emoji}{' '}
-                  {CATEGORIES.find(c => c.slug === categorySlug)?.name}
-                </Text>
-              )}
+              {categorySlug && (() => {
+                const selected = CATEGORIES.find(c => c.slug === categorySlug);
+                return selected ? (
+                  <Text style={styles.donePreviewCategory}>
+                    {selected.emoji} {getCategoryName(selected, language)}
+                  </Text>
+                ) : null;
+              })()}
             </View>
             <Text style={styles.donePreviewDefinition}>{definition}</Text>
           </View>
 
           <TouchableOpacity style={styles.doneCtaPrimary} onPress={handleReset} activeOpacity={0.85}>
-            <Text style={styles.doneCtaPrimaryText}>다른 단어 제안하기</Text>
+            <Text style={styles.doneCtaPrimaryText}>{t('suggestAnother')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.doneCtaSecondary} onPress={() => safeGoBack()}>
-            <Text style={styles.doneCtaSecondaryText}>마이페이지로 돌아가기</Text>
+            <Text style={styles.doneCtaSecondaryText}>{t('suggestBackToMypage')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -83,29 +109,27 @@ export default function SuggestScreen() {
           <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
-          <Text style={styles.topBarTitle}>신조어 제안하기</Text>
+          <Text style={styles.topBarTitle}>{t('suggestTitle')}</Text>
           <View style={styles.backBtn} />
         </View>
 
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <Text style={styles.introText}>
-            아직 속닥 사전에 없는 신조어를 알고 계신가요?{'\n'}제안해주시면 검토 후 추가할게요!
-          </Text>
+          <Text style={styles.introText}>{t('suggestIntro')}</Text>
 
           <View style={styles.field}>
-            <Text style={styles.fieldLabel}>제안할 단어</Text>
+            <Text style={styles.fieldLabel}>{t('suggestWordLabel')}</Text>
             <TextInput
               style={styles.fieldInput}
               value={word}
               onChangeText={setWord}
-              placeholder="예: 갓벽"
+              placeholder={t('suggestWordPlaceholder')}
               placeholderTextColor={Colors.textTertiary}
               maxLength={30}
             />
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.fieldLabel}>카테고리</Text>
+            <Text style={styles.fieldLabel}>{t('suggestCategoryLabel')}</Text>
             <View style={styles.categoryGrid}>
               {CATEGORIES.map(c => {
                 const selected = categorySlug === c.slug;
@@ -125,7 +149,7 @@ export default function SuggestScreen() {
                         selected && { color: getReadableTextColor(c.colorBg) },
                       ]}
                     >
-                      {c.emoji} {c.name}
+                      {c.emoji} {getCategoryName(c, language)}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -134,12 +158,12 @@ export default function SuggestScreen() {
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.fieldLabel}>뜻/설명 (5자 이상)</Text>
+            <Text style={styles.fieldLabel}>{t('suggestDefinitionLabel')}</Text>
             <TextInput
               style={styles.textArea}
               value={definition}
               onChangeText={setDefinition}
-              placeholder="이 단어가 무슨 뜻인지 설명해주세요"
+              placeholder={t('suggestDefinitionPlaceholder')}
               placeholderTextColor={Colors.textTertiary}
               multiline
               textAlignVertical="top"
@@ -148,12 +172,12 @@ export default function SuggestScreen() {
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.fieldLabel}>예문 (선택)</Text>
+            <Text style={styles.fieldLabel}>{t('suggestExampleLabel')}</Text>
             <TextInput
               style={styles.textArea}
               value={example}
               onChangeText={setExample}
-              placeholder="이 단어를 사용한 예문이 있다면 적어주세요"
+              placeholder={t('suggestExamplePlaceholder')}
               placeholderTextColor={Colors.textTertiary}
               multiline
               textAlignVertical="top"
@@ -166,10 +190,12 @@ export default function SuggestScreen() {
           <TouchableOpacity
             style={[styles.submitBtn, isValid && { backgroundColor: Colors.navBar }]}
             onPress={handleSubmit}
-            disabled={!isValid}
+            disabled={!isValid || submitting}
             activeOpacity={0.85}
           >
-            <Text style={[styles.submitBtnText, isValid && { color: Colors.navBarIconActive }]}>제안하기</Text>
+            <Text style={[styles.submitBtnText, isValid && { color: Colors.navBarIconActive }]}>
+              {submitting ? t('suggestSubmitting') : t('suggestSubmitBtn')}
+            </Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

@@ -237,6 +237,7 @@ export type Database = {
           id: string
           level: string
           nickname: string
+          notification_prefs: Json
           phone: string | null
           timezone: string
         }
@@ -247,6 +248,7 @@ export type Database = {
           id: string
           level?: string
           nickname: string
+          notification_prefs?: Json
           phone?: string | null
           timezone?: string
         }
@@ -257,6 +259,7 @@ export type Database = {
           id?: string
           level?: string
           nickname?: string
+          notification_prefs?: Json
           phone?: string | null
           timezone?: string
         }
@@ -383,6 +386,44 @@ export type Database = {
             columns: ["word_id"]
             isOneToOne: false
             referencedRelation: "words"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      word_suggestions: {
+        Row: {
+          category_slug: string
+          created_at: string
+          definition: string
+          example: string | null
+          id: string
+          user_id: string
+          word: string
+        }
+        Insert: {
+          category_slug: string
+          created_at?: string
+          definition: string
+          example?: string | null
+          id?: string
+          user_id: string
+          word: string
+        }
+        Update: {
+          category_slug?: string
+          created_at?: string
+          definition?: string
+          example?: string | null
+          id?: string
+          user_id?: string
+          word?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "word_suggestions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

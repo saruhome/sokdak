@@ -3,26 +3,40 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { Toggle } from '@/components/Toggle';
+import { authStore, type NotificationPrefs } from '../../../constants/authStore';
+import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
 
-type NotificationKey = 'newSlang' | 'popularSlang' | 'popularPost' | 'like' | 'comment';
+type NotificationKey = keyof NotificationPrefs;
 
-const CONTENT_ITEMS: { key: NotificationKey; label: string; desc: string }[] = [
-  { key: 'newSlang',     label: '새로운 신조어/카테고리', desc: '새로운 신조어 소식을 알려드려요' },
-  { key: 'popularSlang', label: '인기 신조어/카테고리',   desc: '가장 많이 검색하는 단어를 알려드려요' },
-];
+const CONTENT_ITEMS: Record<Language, { key: NotificationKey; label: string; desc: string }[]> = {
+  ko: [
+    { key: 'newSlang',     label: '새로운 신조어/카테고리', desc: '새로운 신조어 소식을 알려드려요' },
+    { key: 'popularSlang', label: '인기 신조어/카테고리',   desc: '가장 많이 검색하는 단어를 알려드려요' },
+  ],
+  en: [
+    { key: 'newSlang',     label: 'New slang & categories', desc: 'Get notified about new slang' },
+    { key: 'popularSlang', label: 'Trending slang & categories', desc: 'Get notified about the most searched words' },
+  ],
+};
 
-const COMMUNITY_ITEMS: { key: NotificationKey; label: string; desc: string }[] = [
-  { key: 'popularPost', label: '인기글 알림', desc: '베스트 게시물을 빠르게 알려드려요' },
-  { key: 'like',        label: '좋아요 알림', desc: '내 게시물에 좋아요가 달리면 알려드려요' },
-  { key: 'comment',     label: '댓글 알림',   desc: '내 게시물에 댓글이 작성되면 알려드려요' },
-];
+const COMMUNITY_ITEMS: Record<Language, { key: NotificationKey; label: string; desc: string }[]> = {
+  ko: [
+    { key: 'popularPost', label: '인기글 알림', desc: '베스트 게시물을 빠르게 알려드려요' },
+    { key: 'like',        label: '좋아요 알림', desc: '내 게시물에 좋아요가 달리면 알려드려요' },
+    { key: 'comment',     label: '댓글 알림',   desc: '내 게시물에 댓글이 작성되면 알려드려요' },
+  ],
+  en: [
+    { key: 'popularPost', label: 'Trending posts', desc: 'Get notified about the best posts' },
+    { key: 'like',        label: 'Likes', desc: 'Get notified when someone likes your post' },
+    { key: 'comment',     label: 'Comments', desc: 'Get notified when someone comments on your post' },
+  ],
+};
 
-const DEFAULT_STATE: Record<NotificationKey, boolean> = {
+const DEFAULT_STATE: NotificationPrefs = {
   newSlang: true,
   popularSlang: true,
   popularPost: true,
@@ -30,20 +44,33 @@ const DEFAULT_STATE: Record<NotificationKey, boolean> = {
   comment: true,
 };
 
-/** Figma: 831:4800 — 알림 설정 (전체 알림 + 컨텐츠 + 커뮤니티) */
+/** Figma: 831:4800 — 알림 설정 (전체 알림 + 컨텐츠 + 커뮤니티)
+ * like/comment는 실제 알림 트리거가 참고하는 real setting — Supabase `profiles.notification_prefs`. */
 export default function NotificationsScreen() {
+  const language = useLanguage();
+  const t = languageStore.t;
   const [settings, setSettings] = useState(DEFAULT_STATE);
   const allOn = Object.values(settings).every(Boolean);
 
+  useEffect(() => {
+    authStore.fetchNotificationPrefs().then(setSettings);
+  }, []);
+
   const toggle = (key: NotificationKey) => {
-    setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+    setSettings(prev => {
+      const next = { ...prev, [key]: !prev[key] };
+      authStore.updateNotificationPrefs(next);
+      return next;
+    });
   };
 
   const toggleAll = () => {
     const next = !allOn;
-    setSettings({
+    const nextState: NotificationPrefs = {
       newSlang: next, popularSlang: next, popularPost: next, like: next, comment: next,
-    });
+    };
+    setSettings(nextState);
+    authStore.updateNotificationPrefs(nextState);
   };
 
   const renderRow = (item: { key: NotificationKey; label: string; desc: string }, isLast: boolean) => (
@@ -62,7 +89,7 @@ export default function NotificationsScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>알림 설정</Text>
+        <Text style={styles.topBarTitle}>{t('notificationSettings')}</Text>
         <View style={styles.backBtn} />
       </View>
 
@@ -70,21 +97,21 @@ export default function NotificationsScreen() {
         <View style={styles.group}>
           <View style={styles.row}>
             <View style={styles.rowText}>
-              <Text style={styles.rowLabel}>전체 알림</Text>
-              <Text style={styles.rowDesc}>모든 알림을 한 번에 끄거나 켭니다</Text>
+              <Text style={styles.rowLabel}>{t('allNotifications')}</Text>
+              <Text style={styles.rowDesc}>{t('allNotificationsDesc')}</Text>
             </View>
             <Toggle value={allOn} onValueChange={toggleAll} />
           </View>
         </View>
 
-        <Text style={styles.sectionLabel}>컨텐츠</Text>
+        <Text style={styles.sectionLabel}>{t('contentSectionLabel')}</Text>
         <View style={styles.group}>
-          {CONTENT_ITEMS.map((item, i) => renderRow(item, i === CONTENT_ITEMS.length - 1))}
+          {CONTENT_ITEMS[language].map((item, i) => renderRow(item, i === CONTENT_ITEMS[language].length - 1))}
         </View>
 
-        <Text style={styles.sectionLabel}>커뮤니티</Text>
+        <Text style={styles.sectionLabel}>{t('communitySectionLabel')}</Text>
         <View style={styles.group}>
-          {COMMUNITY_ITEMS.map((item, i) => renderRow(item, i === COMMUNITY_ITEMS.length - 1))}
+          {COMMUNITY_ITEMS[language].map((item, i) => renderRow(item, i === COMMUNITY_ITEMS[language].length - 1))}
         </View>
       </ScrollView>
     </SafeAreaView>

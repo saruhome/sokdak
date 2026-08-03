@@ -36,6 +36,18 @@ export type SokDakUser = {
   level: string;
 };
 
+export type NotificationPrefs = {
+  newSlang: boolean;
+  popularSlang: boolean;
+  popularPost: boolean;
+  like: boolean;
+  comment: boolean;
+};
+
+const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = {
+  newSlang: true, popularSlang: true, popularPost: true, like: true, comment: true,
+};
+
 let _isLoggedIn = false;
 let _user: SokDakUser | null = null;
 const _listeners = new Set<AuthListener>();
@@ -316,6 +328,27 @@ export const authStore = {
   /** 비밀번호 변경 — 재로그인 없이 현재 세션으로 바로 변경된다. */
   async updatePassword(password: string) {
     const { error } = await supabase.auth.updateUser({ password });
+    return { error: error?.message ?? null };
+  },
+
+  /** 알림 설정 — `like`/`comment`는 실제 알림 트리거(notify_on_like/notify_on_comment)가 참고한다.
+   *  newSlang/popularSlang/popularPost는 아직 그 알림 자체를 만드는 백엔드가 없어 값만 저장된다. */
+  async fetchNotificationPrefs(): Promise<NotificationPrefs> {
+    if (!_user) return DEFAULT_NOTIFICATION_PREFS;
+    const { data } = await supabase
+      .from('profiles')
+      .select('notification_prefs')
+      .eq('id', _user.id)
+      .single();
+    return { ...DEFAULT_NOTIFICATION_PREFS, ...(data?.notification_prefs as Partial<NotificationPrefs> ?? {}) };
+  },
+
+  async updateNotificationPrefs(prefs: NotificationPrefs) {
+    if (!_user) return { error: '로그인이 필요해요.' };
+    const { error } = await supabase
+      .from('profiles')
+      .update({ notification_prefs: prefs })
+      .eq('id', _user.id);
     return { error: error?.message ?? null };
   },
 

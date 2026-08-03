@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { authStore } from '../../../constants/authStore';
+import { languageStore, useLanguage } from '../../../constants/languageStore';
 
 /** featured: 기본으로 노출 — 한국·일본 다음으로 한국어 학습 인구가 많은 8개국 (세종학당 수강생 통계 기준) */
 const COUNTRY_OPTIONS = [
@@ -82,6 +83,8 @@ const COUNTRY_OPTIONS = [
 
 /** Figma: 229:3295 — 내 정보 관리 (닉네임·이메일·프로필 이미지 수정) */
 export default function ProfileScreen() {
+  const t = languageStore.t;
+  useLanguage();
   const user = authStore.getUser();
 
   const [name, setName] = useState(user?.name ?? '');
@@ -101,9 +104,9 @@ export default function ProfileScreen() {
   if (!user) {
     return (
       <SafeAreaView style={styles.notFound}>
-        <Text style={styles.notFoundText}>로그인이 필요해요</Text>
+        <Text style={styles.notFoundText}>{t('loginRequiredGeneric')}</Text>
         <TouchableOpacity style={styles.notFoundBtn} onPress={() => router.replace('/auth/login')}>
-          <Text style={styles.notFoundBtnText}>로그인하러 가기</Text>
+          <Text style={styles.notFoundBtnText}>{t('goToLogin')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -115,7 +118,7 @@ export default function ProfileScreen() {
   const pickPhoto = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('권한 필요', '갤러리 접근 권한이 필요합니다.');
+      Alert.alert(t('permissionNeededTitle'), t('galleryPermissionMessage'));
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -135,7 +138,7 @@ export default function ProfileScreen() {
 
   const handleSave = async () => {
     if (!isValid) {
-      Alert.alert('입력 확인', '닉네임을 입력해주세요.');
+      Alert.alert(t('inputCheckTitle'), t('nicknameRequiredMessage'));
       return;
     }
     setSaving(true);
@@ -145,33 +148,33 @@ export default function ProfileScreen() {
     });
     if (!error && email.trim() !== user.email) {
       const res = await authStore.updateEmail(email.trim());
-      if (res.error) { setSaving(false); Alert.alert('저장 실패', res.error); return; }
+      if (res.error) { setSaving(false); Alert.alert(t('saveFailedTitle'), res.error); return; }
     }
     if (!error && password) {
       const res = await authStore.updatePassword(password);
-      if (res.error) { setSaving(false); Alert.alert('저장 실패', res.error); return; }
+      if (res.error) { setSaving(false); Alert.alert(t('saveFailedTitle'), res.error); return; }
       setPassword('');
     }
     setSaving(false);
     if (error) {
-      Alert.alert('저장 실패', error);
+      Alert.alert(t('saveFailedTitle'), error);
       return;
     }
-    Alert.alert('저장 완료', '내 정보가 수정됐어요.', [{ text: '확인', onPress: () => safeGoBack() }]);
+    Alert.alert(t('saveCompleteTitle'), t('saveCompleteMessage'), [{ text: t('confirmLabel'), onPress: () => safeGoBack() }]);
   };
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      '회원탈퇴',
-      '정말 탈퇴하시겠어요? 저장한 단어, 작성한 글 등 모든 정보가 삭제되며 되돌릴 수 없어요.',
+      t('withdrawConfirmTitle'),
+      t('withdrawConfirmMessage'),
       [
-        { text: '취소', style: 'cancel' },
+        { text: t('cancelLabel'), style: 'cancel' },
         {
-          text: '탈퇴하기',
+          text: t('withdrawConfirmBtn'),
           style: 'destructive',
           onPress: async () => {
             const { error } = await authStore.deleteAccount();
-            if (error) { Alert.alert('탈퇴 실패', error); return; }
+            if (error) { Alert.alert(t('withdrawFailedTitle'), error); return; }
             router.replace('/tabs');
           },
         },
@@ -186,14 +189,14 @@ export default function ProfileScreen() {
           <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
-          <Text style={styles.topBarTitle}>내 정보 관리</Text>
+          <Text style={styles.topBarTitle}>{t('myInfoTitle')}</Text>
           <TouchableOpacity
             style={[styles.saveBtn, isValid && !saving && { backgroundColor: Colors.navBar }]}
             onPress={handleSave}
             disabled={!isValid || saving}
           >
             <Text style={[styles.saveBtnText, isValid && !saving && { color: Colors.navBarIconActive }]}>
-              {saving ? '저장 중…' : '저장'}
+              {saving ? t('savingLabel') : t('saveBtnLabel')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -202,74 +205,74 @@ export default function ProfileScreen() {
           <View style={styles.profileHeader}>
             <ProfileAvatar uri={avatarUrl} emoji={emoji} size={76} style={styles.avatarPreview} />
             <View style={styles.profileNameBox}>
-              <Text style={styles.fieldLabel}>닉네임</Text>
+              <Text style={styles.fieldLabel}>{t('nicknameLabel')}</Text>
               <TextInput
                 style={[styles.fieldInput, styles.nameInput]}
                 value={name}
                 onChangeText={setName}
-                placeholder="닉네임을 입력하세요"
+                placeholder={t('nicknamePlaceholder')}
                 placeholderTextColor={Colors.textTertiary}
                 maxLength={20}
               />
             </View>
           </View>
 
-          <Text style={styles.sectionTitle}>계정 정보</Text>
+          <Text style={styles.sectionTitle}>{t('accountInfoSection')}</Text>
 
           <View style={styles.cardGroup}>
             <View style={styles.cardItem}>
-              <Text style={styles.cardLabel}>이메일 Email</Text>
+              <Text style={styles.cardLabel}>{t('emailLabel')}</Text>
               <TextInput
                 style={styles.cardInput}
                 value={email}
                 onChangeText={setEmail}
-                placeholder="이메일을 입력하세요"
+                placeholder={t('emailPlaceholder')}
                 placeholderTextColor={Colors.textTertiary}
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
             </View>
             <View style={styles.cardItem}>
-              <Text style={styles.cardLabel}>비밀번호 Password</Text>
+              <Text style={styles.cardLabel}>{t('passwordLabel')}</Text>
               <TextInput
                 style={styles.cardInput}
                 value={password}
                 onChangeText={setPassword}
-                placeholder="변경할 때만 입력하세요"
+                placeholder={t('passwordChangePlaceholder')}
                 placeholderTextColor={Colors.textTertiary}
                 secureTextEntry
               />
             </View>
             <View style={styles.cardItem}>
-              <Text style={styles.cardLabel}>시간대 Time Zone</Text>
+              <Text style={styles.cardLabel}>{t('timezoneLabel')}</Text>
               <TextInput
                 style={styles.cardInput}
                 value={timezone}
                 onChangeText={setTimezone}
-                placeholder="예: Asia/Seoul"
+                placeholder={t('timezonePlaceholder')}
                 placeholderTextColor={Colors.textTertiary}
                 autoCapitalize="none"
               />
             </View>
           </View>
 
-          <Text style={styles.avatarHint}>프로필 아이콘 선택</Text>
+          <Text style={styles.avatarHint}>{t('profileIconHint')}</Text>
           <View style={styles.avatarActionRow}>
             <TouchableOpacity style={styles.photoBtn} onPress={pickPhoto} activeOpacity={0.8}>
-              <Text style={styles.photoBtnText}>{avatarUrl ? '사진 바꾸기' : '사진 추가'}</Text>
+              <Text style={styles.photoBtnText}>{avatarUrl ? t('changePhoto') : t('addPhoto')}</Text>
             </TouchableOpacity>
             {avatarUrl ? (
               <TouchableOpacity style={styles.photoRemoveBtn} onPress={removePhoto} activeOpacity={0.8}>
-                <Text style={styles.photoRemoveText}>사진 제거</Text>
+                <Text style={styles.photoRemoveText}>{t('removePhoto')}</Text>
               </TouchableOpacity>
             ) : null}
           </View>
-          <Text style={styles.avatarHintSmall}>국기 이모지 또는 프로필 사진을 선택할 수 있어요.</Text>
+          <Text style={styles.avatarHintSmall}>{t('avatarHintSmall')}</Text>
           <TextInput
             style={styles.countrySearchInput}
             value={countryQuery}
             onChangeText={setCountryQuery}
-            placeholder="국가 검색 (한국어/영어)"
+            placeholder={t('countrySearchPlaceholder')}
             placeholderTextColor={Colors.textTertiary}
           />
           <View style={styles.emojiGrid}>
@@ -285,7 +288,7 @@ export default function ProfileScreen() {
           </View>
 
           <TouchableOpacity style={styles.logoutBtn} onPress={handleDeleteAccount}>
-            <Text style={styles.logoutText}>회원탈퇴</Text>
+            <Text style={styles.logoutText}>{t('withdrawAccount')}</Text>
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
@@ -317,7 +320,6 @@ const styles = StyleSheet.create({
     width: 76, height: 76, borderRadius: 38,
     backgroundColor: Colors.navBar, alignItems: 'center', justifyContent: 'center',
   },
-  avatarPreviewText: { fontSize: 36 },
   profileNameBox: { flex: 1, gap: 8 },
 
   sectionTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
@@ -383,8 +385,6 @@ const styles = StyleSheet.create({
     fontSize: 15, color: Colors.textPrimary,
   },
   nameInput: { width: '100%' },
-  fieldInputDisabled: { backgroundColor: Colors.divider, color: Colors.textTertiary },
-  fieldHint: { fontSize: 11, color: Colors.textTertiary },
 
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
   notFoundText: { fontSize: 16, color: Colors.textSecondary },

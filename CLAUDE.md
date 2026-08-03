@@ -225,6 +225,11 @@ mypage.tsx를 mypage/index.tsx + Stack(_layout.tsx)으로 전환하고 6개 서�
   (`notify_on_comment`/`notify_on_like`, 자기 자신에게는 알림 안 감)로 실제 생성.
   `constants/notifications.ts`에서 조회/읽음 처리, 홈 배지·`app/notifications/index.tsx`
   둘 다 연결. `constants/mockNotifications.ts`는 삭제.
+- ✅ 알림설정(`app/tabs/mypage/notifications.tsx`) 실제 백엔드 — 이전엔 토글이 로컬
+  `useState`만 바꾸고 아무 데도 저장되지 않는 순수 UI 스텁이었음. `profiles.notification_prefs`
+  jsonb 컬럼 추가 후 `notify_on_comment`/`notify_on_like` 트리거가 좋아요/댓글 알림 생성 전에
+  수신자의 해당 설정을 확인하도록 수정(`authStore.fetchNotificationPrefs`/`updateNotificationPrefs`).
+  단, newSlang/popularSlang/popularPost 3개는 그 알림 자체를 만드는 백엔드가 아직 없어 값만 저장됨.
 - 새로운 신조어 mock 데이터 5개로 보강(`new-slang` 카테고리, `constants/mockWords.ts`) —
   실제 신조어 개수가 늘면 계속 추가 권장.
 

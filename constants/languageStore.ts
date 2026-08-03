@@ -17,6 +17,31 @@ type TranslationKey =
   | 'savedWords'
   | 'likedPosts'
   | 'myActivity'
+  | 'myPostsTab'
+  | 'myCommentedTab'
+  | 'myLikedTab'
+  | 'noWrittenPostsYet'
+  | 'noCommentedPostsYet'
+  | 'noLikedPostsYet'
+  | 'browseCommunity'
+  | 'suggestTitle'
+  | 'suggestIntro'
+  | 'suggestWordLabel'
+  | 'suggestWordPlaceholder'
+  | 'suggestCategoryLabel'
+  | 'suggestDefinitionLabel'
+  | 'suggestDefinitionPlaceholder'
+  | 'suggestExampleLabel'
+  | 'suggestExamplePlaceholder'
+  | 'suggestSubmitBtn'
+  | 'suggestSubmitting'
+  | 'suggestFailedTitle'
+  | 'loginRequiredSuggest'
+  | 'suggestDoneTitle'
+  | 'suggestDoneDescPrefix'
+  | 'suggestDoneDescSuffix'
+  | 'suggestAnother'
+  | 'suggestBackToMypage'
   | 'suggestNewSlang'
   | 'loginNeeded'
   | 'tapToLogin'
@@ -26,6 +51,11 @@ type TranslationKey =
   | 'privacyPolicy'
   | 'logout'
   | 'login'
+  | 'customerService'
+  | 'faqSearchPlaceholder'
+  | 'contactDirectly'
+  | 'contactMailUnavailableTitle'
+  | 'contactMailUnavailableBody'
   | 'saveWordCount'
   | 'likesCount'
   | 'loginBannerSubtitle'
@@ -123,7 +153,46 @@ type TranslationKey =
   | 'noFavoritesYet'
   | 'browseDictionary'
   | 'sortOldest'
-  | 'sortNewest';
+  | 'sortNewest'
+  // 알림 설정
+  | 'notificationSettings'
+  | 'allNotifications'
+  | 'allNotificationsDesc'
+  | 'contentSectionLabel'
+  | 'communitySectionLabel'
+  // 내 정보 관리
+  | 'myInfoTitle'
+  | 'loginRequiredGeneric'
+  | 'nicknameLabel'
+  | 'nicknamePlaceholder'
+  | 'accountInfoSection'
+  | 'emailLabel'
+  | 'emailPlaceholder'
+  | 'passwordLabel'
+  | 'passwordChangePlaceholder'
+  | 'timezoneLabel'
+  | 'timezonePlaceholder'
+  | 'profileIconHint'
+  | 'changePhoto'
+  | 'addPhoto'
+  | 'removePhoto'
+  | 'avatarHintSmall'
+  | 'countrySearchPlaceholder'
+  | 'withdrawAccount'
+  | 'withdrawConfirmTitle'
+  | 'withdrawConfirmMessage'
+  | 'withdrawConfirmBtn'
+  | 'withdrawFailedTitle'
+  | 'saveBtnLabel'
+  | 'savingLabel'
+  | 'inputCheckTitle'
+  | 'nicknameRequiredMessage'
+  | 'saveFailedTitle'
+  | 'saveCompleteTitle'
+  | 'saveCompleteMessage'
+  | 'confirmLabel'
+  | 'permissionNeededTitle'
+  | 'galleryPermissionMessage';
 
 const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
   ko: {
@@ -139,6 +208,31 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     savedWords: '저장한 단어',
     likedPosts: '좋아요 한 글',
     myActivity: '내 활동',
+    myPostsTab: '게시물',
+    myCommentedTab: '댓글',
+    myLikedTab: '좋아요',
+    noWrittenPostsYet: '아직 작성한 글이 없어요',
+    noCommentedPostsYet: '아직 댓글을 단 글이 없어요',
+    noLikedPostsYet: '아직 좋아요 한 글이 없어요',
+    browseCommunity: '커뮤니티 둘러보기',
+    suggestTitle: '신조어 제안하기',
+    suggestIntro: '아직 속닥 사전에 없는 신조어를 알고 계신가요?\n제안해주시면 검토 후 추가할게요!',
+    suggestWordLabel: '제안할 단어',
+    suggestWordPlaceholder: '예: 갓벽',
+    suggestCategoryLabel: '카테고리',
+    suggestDefinitionLabel: '뜻/설명 (5자 이상)',
+    suggestDefinitionPlaceholder: '이 단어가 무슨 뜻인지 설명해주세요',
+    suggestExampleLabel: '예문 (선택)',
+    suggestExamplePlaceholder: '이 단어를 사용한 예문이 있다면 적어주세요',
+    suggestSubmitBtn: '제안하기',
+    suggestSubmitting: '제출 중…',
+    suggestFailedTitle: '제안 실패',
+    loginRequiredSuggest: '신조어를 제안하려면 먼저 로그인해주세요.',
+    suggestDoneTitle: '제안 감사해요!',
+    suggestDoneDescPrefix: "'",
+    suggestDoneDescSuffix: "' 제안을 잘 받았어요.\n검토 후 사전에 반영될 수 있어요.",
+    suggestAnother: '다른 단어 제안하기',
+    suggestBackToMypage: '마이페이지로 돌아가기',
     suggestNewSlang: '신조어 제안하기',
     loginNeeded: '로그인이 필요해요',
     tapToLogin: '탭하여 로그인 →',
@@ -148,6 +242,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     privacyPolicy: '개인정보처리방침',
     logout: '로그아웃',
     login: '로그인하기',
+    customerService: '고객센터',
+    faqSearchPlaceholder: '질문 검색',
+    contactDirectly: '직접 문의하기',
+    contactMailUnavailableTitle: '메일 앱을 열 수 없어요',
+    contactMailUnavailableBody: 'support@sokdak.app 으로 직접 문의해주세요.',
     saveWordCount: '저장한 단어',
     likesCount: '좋아요',
     loginBannerSubtitle: '로그인하면 단어 저장·커뮤니티 이용 가능',
@@ -246,6 +345,45 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     browseDictionary: '사전 둘러보기',
     sortOldest: '등록순',
     sortNewest: '최신순',
+
+    notificationSettings: '알림 설정',
+    allNotifications: '전체 알림',
+    allNotificationsDesc: '모든 알림을 한 번에 끄거나 켭니다',
+    contentSectionLabel: '컨텐츠',
+    communitySectionLabel: '커뮤니티',
+
+    myInfoTitle: '내 정보 관리',
+    loginRequiredGeneric: '로그인이 필요해요',
+    nicknameLabel: '닉네임',
+    nicknamePlaceholder: '닉네임을 입력하세요',
+    accountInfoSection: '계정 정보',
+    emailLabel: '이메일 Email',
+    emailPlaceholder: '이메일을 입력하세요',
+    passwordLabel: '비밀번호 Password',
+    passwordChangePlaceholder: '변경할 때만 입력하세요',
+    timezoneLabel: '시간대 Time Zone',
+    timezonePlaceholder: '예: Asia/Seoul',
+    profileIconHint: '프로필 아이콘 선택',
+    changePhoto: '사진 바꾸기',
+    addPhoto: '사진 추가',
+    removePhoto: '사진 제거',
+    avatarHintSmall: '국기 이모지 또는 프로필 사진을 선택할 수 있어요.',
+    countrySearchPlaceholder: '국가 검색 (한국어/영어)',
+    withdrawAccount: '회원탈퇴',
+    withdrawConfirmTitle: '회원탈퇴',
+    withdrawConfirmMessage: '정말 탈퇴하시겠어요? 저장한 단어, 작성한 글 등 모든 정보가 삭제되며 되돌릴 수 없어요.',
+    withdrawConfirmBtn: '탈퇴하기',
+    withdrawFailedTitle: '탈퇴 실패',
+    saveBtnLabel: '저장',
+    savingLabel: '저장 중…',
+    inputCheckTitle: '입력 확인',
+    nicknameRequiredMessage: '닉네임을 입력해주세요.',
+    saveFailedTitle: '저장 실패',
+    saveCompleteTitle: '저장 완료',
+    saveCompleteMessage: '내 정보가 수정됐어요.',
+    confirmLabel: '확인',
+    permissionNeededTitle: '권한 필요',
+    galleryPermissionMessage: '갤러리 접근 권한이 필요합니다.',
   },
   en: {
     home: 'Home',
@@ -260,6 +398,31 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     savedWords: 'Saved Words',
     likedPosts: 'Liked Posts',
     myActivity: 'My Activity',
+    myPostsTab: 'Posts',
+    myCommentedTab: 'Comments',
+    myLikedTab: 'Liked',
+    noWrittenPostsYet: 'No posts written yet',
+    noCommentedPostsYet: 'No commented posts yet',
+    noLikedPostsYet: 'No liked posts yet',
+    browseCommunity: 'Browse Community',
+    suggestTitle: 'Suggest New Slang',
+    suggestIntro: "Know a slang word that's not in the SokDak dictionary yet?\nSuggest it and we'll review it for addition!",
+    suggestWordLabel: 'Word to suggest',
+    suggestWordPlaceholder: 'e.g. 갓벽',
+    suggestCategoryLabel: 'Category',
+    suggestDefinitionLabel: 'Meaning (5+ characters)',
+    suggestDefinitionPlaceholder: 'Explain what this word means',
+    suggestExampleLabel: 'Example (optional)',
+    suggestExamplePlaceholder: 'Add an example sentence if you have one',
+    suggestSubmitBtn: 'Submit',
+    suggestSubmitting: 'Submitting…',
+    suggestFailedTitle: 'Suggestion failed',
+    loginRequiredSuggest: 'Please log in to suggest a new slang word.',
+    suggestDoneTitle: 'Thanks for the suggestion!',
+    suggestDoneDescPrefix: "We've received your suggestion for '",
+    suggestDoneDescSuffix: "'.\nIt may be added to the dictionary after review.",
+    suggestAnother: 'Suggest another word',
+    suggestBackToMypage: 'Back to My Page',
     suggestNewSlang: 'Suggest New Slang',
     loginNeeded: 'Login required',
     tapToLogin: 'Tap to login →',
@@ -269,6 +432,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     privacyPolicy: 'Privacy Policy',
     logout: 'Logout',
     login: 'Login',
+    customerService: 'Support',
+    faqSearchPlaceholder: 'Search questions',
+    contactDirectly: 'Contact us directly',
+    contactMailUnavailableTitle: "Couldn't open your mail app",
+    contactMailUnavailableBody: 'Please reach us directly at support@sokdak.app.',
     saveWordCount: 'Saved words',
     likesCount: 'Likes',
     loginBannerSubtitle: 'Login to save words and use the community',
@@ -367,6 +535,45 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     browseDictionary: 'Browse the dictionary',
     sortOldest: 'Oldest',
     sortNewest: 'Newest',
+
+    notificationSettings: 'Notification Settings',
+    allNotifications: 'All Notifications',
+    allNotificationsDesc: 'Turn all notifications on or off at once',
+    contentSectionLabel: 'Content',
+    communitySectionLabel: 'Community',
+
+    myInfoTitle: 'Edit Profile',
+    loginRequiredGeneric: 'Login required',
+    nicknameLabel: 'Nickname',
+    nicknamePlaceholder: 'Enter a nickname',
+    accountInfoSection: 'Account Info',
+    emailLabel: 'Email',
+    emailPlaceholder: 'Enter your email',
+    passwordLabel: 'Password',
+    passwordChangePlaceholder: 'Only fill in to change it',
+    timezoneLabel: 'Time Zone',
+    timezonePlaceholder: 'e.g. Asia/Seoul',
+    profileIconHint: 'Choose a profile icon',
+    changePhoto: 'Change photo',
+    addPhoto: 'Add photo',
+    removePhoto: 'Remove photo',
+    avatarHintSmall: 'Choose a flag emoji or a profile photo.',
+    countrySearchPlaceholder: 'Search country (Korean/English)',
+    withdrawAccount: 'Delete Account',
+    withdrawConfirmTitle: 'Delete Account',
+    withdrawConfirmMessage: 'Are you sure? Saved words, posts, and all your data will be permanently deleted.',
+    withdrawConfirmBtn: 'Delete',
+    withdrawFailedTitle: 'Delete Failed',
+    saveBtnLabel: 'Save',
+    savingLabel: 'Saving…',
+    inputCheckTitle: 'Check Input',
+    nicknameRequiredMessage: 'Please enter a nickname.',
+    saveFailedTitle: 'Save Failed',
+    saveCompleteTitle: 'Saved',
+    saveCompleteMessage: 'Your info has been updated.',
+    confirmLabel: 'OK',
+    permissionNeededTitle: 'Permission Needed',
+    galleryPermissionMessage: 'Gallery access is required.',
   },
 };
 

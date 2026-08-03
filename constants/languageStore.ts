@@ -134,6 +134,15 @@ type TranslationKey =
   | 'toolbarLink'
   | 'toolbarFormat'
   | 'featureComingSoon'
+  | 'linkModalTitle'
+  | 'linkUrlPlaceholder'
+  | 'linkLabelPlaceholder'
+  | 'linkInsert'
+  | 'linkUrlRequiredMessage'
+  | 'boldLabel'
+  | 'italicLabel'
+  | 'uploadingPhoto'
+  | 'uploadFailedTitle'
   | 'titleNeeded'
   | 'contentNeeded'
   | 'readyToPost'
@@ -326,6 +335,15 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     toolbarLink: '링크',
     toolbarFormat: '서식',
     featureComingSoon: '기능은 준비 중이에요.',
+    linkModalTitle: '링크 추가',
+    linkUrlPlaceholder: 'https://example.com',
+    linkLabelPlaceholder: '링크 이름 (선택)',
+    linkInsert: '추가',
+    linkUrlRequiredMessage: '링크 주소를 입력해주세요.',
+    boldLabel: '굵게',
+    italicLabel: '기울임',
+    uploadingPhoto: '사진 업로드 중…',
+    uploadFailedTitle: '업로드 실패',
     titleNeeded: '제목 필요',
     contentNeeded: '내용 필요',
     readyToPost: '작성 완료 ✓',
@@ -517,6 +535,15 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     toolbarLink: 'Link',
     toolbarFormat: 'Format',
     featureComingSoon: 'is coming soon.',
+    linkModalTitle: 'Add link',
+    linkUrlPlaceholder: 'https://example.com',
+    linkLabelPlaceholder: 'Link text (optional)',
+    linkInsert: 'Add',
+    linkUrlRequiredMessage: 'Please enter a URL.',
+    boldLabel: 'Bold',
+    italicLabel: 'Italic',
+    uploadingPhoto: 'Uploading photo…',
+    uploadFailedTitle: 'Upload failed',
     titleNeeded: 'Title needed',
     contentNeeded: 'Content needed',
     readyToPost: 'Ready to post ✓',

@@ -18,6 +18,7 @@ import {
   type CommunityComment, type CommunityPostDetail,
 } from '../../../constants/community';
 import { AppIcon, IconStat } from '@/components/AppIcon';
+import { PostRichText } from '@/components/PostRichText';
 import {
   Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye,
   Pencil, Trash2, Flag, Ban,
@@ -420,8 +421,8 @@ export default function PostDetailScreen() {
             {/* 제목 – 피그마: "'갓벽'이 무슨 뜻인가요?" */}
             <Text style={styles.postTitle}>{post.title}</Text>
 
-            {/* 본문 */}
-            <Text style={styles.postContent}>{post.content}</Text>
+            {/* 본문 — 글쓰기 툴바(사진/링크/서식)가 남긴 마크업을 실제로 렌더링 */}
+            <PostRichText content={post.content} textStyle={styles.postContent} />
 
             {/* 액션 버튼들 */}
             <View style={styles.actionRow}>

@@ -1,19 +1,20 @@
 import {
-  StyleSheet, View, SafeAreaView, TextInput,
+  StyleSheet, View, SafeAreaView, TextInput, Modal,
   TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS, getBoardLabel, type PostBoard } from '../../../constants/mockPosts';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
-import { Camera, Link2, Type } from 'lucide-react-native';
+import { Camera, Link2, Type, Bold, Italic } from 'lucide-react-native';
 import { authStore } from '../../../constants/authStore';
-import { createPost, fetchPost, updatePost } from '../../../constants/community';
+import { createPost, fetchPost, updatePost, uploadPostImage } from '../../../constants/community';
 
 const BOARD_OPTIONS: PostBoard[] = ['궁금해요', 'Q&A', '질문하기'];
 
@@ -33,6 +34,15 @@ export default function WritePostScreen() {
   const [title, setTitle]       = useState('');
   const [content, setContent]   = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  /* 사진/링크/서식 툴바 — 마지막으로 알려진 커서/선택 위치에 마크업을 끼워 넣는다 */
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
+  const contentInputRef = useRef<TextInput>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [linkModalOpen, setLinkModalOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState('');
+  const [linkLabel, setLinkLabel] = useState('');
+  const [formatMenuOpen, setFormatMenuOpen] = useState(false);
 
   /* 수정 진입 — editId로 열리면 기존 글을 불러와 채워둔다 */
   useEffect(() => {
@@ -57,6 +67,67 @@ export default function WritePostScreen() {
   }
 
   const isValid = title.trim().length >= 2 && content.trim().length >= 10;
+
+  /* 선택된 구간(없으면 커서 위치)을 before/after 마크업으로 감싼다 — 서식(굵게/기울임)용 */
+  const wrapSelection = (before: string, after: string, placeholder: string) => {
+    const { start, end } = selection;
+    const selected = content.slice(start, end) || placeholder;
+    const next = content.slice(0, start) + before + selected + after + content.slice(end);
+    const cursor = start + before.length + selected.length + after.length;
+    setContent(next);
+    setSelection({ start: cursor, end: cursor });
+    setFormatMenuOpen(false);
+    contentInputRef.current?.focus();
+  };
+
+  /* 선택 구간을 지우고 그 자리에 텍스트를 끼워 넣는다 — 링크/사진용 */
+  const insertAtCursor = (text: string) => {
+    const { start, end } = selection;
+    const next = content.slice(0, start) + text + content.slice(end);
+    const cursor = start + text.length;
+    setContent(next);
+    setSelection({ start: cursor, end: cursor });
+  };
+
+  const handlePickPhoto = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(t('permissionNeededTitle'), t('galleryPermissionMessage'));
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.7,
+    });
+    if (result.canceled || !result.assets[0]?.uri) return;
+
+    setUploadingPhoto(true);
+    const { url, error } = await uploadPostImage(result.assets[0].uri);
+    setUploadingPhoto(false);
+    if (error || !url) {
+      Alert.alert(t('uploadFailedTitle'), error ?? t('unknownError'));
+      return;
+    }
+    insertAtCursor(`\n![](${url})\n`);
+  };
+
+  const openLinkModal = () => {
+    const { start, end } = selection;
+    setLinkLabel(content.slice(start, end));
+    setLinkUrl('');
+    setLinkModalOpen(true);
+  };
+
+  const handleInsertLink = () => {
+    if (!linkUrl.trim()) {
+      Alert.alert(t('inputCheckTitle'), t('linkUrlRequiredMessage'));
+      return;
+    }
+    const label = linkLabel.trim() || linkUrl.trim();
+    /* 링크는 선택 구간을 대체하므로, 선택돼 있던 텍스트(label 프리필 출처)까지 포함해 지운다 */
+    insertAtCursor(`[${label}](${linkUrl.trim()})`);
+    setLinkModalOpen(false);
+  };
 
   const handleSubmit = async () => {
     if (!isValid) {
@@ -168,11 +239,13 @@ export default function WritePostScreen() {
 
           {/* ── 내용 입력 (Frame 28) */}
           <TextInput
+            ref={contentInputRef}
             style={styles.contentInput}
             placeholder={t('contentPlaceholder')}
             placeholderTextColor={Colors.textTertiary}
             value={content}
             onChangeText={setContent}
+            onSelectionChange={e => setSelection(e.nativeEvent.selection)}
             multiline
             textAlignVertical="top"
             maxLength={2000}
@@ -188,14 +261,19 @@ export default function WritePostScreen() {
         <View style={styles.toolbar}>
           {TOOLBAR_ITEMS.map(({ icon, key, labelKey }) => {
             const label = t(labelKey);
+            const onPress = key === '사진' ? handlePickPhoto
+              : key === '링크' ? openLinkModal
+              : () => setFormatMenuOpen(p => !p);
+            const busy = key === '사진' && uploadingPhoto;
             return (
               <TouchableOpacity
                 key={key}
                 style={styles.toolbarBtn}
-                onPress={() => Alert.alert(label, `${label} ${t('featureComingSoon')}`)}
+                onPress={onPress}
+                disabled={busy}
               >
                 <AppIcon icon={icon} size={16} />
-                <Text style={styles.toolbarLabel}>{label}</Text>
+                <Text style={styles.toolbarLabel}>{busy ? t('uploadingPhoto') : label}</Text>
               </TouchableOpacity>
             );
           })}
@@ -206,6 +284,61 @@ export default function WritePostScreen() {
             </Text>
           </View>
         </View>
+
+        {/* ── 서식(굵게/기울임) 팝업 — 툴바 바로 위에 뜬다 ── */}
+        <Modal visible={formatMenuOpen} transparent animationType="fade" onRequestClose={() => setFormatMenuOpen(false)}>
+          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setFormatMenuOpen(false)}>
+            <View style={styles.formatSheet}>
+              <TouchableOpacity style={styles.formatOption} onPress={() => wrapSelection('**', '**', t('boldLabel'))}>
+                <AppIcon icon={Bold} size={16} color={Colors.textPrimary} />
+                <Text style={styles.formatOptionText}>{t('boldLabel')}</Text>
+              </TouchableOpacity>
+              <View style={styles.menuDivider} />
+              <TouchableOpacity style={styles.formatOption} onPress={() => wrapSelection('_', '_', t('italicLabel'))}>
+                <AppIcon icon={Italic} size={16} color={Colors.textPrimary} />
+                <Text style={styles.formatOptionText}>{t('italicLabel')}</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+
+        {/* ── 링크 추가 모달 ── */}
+        <Modal visible={linkModalOpen} transparent animationType="fade" onRequestClose={() => setLinkModalOpen(false)}>
+          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setLinkModalOpen(false)}>
+            <TouchableOpacity style={styles.linkSheet} activeOpacity={1}>
+              <Text style={styles.linkSheetTitle}>{t('linkModalTitle')}</Text>
+              <TextInput
+                style={styles.linkInput}
+                value={linkUrl}
+                onChangeText={setLinkUrl}
+                placeholder={t('linkUrlPlaceholder')}
+                placeholderTextColor={Colors.textTertiary}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="url"
+              />
+              <TextInput
+                style={styles.linkInput}
+                value={linkLabel}
+                onChangeText={setLinkLabel}
+                placeholder={t('linkLabelPlaceholder')}
+                placeholderTextColor={Colors.textTertiary}
+              />
+              <View style={styles.linkActions}>
+                <TouchableOpacity style={styles.linkCancelBtn} onPress={() => setLinkModalOpen(false)}>
+                  <Text style={styles.linkCancelText}>{t('cancelLabel')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.linkSubmitBtn, !linkUrl.trim() && styles.sendBtnDisabled]}
+                  onPress={handleInsertLink}
+                  disabled={!linkUrl.trim()}
+                >
+                  <Text style={styles.linkSubmitText}>{t('linkInsert')}</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </Modal>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
@@ -308,4 +441,38 @@ const styles = StyleSheet.create({
   notFoundText: { fontSize: 16, color: Colors.textSecondary },
   notFoundBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8, backgroundColor: Colors.navBar },
   notFoundBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontWeight: '600' },
+
+  /* 서식/링크 팝업 공용 백드롭 */
+  menuBackdrop: { flex: 1, justifyContent: 'flex-end', alignItems: 'center' },
+  menuDivider: { height: 1, backgroundColor: Colors.border },
+
+  /* 서식(굵게/기울임) 팝업 — 툴바 바로 위 */
+  formatSheet: {
+    marginBottom: 60, width: 160, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.surface, overflow: 'hidden',
+    shadowColor: '#909090', shadowOffset: { width: 2, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 4,
+  },
+  formatOption: { height: 40, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14 },
+  formatOptionText: { fontSize: 13, color: Colors.textPrimary },
+
+  /* 링크 추가 모달 */
+  linkSheet: {
+    marginHorizontal: 24, padding: 20, borderRadius: 14,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, gap: 10,
+  },
+  linkSheetTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  linkInput: {
+    height: 44, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.background, paddingHorizontal: 12,
+    fontSize: 14, color: Colors.textPrimary,
+  },
+  linkActions: { flexDirection: 'row', gap: 8, marginTop: 4 },
+  linkCancelBtn: {
+    flex: 1, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: Colors.border,
+  },
+  linkCancelText: { fontSize: 14, color: Colors.textSecondary },
+  linkSubmitBtn: { flex: 1, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.navBar },
+  linkSubmitText: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
+  sendBtnDisabled: { backgroundColor: Colors.border },
 });

@@ -238,6 +238,25 @@ export async function reportPost(params: { postId: string; reportedUserId: strin
   return { error: error?.message ?? null };
 }
 
+/** 글쓰기용 사진 첨부 — Supabase Storage 'post-images' 버킷(공개)에 업로드 후 공개 URL 반환 */
+export async function uploadPostImage(uri: string): Promise<{ url: string | null; error: string | null }> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { url: null, error: '로그인이 필요해요.' };
+
+  const response = await fetch(uri);
+  const blob = await response.blob();
+  const ext = blob.type?.split('/')[1] ?? 'jpg';
+  const path = `${user.id}/${Date.now()}.${ext}`;
+
+  const { error } = await supabase.storage.from('post-images').upload(path, blob, {
+    contentType: blob.type || 'image/jpeg',
+  });
+  if (error) return { url: null, error: error.message };
+
+  const { data } = supabase.storage.from('post-images').getPublicUrl(path);
+  return { url: data.publicUrl, error: null };
+}
+
 export async function createComment(params: { postId: string; content: string; parentCommentId?: string | null }) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: '로그인이 필요해요.' };

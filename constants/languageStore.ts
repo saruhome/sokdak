@@ -21,9 +21,11 @@ type TranslationKey =
   | 'myPostsTab'
   | 'myCommentedTab'
   | 'myLikedTab'
+  | 'mySavedTab'
   | 'noWrittenPostsYet'
   | 'noCommentedPostsYet'
   | 'noLikedPostsYet'
+  | 'noSavedPostsYet'
   | 'browseCommunity'
   | 'suggestTitle'
   | 'suggestIntro'
@@ -248,9 +250,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     myPostsTab: '게시물',
     myCommentedTab: '댓글',
     myLikedTab: '좋아요',
+    mySavedTab: '저장',
     noWrittenPostsYet: '아직 작성한 글이 없어요',
     noCommentedPostsYet: '아직 댓글을 단 글이 없어요',
     noLikedPostsYet: '아직 좋아요 한 글이 없어요',
+    noSavedPostsYet: '아직 저장한 글이 없어요',
     browseCommunity: '커뮤니티 둘러보기',
     suggestTitle: '신조어 제안하기',
     suggestIntro: '아직 속닥 사전에 없는 신조어를 알고 계신가요?\n제안해주시면 검토 후 추가할게요!',
@@ -474,9 +478,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     myPostsTab: 'Posts',
     myCommentedTab: 'Comments',
     myLikedTab: 'Liked',
+    mySavedTab: 'Saved',
     noWrittenPostsYet: 'No posts written yet',
     noCommentedPostsYet: 'No commented posts yet',
     noLikedPostsYet: 'No liked posts yet',
+    noSavedPostsYet: 'No saved posts yet',
     browseCommunity: 'Browse Community',
     suggestTitle: 'Suggest New Slang',
     suggestIntro: "Know a slang word that's not in the SokDak dictionary yet?\nSuggest it and we'll review it for addition!",
@@ -700,9 +706,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     myPostsTab: '投稿',
     myCommentedTab: 'コメント',
     myLikedTab: 'いいね',
+    mySavedTab: '保存',
     noWrittenPostsYet: 'まだ投稿がありません',
     noCommentedPostsYet: 'まだコメントした投稿がありません',
     noLikedPostsYet: 'まだいいねした投稿がありません',
+    noSavedPostsYet: 'まだ保存した投稿がありません',
     browseCommunity: 'コミュニティを見る',
     suggestTitle: '新造語を提案する',
     suggestIntro: 'ソクダク辞書にまだない新造語をご存知ですか？\nご提案いただければ検討のうえ追加します！',
@@ -926,9 +934,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     myPostsTab: 'Bài viết',
     myCommentedTab: 'Bình luận',
     myLikedTab: 'Đã thích',
+    mySavedTab: 'Đã lưu',
     noWrittenPostsYet: 'Chưa có bài viết nào',
     noCommentedPostsYet: 'Chưa bình luận bài viết nào',
     noLikedPostsYet: 'Chưa thích bài viết nào',
+    noSavedPostsYet: 'Chưa lưu bài viết nào',
     browseCommunity: 'Khám phá cộng đồng',
     suggestTitle: 'Đề xuất từ mới',
     suggestIntro: 'Bạn biết một từ lóng chưa có trong từ điển SokDak?\nHãy đề xuất, chúng tôi sẽ xem xét và bổ sung!',
@@ -1152,9 +1162,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     myPostsTab: 'Publicaciones',
     myCommentedTab: 'Comentarios',
     myLikedTab: 'Me gusta',
+    mySavedTab: 'Guardadas',
     noWrittenPostsYet: 'Aún no has escrito publicaciones',
     noCommentedPostsYet: 'Aún no has comentado ninguna publicación',
     noLikedPostsYet: 'Aún no te gusta ninguna publicación',
+    noSavedPostsYet: 'Aún no has guardado ninguna publicación',
     browseCommunity: 'Explorar la comunidad',
     suggestTitle: 'Sugerir jerga nueva',
     suggestIntro: '¿Conoces una palabra de jerga que aún no está en el diccionario de SokDak?\n¡Sugiérela y la revisaremos para añadirla!',

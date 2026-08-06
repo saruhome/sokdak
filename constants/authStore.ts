@@ -286,11 +286,25 @@ export const authStore = {
 
   async signIn({ email, password }: { email: string; password: string }) {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!error) {
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.user) {
+        await applySession(data.session.user.id, data.session.user.email);
+      }
+    }
     return { error: error?.message ?? null };
   },
 
   async logout() {
     await supabase.auth.signOut();
+    _isLoggedIn = false;
+    _user = null;
+    _savedWordIds.clear();
+    _savedPostIds.clear();
+    _likedPostIds.clear();
+    _likedCategorySlugs.clear();
+    notifyAuth();
+    notifyBookmarks();
   },
 
   async requestPasswordReset(email: string) {

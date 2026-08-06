@@ -11,9 +11,9 @@ import { fetchMyPosts, fetchPostsCommentedByMe, fetchPostsByIds, type CommunityP
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Eye, Heart, MessageCircle, Pencil } from 'lucide-react-native';
+import { Eye, Heart, MessageCircle, Pencil, Bookmark } from 'lucide-react-native';
 
-type ActivityTab = 'written' | 'commented' | 'liked';
+type ActivityTab = 'written' | 'commented' | 'liked' | 'saved';
 
 /** Figma: 229:3620~3679 — 내 활동 게시물 (쓴 글 / 댓글 단 글 / 좋아요 한 글) */
 export default function MyPostsScreen() {
@@ -28,6 +28,7 @@ export default function MyPostsScreen() {
     { key: 'written',   label: t('myPostsTab') },
     { key: 'commented', label: t('myCommentedTab') },
     { key: 'liked',     label: t('myLikedTab') },
+    { key: 'saved',     label: t('mySavedTab') },
   ];
 
   useFocusEffect(
@@ -36,7 +37,8 @@ export default function MyPostsScreen() {
       setLoading(true);
       const load = tab === 'written' ? fetchMyPosts
         : tab === 'commented' ? fetchPostsCommentedByMe
-        : () => fetchPostsByIds(authStore.getLikedPostIds());
+        : tab === 'liked' ? () => fetchPostsByIds(authStore.getLikedPostIds())
+        : () => fetchPostsByIds(authStore.getSavedPostIds());
       load().then(result => {
         if (!cancelled) { setData(result); setLoading(false); }
       });
@@ -48,6 +50,7 @@ export default function MyPostsScreen() {
     written:   { icon: Pencil,       text: t('noWrittenPostsYet'),   ctaLabel: t('writeTitle'),       ctaRoute: '/tabs/community/write' as const },
     commented: { icon: MessageCircle, text: t('noCommentedPostsYet'), ctaLabel: t('browseCommunity'), ctaRoute: '/tabs/community' as const },
     liked:     { icon: Heart,        text: t('noLikedPostsYet'),     ctaLabel: t('browseCommunity'), ctaRoute: '/tabs/community' as const },
+    saved:     { icon: Bookmark,     text: t('noSavedPostsYet'),     ctaLabel: t('browseCommunity'), ctaRoute: '/tabs/community' as const },
   }[tab];
 
   return (

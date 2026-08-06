@@ -143,6 +143,7 @@ export default function PostDetailScreen() {
     inputRef.current?.focus();
   };
 
+  /* 단어 즐겨찾기와 동일하게 비로그인도 허용 — 세션 동안 유지되고 로그인 시 계정으로 이관된다(authStore) */
   const handleToggleSave = () => {
     if (!post) return;
     authStore.togglePostSaved(post.id);

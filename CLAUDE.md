@@ -236,6 +236,12 @@ mypage.tsx를 mypage/index.tsx + Stack(_layout.tsx)으로 전환하고 6개 서�
   그대로 미러링, romanization 컬럼 누락 + 최신 3개 신조어 누락) 어떤 화면도 실제로 쓰지 않고
   있었음. 컬럼 추가 + 전체 31개 재동기화 후, `constants/words.ts`(`fetchWords`/`fetchWordById`)로
   홈/사전/카테고리/저장한 단어/검색 5개 화면 전부 실데이터로 전환. `constants/mockWords.ts` 삭제.
+- ✅ 앱 언어 5개로 확장(한/영/일/베트남/스페인어) — `languageStore.ts` 전체 문자열 + 로컬
+  `Record<Language>` 콘텐츠 블록 전부 번역, `constants/categories.ts`에 nameJa/nameVi/nameEs 추가.
+- ✅ 게시글 저장(Bookmark) 완성 — 저장 버튼은 있었지만 저장한 글을 보여주는 화면이 없던 미완료
+  기능. `my-posts.tsx`에 '저장' 탭 추가(단어 즐겨찾기와 동일하게 비로그인도 허용).
+- ✅ 글쓰기 사진 첨부 버그 수정 — Supabase에 `post-images` 스토리지 버킷 자체가 없어 업로드가
+  항상 실패했음. 버킷 생성 + RLS(공개 읽기, 본인 폴더 업로드/삭제) 추가.
 
 ## 개발 컨벤션
 

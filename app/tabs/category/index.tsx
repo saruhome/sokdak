@@ -28,6 +28,9 @@ const RECOMMEND_BUBBLE_WIDTH = RECOMMEND_BUBBLE_HEIGHT * CALLOUT_BUBBLE_ASPECT;
 const HORANG_HINTS: Record<Language, string[]> = {
   ko: ['아직 안 가본 카테고리예요!', '오늘은 여기부터 볼까요?', '이 카테고리도 궁금하지 않아요?', '한번 둘러보고 가요!'],
   en: ["A category you haven't explored yet!", 'How about starting here today?', 'Curious about this one too?', 'Take a look around!'],
+  ja: ['まだ見たことのないカテゴリーです！', '今日はここから見てみましょうか？', 'このカテゴリーも気になりませんか？', 'ちょっと見て行ってくださいね！'],
+  vi: ['Đây là danh mục bạn chưa khám phá!', 'Hôm nay bắt đầu từ đây nhé?', 'Bạn không tò mò về danh mục này sao?', 'Ghé xem một chút nhé!'],
+  es: ['¡Una categoría que aún no has explorado!', '¿Empezamos por aquí hoy?', '¿No sientes curiosidad por esta categoría también?', '¡Échale un vistazo!'],
 };
 
 type SortMode = '인기순' | '가나다순';

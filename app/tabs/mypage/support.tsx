@@ -16,6 +16,9 @@ const FAQ_CATEGORY_SLUGS: FaqCategorySlug[] = ['all', 'howTo', 'account', 'sugge
 const FAQ_CATEGORY_LABELS: Record<Language, Record<FaqCategorySlug, string>> = {
   ko: { all: '전체', howTo: '이용 방법', account: '회원정보', suggest: '제안하기', community: '커뮤니티' },
   en: { all: 'All', howTo: 'How to use', account: 'Account', suggest: 'Suggestions', community: 'Community' },
+  ja: { all: 'すべて', howTo: '使い方', account: 'アカウント', suggest: '提案する', community: 'コミュニティ' },
+  vi: { all: 'Tất cả', howTo: 'Cách dùng', account: 'Tài khoản', suggest: 'Đề xuất', community: 'Cộng đồng' },
+  es: { all: 'Todos', howTo: 'Cómo usar', account: 'Cuenta', suggest: 'Sugerencias', community: 'Comunidad' },
 };
 
 type FaqItem = { category: Exclude<FaqCategorySlug, 'all'>; q: string; a: string };
@@ -33,6 +36,27 @@ const FAQ_ITEMS: Record<Language, FaqItem[]> = {
     { category: 'suggest', q: 'I want to suggest a new slang word.', a: "Use My Page > Suggest New Slang to submit a word and its meaning. It'll be added to the dictionary after review." },
     { category: 'account', q: 'Can I use the app without logging in?', a: 'Dictionary search and reading community posts don’t require login. Saving words, writing posts, and commenting do.' },
     { category: 'community', q: 'What are the community rules?', a: 'We aim for a respectful learning community. Profanity, ads, and hate speech may be moderated.' },
+  ],
+  ja: [
+    { category: 'howTo', q: 'ソクダクはどんなアプリですか？', a: '韓国在住の中〜上級外国人学習者向けの韓国語新造語学習アプリです。教科書にはないリアルな生活韓国語が学べます。' },
+    { category: 'howTo', q: '単語はどうやって保存しますか？', a: '単語詳細画面で「保存」ボタンを押すと、マイページ＞お気に入りでまとめて見られます。' },
+    { category: 'suggest', q: '新造語を提案したいです。', a: 'マイページ＞新造語を提案するメニューで、単語と意味を提案できます。検討のうえ辞書に反映されます。' },
+    { category: 'account', q: 'ログインなしでも利用できますか？', a: '辞書検索とコミュニティ投稿の閲覧はログインなしで可能です。単語の保存、投稿、コメントの作成にはログインが必要です。' },
+    { category: 'community', q: 'コミュニティの利用ルールを知りたいです。', a: 'お互いを尊重する学習コミュニティを目指しています。暴言、広告、ヘイト表現は制限の対象になることがあります。' },
+  ],
+  vi: [
+    { category: 'howTo', q: 'SokDak là ứng dụng gì?', a: 'Ứng dụng học từ lóng tiếng Hàn dành cho người nước ngoài trình độ trung-cao cấp đang sống tại Hàn Quốc. Bạn có thể học tiếng Hàn đời thường thực sự không có trong sách giáo khoa.' },
+    { category: 'howTo', q: 'Làm sao để lưu từ?', a: "Nhấn nút 'Lưu' ở màn hình chi tiết từ, bạn có thể xem lại ở Trang cá nhân > Yêu thích." },
+    { category: 'suggest', q: 'Tôi muốn đề xuất một từ lóng mới.', a: 'Vào Trang cá nhân > Đề xuất từ mới để gửi từ và ý nghĩa bạn muốn. Từ sẽ được thêm vào từ điển sau khi xem xét.' },
+    { category: 'account', q: 'Tôi có thể dùng ứng dụng mà không cần đăng nhập không?', a: 'Bạn có thể tìm kiếm từ điển và đọc bài viết cộng đồng mà không cần đăng nhập. Lưu từ, viết bài và bình luận thì cần đăng nhập.' },
+    { category: 'community', q: 'Quy tắc sử dụng cộng đồng là gì?', a: 'Chúng tôi hướng đến một cộng đồng học tập tôn trọng lẫn nhau. Ngôn từ thô tục, quảng cáo và phát ngôn thù ghét có thể bị xử lý.' },
+  ],
+  es: [
+    { category: 'howTo', q: '¿Qué tipo de app es SokDak?', a: 'Una app para aprender jerga coreana pensada para residentes extranjeros de nivel intermedio-avanzado en Corea. Aprende coreano real y cotidiano que no encontrarás en los libros de texto.' },
+    { category: 'howTo', q: '¿Cómo guardo una palabra?', a: "Toca 'Guardar' en la pantalla de detalle de la palabra; podrás verlas en Mi página > Favoritos." },
+    { category: 'suggest', q: 'Quiero sugerir una palabra de jerga nueva.', a: 'Ve a Mi página > Sugerir jerga nueva para enviar la palabra y su significado. Se añadirá al diccionario tras la revisión.' },
+    { category: 'account', q: '¿Puedo usar la app sin iniciar sesión?', a: 'Puedes buscar en el diccionario y leer publicaciones de la comunidad sin iniciar sesión. Para guardar palabras, escribir publicaciones y comentar necesitas iniciar sesión.' },
+    { category: 'community', q: '¿Cuáles son las normas de la comunidad?', a: 'Buscamos una comunidad de aprendizaje respetuosa. El lenguaje ofensivo, la publicidad y el discurso de odio pueden ser moderados.' },
   ],
 };
 

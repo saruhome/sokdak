@@ -27,6 +27,9 @@ const TIP_BUBBLE_WIDTH = TIP_BUBBLE_HEIGHT * CALLOUT_BUBBLE_ASPECT;
 const JJAEKI_HINTS: Record<Language, string[]> = {
   ko: ['이것도 몰라? 뭐, 보든가', '이거 모르면 안 되는데', '설마 이것도 모르는 거 아니지?', '알아두면 좋을걸. 몰라도 말고'],
   en: ["Don't know this either? Fine, take a look.", 'You really should know this one.', "Don't tell me you don't know this too.", 'Might wanna know this. Or not, whatever.'],
+  ja: ['これも知らないの？まあ、見てみれば？', 'これは知っておかないとね', 'まさかこれも知らないなんてことないよね？', '知っておくと得するかもよ。知らなくても別にいいけど'],
+  vi: ['Cái này cũng không biết à? Thôi thì xem đi.', 'Cái này thì phải biết chứ.', 'Đừng nói là cái này cũng không biết đấy nhé?', 'Biết thì tốt. Không biết cũng chẳng sao.'],
+  es: ['¿Tampoco sabes esto? Bueno, échale un vistazo.', 'Esto sí que deberías saberlo.', 'No me digas que esto tampoco lo sabías.', 'Podría venirte bien saberlo. O no, tú verás.'],
 };
 
 /**

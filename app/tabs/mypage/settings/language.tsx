@@ -8,6 +8,9 @@ import { languageStore, type Language } from '../../../../constants/languageStor
 const LANGUAGE_OPTIONS: { label: string; value: Language }[] = [
   { label: '한국어', value: 'ko' },
   { label: 'English', value: 'en' },
+  { label: '日本語', value: 'ja' },
+  { label: 'Tiếng Việt', value: 'vi' },
+  { label: 'Español', value: 'es' },
 ];
 
 export default function LanguageSettingsScreen() {

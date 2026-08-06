@@ -21,6 +21,18 @@ const CONTENT_ITEMS: Record<Language, { key: NotificationKey; label: string; des
     { key: 'newSlang',     label: 'New slang & categories', desc: 'Get notified about new slang' },
     { key: 'popularSlang', label: 'Trending slang & categories', desc: 'Get notified about the most searched words' },
   ],
+  ja: [
+    { key: 'newSlang',     label: '新しい新造語/カテゴリー', desc: '新しい新造語のお知らせをお届けします' },
+    { key: 'popularSlang', label: '人気の新造語/カテゴリー', desc: '最も検索されている単語をお知らせします' },
+  ],
+  vi: [
+    { key: 'newSlang',     label: 'Từ lóng/danh mục mới', desc: 'Nhận thông báo về từ lóng mới' },
+    { key: 'popularSlang', label: 'Từ lóng/danh mục thịnh hành', desc: 'Nhận thông báo về những từ được tìm kiếm nhiều nhất' },
+  ],
+  es: [
+    { key: 'newSlang',     label: 'Jerga y categorías nuevas', desc: 'Recibe avisos sobre jerga nueva' },
+    { key: 'popularSlang', label: 'Jerga y categorías populares', desc: 'Recibe avisos sobre las palabras más buscadas' },
+  ],
 };
 
 const COMMUNITY_ITEMS: Record<Language, { key: NotificationKey; label: string; desc: string }[]> = {
@@ -33,6 +45,21 @@ const COMMUNITY_ITEMS: Record<Language, { key: NotificationKey; label: string; d
     { key: 'popularPost', label: 'Trending posts', desc: 'Get notified about the best posts' },
     { key: 'like',        label: 'Likes', desc: 'Get notified when someone likes your post' },
     { key: 'comment',     label: 'Comments', desc: 'Get notified when someone comments on your post' },
+  ],
+  ja: [
+    { key: 'popularPost', label: '人気投稿の通知', desc: '注目の投稿をすばやくお知らせします' },
+    { key: 'like',        label: 'いいねの通知', desc: '自分の投稿にいいねが付いたらお知らせします' },
+    { key: 'comment',     label: 'コメントの通知', desc: '自分の投稿にコメントが付いたらお知らせします' },
+  ],
+  vi: [
+    { key: 'popularPost', label: 'Bài viết nổi bật', desc: 'Nhận thông báo nhanh về các bài viết hay nhất' },
+    { key: 'like',        label: 'Lượt thích', desc: 'Nhận thông báo khi có người thích bài viết của bạn' },
+    { key: 'comment',     label: 'Bình luận', desc: 'Nhận thông báo khi có người bình luận bài viết của bạn' },
+  ],
+  es: [
+    { key: 'popularPost', label: 'Publicaciones destacadas', desc: 'Recibe avisos sobre las mejores publicaciones' },
+    { key: 'like',        label: 'Me gusta', desc: 'Recibe avisos cuando a alguien le guste tu publicación' },
+    { key: 'comment',     label: 'Comentarios', desc: 'Recibe avisos cuando alguien comente tu publicación' },
   ],
 };
 

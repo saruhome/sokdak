@@ -4,10 +4,10 @@ import {
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Colors, getCategoryLabelColor } from '../../../constants/Colors';
 import { CATEGORIES, getCategoryName, pickLeastPopular, type Category } from '../../../constants/categories';
-import { MOCK_WORDS } from '../../../constants/mockWords';
+import { fetchWords, type Word } from '../../../constants/words';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
 import { fetchUnreadNotificationCount } from '../../../constants/notifications';
@@ -39,20 +39,25 @@ export default function CategoryScreen() {
   const [sortMode, setSortMode] = useState<SortMode>('인기순');
   const [, forceUpdate] = useState(0);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+  const [words, setWords] = useState<Word[]>([]);
+  /* 항상 같은(가장 인기 있는) 카테고리 대신, 잘 안 찾아보는 카테고리부터 랜덤하게 추천 —
+   * 화면을 다시 열 때마다 바뀌도록 마운트당 한 번만 뽑고, 좋아요 토글 등 재렌더로는 안 바뀌게 고정한다. */
+  const [topCategory, setTopCategory] = useState<Category | null>(null);
 
   useFocusEffect(useCallback(() => {
     fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
   }, []));
 
-  const countBySlug = Object.fromEntries(
-    CATEGORIES.map(c => [c.slug, MOCK_WORDS.filter(w => w.category === c.slug).length])
-  );
+  useEffect(() => {
+    fetchWords().then(data => {
+      setWords(data);
+      const counts = Object.fromEntries(CATEGORIES.map(c => [c.slug, data.filter(w => w.category === c.slug).length]));
+      setTopCategory(pickLeastPopular(CATEGORIES, c => counts[c.slug] ?? 0));
+    });
+  }, []);
 
-  /* 항상 같은(가장 인기 있는) 카테고리 대신, 잘 안 찾아보는 카테고리부터 랜덤하게 추천 —
-   * 화면을 다시 열 때마다 바뀌도록 마운트당 한 번만 뽑고, 좋아요 토글 등 재렌더로는 안 바뀌게 고정한다. */
-  const topCategory = useMemo(
-    () => pickLeastPopular(CATEGORIES, c => countBySlug[c.slug] ?? 0),
-    [],
+  const countBySlug = Object.fromEntries(
+    CATEGORIES.map(c => [c.slug, words.filter(w => w.category === c.slug).length])
   );
   /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
   const [hintIndex] = useState(() => Math.floor(Math.random() * HORANG_HINTS.ko.length));
@@ -106,25 +111,27 @@ export default function CategoryScreen() {
             </TouchableOpacity>
 
             {/* ── 추천 카테고리 – Figma: Callout Card/Recommend_호랭 (말풍선 배경 + 호랭) */}
-            <TouchableOpacity
-              style={styles.recommendCard}
-              onPress={() => router.push(`/tabs/category/${topCategory.slug}`)}
-              activeOpacity={0.85}
-            >
-              <View style={styles.bubbleLayer} pointerEvents="none">
-                <CalloutBubble width={RECOMMEND_BUBBLE_WIDTH} height={RECOMMEND_BUBBLE_HEIGHT} />
-              </View>
-              <View style={styles.recommendTextWrap}>
-                <Text style={styles.recommendLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
-                  {HORANG_HINTS[language][hintIndex]}
-                </Text>
-                <Text style={styles.recommendName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
-                  &quot;{getCategoryName(topCategory, language)}&quot;
-                </Text>
-                <Text style={styles.recommendClick}>Click &gt;</Text>
-              </View>
-              <Image source={HORANG_ICON} style={styles.recommendImg} resizeMode="contain" />
-            </TouchableOpacity>
+            {topCategory && (
+              <TouchableOpacity
+                style={styles.recommendCard}
+                onPress={() => router.push(`/tabs/category/${topCategory.slug}`)}
+                activeOpacity={0.85}
+              >
+                <View style={styles.bubbleLayer} pointerEvents="none">
+                  <CalloutBubble width={RECOMMEND_BUBBLE_WIDTH} height={RECOMMEND_BUBBLE_HEIGHT} />
+                </View>
+                <View style={styles.recommendTextWrap}>
+                  <Text style={styles.recommendLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
+                    {HORANG_HINTS[language][hintIndex]}
+                  </Text>
+                  <Text style={styles.recommendName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
+                    &quot;{getCategoryName(topCategory, language)}&quot;
+                  </Text>
+                  <Text style={styles.recommendClick}>Click &gt;</Text>
+                </View>
+                <Image source={HORANG_ICON} style={styles.recommendImg} resizeMode="contain" />
+              </TouchableOpacity>
+            )}
 
             {/* ── 정렬/카운트 행 ── */}
             <View style={styles.filterRow}>

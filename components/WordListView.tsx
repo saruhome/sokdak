@@ -1,12 +1,12 @@
 import {
   StyleSheet, View, Image,
-  TextInput, FlatList, TouchableOpacity,
+  TextInput, FlatList, TouchableOpacity, ActivityIndicator,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors, getReadableTextColor } from '@/constants/Colors';
-import { MOCK_WORDS, type Word } from '@/constants/mockWords';
+import { fetchWords, type Word } from '@/constants/words';
 import { getCategoryBySlug, getCategoryName, pickLeastPopular } from '@/constants/categories';
 import { languageStore, useLanguage, type Language } from '@/constants/languageStore';
 import { authStore } from '@/constants/authStore';
@@ -49,6 +49,8 @@ export function WordListView({
 }) {
   const language = useLanguage();
   const t = languageStore.t;
+  const [words, setWords] = useState<Word[]>([]);
+  const [loading, setLoading] = useState(true);
   const [sortIndex, setSortIndex] = useState(initialSortIndex);
   const [query, setQuery] = useState('');
   const [consonant, setConsonant] = useState<string>('전체');
@@ -56,6 +58,8 @@ export function WordListView({
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
   /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
   const [hintIndex] = useState(() => Math.floor(Math.random() * JJAEKI_HINTS.ko.length));
+
+  useEffect(() => { fetchWords().then(data => { setWords(data); setLoading(false); }); }, []);
 
   /* 카테고리 상세에서 다른 카테고리로 이동하면 필터를 새 slug로 리셋 */
   useEffect(() => { setCategorySlugs(initialCategorySlugs); }, [initialCategorySlugs.join(',')]);
@@ -69,17 +73,17 @@ export function WordListView({
   /* 추천 배너 단어 — 항상 인기 단어 대신, (필터가 걸려 있으면 그 안에서) 좋아요가 적어
    * 잘 안 찾아보는 단어부터 랜덤하게 고른다. 필터가 바뀔 때만 다시 뽑는다. */
   const tipWord = useMemo(() => {
-    const pool = MOCK_WORDS.filter(w => matchesCategories(w, categorySlugs));
-    return pool.length > 0 ? pickLeastPopular(pool, w => w.likes) : MOCK_WORDS[0];
-  }, [categorySlugs]);
+    const pool = words.filter(w => matchesCategories(w, categorySlugs));
+    return pool.length > 0 ? pickLeastPopular(pool, w => w.likes) : words[0];
+  }, [words, categorySlugs]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const base = MOCK_WORDS
+    const base = words
       .filter(w => matchesCategories(w, categorySlugs))
       .filter(w => !q || w.word.includes(q) || w.shortDesc.includes(q) || w.category.toLowerCase().includes(q));
     return sortWords(base, sortIndex);
-  }, [sortIndex, query, categorySlugs]);
+  }, [words, sortIndex, query, categorySlugs]);
 
   const showConsonantRow = sortIndex === 2;
   const visible = useMemo(() => {
@@ -122,7 +126,7 @@ export function WordListView({
             </View>
 
             {/* ── 추천 단어 배너 – Figma: Callout Card/Recommend_짹이 ── */}
-            {showTipCard && (
+            {showTipCard && tipWord && (
               <TouchableOpacity
                 style={styles.tipCard}
                 onPress={() => router.push(`/tabs/dictionary/${tipWord.id}`)}
@@ -214,9 +218,15 @@ export function WordListView({
           );
         }}
         ListEmptyComponent={
-          <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>{t('noSearchResults')}</Text>
-          </View>
+          loading ? (
+            <View style={styles.emptyWrap}>
+              <ActivityIndicator color={Colors.textTertiary} />
+            </View>
+          ) : (
+            <View style={styles.emptyWrap}>
+              <Text style={styles.emptyText}>{t('noSearchResults')}</Text>
+            </View>
+          )
         }
         contentContainerStyle={visible.length === 0 ? { flexGrow: 1 } : styles.listContent}
       />

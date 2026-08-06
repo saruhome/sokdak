@@ -6,7 +6,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { MOCK_WORDS, type Word } from '../../../constants/mockWords';
+import { fetchWords, type Word } from '../../../constants/words';
 import { authStore } from '../../../constants/authStore';
 import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
@@ -31,6 +31,7 @@ export default function SavedWordsScreen() {
   const [sortIndex, setSortIndex] = useState(0);
   const [consonant, setConsonant] = useState<string>('전체');
   const [filterSlugs, setFilterSlugs] = useState<string[]>([]);
+  const [allWords, setAllWords] = useState<Word[]>([]);
 
   const sync = useCallback(() => {
     setSavedIds(authStore.getSavedWordIds());
@@ -42,9 +43,10 @@ export default function SavedWordsScreen() {
     const unsub = authStore.subscribeBookmarks(sync);
     return () => { unsub(); };
   }, [sync]);
+  useEffect(() => { fetchWords().then(setAllWords); }, []);
 
   const savedWords = savedIds
-    .map(id => MOCK_WORDS.find(w => w.id === id))
+    .map(id => allWords.find(w => w.id === id))
     .filter((w): w is Word => !!w);
 
   const filteredWords = sortWords(savedWords.filter(w => matchesCategories(w, filterSlugs)), sortIndex);

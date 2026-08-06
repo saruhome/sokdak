@@ -70,7 +70,7 @@ app/
 constants/
   Colors.ts            # ✅ 디자인 토큰
   categories.ts        # ✅ 10개 카테고리 마스터
-  mockWords.ts         # ✅ 단어 27개 mock
+  words.ts             # ✅ 단어 — Supabase `words` 테이블 실데이터 (31개)
   mockPosts.ts         # ✅ 게시글 8개 mock
   authStore.ts         # ✅ 세션 인증 스토어
 ```
@@ -232,8 +232,10 @@ mypage.tsx를 mypage/index.tsx + Stack(_layout.tsx)으로 전환하고 6개 서�
   단, newSlang/popularSlang/popularPost 3개는 그 알림 자체를 만드는 백엔드가 아직 없어 값만 저장됨.
 - 새로운 신조어 mock 데이터 5개로 보강(`new-slang` 카테고리, `constants/mockWords.ts`) —
   실제 신조어 개수가 늘면 계속 추가 권장.
-
----
+- ✅ 사전 단어 mock → 실제 백엔드 전환 — Supabase `words` 테이블은 이미 존재했지만(mockWords.ts를
+  그대로 미러링, romanization 컬럼 누락 + 최신 3개 신조어 누락) 어떤 화면도 실제로 쓰지 않고
+  있었음. 컬럼 추가 + 전체 31개 재동기화 후, `constants/words.ts`(`fetchWords`/`fetchWordById`)로
+  홈/사전/카테고리/저장한 단어/검색 5개 화면 전부 실데이터로 전환. `constants/mockWords.ts` 삭제.
 
 ## 개발 컨벤션
 
@@ -260,10 +262,10 @@ router.push('/auth/email-login')      // 이메일 로그인
 router.push('/search')                // 검색
 ```
 
-### mock 데이터 위치
-- `constants/mockWords.ts` — 단어 (Word 타입)
-- `constants/mockPosts.ts` — 게시글 (Post 타입)
-- 새 mock 데이터는 이 파일들에 추가
+### 단어 데이터
+- `constants/words.ts` — Supabase `words` 테이블 실데이터 접근 계층(`fetchWords`/`fetchWordById`).
+  단어 추가/수정은 Supabase 대시보드에서 직접(word_suggestions 검토 후 반영도 동일).
+- `constants/mockPosts.ts` — 게시글 (Post 타입, 아직 mock)
 
 ### 인증 스토어
 ```typescript

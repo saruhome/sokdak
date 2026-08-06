@@ -5,7 +5,7 @@ import { Colors, getCategoryLabelColor, getReadableTextColor } from '@/constants
 import { CATEGORIES, getCategoryBySlug, getCategoryName } from '@/constants/categories';
 import { languageStore, useLanguage } from '@/constants/languageStore';
 import { SCREEN_WIDTH } from '@/constants/layout';
-import { type Word } from '@/constants/mockWords';
+import { type Word } from '@/constants/words';
 import { AppIcon } from '@/components/AppIcon';
 import { ChevronDown, List, X, RotateCcw } from 'lucide-react-native';
 

@@ -5,13 +5,14 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { MOCK_WORDS } from '../../../constants/mockWords';
+import { fetchWordById, fetchWords, type Word } from '../../../constants/words';
 import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { authStore } from '../../../constants/authStore';
@@ -28,10 +29,24 @@ export default function WordDetailScreen() {
   const language = useLanguage();
   const t = languageStore.t;
   const { id } = useLocalSearchParams<{ id: string }>();
-  const word = MOCK_WORDS.find((w) => w.id === id);
+  const [word, setWord] = useState<Word | null | undefined>(undefined);
+  /* 관련 단어 칩이 다른 단어로 이동할 때 word.word → id를 찾기 위한 전체 목록 */
+  const [allWords, setAllWords] = useState<Word[]>([]);
 
-  const [saved, setSaved] = useState(() => (word ? authStore.isWordSaved(word.id) : false));
-  const [activeTab, setActiveTab] = useState(word?.category);
+  const [saved, setSaved] = useState(false);
+  const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!id) return;
+    fetchWordById(id).then(data => {
+      setWord(data);
+      if (data) {
+        setSaved(authStore.isWordSaved(data.id));
+        setActiveTab(data.category);
+      }
+    });
+    fetchWords().then(setAllWords);
+  }, [id]);
 
   /* 마이페이지 > 저장한 단어에서 해제된 경우 등 화면 재진입 시 동기화 */
   useFocusEffect(
@@ -39,6 +54,14 @@ export default function WordDetailScreen() {
       if (word) setSaved(authStore.isWordSaved(word.id));
     }, [word]),
   );
+
+  if (word === undefined) {
+    return (
+      <SafeAreaView style={styles.notFound}>
+        <ActivityIndicator color={Colors.textTertiary} />
+      </SafeAreaView>
+    );
+  }
 
   if (!word) {
     return (
@@ -223,7 +246,7 @@ export default function WordDetailScreen() {
               <Text style={styles.sectionTitle}>{t('relatedWords')}</Text>
               <View style={styles.relatedRow}>
                 {word.relatedWords.map((rw) => {
-                  const target = MOCK_WORDS.find((w) => w.word === rw);
+                  const target = allWords.find((w) => w.word === rw);
                   return (
                     <TouchableOpacity
                       key={rw}

@@ -472,6 +472,7 @@ export type Database = {
           origin_en: string | null
           pronunciation: string | null
           related_words: string[]
+          romanization: string | null
           saves: number
           secondary_category: string | null
           short_desc: string
@@ -491,6 +492,7 @@ export type Database = {
           origin_en?: string | null
           pronunciation?: string | null
           related_words?: string[]
+          romanization?: string | null
           saves?: number
           secondary_category?: string | null
           short_desc: string
@@ -510,6 +512,7 @@ export type Database = {
           origin_en?: string | null
           pronunciation?: string | null
           related_words?: string[]
+          romanization?: string | null
           saves?: number
           secondary_category?: string | null
           short_desc?: string

@@ -7,7 +7,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
-import { MOCK_WORDS } from '../../constants/mockWords';
+import { fetchWords, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
 import { fetchUnreadNotificationCount } from '../../constants/notifications';
@@ -20,11 +20,11 @@ import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Search, Bell, Eye, Heart, MessageCircle } from 'lucide-react-native';
 
 /** 날짜(YYYY-MM-DD)를 시드로 결정적 난수를 뽑아 오늘 하루 동안은 항상 같은 3개가 나오게 한다 */
-function pickDailyWords(words: typeof MOCK_WORDS, count: number, seed: string) {
+function pickDailyWords(words: Word[], count: number, seed: string) {
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
   const pool = [...words];
-  const picked: typeof MOCK_WORDS = [];
+  const picked: Word[] = [];
   while (picked.length < count && pool.length > 0) {
     h = (h * 1664525 + 1013904223) >>> 0;
     const idx = h % pool.length;
@@ -32,11 +32,6 @@ function pickDailyWords(words: typeof MOCK_WORDS, count: number, seed: string) {
   }
   return picked;
 }
-
-/** Figma: Card/Recommend2 — 오늘의 단어 캐러셀 (날짜 기반 랜덤 3개, 매일 자정 기준으로 바뀜) */
-const HERO_WORDS = pickDailyWords(MOCK_WORDS, 3, new Date().toISOString().slice(0, 10));
-/** Figma: 새로운 신조어 섹션 — new-slang 카테고리 단어 미리보기 */
-const NEW_SLANG_WORDS = MOCK_WORDS.filter(w => w.category === 'new-slang');
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */
 const HERO_AUTOPLAY_INTERVAL = 4000;
@@ -47,8 +42,19 @@ export default function HomeScreen() {
   const [heroIndex, setHeroIndex] = useState(0);
   const [communityPosts, setCommunityPosts] = useState<CommunityPostSummary[]>([]);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+  /** Figma: Card/Recommend2 — 오늘의 단어 캐러셀 (날짜 기반 랜덤 3개, 매일 자정 기준으로 바뀜) */
+  const [heroWords, setHeroWords] = useState<Word[]>([]);
+  /** Figma: 새로운 신조어 섹션 — new-slang 카테고리 단어 미리보기 */
+  const [newSlangWords, setNewSlangWords] = useState<Word[]>([]);
   const heroScrollRef = useRef<ScrollView>(null);
   const heroPausedRef = useRef(false);
+
+  useEffect(() => {
+    fetchWords().then(words => {
+      setHeroWords(pickDailyWords(words, 3, new Date().toISOString().slice(0, 10)));
+      setNewSlangWords(words.filter(w => w.category === 'new-slang'));
+    });
+  }, []);
 
   useFocusEffect(useCallback(() => {
     fetchPosts().then(data => setCommunityPosts(data.slice(0, 3)));
@@ -58,10 +64,11 @@ export default function HomeScreen() {
   /* 히어로 캐러셀 자동 재생 — 오른쪽에서 왼쪽으로 넘어가도록 다음 인덱스로 스크롤.
    * 사용자가 직접 스와이프하는 동안(heroPausedRef)에는 타이머가 끼어들지 않게 건너뜀. */
   useEffect(() => {
+    if (heroWords.length === 0) return;
     const timer = setInterval(() => {
       if (heroPausedRef.current) return;
       setHeroIndex(prev => {
-        const next = (prev + 1) % HERO_WORDS.length;
+        const next = (prev + 1) % heroWords.length;
         // 웹(react-native-web)에서는 animated:true인 scrollTo가 실제로 스크롤을
         // 이동시키지 않는 버그가 있어(로컬 검증 완료) 웹만 즉시 이동으로 처리.
         heroScrollRef.current?.scrollTo({ x: next * SCREEN_WIDTH, animated: Platform.OS !== 'web' });
@@ -69,7 +76,7 @@ export default function HomeScreen() {
       });
     }, HERO_AUTOPLAY_INTERVAL);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroWords.length]);
 
   const handleHeroScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH));
@@ -104,7 +111,7 @@ export default function HomeScreen() {
             onScrollBeginDrag={() => { heroPausedRef.current = true; }}
             onMomentumScrollEnd={handleHeroScrollEnd}
           >
-            {HERO_WORDS.map(word => {
+            {heroWords.map(word => {
               const category = getCategoryBySlug(word.category);
               return (
                 <TouchableOpacity
@@ -128,7 +135,7 @@ export default function HomeScreen() {
             })}
           </ScrollView>
           <View style={styles.dotsRow}>
-            {HERO_WORDS.map((_, i) => (
+            {heroWords.map((_, i) => (
               <View key={i} style={[styles.dot, i === heroIndex && styles.dotActive]} />
             ))}
           </View>
@@ -155,7 +162,7 @@ export default function HomeScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.wordCardRow}
           >
-            {NEW_SLANG_WORDS.map(word => (
+            {newSlangWords.map(word => (
               <TouchableOpacity
                 key={word.id}
                 style={styles.wordCard}

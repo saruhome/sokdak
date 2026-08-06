@@ -8,7 +8,7 @@ import { useMemo, useState, useCallback, useEffect } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
-import { MOCK_WORDS, type Word } from '../../constants/mockWords';
+import { fetchWords, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
 import { CATEGORIES, getCategoryBySlug } from '../../constants/categories';
@@ -18,12 +18,6 @@ import { Search, BookOpen, Heart, Star, Eye, MessageCircle, Inbox } from 'lucide
 
 type ResultTab = 'word' | 'community';
 
-/** Figma: 인기 검색어 — likes 상위 8개 단어로 구성 */
-const POPULAR_SEARCHES = [...MOCK_WORDS]
-  .sort((a, b) => b.likes - a.likes)
-  .slice(0, 8)
-  .map(w => w.word);
-
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
@@ -32,6 +26,9 @@ export default function SearchScreen() {
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
   const [communityPosts, setCommunityPosts] = useState<CommunityPostSummary[]>([]);
+  const [allWords, setAllWords] = useState<Word[]>([]);
+  /** Figma: 인기 검색어 — likes 상위 8개 단어로 구성 */
+  const [popularSearches, setPopularSearches] = useState<string[]>([]);
 
   useFocusEffect(useCallback(() => { setSavedIds(authStore.getSavedWordIds()); }, []));
   useEffect(() => {
@@ -39,6 +36,12 @@ export default function SearchScreen() {
     return () => { unsub(); };
   }, []);
   useEffect(() => { fetchPosts().then(setCommunityPosts); }, []);
+  useEffect(() => {
+    fetchWords().then(data => {
+      setAllWords(data);
+      setPopularSearches([...data].sort((a, b) => b.likes - a.likes).slice(0, 8).map(w => w.word));
+    });
+  }, []);
 
   const toggleSave = (id: string) => {
     if (!authStore.isLoggedIn()) {
@@ -75,19 +78,19 @@ export default function SearchScreen() {
   const suggestions = useMemo<Word[]>(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
-    return MOCK_WORDS
+    return allWords
       .filter(w => w.word.toLowerCase().includes(q) || w.shortDesc.includes(q))
       .slice(0, 6);
-  }, [query]);
+  }, [allWords, query]);
 
   /* ── 검색 결과 (Figma: 229:2750 단어 / 229:2772 필터 / 229:2794 없음) ── */
   const wordResults = useMemo<Word[]>(() => {
     const q = submittedQuery?.trim().toLowerCase() ?? '';
-    let base = MOCK_WORDS.filter(w =>
+    let base = allWords.filter(w =>
       w.word.toLowerCase().includes(q) || w.shortDesc.includes(q) || w.category.toLowerCase().includes(q));
     if (categoryFilter) base = base.filter(w => w.category === categoryFilter);
     return base;
-  }, [submittedQuery, categoryFilter]);
+  }, [allWords, submittedQuery, categoryFilter]);
 
   /* ── 커뮤니티 검색 결과 (Figma: 229:2808) ── */
   const postResults = useMemo<CommunityPostSummary[]>(() => {
@@ -156,7 +159,7 @@ export default function SearchScreen() {
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>인기 검색어</Text>
-            {POPULAR_SEARCHES.map((term, i) => (
+            {popularSearches.map((term, i) => (
               <TouchableOpacity
                 key={term}
                 style={styles.popularRow}

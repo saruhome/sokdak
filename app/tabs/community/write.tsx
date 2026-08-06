@@ -432,7 +432,6 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   toolbarBtn: { paddingHorizontal: 10, alignItems: 'center', flexDirection: 'row', gap: 5 },
-  toolbarIcon: { fontSize: 18 },
   toolbarLabel: { fontSize: 12, color: Colors.textSecondary },
   toolbarDivider: { flex: 1 },
   charCountCompact: { paddingRight: 8 },

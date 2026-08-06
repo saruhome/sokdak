@@ -55,6 +55,8 @@ const _listeners = new Set<AuthListener>();
 const _savedWordIds = new Set<string>();
 const _savedPostIds = new Set<string>();
 const _likedPostIds = new Set<string>();
+/** 좋아요 한 댓글 — 로그인 계정에만 의미가 있어 게스트 이관 로직 없이 로그인 시에만 채운다 */
+const _likedCommentIds = new Set<string>();
 /** 좋아요 한 카테고리 — DB 테이블이 아직 없어 세션 동안만 유지(로그아웃/새로고침 시 초기화) */
 const _likedCategorySlugs = new Set<string>();
 /** 차단한 유저 — 로그인 계정에만 의미가 있어 게스트 이관 로직 없이 로그인 시에만 채운다 */
@@ -142,10 +144,11 @@ async function fetchBookmarks(userId: string) {
   const guestLiked = Array.from(_likedPostIds);
   const guestSavedPosts = Array.from(_savedPostIds);
 
-  const [savedRes, likedRes, savedPostsRes] = await Promise.all([
+  const [savedRes, likedRes, savedPostsRes, likedCommentsRes] = await Promise.all([
     supabase.from('saved_words').select('word_id').eq('user_id', userId),
     supabase.from('post_likes').select('post_id').eq('user_id', userId),
     supabase.from('saved_posts').select('post_id').eq('user_id', userId),
+    supabase.from('comment_likes').select('comment_id').eq('user_id', userId),
   ]);
 
   _savedWordIds.clear();
@@ -154,6 +157,8 @@ async function fetchBookmarks(userId: string) {
   likedRes.data?.forEach(row => _likedPostIds.add(row.post_id));
   _savedPostIds.clear();
   savedPostsRes.data?.forEach(row => _savedPostIds.add(row.post_id));
+  _likedCommentIds.clear();
+  likedCommentsRes.data?.forEach(row => _likedCommentIds.add(row.comment_id));
 
   /* 게스트 저장분을 계정에 병합 (이미 있는 건 제외). 실패 시 로컬에도 반영하지 않는다. */
   const newSaved = guestSaved.filter(id => !_savedWordIds.has(id));
@@ -195,6 +200,7 @@ async function applySession(userId: string | undefined, email: string | undefine
     _user = null;
     _savedWordIds.clear();
     _likedPostIds.clear();
+    _likedCommentIds.clear();
     _likedCategorySlugs.clear();
     _blockedUserIds.clear();
     notifyAuth();
@@ -432,6 +438,27 @@ export const authStore = {
     });
   },
   getLikedPostIds: () => Array.from(_likedPostIds),
+
+  /* ── 좋아요 한 댓글 ── */
+  isCommentLiked: (id: string) => _likedCommentIds.has(id),
+  toggleCommentLiked(id: string) {
+    const wasLiked = _likedCommentIds.has(id);
+    if (wasLiked) _likedCommentIds.delete(id); else _likedCommentIds.add(id);
+    notifyBookmarks();
+
+    if (!_user) return;
+    const userId = _user.id;
+
+    const write = wasLiked
+      ? supabase.from('comment_likes').delete().eq('user_id', userId).eq('comment_id', id)
+      : supabase.from('comment_likes').insert({ user_id: userId, comment_id: id });
+
+    write.then(({ error }) => {
+      if (!error) return;
+      if (wasLiked) _likedCommentIds.add(id); else _likedCommentIds.delete(id);
+      notifyBookmarks();
+    });
+  },
 
   /* ── 좋아요 한 카테고리 (세션 전용, DB 미연동) ── */
   isCategoryLiked: (slug: string) => _likedCategorySlugs.has(slug),

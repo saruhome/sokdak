@@ -29,6 +29,7 @@ export type CommunityComment = {
   author: CommunityAuthor;
   content: string;
   createdAt: string;
+  likes: number;
   replies?: CommunityComment[];
 };
 
@@ -143,7 +144,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
       .single(),
     supabase
       .from('comments')
-      .select('id, author_id, content, created_at, parent_comment_id, profiles(nickname, avatar_emoji, avatar_url, level)')
+      .select('id, author_id, content, created_at, parent_comment_id, profiles!comments_author_id_fkey(nickname, avatar_emoji, avatar_url, level), comment_likes(count)')
       .eq('post_id', id)
       .order('created_at', { ascending: true }),
   ]);
@@ -158,6 +159,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
     author: toAuthor(r.profiles as ProfileRow),
     content: r.content,
     createdAt: toDate(r.created_at),
+    likes: (r.comment_likes as { count: number }[])[0]?.count ?? 0,
     replies: [],
   }));
   const topLevel: CommunityComment[] = [];

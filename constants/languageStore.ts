@@ -202,7 +202,33 @@ type TranslationKey =
   | 'saveCompleteMessage'
   | 'confirmLabel'
   | 'permissionNeededTitle'
-  | 'galleryPermissionMessage';
+  | 'galleryPermissionMessage'
+  // 커뮤니티 게시글/댓글 케밥 메뉴 · 신고 · 차단
+  | 'editLabel'
+  | 'deleteLabel'
+  | 'reportLabel'
+  | 'blockLabel'
+  | 'deletePostTitle'
+  | 'deleteCommentTitle'
+  | 'deleteConfirmMessage'
+  | 'deleteFailedTitle'
+  | 'blockUserTitle'
+  | 'blockConfirmMessagePrefix'
+  | 'blockConfirmMessageSuffix'
+  | 'blockFailedTitle'
+  | 'editFailedTitle'
+  | 'reportReasonRequiredTitle'
+  | 'reportReasonRequiredMessage'
+  | 'reportFailedTitle'
+  | 'reportReceivedTitle'
+  | 'reportReceivedMessage'
+  | 'reportPostTitle'
+  | 'reportCommentTitle'
+  | 'reportSheetSub'
+  | 'reportReasonPlaceholder'
+  | 'reportSubmitBtn'
+  | 'reportSubmittingLabel'
+  | 'processingLabel';
 
 const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
   ko: {
@@ -404,6 +430,32 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     confirmLabel: '확인',
     permissionNeededTitle: '권한 필요',
     galleryPermissionMessage: '갤러리 접근 권한이 필요합니다.',
+
+    editLabel: '수정',
+    deleteLabel: '삭제',
+    reportLabel: '신고',
+    blockLabel: '차단',
+    deletePostTitle: '게시글 삭제',
+    deleteCommentTitle: '댓글 삭제',
+    deleteConfirmMessage: '정말 삭제하시겠어요? 되돌릴 수 없어요.',
+    deleteFailedTitle: '삭제 실패',
+    blockUserTitle: '사용자 차단',
+    blockConfirmMessagePrefix: '',
+    blockConfirmMessageSuffix: '님을 차단하면 이 유저의 글이 더 이상 보이지 않아요.',
+    blockFailedTitle: '차단 실패',
+    editFailedTitle: '수정 실패',
+    reportReasonRequiredTitle: '신고 사유 필요',
+    reportReasonRequiredMessage: '신고 사유를 입력해주세요.',
+    reportFailedTitle: '신고 실패',
+    reportReceivedTitle: '신고 접수',
+    reportReceivedMessage: '신고가 접수됐어요. 운영팀이 확인할게요.',
+    reportPostTitle: '게시글 신고',
+    reportCommentTitle: '댓글 신고',
+    reportSheetSub: '신고 사유를 알려주세요. 운영팀이 확인 후 조치할게요.',
+    reportReasonPlaceholder: '신고 사유를 입력하세요',
+    reportSubmitBtn: '신고하기',
+    reportSubmittingLabel: '접수 중…',
+    processingLabel: '처리 중…',
   },
   en: {
     home: 'Home',
@@ -604,6 +656,32 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     confirmLabel: 'OK',
     permissionNeededTitle: 'Permission Needed',
     galleryPermissionMessage: 'Gallery access is required.',
+
+    editLabel: 'Edit',
+    deleteLabel: 'Delete',
+    reportLabel: 'Report',
+    blockLabel: 'Block',
+    deletePostTitle: 'Delete Post',
+    deleteCommentTitle: 'Delete Comment',
+    deleteConfirmMessage: "Are you sure? This can't be undone.",
+    deleteFailedTitle: 'Delete Failed',
+    blockUserTitle: 'Block User',
+    blockConfirmMessagePrefix: 'Block ',
+    blockConfirmMessageSuffix: "? You won't see their posts anymore.",
+    blockFailedTitle: 'Block Failed',
+    editFailedTitle: 'Edit Failed',
+    reportReasonRequiredTitle: 'Reason Required',
+    reportReasonRequiredMessage: 'Please enter a reason for the report.',
+    reportFailedTitle: 'Report Failed',
+    reportReceivedTitle: 'Report Received',
+    reportReceivedMessage: "Your report has been submitted. Our team will review it.",
+    reportPostTitle: 'Report Post',
+    reportCommentTitle: 'Report Comment',
+    reportSheetSub: "Tell us why you're reporting this. Our team will review and take action.",
+    reportReasonPlaceholder: 'Enter your reason',
+    reportSubmitBtn: 'Submit Report',
+    reportSubmittingLabel: 'Submitting…',
+    processingLabel: 'Processing…',
   },
 };
 

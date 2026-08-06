@@ -161,12 +161,12 @@ export default function PostDetailScreen() {
   const handleDelete = () => {
     setMenuTarget(null);
     setConfirmDialog({
-      title: '게시글 삭제',
-      message: '정말 삭제하시겠어요? 되돌릴 수 없어요.',
-      confirmLabel: '삭제',
+      title: t('deletePostTitle'),
+      message: t('deleteConfirmMessage'),
+      confirmLabel: t('deleteLabel'),
       onConfirm: async () => {
         const { error } = await deletePost(post.id);
-        if (error) { Alert.alert('삭제 실패', error); return; }
+        if (error) { Alert.alert(t('deleteFailedTitle'), error); return; }
         setConfirmDialog(null);
         router.replace('/tabs/community');
       },
@@ -187,12 +187,12 @@ export default function PostDetailScreen() {
   const handleBlock = () => {
     setMenuTarget(null);
     setConfirmDialog({
-      title: '사용자 차단',
-      message: `${post.author.name}님을 차단하면 이 유저의 글이 더 이상 보이지 않아요.`,
-      confirmLabel: '차단',
+      title: t('blockUserTitle'),
+      message: `${t('blockConfirmMessagePrefix')}${post.author.name}${t('blockConfirmMessageSuffix')}`,
+      confirmLabel: t('blockLabel'),
       onConfirm: async () => {
         const { error } = await authStore.blockUser(post.authorId);
-        if (error) { Alert.alert('차단 실패', error); return; }
+        if (error) { Alert.alert(t('blockFailedTitle'), error); return; }
         setConfirmDialog(null);
         router.replace('/tabs/community');
       },
@@ -211,7 +211,7 @@ export default function PostDetailScreen() {
     setSavingEdit(true);
     const { error } = await updateComment(editingCommentId, editingText.trim());
     setSavingEdit(false);
-    if (error) { Alert.alert('수정 실패', error); return; }
+    if (error) { Alert.alert(t('editFailedTitle'), error); return; }
     setEditingCommentId(null);
     load();
   };
@@ -219,12 +219,12 @@ export default function PostDetailScreen() {
   const handleDeleteComment = (comment: CommunityComment) => {
     setMenuTarget(null);
     setConfirmDialog({
-      title: '댓글 삭제',
-      message: '정말 삭제하시겠어요? 되돌릴 수 없어요.',
-      confirmLabel: '삭제',
+      title: t('deleteCommentTitle'),
+      message: t('deleteConfirmMessage'),
+      confirmLabel: t('deleteLabel'),
       onConfirm: async () => {
         const { error } = await deleteComment(comment.id);
-        if (error) { Alert.alert('삭제 실패', error); return; }
+        if (error) { Alert.alert(t('deleteFailedTitle'), error); return; }
         setConfirmDialog(null);
         load();
       },
@@ -240,12 +240,12 @@ export default function PostDetailScreen() {
   const handleBlockComment = (comment: CommunityComment) => {
     setMenuTarget(null);
     setConfirmDialog({
-      title: '사용자 차단',
-      message: `${comment.author.name}님을 차단하면 이 유저의 글이 더 이상 보이지 않아요.`,
-      confirmLabel: '차단',
+      title: t('blockUserTitle'),
+      message: `${t('blockConfirmMessagePrefix')}${comment.author.name}${t('blockConfirmMessageSuffix')}`,
+      confirmLabel: t('blockLabel'),
       onConfirm: async () => {
         const { error } = await authStore.blockUser(comment.authorId);
-        if (error) { Alert.alert('차단 실패', error); return; }
+        if (error) { Alert.alert(t('blockFailedTitle'), error); return; }
         setConfirmDialog(null);
         load();
       },
@@ -254,7 +254,7 @@ export default function PostDetailScreen() {
 
   const handleSubmitReport = async () => {
     if (!reportTarget || !reportReason.trim()) {
-      Alert.alert('신고 사유 필요', '신고 사유를 입력해주세요.');
+      Alert.alert(t('reportReasonRequiredTitle'), t('reportReasonRequiredMessage'));
       return;
     }
     setReporting(true);
@@ -267,9 +267,9 @@ export default function PostDetailScreen() {
           reason: reportReason.trim(),
         });
     setReporting(false);
-    if (error) { Alert.alert('신고 실패', error); return; }
+    if (error) { Alert.alert(t('reportFailedTitle'), error); return; }
     setReportTarget(null);
-    Alert.alert('신고 접수', '신고가 접수됐어요. 운영팀이 확인할게요.');
+    Alert.alert(t('reportReceivedTitle'), t('reportReceivedMessage'));
   };
 
   const handleConfirm = async () => {
@@ -313,7 +313,7 @@ export default function PostDetailScreen() {
                     onPress={() => menuTarget?.kind === 'comment' ? handleEditComment(menuTarget.comment) : handleEdit()}
                   >
                     <AppIcon icon={Pencil} size={14} color={Colors.textPrimary} />
-                    <Text style={styles.menuItemText}>수정</Text>
+                    <Text style={styles.menuItemText}>{t('editLabel')}</Text>
                   </TouchableOpacity>
                   <View style={styles.menuDivider} />
                   <TouchableOpacity
@@ -321,7 +321,7 @@ export default function PostDetailScreen() {
                     onPress={() => menuTarget?.kind === 'comment' ? handleDeleteComment(menuTarget.comment) : handleDelete()}
                   >
                     <AppIcon icon={Trash2} size={14} color={Colors.textPrimary} />
-                    <Text style={styles.menuItemText}>삭제</Text>
+                    <Text style={styles.menuItemText}>{t('deleteLabel')}</Text>
                   </TouchableOpacity>
                 </>
               ) : (
@@ -331,7 +331,7 @@ export default function PostDetailScreen() {
                     onPress={() => menuTarget?.kind === 'comment' ? handleReportComment(menuTarget.comment) : handleReport()}
                   >
                     <AppIcon icon={Flag} size={14} color={Colors.textPrimary} />
-                    <Text style={styles.menuItemText}>신고</Text>
+                    <Text style={styles.menuItemText}>{t('reportLabel')}</Text>
                   </TouchableOpacity>
                   <View style={styles.menuDivider} />
                   <TouchableOpacity
@@ -339,7 +339,7 @@ export default function PostDetailScreen() {
                     onPress={() => menuTarget?.kind === 'comment' ? handleBlockComment(menuTarget.comment) : handleBlock()}
                   >
                     <AppIcon icon={Ban} size={14} color={Colors.textPrimary} />
-                    <Text style={styles.menuItemText}>차단</Text>
+                    <Text style={styles.menuItemText}>{t('blockLabel')}</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -351,13 +351,13 @@ export default function PostDetailScreen() {
         <Modal visible={!!reportTarget} transparent animationType="fade" onRequestClose={() => setReportTarget(null)}>
           <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setReportTarget(null)}>
             <TouchableOpacity style={styles.reportSheet} activeOpacity={1}>
-              <Text style={styles.reportTitle}>{reportTarget?.kind === 'comment' ? '댓글 신고' : '게시글 신고'}</Text>
-              <Text style={styles.reportSub}>신고 사유를 알려주세요. 운영팀이 확인 후 조치할게요.</Text>
+              <Text style={styles.reportTitle}>{reportTarget?.kind === 'comment' ? t('reportCommentTitle') : t('reportPostTitle')}</Text>
+              <Text style={styles.reportSub}>{t('reportSheetSub')}</Text>
               <TextInput
                 style={styles.reportInput}
                 value={reportReason}
                 onChangeText={setReportReason}
-                placeholder="신고 사유를 입력하세요"
+                placeholder={t('reportReasonPlaceholder')}
                 placeholderTextColor={Colors.textTertiary}
                 multiline
                 maxLength={300}
@@ -371,7 +371,7 @@ export default function PostDetailScreen() {
                   onPress={handleSubmitReport}
                   disabled={!reportReason.trim() || reporting}
                 >
-                  <Text style={styles.reportSubmitText}>{reporting ? '접수 중…' : '신고하기'}</Text>
+                  <Text style={styles.reportSubmitText}>{reporting ? t('reportSubmittingLabel') : t('reportSubmitBtn')}</Text>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -393,7 +393,7 @@ export default function PostDetailScreen() {
                   onPress={handleConfirm}
                   disabled={confirmBusy}
                 >
-                  <Text style={styles.reportSubmitText}>{confirmBusy ? '처리 중…' : confirmDialog?.confirmLabel}</Text>
+                  <Text style={styles.reportSubmitText}>{confirmBusy ? t('processingLabel') : confirmDialog?.confirmLabel}</Text>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -562,7 +562,21 @@ function CommentItem({
   onCancelEdit: () => void;
   savingEdit: boolean;
 }) {
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(() => authStore.isCommentLiked(comment.id));
+  const [likeCount, setLikeCount] = useState(comment.likes);
+
+  const handleToggleLike = () => {
+    if (!authStore.isLoggedIn()) {
+      Alert.alert(languageStore.t('loginRequiredTitle'), languageStore.t('loginRequiredLike'), [
+        { text: languageStore.t('cancelLabel'), style: 'cancel' },
+        { text: languageStore.t('goToLogin'), onPress: () => router.push('/auth/login') },
+      ]);
+      return;
+    }
+    authStore.toggleCommentLiked(comment.id);
+    setLiked(p => !p);
+    setLikeCount(p => liked ? p - 1 : p + 1);
+  };
 
   return (
     <View style={[styles.commentItem, isReply && styles.commentItemReply]}>
@@ -591,7 +605,7 @@ function CommentItem({
                 onPress={onSaveEdit}
                 disabled={!editText.trim() || savingEdit}
               >
-                <Text style={styles.commentEditSaveText}>{savingEdit ? '저장 중…' : '저장'}</Text>
+                <Text style={styles.commentEditSaveText}>{savingEdit ? languageStore.t('savingLabel') : languageStore.t('saveBtnLabel')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -601,10 +615,10 @@ function CommentItem({
         <View style={styles.commentActions}>
           <TouchableOpacity
             style={styles.commentAction}
-            onPress={() => setLiked(p => !p)}
+            onPress={handleToggleLike}
           >
             <AppIcon icon={Star} size={13} fill={liked ? ACTIVE_STAR_COLOR : undefined} color={liked ? ACTIVE_STAR_COLOR : undefined} />
-            <Text style={styles.commentActionText}>{liked ? 1 : 0}</Text>
+            <Text style={styles.commentActionText}>{likeCount}</Text>
           </TouchableOpacity>
           {!isReply && (
             <TouchableOpacity style={styles.commentAction} onPress={onReply}>
@@ -639,8 +653,6 @@ const styles = StyleSheet.create({
   backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34, marginTop: -2 },
   topBarRight: { marginLeft: 'auto', flexDirection: 'row', alignItems: 'center' },
   iconButton: { width: 40, height: 44, alignItems: 'center', justifyContent: 'center' },
-  shareIcon: { fontSize: 17 },
-  moreIcon: { fontSize: 20, color: Colors.textSecondary },
 
   /* 케밥 메뉴 — Figma: 80×72, 라운드 카드 두 줄 (2글자 라벨이 안 줄바꿈되게 92px로 살짝 넓힘)
    * top은 눌린 케밥 버튼 위치에 따라 인라인으로 넘어온다 — right는 모든 케밥 버튼(게시글/댓글)이
@@ -730,7 +742,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
   },
   actionBtnActive: { borderColor: Colors.accent + '60', backgroundColor: Colors.accent + '10' },
-  actionIcon: { fontSize: 14 },
   actionLabel: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500' },
 
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -780,7 +791,6 @@ const styles = StyleSheet.create({
   commentContent: { fontSize: 14, color: Colors.textPrimary, lineHeight: 21 },
   commentActions: { flexDirection: 'row', gap: 14 },
   commentAction: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  commentActionIcon: { fontSize: 13 },
   commentActionText: { fontSize: 12, color: Colors.textTertiary },
 
   /* 댓글 인라인 수정 */

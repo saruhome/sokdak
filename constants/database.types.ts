@@ -270,6 +270,7 @@ export type Database = {
           id: string
           is_premium: boolean
           last_active_date: string | null
+          last_seen_reply_at: string | null
           level: string
           nickname: string
           notification_prefs: Json
@@ -284,6 +285,7 @@ export type Database = {
           id: string
           is_premium?: boolean
           last_active_date?: string | null
+          last_seen_reply_at?: string | null
           level?: string
           nickname: string
           notification_prefs?: Json
@@ -298,6 +300,7 @@ export type Database = {
           id?: string
           is_premium?: boolean
           last_active_date?: string | null
+          last_seen_reply_at?: string | null
           level?: string
           nickname?: string
           notification_prefs?: Json

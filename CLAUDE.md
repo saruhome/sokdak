@@ -288,12 +288,15 @@ create trigger profiles_block_client_premium_write
   에 문의 폼 + 내 문의 내역(답변 대기/답변 완료 pill) 추가 — 로그인 유저 전용이며, 비로그인은
   기존 `mailto:` 카드 그대로 폴백.
 - ✅ 답변 도착 알림 — `notifications` 테이블(actor_id/post_id NOT NULL이라 운영진 답변엔
-  안 맞음)을 재사용하지 않고, `authStore`의 guest-bookmark AsyncStorage 패턴을 그대로 가져와
-  `constants/support.ts`에 `hasUnseenReply`/`markRepliesSeen` 추가 — 새 컬럼도 새 RLS 정책도
-  없이 "마지막으로 확인한 시각"만 기기 로컬에 저장(`sokdak.support.lastSeenReplyAt.<userId>`).
+  안 맞음)을 재사용하지 않고, `constants/support.ts`에 `hasUnseenReply`/`markRepliesSeen` 추가.
   마이페이지 "고객센터" 행에 답변 미확인 시 빨간 점(`app/tabs/mypage/index.tsx`), 문의 화면
-  진입 시 확인 처리. 여러 기기 동기화는 안 됨(로컬 저장이라 기기마다 따로) — 필요해지면
-  `profiles`에 `last_seen_reply_at` 컬럼 추가해 서버 저장으로 바꿀 것.
+  진입 시 확인 처리.
+  "마지막으로 확인한 시각"은 처음엔 기기 로컬(AsyncStorage)에 저장했다가, 여러 기기 동기화가
+  필요해져서 `profiles.last_seen_reply_at` 컬럼(서버 저장)으로 바로 교체함 — `profiles`는
+  이미 본인 행 UPDATE가 허용돼 있어(닉네임 수정 등에 쓰던 것과 동일 경로) 새 RLS 정책 없이
+  그대로 재사용. `is_premium`처럼 클라이언트가 함부로 켜면 안 되는 민감한 값이 아니라서
+  is_premium 전용 트리거로 막을 필요는 없음 — 저장 시각을 스스로 미래로 조작해도 자기
+  배지가 일찍 사라지는 것 말고는 영향이 없는 값이라 위험이 없다고 판단.
 
 ## 개발 컨벤션
 

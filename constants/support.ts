@@ -2,14 +2,9 @@
  * 답변 작성은 클라이언트가 아니라 운영진이 Supabase Studio에서 직접 입력한다
  * (client는 select/insert 정책만 있고 update 정책이 없음 — 실수로도 답변을 조작 못 함).
  * "답변 도착" 알림은 notifications 테이블(댓글/좋아요 전용, actor_id/post_id가 NOT NULL이라
- * 운영진 답변엔 안 맞음)을 재사용하지 않고, 이미 authStore가 쓰는 AsyncStorage 로컬
- * "마지막으로 확인한 시각" 패턴으로 처리 — 새 컬럼도, 새 RLS 정책도 필요 없다. */
-import AsyncStorage from '@react-native-async-storage/async-storage';
+ * 운영진 답변엔 안 맞음)을 재사용하지 않고, profiles.last_seen_reply_at 한 컬럼으로 처리 —
+ * 기기 간 동기화되도록 서버에 저장(로컬 AsyncStorage였다면 기기마다 따로 놀았을 것). */
 import { supabase } from './supabase';
-
-function lastSeenReplyKey(userId: string) {
-  return `sokdak.support.lastSeenReplyAt.${userId}`;
-}
 
 export type SupportTicket = {
   id: string;
@@ -58,12 +53,13 @@ export async function hasUnseenReply(): Promise<boolean> {
   const latestReply = tickets.map(t => t.repliedAt).filter((d): d is string => !!d).sort().at(-1);
   if (!latestReply) return false;
 
-  const lastSeen = await AsyncStorage.getItem(lastSeenReplyKey(user.id));
+  const { data } = await supabase.from('profiles').select('last_seen_reply_at').eq('id', user.id).single();
+  const lastSeen = data?.last_seen_reply_at;
   return !lastSeen || latestReply > lastSeen;
 }
 
 export async function markRepliesSeen(): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
-  await AsyncStorage.setItem(lastSeenReplyKey(user.id), new Date().toISOString());
+  await supabase.from('profiles').update({ last_seen_reply_at: new Date().toISOString() }).eq('id', user.id);
 }

@@ -278,6 +278,16 @@ create trigger profiles_block_client_premium_write
 결제 웹훅은 `service_role` 키로 업데이트하므로 영향 없음. 적용 후 `premium.tsx`의 체험
 토글 버튼은 그대로 두면 에러만 뜨고 조용히 실패하니, 이 SQL을 실행하는 김에 해당 화면도
 "프리미엄은 결제로만 이용 가능해요" 안내로 같이 바꿀 것.
+- ✅ 고객센터 인앱 문의함 — 유저가 운영진에게 문의를 보내고 답변을 받는 흐름을 별도 헬프데스크
+  SaaS 없이 구현(비용 $0, 기존 Supabase 프로젝트 안에서 해결). `support_tickets` 테이블
+  (message/status/reply/replied_at) + RLS는 로그인 유저의 INSERT/SELECT만 허용하고 UPDATE
+  정책은 아예 없음 — 운영진은 Supabase Studio에서 `service_role`로 직접 `reply`를 채우고
+  RLS를 우회해 저장(별도 관리자 앱 불필요). 클라이언트가 API를 직접 호출해 자기 답변을 조작
+  시도해도 UPDATE 정책이 없어 조용히 0행 처리됨(`is_premium`과 달리 이번엔 처음부터 갭 없이
+  설계). `constants/support.ts`(`fetchMyTickets`/`submitTicket`), `app/tabs/mypage/support.tsx`
+  에 문의 폼 + 내 문의 내역(답변 대기/답변 완료 pill) 추가 — 로그인 유저 전용이며, 비로그인은
+  기존 `mailto:` 카드 그대로 폴백. 답변 도착 푸시/인앱 알림은 스킵(필요해지면 `notifications`
+  트리거 패턴 재사용해서 추가).
 
 ## 개발 컨벤션
 

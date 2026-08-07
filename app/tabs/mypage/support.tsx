@@ -4,10 +4,13 @@ import {
 } from 'react-native';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
+import { authStore } from '../../../constants/authStore';
+import { fetchMyTickets, submitTicket, type SupportTicket } from '../../../constants/support';
 import { AppIcon } from '@/components/AppIcon';
 import { Mail, ChevronDown, ChevronRight, Search, Mic } from 'lucide-react-native';
 
@@ -67,6 +70,15 @@ export default function SupportScreen() {
   const [activeCategory, setActiveCategory] = useState<FaqCategorySlug>('all');
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [query, setQuery] = useState('');
+  const [loggedIn, setLoggedIn] = useState(authStore.isLoggedIn());
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [ticketMessage, setTicketMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useFocusEffect(useCallback(() => {
+    setLoggedIn(authStore.isLoggedIn());
+    if (authStore.isLoggedIn()) fetchMyTickets().then(setTickets);
+  }, []));
 
   const items = FAQ_ITEMS[language];
   const visibleItems = useMemo(() => {
@@ -85,6 +97,18 @@ export default function SupportScreen() {
     Linking.openURL(url).catch(() => {
       Alert.alert(t('contactMailUnavailableTitle'), t('contactMailUnavailableBody'));
     });
+  };
+
+  const handleSubmitTicket = async () => {
+    const message = ticketMessage.trim();
+    if (!message || submitting) return;
+    setSubmitting(true);
+    const { error } = await submitTicket(message);
+    setSubmitting(false);
+    if (error) { Alert.alert(t('saveFailedTitle'), error); return; }
+    setTicketMessage('');
+    Alert.alert(t('inquirySubmittedAlert'));
+    fetchMyTickets().then(setTickets);
   };
 
   return (
@@ -156,14 +180,61 @@ export default function SupportScreen() {
           })}
         </View>
 
-        {/* ── 직접 문의하기 ── */}
-        <TouchableOpacity style={styles.contactCard} onPress={handleContact} activeOpacity={0.85}>
-          <View style={styles.contactTitleRow}>
-            <AppIcon icon={Mail} size={16} color={Colors.textPrimary} />
+        {/* ── 문의하기 ── 로그인 시 인앱 문의함(운영진이 Supabase Studio에서 직접 답변 입력),
+         *  비로그인은 기존 mailto 카드로 폴백(추가 인프라 없이 이미 동작하던 경로 재사용) */}
+        {loggedIn ? (
+          <View style={styles.inquirySection}>
             <Text style={styles.contactTitle}>{t('contactDirectly')}</Text>
+            <TextInput
+              style={styles.inquiryInput}
+              placeholder={t('inquiryPlaceholder')}
+              placeholderTextColor={Colors.textTertiary}
+              value={ticketMessage}
+              onChangeText={setTicketMessage}
+              multiline
+              numberOfLines={4}
+            />
+            <TouchableOpacity
+              style={[styles.inquirySubmitBtn, (!ticketMessage.trim() || submitting) && styles.inquirySubmitBtnDisabled]}
+              onPress={handleSubmitTicket}
+              disabled={!ticketMessage.trim() || submitting}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.inquirySubmitBtnText}>{t('inquirySubmitBtn')}</Text>
+            </TouchableOpacity>
+
+            <Text style={[styles.contactTitle, styles.myInquiriesTitle]}>{t('myInquiriesTitle')}</Text>
+            {tickets.length === 0 && (
+              <Text style={styles.inquiryEmpty}>{t('inquiryEmptyText')}</Text>
+            )}
+            {tickets.map(ticket => (
+              <View key={ticket.id} style={styles.ticketCard}>
+                <View style={styles.ticketHeaderRow}>
+                  <View style={[styles.ticketStatusPill, ticket.status === 'answered' && styles.ticketStatusPillAnswered]}>
+                    <Text style={[styles.ticketStatusText, ticket.status === 'answered' && styles.ticketStatusTextAnswered]}>
+                      {ticket.status === 'answered' ? t('inquiryStatusAnswered') : t('inquiryStatusOpen')}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={styles.ticketMessage}>{ticket.message}</Text>
+                {ticket.reply && (
+                  <View style={styles.ticketReplyBox}>
+                    <Text style={styles.ticketReplyLabel}>{t('inquiryReplyLabel')}</Text>
+                    <Text style={styles.ticketReplyText}>{ticket.reply}</Text>
+                  </View>
+                )}
+              </View>
+            ))}
           </View>
-          <Text style={styles.contactSub}>support@sokdak.app</Text>
-        </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.contactCard} onPress={handleContact} activeOpacity={0.85}>
+            <View style={styles.contactTitleRow}>
+              <AppIcon icon={Mail} size={16} color={Colors.textPrimary} />
+              <Text style={styles.contactTitle}>{t('contactDirectly')}</Text>
+            </View>
+            <Text style={styles.contactSub}>support@sokdak.app</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -221,6 +292,42 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   contactTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  contactTitle: { fontSize: 15, color: Colors.textPrimary, fontFamily: undefined },
+  contactTitle: { fontSize: 15, color: Colors.textPrimary, fontFamily: undefined, fontWeight: '600' },
   contactSub: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+
+  /* 인앱 문의하기 (로그인 사용자) */
+  inquirySection: { marginHorizontal: 24, marginTop: 24, gap: 10 },
+  inquiryInput: {
+    minHeight: 88, borderRadius: 10, padding: 12,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    fontSize: 14, color: Colors.textPrimary, textAlignVertical: 'top',
+  },
+  inquirySubmitBtn: {
+    height: 44, borderRadius: 10, backgroundColor: Colors.navBar,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  inquirySubmitBtnDisabled: { opacity: 0.4 },
+  inquirySubmitBtnText: { fontSize: 14, fontWeight: '600', color: Colors.navBarIconActive },
+  myInquiriesTitle: { marginTop: 12 },
+  inquiryEmpty: { fontSize: 13, color: Colors.textTertiary, paddingVertical: 12, textAlign: 'center' },
+
+  ticketCard: {
+    padding: 14, borderRadius: 10, gap: 8,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+  },
+  ticketHeaderRow: { flexDirection: 'row' },
+  ticketStatusPill: {
+    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10,
+    backgroundColor: Colors.divider,
+  },
+  ticketStatusPillAnswered: { backgroundColor: Colors.accent + '20' },
+  ticketStatusText: { fontSize: 11, fontWeight: '600', color: Colors.textSecondary },
+  ticketStatusTextAnswered: { color: Colors.accent },
+  ticketMessage: { fontSize: 14, color: Colors.textPrimary, lineHeight: 20, fontFamily: undefined },
+  ticketReplyBox: {
+    padding: 10, borderRadius: 8, gap: 2,
+    backgroundColor: Colors.background, borderLeftWidth: 2, borderLeftColor: Colors.accent,
+  },
+  ticketReplyLabel: { fontSize: 11, fontWeight: '600', color: Colors.accent },
+  ticketReplyText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined },
 });

@@ -59,6 +59,14 @@ type TranslationKey =
   | 'contactDirectly'
   | 'contactMailUnavailableTitle'
   | 'contactMailUnavailableBody'
+  | 'myInquiriesTitle'
+  | 'inquiryPlaceholder'
+  | 'inquirySubmitBtn'
+  | 'inquirySubmittedAlert'
+  | 'inquiryEmptyText'
+  | 'inquiryStatusOpen'
+  | 'inquiryStatusAnswered'
+  | 'inquiryReplyLabel'
   | 'saveWordCount'
   | 'likesCount'
   | 'loginBannerSubtitle'
@@ -318,6 +326,14 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     contactDirectly: '직접 문의하기',
     contactMailUnavailableTitle: '메일 앱을 열 수 없어요',
     contactMailUnavailableBody: 'support@sokdak.app 으로 직접 문의해주세요.',
+    myInquiriesTitle: '내 문의 내역',
+    inquiryPlaceholder: '문의 내용을 입력해주세요',
+    inquirySubmitBtn: '문의 보내기',
+    inquirySubmittedAlert: '문의가 접수됐어요. 답변이 오면 여기서 확인할 수 있어요.',
+    inquiryEmptyText: '아직 보낸 문의가 없어요',
+    inquiryStatusOpen: '답변 대기',
+    inquiryStatusAnswered: '답변 완료',
+    inquiryReplyLabel: '운영진 답변',
     saveWordCount: '저장한 단어',
     likesCount: '좋아요',
     loginBannerSubtitle: '로그인하면 단어 저장·커뮤니티 이용 가능',
@@ -576,6 +592,14 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     contactDirectly: 'Contact us directly',
     contactMailUnavailableTitle: "Couldn't open your mail app",
     contactMailUnavailableBody: 'Please reach us directly at support@sokdak.app.',
+    myInquiriesTitle: 'My Inquiries',
+    inquiryPlaceholder: 'Type your inquiry here',
+    inquirySubmitBtn: 'Send Inquiry',
+    inquirySubmittedAlert: "Your inquiry has been sent. You'll see the reply here once we answer.",
+    inquiryEmptyText: "You haven't sent any inquiries yet",
+    inquiryStatusOpen: 'Awaiting reply',
+    inquiryStatusAnswered: 'Answered',
+    inquiryReplyLabel: 'Support reply',
     saveWordCount: 'Saved words',
     likesCount: 'Likes',
     loginBannerSubtitle: 'Login to save words and use the community',
@@ -834,6 +858,14 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     contactDirectly: '直接お問い合わせ',
     contactMailUnavailableTitle: 'メールアプリを開けませんでした',
     contactMailUnavailableBody: 'support@sokdak.app まで直接お問い合わせください。',
+    myInquiriesTitle: '問い合わせ履歴',
+    inquiryPlaceholder: 'お問い合わせ内容を入力してください',
+    inquirySubmitBtn: '問い合わせを送る',
+    inquirySubmittedAlert: 'お問い合わせを受け付けました。回答が届くとここで確認できます。',
+    inquiryEmptyText: 'まだ送った問い合わせがありません',
+    inquiryStatusOpen: '回答待ち',
+    inquiryStatusAnswered: '回答済み',
+    inquiryReplyLabel: '運営からの回答',
     saveWordCount: '保存した単語',
     likesCount: 'いいね',
     loginBannerSubtitle: 'ログインすると単語の保存・コミュニティが利用できます',
@@ -1092,6 +1124,14 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     contactDirectly: 'Liên hệ trực tiếp',
     contactMailUnavailableTitle: 'Không thể mở ứng dụng email',
     contactMailUnavailableBody: 'Vui lòng liên hệ trực tiếp qua support@sokdak.app.',
+    myInquiriesTitle: 'Yêu cầu của tôi',
+    inquiryPlaceholder: 'Nhập nội dung yêu cầu của bạn',
+    inquirySubmitBtn: 'Gửi yêu cầu',
+    inquirySubmittedAlert: 'Yêu cầu của bạn đã được gửi. Bạn sẽ thấy câu trả lời ở đây khi có.',
+    inquiryEmptyText: 'Bạn chưa gửi yêu cầu nào',
+    inquiryStatusOpen: 'Đang chờ trả lời',
+    inquiryStatusAnswered: 'Đã trả lời',
+    inquiryReplyLabel: 'Phản hồi từ đội ngũ hỗ trợ',
     saveWordCount: 'Từ đã lưu',
     likesCount: 'Lượt thích',
     loginBannerSubtitle: 'Đăng nhập để lưu từ và dùng cộng đồng',
@@ -1350,6 +1390,14 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     contactDirectly: 'Contáctanos directamente',
     contactMailUnavailableTitle: 'No se pudo abrir tu app de correo',
     contactMailUnavailableBody: 'Contáctanos directamente en support@sokdak.app.',
+    myInquiriesTitle: 'Mis consultas',
+    inquiryPlaceholder: 'Escribe tu consulta aquí',
+    inquirySubmitBtn: 'Enviar consulta',
+    inquirySubmittedAlert: 'Tu consulta fue enviada. Verás la respuesta aquí cuando la tengamos.',
+    inquiryEmptyText: 'Todavía no has enviado ninguna consulta',
+    inquiryStatusOpen: 'Esperando respuesta',
+    inquiryStatusAnswered: 'Respondida',
+    inquiryReplyLabel: 'Respuesta del equipo',
     saveWordCount: 'Palabras guardadas',
     likesCount: 'Me gusta',
     loginBannerSubtitle: 'Inicia sesión para guardar palabras y usar la comunidad',

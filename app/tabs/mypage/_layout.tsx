@@ -17,6 +17,7 @@ export default function MyPageLayout() {
       <Stack.Screen name="suggest" />
       <Stack.Screen name="support" />
       <Stack.Screen name="notifications" />
+      <Stack.Screen name="premium" />
     </Stack>
   );
 }

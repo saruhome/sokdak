@@ -231,7 +231,37 @@ type TranslationKey =
   | 'reportReasonPlaceholder'
   | 'reportSubmitBtn'
   | 'reportSubmittingLabel'
-  | 'processingLabel';
+  | 'processingLabel'
+  // 프리미엄
+  | 'premiumTitle'
+  | 'premiumUpgradeCta'
+  | 'premiumActiveLabel'
+  | 'premiumBannerTitle'
+  | 'premiumBannerSub'
+  | 'premiumFeatureUnlimitedSaves'
+  | 'premiumFeatureOffline'
+  | 'premiumFeatureSituational'
+  | 'premiumFeatureQuiz'
+  | 'premiumFeaturePersonalized'
+  | 'premiumFeatureExclusiveContent'
+  | 'premiumActivateTestBtn'
+  | 'premiumDeactivateTestBtn'
+  | 'premiumActivatedAlert'
+  | 'premiumComingSoonNote'
+  | 'saveLimitReachedTitle'
+  | 'saveLimitReachedMessage'
+  | 'dictionaryPremiumBannerText'
+  // 오늘의 실전 표현 / streak
+  | 'todayExpressionTitle'
+  | 'todayExpressionSub'
+  | 'situationCafe'
+  | 'situationSubway'
+  | 'situationWork'
+  | 'situationHospital'
+  | 'situationSns'
+  | 'situationDinner'
+  | 'streakLabel'
+  | 'streakDaysSuffix';
 
 const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
   ko: {
@@ -461,6 +491,36 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     reportSubmitBtn: '신고하기',
     reportSubmittingLabel: '접수 중…',
     processingLabel: '처리 중…',
+
+    premiumTitle: '프리미엄',
+    premiumUpgradeCta: '프리미엄 업그레이드',
+    premiumActiveLabel: '프리미엄 회원',
+    premiumBannerTitle: '실전 한국어, 막힘없이',
+    premiumBannerSub: '무제한 저장 · 상황별 학습 · 반복 복습까지',
+    premiumFeatureUnlimitedSaves: '무제한 단어 저장',
+    premiumFeatureOffline: '오프라인 사전 이용',
+    premiumFeatureSituational: '상황별 실전 학습 (카페·지하철·회사 등)',
+    premiumFeatureQuiz: '반복 복습 & 퀴즈',
+    premiumFeaturePersonalized: '맞춤형 추천 학습',
+    premiumFeatureExclusiveContent: '프리미엄 전용 콘텐츠',
+    premiumActivateTestBtn: '프리미엄 체험 시작하기',
+    premiumDeactivateTestBtn: '프리미엄 체험 종료하기',
+    premiumActivatedAlert: '프리미엄이 활성화됐어요!',
+    premiumComingSoonNote: '실제 결제는 준비 중이에요. 지금은 체험판으로 먼저 만나보세요.',
+    saveLimitReachedTitle: '저장 한도에 도달했어요',
+    saveLimitReachedMessage: '무료 회원은 단어를 최대 15개까지 저장할 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 저장할 수 있어요.',
+    dictionaryPremiumBannerText: '무제한 저장 · 오프라인 사전은 프리미엄에서',
+
+    todayExpressionTitle: '오늘의 실전 표현',
+    todayExpressionSub: '3분이면 충분해요, 바로 써먹는 한국어',
+    situationCafe: '카페',
+    situationSubway: '지하철',
+    situationWork: '회사',
+    situationHospital: '병원',
+    situationSns: 'SNS',
+    situationDinner: '회식',
+    streakLabel: '연속 학습',
+    streakDaysSuffix: '일째',
   },
   en: {
     home: 'Home',
@@ -689,6 +749,36 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     reportSubmitBtn: 'Submit Report',
     reportSubmittingLabel: 'Submitting…',
     processingLabel: 'Processing…',
+
+    premiumTitle: 'Premium',
+    premiumUpgradeCta: 'Upgrade to Premium',
+    premiumActiveLabel: 'Premium Member',
+    premiumBannerTitle: 'Real Korean, without limits',
+    premiumBannerSub: 'Unlimited saves · situational lessons · spaced review',
+    premiumFeatureUnlimitedSaves: 'Unlimited word saves',
+    premiumFeatureOffline: 'Offline dictionary access',
+    premiumFeatureSituational: 'Situational lessons (cafés, subway, work, and more)',
+    premiumFeatureQuiz: 'Spaced review & quizzes',
+    premiumFeaturePersonalized: 'Personalized recommendations',
+    premiumFeatureExclusiveContent: 'Premium-only content',
+    premiumActivateTestBtn: 'Start Premium Trial',
+    premiumDeactivateTestBtn: 'End Premium Trial',
+    premiumActivatedAlert: 'Premium is now active!',
+    premiumComingSoonNote: 'Real payment is coming soon. Try it as a trial for now.',
+    saveLimitReachedTitle: "You've reached your save limit",
+    saveLimitReachedMessage: 'Free members can save up to 15 words. Upgrade to Premium for unlimited saves.',
+    dictionaryPremiumBannerText: 'Unlimited saves & offline dictionary with Premium',
+
+    todayExpressionTitle: "Today's Real-Life Expression",
+    todayExpressionSub: '3 minutes is all it takes — Korean you can use right now',
+    situationCafe: 'Café',
+    situationSubway: 'Subway',
+    situationWork: 'Work',
+    situationHospital: 'Hospital',
+    situationSns: 'SNS',
+    situationDinner: 'Team Dinner',
+    streakLabel: 'Day Streak',
+    streakDaysSuffix: 'days',
   },
   ja: {
     home: 'ホーム',
@@ -917,6 +1007,36 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     reportSubmitBtn: '通報する',
     reportSubmittingLabel: '送信中…',
     processingLabel: '処理中…',
+
+    premiumTitle: 'プレミアム',
+    premiumUpgradeCta: 'プレミアムにアップグレード',
+    premiumActiveLabel: 'プレミアム会員',
+    premiumBannerTitle: '実践韓国語を、制限なく',
+    premiumBannerSub: '無制限保存・状況別学習・反復復習まで',
+    premiumFeatureUnlimitedSaves: '単語を無制限に保存',
+    premiumFeatureOffline: 'オフライン辞書の利用',
+    premiumFeatureSituational: '状況別の実践学習（カフェ・地下鉄・会社など）',
+    premiumFeatureQuiz: '反復復習＆クイズ',
+    premiumFeaturePersonalized: 'パーソナライズされたおすすめ',
+    premiumFeatureExclusiveContent: 'プレミアム限定コンテンツ',
+    premiumActivateTestBtn: 'プレミアム体験を始める',
+    premiumDeactivateTestBtn: 'プレミアム体験を終了する',
+    premiumActivatedAlert: 'プレミアムが有効になりました！',
+    premiumComingSoonNote: '実際の決済は準備中です。今はお試し版でご利用ください。',
+    saveLimitReachedTitle: '保存上限に達しました',
+    saveLimitReachedMessage: '無料会員は単語を最大15個まで保存できます。プレミアムにアップグレードすると無制限に保存できます。',
+    dictionaryPremiumBannerText: '無制限保存・オフライン辞書はプレミアムで',
+
+    todayExpressionTitle: '今日の実践表現',
+    todayExpressionSub: '3分あれば十分、すぐ使える韓国語',
+    situationCafe: 'カフェ',
+    situationSubway: '地下鉄',
+    situationWork: '会社',
+    situationHospital: '病院',
+    situationSns: 'SNS',
+    situationDinner: '会食',
+    streakLabel: '連続学習',
+    streakDaysSuffix: '日目',
   },
   vi: {
     home: 'Trang chủ',
@@ -1145,6 +1265,36 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     reportSubmitBtn: 'Gửi báo cáo',
     reportSubmittingLabel: 'Đang gửi…',
     processingLabel: 'Đang xử lý…',
+
+    premiumTitle: 'Premium',
+    premiumUpgradeCta: 'Nâng cấp Premium',
+    premiumActiveLabel: 'Thành viên Premium',
+    premiumBannerTitle: 'Tiếng Hàn thực tế, không giới hạn',
+    premiumBannerSub: 'Lưu không giới hạn · học theo tình huống · ôn tập lặp lại',
+    premiumFeatureUnlimitedSaves: 'Lưu từ không giới hạn',
+    premiumFeatureOffline: 'Dùng từ điển ngoại tuyến',
+    premiumFeatureSituational: 'Học theo tình huống (quán cà phê, tàu điện, công ty...)',
+    premiumFeatureQuiz: 'Ôn tập lặp lại & câu đố',
+    premiumFeaturePersonalized: 'Gợi ý học cá nhân hóa',
+    premiumFeatureExclusiveContent: 'Nội dung độc quyền Premium',
+    premiumActivateTestBtn: 'Bắt đầu dùng thử Premium',
+    premiumDeactivateTestBtn: 'Kết thúc dùng thử Premium',
+    premiumActivatedAlert: 'Premium đã được kích hoạt!',
+    premiumComingSoonNote: 'Thanh toán thật đang được chuẩn bị. Hãy dùng thử miễn phí trước nhé.',
+    saveLimitReachedTitle: 'Bạn đã đạt giới hạn lưu từ',
+    saveLimitReachedMessage: 'Thành viên miễn phí chỉ lưu được tối đa 15 từ. Nâng cấp Premium để lưu không giới hạn.',
+    dictionaryPremiumBannerText: 'Lưu không giới hạn & từ điển ngoại tuyến với Premium',
+
+    todayExpressionTitle: 'Cụm từ thực tế hôm nay',
+    todayExpressionSub: 'Chỉ cần 3 phút — tiếng Hàn dùng được ngay',
+    situationCafe: 'Quán cà phê',
+    situationSubway: 'Tàu điện ngầm',
+    situationWork: 'Công ty',
+    situationHospital: 'Bệnh viện',
+    situationSns: 'Mạng xã hội',
+    situationDinner: 'Tiệc công ty',
+    streakLabel: 'Chuỗi ngày học',
+    streakDaysSuffix: 'ngày',
   },
   es: {
     home: 'Inicio',
@@ -1373,6 +1523,36 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     reportSubmitBtn: 'Enviar reporte',
     reportSubmittingLabel: 'Enviando…',
     processingLabel: 'Procesando…',
+
+    premiumTitle: 'Premium',
+    premiumUpgradeCta: 'Mejorar a Premium',
+    premiumActiveLabel: 'Miembro Premium',
+    premiumBannerTitle: 'Coreano real, sin límites',
+    premiumBannerSub: 'Guardado ilimitado · lecciones por situación · repaso espaciado',
+    premiumFeatureUnlimitedSaves: 'Guardado ilimitado de palabras',
+    premiumFeatureOffline: 'Acceso al diccionario sin conexión',
+    premiumFeatureSituational: 'Lecciones por situación (cafetería, metro, oficina y más)',
+    premiumFeatureQuiz: 'Repaso espaciado y cuestionarios',
+    premiumFeaturePersonalized: 'Recomendaciones personalizadas',
+    premiumFeatureExclusiveContent: 'Contenido exclusivo Premium',
+    premiumActivateTestBtn: 'Iniciar prueba Premium',
+    premiumDeactivateTestBtn: 'Finalizar prueba Premium',
+    premiumActivatedAlert: '¡Premium está activado!',
+    premiumComingSoonNote: 'El pago real está en camino. Por ahora, pruébalo gratis.',
+    saveLimitReachedTitle: 'Has alcanzado tu límite de guardado',
+    saveLimitReachedMessage: 'Los miembros gratuitos pueden guardar hasta 15 palabras. Mejora a Premium para guardado ilimitado.',
+    dictionaryPremiumBannerText: 'Guardado ilimitado y diccionario sin conexión con Premium',
+
+    todayExpressionTitle: 'Expresión real de hoy',
+    todayExpressionSub: 'Bastan 3 minutos — coreano que puedes usar ya',
+    situationCafe: 'Cafetería',
+    situationSubway: 'Metro',
+    situationWork: 'Oficina',
+    situationHospital: 'Hospital',
+    situationSns: 'Redes sociales',
+    situationDinner: 'Cena de equipo',
+    streakLabel: 'Racha de días',
+    streakDaysSuffix: 'días',
   },
 };
 

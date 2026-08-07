@@ -10,6 +10,7 @@ import {
 import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
+import { Alert } from '@/constants/alert';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { fetchWordById, fetchWords, type Word } from '../../../constants/words';
@@ -89,8 +90,13 @@ export default function WordDetailScreen() {
     ? word.romanization
     : `${word.romanization} · ${koreanReading}`;
 
-  /* 비로그인도 즐겨찾기 가능 — 세션 동안 유지되고 로그인 시 계정으로 이관된다(authStore) */
+  /* 비로그인도 즐겨찾기 가능 — 세션 동안 유지되고 로그인 시 계정으로 이관된다(authStore).
+   * 저장 해제는 한도와 무관하게 항상 허용, 새로 저장할 때만 무료 한도 체크. */
   const handleSave = () => {
+    if (!saved && !authStore.canSaveMoreWords()) {
+      Alert.alert(t('saveLimitReachedTitle'), t('saveLimitReachedMessage'));
+      return;
+    }
     authStore.toggleWordSaved(word.id);
     setSaved((prev) => !prev);
   };

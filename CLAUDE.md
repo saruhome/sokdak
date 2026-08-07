@@ -217,8 +217,9 @@ mypage.tsx를 mypage/index.tsx + Stack(_layout.tsx)으로 전환하고 6개 서�
 - ✅ (부분) 단어 저장 상태 — `authStore`에 세션 동안 유지 (Phase 2에서 구현). AsyncStorage로
   앱 재시작 후에도 유지되도록 하는 것은 아직 미구현.
 - ✅ (부분) 게시글 좋아요 상태 — 위와 동일, 세션 동안만 유지.
-- ✅ 홈 화면 오늘의 단어 로직 (날짜 기반 랜덤) — `app/tabs/index.tsx`의 `pickDailyWords`,
-  날짜 문자열을 시드로 결정적 난수 선택(같은 날엔 항상 같은 3개, 자정 지나면 갱신).
+- ✅ 홈 화면 오늘의 단어 로직 (날짜 기반 랜덤) — `app/tabs/index.tsx`의 `pickDaily`(제네릭,
+  원래 이름 `pickDailyWords`에서 오늘의 실전 표현과 공유하도록 일반화),
+  날짜 문자열을 시드로 결정적 난수 선택(같은 날엔 항상 같은 결과, 자정 지나면 갱신).
 - ✅ 앱 아이콘 / 스플래시 스크린 커스텀 — `assets/icon.png`(호랭이 마스코트) +
   `app/_layout.tsx`의 커스텀 페이드 스플래시로 이미 구현되어 있었음(문서만 안 갱신됨).
 - ✅ 알림(댓글·좋아요) 실제 백엔드 — `notifications` 테이블 + DB 트리거
@@ -242,6 +243,19 @@ mypage.tsx를 mypage/index.tsx + Stack(_layout.tsx)으로 전환하고 6개 서�
   기능. `my-posts.tsx`에 '저장' 탭 추가(단어 즐겨찾기와 동일하게 비로그인도 허용).
 - ✅ 글쓰기 사진 첨부 버그 수정 — Supabase에 `post-images` 스토리지 버킷 자체가 없어 업로드가
   항상 실패했음. 버킷 생성 + RLS(공개 읽기, 본인 폴더 업로드/삭제) 추가.
+- ✅ Freemium/프리미엄 구조 도입 — 안드로이드 앱스토어 출시 및 수익화를 위한 최소 범위 구현.
+  `profiles.is_premium`/`streak_count`/`last_active_date` 컬럼 추가, `authStore.setPremiumStatus`/
+  `isPremium`/`canSaveMoreWords`(무료 15개 저장 한도)/`getStreakCount`. 마이페이지 프리미엄
+  업그레이드 행 + 스트릭 칩, `app/tabs/mypage/premium.tsx`(체험 시작/종료 토글 — 실결제 SDK 없이
+  테스트 가능, 나중에 Stripe/Google Play 웹훅이 같은 `is_premium` 컬럼을 갱신하도록 교체 가능한
+  구조), 홈 화면 "오늘의 실전 표현" 카드(상황별 표현 12개, ko/en만 — 사전 콘텐츠와 동일 컨벤션)
+  + 비프리미엄 사용자에게만 보이는 티저, 사전 화면 상단 프리미엄 배너, 단어 저장 시 무료 한도
+  도달하면 알림 후 차단(해제는 항상 허용). **알려진 보안 갭**: `profiles`의 기존 UPDATE RLS가
+  본인 행 전체를 허용해서 로그인한 사용자가 클라이언트에서 직접 `is_premium`을 켤 수 있음 —
+  테스트 목적상 의도적으로 남겨둔 것이며, 실제 결제 연동 전에 컬럼 단위 RLS 또는 트리거로
+  서버(웹훅)만 쓸 수 있게 반드시 잠가야 함. 스킵한 항목(요청 목록 중 이번엔 구현 안 함): 푸시
+  리마인더, 퀴즈/챌린지 엔진, 개인화 추천 엔진, 오프라인 사전 다운로드, "광고 없음"(광고 시스템
+  자체가 없음), `community/[id].tsx` 변경(요청 기능 중 해당 화면에 구체적으로 매핑되는 게 없음).
 
 ## 개발 컨벤션
 

@@ -11,6 +11,7 @@ import { getCategoryBySlug, getCategoryName, pickLeastPopular } from '@/constant
 import { languageStore, useLanguage, type Language } from '@/constants/languageStore';
 import { authStore } from '@/constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
+import { Alert } from '@/constants/alert';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
 } from '@/components/WordFilterBar';
@@ -94,8 +95,13 @@ export function WordListView({
     return filtered.filter(w => getInitialConsonant(w.word) === consonant);
   }, [filtered, showConsonantRow, consonant]);
 
-  /* 비로그인도 즐겨찾기 가능 — 세션 동안 유지되고 로그인 시 계정으로 이관된다(authStore) */
+  /* 비로그인도 즐겨찾기 가능 — 세션 동안 유지되고 로그인 시 계정으로 이관된다(authStore).
+   * 저장 해제는 한도와 무관하게 항상 허용, 새로 저장할 때만 무료 한도(FREE_WORD_SAVE_LIMIT) 체크. */
   const toggleSave = (id: string) => {
+    if (!authStore.isWordSaved(id) && !authStore.canSaveMoreWords()) {
+      Alert.alert(t('saveLimitReachedTitle'), t('saveLimitReachedMessage'));
+      return;
+    }
     authStore.toggleWordSaved(id);
     setSavedIds(authStore.getSavedWordIds());
   };

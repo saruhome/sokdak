@@ -32,6 +32,7 @@ export const Colors = {
   error:    '#A94949',   // SOKDAK_GUIDELINES.md point.like — 좋아요 활성/알림 뱃지/경고에 겸용
   warning:  '#C07A2A',
   success:  '#3A8C5C',
+  premium:  '#E2B55D',   // = point5. 새 색 없이 기존 Figma 팔레트에서 프리미엄 배지/버튼 전용으로 재사용
 } as const;
 
 /**

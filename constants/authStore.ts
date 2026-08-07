@@ -34,7 +34,13 @@ export type SokDakUser = {
   phone?: string | null;
   timezone: string;
   level: string;
+  isPremium: boolean;
+  streakCount: number;
 };
+
+/** ponytail: 무료 사용자(게스트 포함) 저장 단어 상한. 프리미엄은 무제한.
+ *  실제 결제 연동 전까지는 클라이언트 상수 — 서버에서 강제하는 값이 아니라 UX 가드일 뿐이다. */
+export const FREE_WORD_SAVE_LIMIT = 15;
 
 export type NotificationPrefs = {
   newSlang: boolean;
@@ -119,12 +125,34 @@ function clearGuestBookmarkStorage() {
   ]).catch(() => {});
 }
 
+function todayString() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** 오늘 처음 로그인/세션 복원 시 연속 학습일(streak)을 갱신한다.
+ * 어제까지 활동 → +1, 그보다 오래됐으면 1로 리셋, 오늘 이미 반영했으면 그대로 둔다. */
+async function bumpStreak(userId: string, lastActiveDate: string | null, currentStreak: number) {
+  const today = todayString();
+  if (lastActiveDate === today) return currentStreak;
+
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  const nextStreak = lastActiveDate === yesterday ? currentStreak + 1 : 1;
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ streak_count: nextStreak, last_active_date: today })
+    .eq('id', userId);
+  return error ? currentStreak : nextStreak;
+}
+
 async function fetchProfile(userId: string, email: string): Promise<SokDakUser> {
   const { data } = await supabase
     .from('profiles')
-    .select('nickname, avatar_emoji, avatar_url, phone, timezone, level')
+    .select('nickname, avatar_emoji, avatar_url, phone, timezone, level, is_premium, streak_count, last_active_date')
     .eq('id', userId)
     .single();
+
+  const streakCount = await bumpStreak(userId, data?.last_active_date ?? null, data?.streak_count ?? 0);
 
   return {
     id: userId,
@@ -135,6 +163,8 @@ async function fetchProfile(userId: string, email: string): Promise<SokDakUser> 
     phone: data?.phone ?? null,
     timezone: data?.timezone ?? 'UTC',
     level: data?.level ?? '초급',
+    isPremium: data?.is_premium ?? false,
+    streakCount,
   };
 }
 
@@ -371,6 +401,27 @@ export const authStore = {
       .eq('id', _user.id);
     return { error: error?.message ?? null };
   },
+
+  /* ── 프리미엄 ──
+   * ponytail: 실제 결제 SDK(Google Play Billing/Stripe) 연동 전 임시 구조 — setPremiumStatus를
+   * "테스트 활성화" 버튼이 직접 호출한다. 나중에 결제 웹훅이 서버에서 이 컬럼을 갱신하도록
+   * 바꾸면 되고, 화면 쪽은 authStore.isPremium()만 보므로 수정할 필요가 없다.
+   * 주의: profiles UPDATE RLS가 본인 행 전체를 허용하므로, 지금은 클라이언트가 직접
+   * is_premium을 켤 수 있다 — 실 결제 연동 시 이 컬럼은 반드시 서버(webhook/서비스 롤)만
+   * 쓰도록 RLS를 좁혀야 한다(컬럼 단위 정책 또는 트리거로 클라이언트 UPDATE 차단). */
+  isPremium: () => _user?.isPremium ?? false,
+  async setPremiumStatus(isPremium: boolean) {
+    if (!_user) return { error: '로그인이 필요해요.' };
+    const { error } = await supabase.from('profiles').update({ is_premium: isPremium }).eq('id', _user.id);
+    if (error) return { error: error.message };
+    _user = { ..._user, isPremium };
+    notifyAuth();
+    return { error: null };
+  },
+  getStreakCount: () => _user?.streakCount ?? 0,
+  /** 무료 사용자(게스트 포함) 단어 저장 상한 체크 — 이미 저장된 단어를 해제하는 건 항상 허용,
+   *  새로 추가할 때만 막는다. 화면에서 toggleWordSaved 호출 전에 확인한다. */
+  canSaveMoreWords: () => _user?.isPremium === true || _savedWordIds.size < FREE_WORD_SAVE_LIMIT,
 
   /** 회원탈퇴 — DB의 delete_own_account()가 auth.users를 지우면 profiles/저장한 단어/게시글 등이
    *  전부 CASCADE로 함께 삭제된다. 성공하면 로컬 세션도 정리. */

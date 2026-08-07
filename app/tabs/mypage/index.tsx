@@ -12,7 +12,7 @@ import { authStore } from '../../../constants/authStore';
 import { languageStore } from '../../../constants/languageStore';
 import ProfileAvatar from '@/components/ProfileAvatar';
 import { AppIcon } from '@/components/AppIcon';
-import { ChevronRight } from 'lucide-react-native';
+import { ChevronRight, Crown, Flame } from 'lucide-react-native';
 
 /** Figma: 5-1.마이페이지-2 와이어프레임(524:1871) — 저장한 단어 / 내 활동 / 자주 묻는 질문 / 제안하기.
  *  내 정보 관리는 별도 메뉴가 아니라 프로필 행(›)으로 진입. */
@@ -26,6 +26,8 @@ export default function MyPageScreen() {
   const [loggedIn, setLoggedIn] = useState(authStore.isLoggedIn());
   const [savedCount, setSavedCount] = useState(authStore.getSavedWordIds().length);
   const [likedCount, setLikedCount] = useState(authStore.getLikedPostIds().length);
+  const [isPremium, setIsPremium] = useState(authStore.isPremium());
+  const [streakCount, setStreakCount] = useState(authStore.getStreakCount());
   const [language, setLanguage] = useState(languageStore.getLanguage());
   const user = authStore.getUser();
   const t = (key: Parameters<typeof languageStore.t>[0]) => languageStore.t(key);
@@ -36,12 +38,18 @@ export default function MyPageScreen() {
       setLoggedIn(authStore.isLoggedIn());
       setSavedCount(authStore.getSavedWordIds().length);
       setLikedCount(authStore.getLikedPostIds().length);
+      setIsPremium(authStore.isPremium());
+      setStreakCount(authStore.getStreakCount());
     }, []),
   );
 
   /* 스토어 변경 구독 */
   useEffect(() => {
-    const unsub = authStore.subscribe(setLoggedIn);
+    const unsub = authStore.subscribe(loggedIn => {
+      setLoggedIn(loggedIn);
+      setIsPremium(authStore.isPremium());
+      setStreakCount(authStore.getStreakCount());
+    });
     const unsubBookmarks = authStore.subscribeBookmarks(() => {
       setSavedCount(authStore.getSavedWordIds().length);
       setLikedCount(authStore.getLikedPostIds().length);
@@ -81,6 +89,27 @@ export default function MyPageScreen() {
           </View>
           <AppIcon icon={ChevronRight} size={20} color={Colors.textTertiary} />
         </TouchableOpacity>
+
+        {loggedIn && (
+          <TouchableOpacity
+            style={[styles.premiumRow, isPremium && styles.premiumRowActive]}
+            onPress={() => router.push('/tabs/mypage/premium')}
+            activeOpacity={0.85}
+          >
+            <View style={styles.premiumRowLeft}>
+              <AppIcon icon={Crown} size={20} color={isPremium ? Colors.premium : Colors.navBarIconMuted} />
+              <Text style={[styles.premiumRowLabel, isPremium && styles.premiumRowLabelActive]}>
+                {isPremium ? t('premiumActiveLabel') : t('premiumUpgradeCta')}
+              </Text>
+            </View>
+            {streakCount > 0 && (
+              <View style={styles.streakChip}>
+                <AppIcon icon={Flame} size={13} color={Colors.point1} />
+                <Text style={styles.streakChipText}>{streakCount}{t('streakDaysSuffix')}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        )}
 
         <Text style={styles.sectionHeader}>{t('activity')}</Text>
         <View style={styles.activityCards}>
@@ -161,6 +190,24 @@ const styles = StyleSheet.create({
   },
   profileRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   profileName: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
+
+  /* 프리미엄 상태/업그레이드 행 */
+  premiumRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    height: 52, paddingHorizontal: 16, marginTop: 10,
+    backgroundColor: Colors.surface, borderRadius: 10,
+    borderWidth: 1, borderColor: Colors.border,
+  },
+  premiumRowActive: { backgroundColor: Colors.premium + '12', borderColor: Colors.premium },
+  premiumRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  premiumRowLabel: { fontSize: 14, fontWeight: '700', color: Colors.textSecondary },
+  premiumRowLabelActive: { color: Colors.premium },
+  streakChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,
+    backgroundColor: Colors.point1 + '15',
+  },
+  streakChipText: { fontSize: 12, fontWeight: '700', color: Colors.point1 },
 
   sectionHeader: {
     fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary,

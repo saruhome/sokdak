@@ -15,16 +15,17 @@ import { getCategoryBySlug, getCategoryName } from '../../constants/categories';
 import { getBoardLabel } from '../../constants/mockPosts';
 import { SCREEN_WIDTH } from '../../constants/layout';
 import { languageStore, useLanguage } from '../../constants/languageStore';
+import { authStore } from '../../constants/authStore';
 import { SokDakLogo } from '@/components/icons/SokDakLogo';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Search, Bell, Eye, Heart, MessageCircle } from 'lucide-react-native';
+import { Search, Bell, Eye, Heart, MessageCircle, Crown } from 'lucide-react-native';
 
-/** 날짜(YYYY-MM-DD)를 시드로 결정적 난수를 뽑아 오늘 하루 동안은 항상 같은 3개가 나오게 한다 */
-function pickDailyWords(words: Word[], count: number, seed: string) {
+/** 날짜(YYYY-MM-DD)를 시드로 결정적 난수를 뽑아 오늘 하루 동안은 항상 같은 결과가 나오게 한다 */
+function pickDaily<T>(items: T[], count: number, seed: string): T[] {
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
-  const pool = [...words];
-  const picked: Word[] = [];
+  const pool = [...items];
+  const picked: T[] = [];
   while (picked.length < count && pool.length > 0) {
     h = (h * 1664525 + 1013904223) >>> 0;
     const idx = h % pool.length;
@@ -32,6 +33,29 @@ function pickDailyWords(words: Word[], count: number, seed: string) {
   }
   return picked;
 }
+
+/** "오늘의 실전 표현" — 한국 거주 외국인이 바로 써먹는 상황별 표현.
+ * 신조어 사전과는 다른 결의 콘텐츠라 별도 로컬 데이터로 관리한다(다른 화면의
+ * HORANG_HINTS 등과 동일한 컨벤션 — 아직 사전 콘텐츠처럼 5개 언어로 번역하진 않음). */
+type Situation = 'cafe' | 'subway' | 'work' | 'hospital' | 'sns' | 'dinner';
+const SITUATION_LABEL_KEY: Record<Situation, Parameters<typeof languageStore.t>[0]> = {
+  cafe: 'situationCafe', subway: 'situationSubway', work: 'situationWork',
+  hospital: 'situationHospital', sns: 'situationSns', dinner: 'situationDinner',
+};
+const EXPRESSIONS: { situation: Situation; ko: string; en: string }[] = [
+  { situation: 'cafe', ko: '이거 하나 주세요', en: 'One of these, please (pointing at the menu)' },
+  { situation: 'cafe', ko: '테이크아웃 할게요', en: "I'll take it to go" },
+  { situation: 'subway', ko: '이번 역에서 내리세요?', en: 'Are you getting off at this stop?' },
+  { situation: 'subway', ko: '여기 자리 있어요?', en: 'Is this seat taken?' },
+  { situation: 'work', ko: '먼저 퇴근하겠습니다', en: "I'll head out first (leaving before others)" },
+  { situation: 'work', ko: '확인 후 회신 드리겠습니다', en: "I'll check and get back to you" },
+  { situation: 'hospital', ko: '여기가 아파요', en: 'It hurts here' },
+  { situation: 'hospital', ko: '실비보험 있어요', en: 'I have private (supplemental) insurance' },
+  { situation: 'sns', ko: '선팔하고 갈게요', en: "I'll follow you first" },
+  { situation: 'sns', ko: '댓글 감사해요', en: 'Thanks for the comment' },
+  { situation: 'dinner', ko: '제가 한 잔 따라드릴게요', en: 'Let me pour you a drink' },
+  { situation: 'dinner', ko: '저는 술을 잘 못 마셔요', en: "I don't drink well (polite way to decline alcohol)" },
+];
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */
 const HERO_AUTOPLAY_INTERVAL = 4000;
@@ -48,10 +72,13 @@ export default function HomeScreen() {
   const [newSlangWords, setNewSlangWords] = useState<Word[]>([]);
   const heroScrollRef = useRef<ScrollView>(null);
   const heroPausedRef = useRef(false);
+  const [isPremium, setIsPremium] = useState(authStore.isPremium());
+  /** 오늘의 실전 표현 2개 — 날짜 시드로 결정적 선택(자정 지나면 갱신) */
+  const todayExpressions = pickDaily(EXPRESSIONS, 2, 'expr-' + new Date().toISOString().slice(0, 10));
 
   useEffect(() => {
     fetchWords().then(words => {
-      setHeroWords(pickDailyWords(words, 3, new Date().toISOString().slice(0, 10)));
+      setHeroWords(pickDaily(words, 3, new Date().toISOString().slice(0, 10)));
       setNewSlangWords(words.filter(w => w.category === 'new-slang'));
     });
   }, []);
@@ -59,7 +86,13 @@ export default function HomeScreen() {
   useFocusEffect(useCallback(() => {
     fetchPosts().then(data => setCommunityPosts(data.slice(0, 3)));
     fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
+    setIsPremium(authStore.isPremium());
   }, []));
+
+  useEffect(() => {
+    const unsub = authStore.subscribe(() => setIsPremium(authStore.isPremium()));
+    return () => { unsub(); };
+  }, []);
 
   /* 히어로 캐러셀 자동 재생 — 오른쪽에서 왼쪽으로 넘어가도록 다음 인덱스로 스크롤.
    * 사용자가 직접 스와이프하는 동안(heroPausedRef)에는 타이머가 끼어들지 않게 건너뜀. */
@@ -138,6 +171,35 @@ export default function HomeScreen() {
             {heroWords.map((_, i) => (
               <View key={i} style={[styles.dot, i === heroIndex && styles.dotActive]} />
             ))}
+          </View>
+        </View>
+
+        {/* ── 오늘의 실전 표현 ── 리텐션 훅: 3분 학습, 매일 갱신 */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>{t('todayExpressionTitle')}</Text>
+            <Text style={styles.sectionSub}>{t('todayExpressionSub')}</Text>
+          </View>
+          <View style={styles.exprCard}>
+            {todayExpressions.map((expr, i) => (
+              <View key={i} style={[styles.exprRow, i > 0 && styles.exprRowBorder]}>
+                <View style={styles.exprSituationBadge}>
+                  <Text style={styles.exprSituationText}>{t(SITUATION_LABEL_KEY[expr.situation])}</Text>
+                </View>
+                <Text style={styles.exprKo}>{expr.ko}</Text>
+                <Text style={styles.exprEn}>{expr.en}</Text>
+              </View>
+            ))}
+            {!isPremium && (
+              <TouchableOpacity
+                style={styles.exprPremiumTeaser}
+                onPress={() => router.push('/tabs/mypage/premium')}
+                activeOpacity={0.8}
+              >
+                <AppIcon icon={Crown} size={14} color={Colors.premium} />
+                <Text style={styles.exprPremiumTeaserText}>{t('dictionaryPremiumBannerText')}</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -294,6 +356,27 @@ const styles = StyleSheet.create({
   moreLink: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   moreLinkText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
   moreLinkArrow: { fontSize: 14, color: Colors.textSecondary, fontFamily: undefined },
+
+  /* 오늘의 실전 표현 카드 */
+  exprCard: {
+    backgroundColor: Colors.surface, borderRadius: 12,
+    borderWidth: 1, borderColor: Colors.border, overflow: 'hidden',
+  },
+  exprRow: { padding: 16, gap: 6 },
+  exprRowBorder: { borderTopWidth: 1, borderTopColor: Colors.divider },
+  exprSituationBadge: {
+    alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2,
+    borderRadius: 10, backgroundColor: Colors.point1 + '15',
+  },
+  exprSituationText: { fontSize: 11, fontWeight: '700', color: Colors.point1 },
+  exprKo: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, marginTop: 2 },
+  exprEn: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  exprPremiumTeaser: {
+    flexDirection: 'row', alignItems: 'center', gap: 6, justifyContent: 'center',
+    paddingVertical: 12, backgroundColor: Colors.premium + '12',
+    borderTopWidth: 1, borderTopColor: Colors.divider,
+  },
+  exprPremiumTeaserText: { fontSize: 12, fontWeight: '600', color: Colors.premium },
 
   /* 새로운 신조어 카드 */
   wordCardRow: { gap: 16, paddingRight: 24 },

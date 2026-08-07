@@ -268,10 +268,13 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           id: string
+          is_premium: boolean
+          last_active_date: string | null
           level: string
           nickname: string
           notification_prefs: Json
           phone: string | null
+          streak_count: number
           timezone: string
         }
         Insert: {
@@ -279,10 +282,13 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           id: string
+          is_premium?: boolean
+          last_active_date?: string | null
           level?: string
           nickname: string
           notification_prefs?: Json
           phone?: string | null
+          streak_count?: number
           timezone?: string
         }
         Update: {
@@ -290,10 +296,13 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           id?: string
+          is_premium?: boolean
+          last_active_date?: string | null
           level?: string
           nickname?: string
           notification_prefs?: Json
           phone?: string | null
+          streak_count?: number
           timezone?: string
         }
         Relationships: []

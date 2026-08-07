@@ -297,6 +297,21 @@ create trigger profiles_block_client_premium_write
   그대로 재사용. `is_premium`처럼 클라이언트가 함부로 켜면 안 되는 민감한 값이 아니라서
   is_premium 전용 트리거로 막을 필요는 없음 — 저장 시각을 스스로 미래로 조작해도 자기
   배지가 일찍 사라지는 것 말고는 영향이 없는 값이라 위험이 없다고 판단.
+- ✅ 단어 상세 영상 + 홈 썸네일 — 처음 제안된 스펙(별도 `/clip` 라우트, 네이티브에서 유튜브 앱으로
+  자동 이탈)은 이미 있던 `words.video_url` + `WordVideo` 인앱 재생 파이프라인과 연결이 안 되고
+  UX도 후퇴시켜서 채택하지 않음. 대신 `WordVideo`를 확장해 기존 자리(단어 상세 상단)에 그대로
+  통합: `video_url`(보유 클립, 기존 동작 그대로) → `video_youtube_id`(제3자 유튜브, 웹은 iframe
+  임베드/네이티브는 탭하면 유튜브로 이동) → `thumbnail_url`만 있는 정지 이미지 → 빈 상태 순으로
+  폴백. 홈 히어로 카드·새로운 신조어 카드에도 같은 썸네일을 배경으로 표시(`app/tabs/index.tsx`).
+  `words` 테이블에 `video_youtube_id`/`video_start_sec`/`video_end_sec`/`thumbnail_url` 컬럼
+  추가, 파싱은 `constants/youtube.ts`(`extractYoutubeId`/`parseTimeToSeconds`/`youtubeThumbnailUrl`).
+  **저작권/초상권 판단**: 자체 캡처 이미지를 우리 서버에 올리는 대신 유튜브 공식 썸네일 CDN
+  (`img.youtube.com/vi/{id}/hqdefault.jpg`)을 그대로 참조 — 복제본을 만들지 않아 iframe 임베드와
+  같은 성격(유튜브 자체 서버에서 서빙)이라 자체 호스팅보다 노출이 적음. 영상이 없는 신조어만
+  운영자가 직접 캡처해 `word-thumbnails` 버킷(공개 읽기, client insert 정책 없음 — Supabase
+  Studio에서 운영진이 직접 업로드)에 올리는 예외 경로로 남김 — 이 경우는 실제 복제라 별개 위험.
+  **정책**: 단어 상세 영상/썸네일은 프리미엄 유료벽 뒤에 두지 않음(유튜브 임베드는 애초에
+  유료화 불가 — TOS 위반 소지).
 
 ## 개발 컨벤션
 

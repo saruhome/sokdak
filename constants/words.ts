@@ -3,6 +3,7 @@
  * 예전 mockWords.ts와 동일한 Word 타입을 그대로 유지해 화면 쪽 변경을 최소화한다.
  */
 import { supabase } from './supabase';
+import { youtubeThumbnailUrl } from './youtube';
 
 export type Word = {
   id: string;
@@ -27,12 +28,18 @@ export type Word = {
   likes: number;
   saves: number;
   translations: { lang: string; text: string }[];
-  /** 단어 상세 상단 영상 클립 — 비디오 링크(mp4/스트리밍 URL)가 있는 단어만 지정 */
+  /** 단어 상세 상단 영상 클립 — 직접 보유/라이선스한 mp4·스트리밍 URL (최우선 재생 경로) */
   videoUrl?: string;
+  /** 제3자 유튜브 클립 — videoUrl이 없을 때만 사용, 임베드/딥링크로만 재생(다운로드 없음) */
+  youtubeId?: string;
+  videoStartSec?: number;
+  videoEndSec?: number;
+  /** 카드·상세 썸네일 — 명시적으로 없으면 youtubeId로 유튜브 공식 썸네일을 유도해서 쓴다 */
+  thumbnailUrl?: string;
 };
 
 const WORDS_SELECT =
-  'id, word, romanization, category, secondary_category, short_desc, pronunciation, meanings, origin, origin_en, usage, usage_en, related_words, likes, saves, translations, video_url';
+  'id, word, romanization, category, secondary_category, short_desc, pronunciation, meanings, origin, origin_en, usage, usage_en, related_words, likes, saves, translations, video_url, video_youtube_id, video_start_sec, video_end_sec, thumbnail_url';
 
 function mapRow(row: any): Word {
   return {
@@ -53,6 +60,10 @@ function mapRow(row: any): Word {
     saves: row.saves,
     translations: row.translations ?? [],
     videoUrl: row.video_url ?? undefined,
+    youtubeId: row.video_youtube_id ?? undefined,
+    videoStartSec: row.video_start_sec ?? undefined,
+    videoEndSec: row.video_end_sec ?? undefined,
+    thumbnailUrl: row.thumbnail_url ?? (row.video_youtube_id ? youtubeThumbnailUrl(row.video_youtube_id) : undefined),
   };
 }
 

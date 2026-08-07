@@ -1,6 +1,6 @@
 import {
   StyleSheet, View, SafeAreaView, ScrollView,
-  TouchableOpacity, Platform,
+  TouchableOpacity, Platform, Image,
   type NativeSyntheticEvent, type NativeScrollEvent,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
@@ -153,6 +153,9 @@ export default function HomeScreen() {
                   onPress={() => router.push(`/tabs/dictionary/${word.id}`)}
                   activeOpacity={0.9}
                 >
+                  {word.thumbnailUrl && (
+                    <Image source={{ uri: word.thumbnailUrl }} style={styles.heroThumbnail} resizeMode="cover" />
+                  )}
                   <View style={styles.heroScrim} />
                   <View style={styles.heroContent}>
                     {category && (
@@ -231,8 +234,14 @@ export default function HomeScreen() {
                 onPress={() => router.push(`/tabs/dictionary/${word.id}`)}
                 activeOpacity={0.85}
               >
-                <Text style={styles.wordCardTitle}>{word.word}</Text>
-                <Text style={styles.wordCardDesc} numberOfLines={2}>{word.shortDesc}</Text>
+                {word.thumbnailUrl && (
+                  <>
+                    <Image source={{ uri: word.thumbnailUrl }} style={styles.wordCardThumbnail} resizeMode="cover" />
+                    <View style={styles.wordCardScrim} />
+                  </>
+                )}
+                <Text style={[styles.wordCardTitle, word.thumbnailUrl && styles.wordCardTitleOnImage]}>{word.word}</Text>
+                <Text style={[styles.wordCardDesc, word.thumbnailUrl && styles.wordCardDescOnImage]} numberOfLines={2}>{word.shortDesc}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -324,6 +333,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.pageBackground,
     opacity: 0.55,
   },
+  heroThumbnail: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+  },
   heroContent: { gap: 8 },
   heroBadge: {
     alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2,
@@ -387,9 +399,17 @@ const styles = StyleSheet.create({
     padding: 16, justifyContent: 'flex-end', gap: 8,
     shadowColor: '#8B8B8B', shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 0.15, shadowRadius: 2.5, elevation: 3,
+    overflow: 'hidden',
+  },
+  wordCardThumbnail: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  wordCardScrim: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.35)',
   },
   wordCardTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
+  wordCardTitleOnImage: { color: '#fff' },
   wordCardDesc: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16, fontFamily: undefined },
+  wordCardDescOnImage: { color: 'rgba(255,255,255,0.85)' },
 
   /* 커뮤니티 리스트 */
   communityEmpty: { fontSize: 13, color: Colors.textTertiary, paddingVertical: 24, textAlign: 'center' },

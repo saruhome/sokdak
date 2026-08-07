@@ -145,7 +145,13 @@ export default function WordDetailScreen() {
 
           {/* ── 메인 카드: 영상+헤더+의미+문화적배경+대화예시 ── */}
           <View style={[styles.mainCard, hasTabs && styles.mainCardWithTabs]}>
-            <WordVideo videoUrl={word.videoUrl} />
+            <WordVideo
+              videoUrl={word.videoUrl}
+              youtubeId={word.youtubeId}
+              videoStartSec={word.videoStartSec}
+              videoEndSec={word.videoEndSec}
+              thumbnailUrl={word.thumbnailUrl}
+            />
 
             {/* 단어 헤더 */}
             <View style={styles.headerBlock}>

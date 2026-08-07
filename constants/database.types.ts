@@ -526,10 +526,14 @@ export type Database = {
           saves: number
           secondary_category: string | null
           short_desc: string
+          thumbnail_url: string | null
           translations: Json
           usage: string
           usage_en: string | null
+          video_end_sec: number | null
+          video_start_sec: number | null
           video_url: string | null
+          video_youtube_id: string | null
           word: string
         }
         Insert: {
@@ -546,10 +550,14 @@ export type Database = {
           saves?: number
           secondary_category?: string | null
           short_desc: string
+          thumbnail_url?: string | null
           translations?: Json
           usage: string
           usage_en?: string | null
+          video_end_sec?: number | null
+          video_start_sec?: number | null
           video_url?: string | null
+          video_youtube_id?: string | null
           word: string
         }
         Update: {
@@ -566,10 +574,14 @@ export type Database = {
           saves?: number
           secondary_category?: string | null
           short_desc?: string
+          thumbnail_url?: string | null
           translations?: Json
           usage?: string
           usage_en?: string | null
+          video_end_sec?: number | null
+          video_start_sec?: number | null
           video_url?: string | null
+          video_youtube_id?: string | null
           word?: string
         }
         Relationships: []

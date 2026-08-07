@@ -17,6 +17,7 @@ import { fetchWordById, fetchWords, type Word } from '../../../constants/words';
 import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { authStore } from '../../../constants/authStore';
+import { speakWord } from '../../../constants/speech';
 import { AppIcon } from '@/components/AppIcon';
 import { Star, Volume2, MessageCircle } from 'lucide-react-native';
 import { WordVideo } from '@/components/WordVideo';
@@ -158,7 +159,7 @@ export default function WordDetailScreen() {
               <View style={styles.wordTitleRow}>
                 <Text style={styles.wordTitle}>{word.word}</Text>
                 {reading && <Text style={styles.reading}>{reading}</Text>}
-                <AppIcon icon={Volume2} size={18} style={styles.soundBtn} onPress={() => {}} />
+                <AppIcon icon={Volume2} size={18} style={styles.soundBtn} onPress={() => speakWord(word)} />
               </View>
               {categories.length > 0 && (
                 <View style={styles.badgeRow}>

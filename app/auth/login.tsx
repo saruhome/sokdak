@@ -30,6 +30,7 @@ export default function LoginScreen() {
       </View>
 
       <ScrollView
+        style={styles.scrollFlex}
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -37,7 +38,7 @@ export default function LoginScreen() {
         {/* ── 로고 섹션 ── */}
         <View style={styles.logoSection}>
           <SokDakLogo width={200} color={Colors.navBar} />
-          <Text style={styles.logoTagline}>속닥속닥 배우는{'\n'}교과서에는 없던 진짜국어</Text>
+          <Text style={styles.logoTagline}>속닥속닥, 교과서 밖 진짜 한국어를 배우다</Text>
         </View>
 
         {/* ── 캐릭터 일러스트 ── Figma: Character/짹이/Default + Character/호랭/Default */}
@@ -71,10 +72,12 @@ const styles = StyleSheet.create({
   topRow: { height: 44, justifyContent: 'center' },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', marginLeft: 14 },
 
-  scroll: { paddingHorizontal: 24, paddingBottom: 40, alignItems: 'center' },
+  /* 화면 전체 요소를 하나의 그룹으로 세로 중앙 정렬 — 내용이 화면보다 길면 자연스럽게 스크롤됨 */
+  scrollFlex: { flex: 1 },
+  scroll: { flexGrow: 1, paddingHorizontal: 24, paddingVertical: 40, alignItems: 'center', justifyContent: 'center' },
 
   /* ── 로고 ── */
-  logoSection: { alignItems: 'center', marginTop: 8, gap: 16 },
+  logoSection: { alignItems: 'center', marginTop: -32, gap: 16 }, // 중앙 정렬 기준에서 전체 그룹을 40px 위로
   logoTagline: { fontSize: 16, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20, fontFamily: undefined },
 
   /* ── 캐릭터 ── */

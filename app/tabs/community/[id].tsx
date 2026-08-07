@@ -21,7 +21,7 @@ import { AppIcon, IconStat } from '@/components/AppIcon';
 import { PostRichText } from '@/components/PostRichText';
 import {
   Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye,
-  Pencil, Trash2, Flag, Ban,
+  Pencil, Trash2, Flag, Ban, ChevronLeft,
 } from 'lucide-react-native';
 
 const ACTIVE_STAR_COLOR = '#FACC15';
@@ -291,9 +291,10 @@ export default function PostDetailScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* ── TopAppBar – Figma: Navigation/TopAppBar/Post : 다른 사람 게시물(710:4873)/내 게시물(736:6169) — back + share + more, 뱃지 없음 */}
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/tabs/community')}>
-            <Text style={styles.backIcon}>‹</Text>
-          </TouchableOpacity>
+          <AppIcon
+            icon={ChevronLeft} size={20} style={styles.backButton}
+            onPress={() => router.replace('/tabs/community')}
+          />
           <View style={styles.topBarRight}>
             <AppIcon icon={Share2} size={20} style={styles.iconButton} onPress={handleShare} />
             <AppIcon
@@ -651,7 +652,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   backButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34, marginTop: -2 },
   topBarRight: { marginLeft: 'auto', flexDirection: 'row', alignItems: 'center' },
   iconButton: { width: 40, height: 44, alignItems: 'center', justifyContent: 'center' },
 
@@ -700,12 +700,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar,
   },
   reportSubmitText: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
+  /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
   boardBadge: {
-    paddingHorizontal: 12, paddingVertical: 4,
+    paddingHorizontal: 8, paddingVertical: 2,
     borderRadius: 12,
   },
   boardBadgeStandalone: { alignSelf: 'flex-start', marginBottom: 12 },
-  boardBadgeText: { fontSize: 11, fontWeight: '700' },
+  boardBadgeText: { fontSize: 10, fontWeight: '700' },
 
   scroll: { flex: 1 },
 

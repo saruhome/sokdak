@@ -10,6 +10,7 @@ import { fetchWords, type Word } from '../../../constants/words';
 import { authStore } from '../../../constants/authStore';
 import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
+import { speakWord } from '@/constants/speech';
 import { AppIcon } from '@/components/AppIcon';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
@@ -181,7 +182,7 @@ export default function SavedWordsScreen() {
                       style={styles.iconBtn} hitSlop={6}
                       onPress={() => handleRemoveWord(word.id)}
                     />
-                    <AppIcon icon={Volume2} size={18} style={styles.iconBtn} onPress={() => {}} />
+                    <AppIcon icon={Volume2} size={18} style={styles.iconBtn} onPress={() => speakWord(word)} />
                   </View>
                 </TouchableOpacity>
               );

@@ -10,19 +10,20 @@ import { fetchWords, type Word } from '@/constants/words';
 import { getCategoryBySlug, getCategoryName, pickLeastPopular } from '@/constants/categories';
 import { languageStore, useLanguage, type Language } from '@/constants/languageStore';
 import { authStore } from '@/constants/authStore';
+import { speakWord } from '@/constants/speech';
 import { AppIcon } from '@/components/AppIcon';
 import { Alert } from '@/constants/alert';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
 } from '@/components/WordFilterBar';
-import { CalloutBubble, CALLOUT_BUBBLE_ASPECT } from '@/components/icons/CalloutBubble';
 import { Search, Star, Volume2, Mic, Heart } from 'lucide-react-native';
+import { SCREEN_WIDTH } from '@/constants/layout';
 
 const JJAEKI_ICON = require('../assets/characters/jjaeki-full.png');
-/* 카테고리 추천 카드(Callout Card/Recommend_호랭)와 같은 말풍선 배경을 재사용 —
- * 카드 높이(108)에 맞춰 원본 비율로만 키우고 왼쪽에 붙여, 꼬리가 항상 짹이 쪽에 오도록 고정한다. */
-const TIP_BUBBLE_HEIGHT = 108;
-const TIP_BUBBLE_WIDTH = TIP_BUBBLE_HEIGHT * CALLOUT_BUBBLE_ASPECT;
+const TIP_CARD_LEFT = 24; // searchWrap과 동일한 marginHorizontal
+const TIP_BUBBLE_MAX_WIDTH = SCREEN_WIDTH / 2 - TIP_CARD_LEFT + 40;
+const TIP_BUBBLE_PAD = 12;
+const TIP_BUBBLE_BORDER = 1; // border-box라 padding처럼 content 폭에서 빠지므로 같이 더해야 함
 
 /** 짹이 성격 — 안 친절하고 까칠한 톤. 매 방문마다 하나를 랜덤으로 골라 보여준다. */
 const JJAEKI_HINTS: Record<Language, string[]> = {
@@ -62,6 +63,8 @@ export function WordListView({
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
   /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
   const [hintIndex] = useState(() => Math.floor(Math.random() * JJAEKI_HINTS.ko.length));
+  /* 말풍선 폭을 첫째 줄(힌트 문구) 실측 너비에 맞춰 늘였다 줄였다 하기 위한 측정값 */
+  const [hintWidth, setHintWidth] = useState<number | null>(null);
 
   useEffect(() => { fetchWords().then(data => { setWords(data); setLoading(false); }); }, []);
 
@@ -141,11 +144,33 @@ export function WordListView({
                 onPress={() => router.push(`/tabs/dictionary/${tipWord.id}`)}
                 activeOpacity={0.85}
               >
-                <View style={styles.bubbleLayer} pointerEvents="none">
-                  <CalloutBubble width={TIP_BUBBLE_WIDTH} height={TIP_BUBBLE_HEIGHT} />
-                </View>
-                <View style={styles.tipTextWrap}>
-                  <Text style={styles.tipHint} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
+                {/* 첫 줄(힌트)은 무조건 전체가 보여야 하므로 폭 상한(maxWidth)보다 우선하고,
+                 * flexShrink:0으로 좁은 화면에서도 압축되지 않는다 — 대신 옆의 마스코트가 줄어든다.
+                 * maxWidth는 CSS에서 width보다 항상 이기므로 같이 올려줘야 실제로 넓어진다 */}
+                <View
+                  style={[
+                    styles.tipTextWrap,
+                    hintWidth != null && {
+                      width: hintWidth + TIP_BUBBLE_PAD * 2 + TIP_BUBBLE_BORDER * 2,
+                      maxWidth: hintWidth + TIP_BUBBLE_PAD * 2 + TIP_BUBBLE_BORDER * 2,
+                      flexShrink: 0,
+                    },
+                  ]}
+                >
+                  <View style={styles.bubbleTailOuter} pointerEvents="none" />
+                  <View style={styles.bubbleTailInner} pointerEvents="none" />
+                  {/* 화면 밖에서 폭 제약 없이 자연 너비를 재는 측정용 사본 — 실제 표시되는 줄과 폭 제약을
+                   * 공유하면 잰 값이 잰 값을 되먹임해 너비가 굳어버리므로 별도로 분리한다 */}
+                  <Text
+                    style={[styles.tipHint, styles.measureGhost]}
+                    numberOfLines={1}
+                    onLayout={e => setHintWidth(e.nativeEvent.layout.width)}
+                  >
+                    {JJAEKI_HINTS[language][hintIndex]}
+                  </Text>
+                  {/* 박스가 이미 이 텍스트의 실측 너비에 맞춰져 있어 adjustsFontSizeToFit이 불필요 —
+                   * 오히려 폭이 넓어지기 전 첫 렌더의 축소값이 그대로 굳어버리는 문제가 있었다 */}
+                  <Text style={styles.tipHint} numberOfLines={1}>
                     {JJAEKI_HINTS[language][hintIndex]}
                   </Text>
                   <Text style={styles.tipWord} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
@@ -221,7 +246,7 @@ export function WordListView({
                   hitSlop={6}
                   onPress={() => toggleSave(item.id)}
                 />
-                <AppIcon icon={Volume2} size={20} style={styles.iconBtn} onPress={() => {}} />
+                <AppIcon icon={Volume2} size={20} style={styles.iconBtn} onPress={() => speakWord(item)} />
               </View>
             </TouchableOpacity>
           );
@@ -257,19 +282,40 @@ const styles = StyleSheet.create({
   /* TextInput은 AppText를 안 거쳐 기본 서체가 시스템 산세리프라 카테고리 검색창과 달랐음 — 명시 지정 */
   searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontFamily: 'NotoSerifKR_400Regular' },
 
+  /* 가로는 marginHorizontal:24가 검색창과 동일해 이미 고정 폭 — 세로는 카테고리 말풍선 실측값(105)으로 고정 */
   tipCard: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    marginHorizontal: 24, marginTop: 16, paddingLeft: 16,
-    height: 108,
+    marginHorizontal: 24, marginTop: 16, height: 105,
   },
-  /* 카드 폭 전체로 늘리면 꼬리 비율이 밀려 짹이와 겹쳐서, 원본 비율 그대로 왼쪽에만 붙인다 */
-  bubbleLayer: { position: 'absolute', left: 0, top: 0 },
-  /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 캐릭터와 겹친다 */
-  tipTextWrap: { flexShrink: 1, minWidth: 0, gap: 4 },
+  /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 캐릭터와 겹친다.
+   * 말풍선 배경 자체를 이 View가 담당 — 3줄 텍스트 크기에 맞춰 폭/높이가 정해지고 사방 8px 여백만 준다. */
+  tipTextWrap: {
+    flexShrink: 1, minWidth: 0, maxWidth: TIP_BUBBLE_MAX_WIDTH, gap: 4,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, borderRadius: 12,
+    paddingHorizontal: TIP_BUBBLE_PAD, paddingVertical: TIP_BUBBLE_PAD,
+  },
+  /* 오른쪽 짹이를 향한 말풍선 꼬리 — border-triangle 기법. 테두리색 삼각형(Outer) 위에
+   * 1px 작은 배경색 삼각형(Inner)을 겹쳐 윤곽선 있는 삼각형처럼 보이게 한다.
+   * (이전엔 사각형을 45도 회전시켰는데 보이는 두 변의 조합이 아래쪽을 향해 잘못 그려졌었음) */
+  bubbleTailOuter: {
+    position: 'absolute', right: -8, top: '50%', marginTop: -7,
+    width: 0, height: 0,
+    borderTopWidth: 7, borderBottomWidth: 7, borderLeftWidth: 8,
+    borderTopColor: 'transparent', borderBottomColor: 'transparent', borderLeftColor: Colors.border,
+  },
+  bubbleTailInner: {
+    position: 'absolute', right: -7, top: '50%', marginTop: -6,
+    width: 0, height: 0,
+    borderTopWidth: 6, borderBottomWidth: 6, borderLeftWidth: 7,
+    borderTopColor: 'transparent', borderBottomColor: 'transparent', borderLeftColor: Colors.surface,
+  },
   tipHint: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },
+  measureGhost: { position: 'absolute', opacity: 0, left: -9999, top: 0 },
   tipWord: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
   tipClick: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
-  tipImg: { width: 93, height: 107, marginRight: 8 },
+  /* 짹이 크기/위치는 고정 — 카드가 고정 폭(312)이라 줄어들 필요가 없다.
+   * marginRight 없이 카드 우측 끝(검색창 우측 끝과 동일)에 딱 맞춘다 */
+  tipImg: { width: 93, height: 107, flexShrink: 0 },
 
 
 

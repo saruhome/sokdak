@@ -148,8 +148,9 @@ const styles = StyleSheet.create({
 
   postItem: { paddingHorizontal: 20, paddingVertical: 12, gap: 4 },
   postTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  boardBadge: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
-  boardBadgeText: { fontSize: 11, fontWeight: '600' },
+  /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
+  boardBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
+  boardBadgeText: { fontSize: 10, fontWeight: '600' },
   postDate: { fontSize: 11, color: Colors.textTertiary, marginLeft: 'auto' },
   postTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, lineHeight: 20 },
   postMetaRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },

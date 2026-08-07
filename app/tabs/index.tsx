@@ -13,6 +13,7 @@ import { fetchPosts, type CommunityPostSummary } from '../../constants/community
 import { fetchUnreadNotificationCount } from '../../constants/notifications';
 import { getCategoryBySlug, getCategoryName } from '../../constants/categories';
 import { getBoardLabel } from '../../constants/mockPosts';
+import { sortWords } from '@/components/WordFilterBar';
 import { SCREEN_WIDTH } from '../../constants/layout';
 import { languageStore, useLanguage } from '../../constants/languageStore';
 import { authStore } from '../../constants/authStore';
@@ -74,12 +75,13 @@ export default function HomeScreen() {
   const heroPausedRef = useRef(false);
   const [isPremium, setIsPremium] = useState(authStore.isPremium());
   /** 오늘의 실전 표현 2개 — 날짜 시드로 결정적 선택(자정 지나면 갱신) */
-  const todayExpressions = pickDaily(EXPRESSIONS, 2, 'expr-' + new Date().toISOString().slice(0, 10));
+  const todayExpressions = pickDaily(EXPRESSIONS, 1, 'expr-' + new Date().toISOString().slice(0, 10));
 
   useEffect(() => {
     fetchWords().then(words => {
-      setHeroWords(pickDaily(words, 3, new Date().toISOString().slice(0, 10)));
-      setNewSlangWords(words.filter(w => w.category === 'new-slang'));
+      setHeroWords(pickDaily(words, 5, new Date().toISOString().slice(0, 10)));
+      /* 사전 화면의 최신순(SORT_TABS[1])과 동일한 순서 */
+      setNewSlangWords(sortWords(words.filter(w => w.category === 'new-slang'), 1));
     });
   }, []);
 
@@ -206,6 +208,8 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        <View style={styles.sectionDivider} />
+
         {/* ── 새로운 신조어 ── */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -246,6 +250,8 @@ export default function HomeScreen() {
             ))}
           </ScrollView>
         </View>
+
+        <View style={styles.sectionDivider} />
 
         {/* ── 커뮤니티 ── */}
         <View style={styles.section}>
@@ -336,17 +342,18 @@ const styles = StyleSheet.create({
   heroThumbnail: {
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
   },
-  heroContent: { gap: 8 },
+  /* 태그→제목→소제목 간격을 오늘의 실전 표현 카드(exprRow)와 동일하게: gap 6 + 제목에 marginTop 2 */
+  heroContent: { gap: 6 },
   heroBadge: {
     alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2,
-    borderRadius: 12, marginBottom: 8,
+    borderRadius: 12,
   },
   heroBadgeText: { fontSize: 10, fontWeight: '600', fontFamily: 'NotoSerifKR_600SemiBold' },
   heroWord: {
     fontSize: 24, lineHeight: 36, color: '#000',
-    fontFamily: 'NotoSerifKR_600SemiBold',
+    fontFamily: 'NotoSerifKR_600SemiBold', marginTop: 2,
   },
-  heroDesc: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined, opacity: 0.9, marginTop: 8 },
+  heroDesc: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined, opacity: 0.9 },
 
   dotsRow: {
     flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
@@ -361,7 +368,9 @@ const styles = StyleSheet.create({
 
   /* 섹션 공통 */
   section: { paddingHorizontal: 24, marginTop: 16, gap: 16 },
-  sectionHeader: { gap: 8 },
+  sectionDivider: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 24, marginTop: 16 },
+  /* 대제목→소제목 간격도 exprRow의 제목→소제목 간격(6)과 동일하게 */
+  sectionHeader: { gap: 6 },
   sectionTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   sectionSubRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   sectionSub: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined, flexShrink: 1 },
@@ -376,11 +385,12 @@ const styles = StyleSheet.create({
   },
   exprRow: { padding: 16, gap: 6 },
   exprRowBorder: { borderTopWidth: 1, borderTopColor: Colors.divider },
+  /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
   exprSituationBadge: {
     alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2,
-    borderRadius: 10, backgroundColor: Colors.point1 + '15',
+    borderRadius: 12, backgroundColor: Colors.point1 + '15',
   },
-  exprSituationText: { fontSize: 11, fontWeight: '700', color: Colors.point1 },
+  exprSituationText: { fontSize: 10, fontWeight: '700', color: Colors.point1 },
   exprKo: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, marginTop: 2 },
   exprEn: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
   exprPremiumTeaser: {
@@ -416,8 +426,9 @@ const styles = StyleSheet.create({
   postItem: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 16, gap: 12 },
   postItemBorder: { borderTopWidth: 1, borderTopColor: Colors.divider },
   postItemLeft: { flex: 1, gap: 8 },
-  postBadge: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
-  postBadgeText: { fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold' },
+  /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
+  postBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
+  postBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
   postTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, lineHeight: 18 },
   postMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   postAuthor: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },

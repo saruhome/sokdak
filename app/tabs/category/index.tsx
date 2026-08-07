@@ -12,17 +12,16 @@ import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
 import { fetchUnreadNotificationCount } from '../../../constants/notifications';
 import { AppIcon } from '@/components/AppIcon';
-import { CalloutBubble, CALLOUT_BUBBLE_ASPECT } from '@/components/icons/CalloutBubble';
 import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
+import { SCREEN_WIDTH } from '../../../constants/layout';
 
 const HORANG_ICON = require('../../../assets/Callout Card/image 146.png');
 const MIC_ICON = require('../../../assets/categories/icon-mic.png');
 const ACTIVE_STAR_COLOR = '#FACC15';
-/* Bubble_호랭.svg 원본 비율(228:95)을 유지한 실제 렌더 크기 — 카드 폭까지 늘리면
- * 말풍선 꼬리가 비율대로 밀려나 우측 호랭이와 겹친다. 카드 높이(108)에 맞춰
- * 원본 비율로만 키우고, 왼쪽에 붙여서 꼬리가 항상 호랭이 쪽에 오도록 고정한다. */
-const RECOMMEND_BUBBLE_HEIGHT = 108;
-const RECOMMEND_BUBBLE_WIDTH = RECOMMEND_BUBBLE_HEIGHT * CALLOUT_BUBBLE_ASPECT;
+const RECOMMEND_CARD_LEFT = 24; // FlatList contentContainerStyle paddingHorizontal과 동일
+const RECOMMEND_BUBBLE_MAX_WIDTH = SCREEN_WIDTH / 2 - RECOMMEND_CARD_LEFT + 40;
+const RECOMMEND_BUBBLE_PAD = 12;
+const RECOMMEND_BUBBLE_BORDER = 1; // border-box라 padding처럼 content 폭에서 빠지므로 같이 더해야 함
 
 /** 호랭이 성격 — 책 읽는 걸 좋아하는 붙임성 있는 서생 톤. 매 방문마다 하나를 랜덤으로 골라 보여준다. */
 const HORANG_HINTS: Record<Language, string[]> = {
@@ -64,6 +63,8 @@ export default function CategoryScreen() {
   );
   /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
   const [hintIndex] = useState(() => Math.floor(Math.random() * HORANG_HINTS.ko.length));
+  /* 말풍선 폭을 첫째 줄(힌트 문구) 실측 너비에 맞춰 늘였다 줄였다 하기 위한 측정값 */
+  const [hintWidth, setHintWidth] = useState<number | null>(null);
 
   const sortedCategories = [...CATEGORIES].sort((a, b) =>
     sortMode === '인기순'
@@ -120,11 +121,33 @@ export default function CategoryScreen() {
                 onPress={() => router.push(`/tabs/category/${topCategory.slug}`)}
                 activeOpacity={0.85}
               >
-                <View style={styles.bubbleLayer} pointerEvents="none">
-                  <CalloutBubble width={RECOMMEND_BUBBLE_WIDTH} height={RECOMMEND_BUBBLE_HEIGHT} />
-                </View>
-                <View style={styles.recommendTextWrap}>
-                  <Text style={styles.recommendLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
+                {/* 첫 줄(힌트)은 무조건 전체가 보여야 하므로 폭 상한(maxWidth)보다 우선하고,
+                 * flexShrink:0으로 좁은 화면에서도 압축되지 않는다 — 대신 옆의 마스코트가 줄어든다.
+                 * maxWidth는 CSS에서 width보다 항상 이기므로 같이 올려줘야 실제로 넓어진다 */}
+                <View
+                  style={[
+                    styles.recommendTextWrap,
+                    hintWidth != null && {
+                      width: hintWidth + RECOMMEND_BUBBLE_PAD * 2 + RECOMMEND_BUBBLE_BORDER * 2,
+                      maxWidth: hintWidth + RECOMMEND_BUBBLE_PAD * 2 + RECOMMEND_BUBBLE_BORDER * 2,
+                      flexShrink: 0,
+                    },
+                  ]}
+                >
+                  <View style={styles.bubbleTailOuter} pointerEvents="none" />
+                  <View style={styles.bubbleTailInner} pointerEvents="none" />
+                  {/* 화면 밖에서 폭 제약 없이 자연 너비를 재는 측정용 사본 — 실제 표시되는 줄과 폭 제약을
+                   * 공유하면 잰 값이 잰 값을 되먹임해 너비가 굳어버리므로 별도로 분리한다 */}
+                  <Text
+                    style={[styles.recommendLabel, styles.measureGhost]}
+                    numberOfLines={1}
+                    onLayout={e => setHintWidth(e.nativeEvent.layout.width)}
+                  >
+                    {HORANG_HINTS[language][hintIndex]}
+                  </Text>
+                  {/* 박스가 이미 이 텍스트의 실측 너비에 맞춰져 있어 adjustsFontSizeToFit이 불필요 —
+                   * 오히려 폭이 넓어지기 전 첫 렌더의 축소값이 그대로 굳어버리는 문제가 있었다 */}
+                  <Text style={styles.recommendLabel} numberOfLines={1}>
                     {HORANG_HINTS[language][hintIndex]}
                   </Text>
                   <Text style={styles.recommendName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
@@ -229,22 +252,43 @@ const styles = StyleSheet.create({
   },
   searchPlaceholder: { flex: 1, fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
 
-  /* Figma: Callout Card/Recommend_호랭 — 배경은 Bubble_호랭.svg를 그대로 그린 CalloutBubble,
-   * 실사 이미지 대신 앱 마스코트(호랭)를 꼬리 쪽에 재사용 */
+  /* Figma: Callout Card/Recommend_호랭 — 실사 이미지 대신 앱 마스코트(호랭)를 꼬리 쪽에 재사용.
+   * 가로는 FlatList grid paddingHorizontal:24가 검색바와 동일해 이미 고정 폭 — 세로는 이 화면
+   * 말풍선의 실측값(105)으로 고정 */
   recommendCard: {
     marginTop: 8, marginBottom: 16,
-    height: 108,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingLeft: 16,
+    height: 105,
   },
-  /* 카드 폭 전체로 늘리면 꼬리 비율이 밀려 호랭이와 겹쳐서, 원본 비율 그대로 왼쪽에만 붙인다 */
-  bubbleLayer: { position: 'absolute', left: 0, top: 0 },
-  /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 호랭이와 겹친다 */
-  recommendTextWrap: { gap: 8, flexShrink: 1, minWidth: 0 },
+  /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 호랭이와 겹친다.
+   * 말풍선 배경 자체를 이 View가 담당 — 첫째 줄(힌트) 실측 너비에 맞춰 폭이 늘었다 줄었다 한다. */
+  recommendTextWrap: {
+    gap: 8, flexShrink: 1, minWidth: 0, maxWidth: RECOMMEND_BUBBLE_MAX_WIDTH,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, borderRadius: 12,
+    paddingHorizontal: RECOMMEND_BUBBLE_PAD, paddingVertical: RECOMMEND_BUBBLE_PAD,
+  },
+  /* 오른쪽 호랭이를 향한 말풍선 꼬리 — border-triangle 기법. 테두리색 삼각형(Outer) 위에
+   * 1px 작은 배경색 삼각형(Inner)을 겹쳐 윤곽선 있는 삼각형처럼 보이게 한다.
+   * (이전엔 사각형을 45도 회전시켰는데 보이는 두 변의 조합이 아래쪽을 향해 잘못 그려졌었음) */
+  bubbleTailOuter: {
+    position: 'absolute', right: -8, top: '50%', marginTop: -7,
+    width: 0, height: 0,
+    borderTopWidth: 7, borderBottomWidth: 7, borderLeftWidth: 8,
+    borderTopColor: 'transparent', borderBottomColor: 'transparent', borderLeftColor: Colors.border,
+  },
+  bubbleTailInner: {
+    position: 'absolute', right: -7, top: '50%', marginTop: -6,
+    width: 0, height: 0,
+    borderTopWidth: 6, borderBottomWidth: 6, borderLeftWidth: 7,
+    borderTopColor: 'transparent', borderBottomColor: 'transparent', borderLeftColor: Colors.surface,
+  },
   recommendLabel: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },
+  measureGhost: { position: 'absolute', opacity: 0, left: -9999, top: 0 },
   recommendName: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
   recommendClick: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
-  recommendImg: { width: 93, height: 107, marginRight: 8 },
+  /* 호랭이 크기/위치는 고정 — 카드가 고정 폭(312)이라 줄어들 필요가 없다.
+   * marginRight 없이 카드 우측 끝(검색바 우측 끝과 동일)에 딱 맞춘다 */
+  recommendImg: { width: 93, height: 107, flexShrink: 0 },
 
   filterRow: {
     paddingBottom: 12,

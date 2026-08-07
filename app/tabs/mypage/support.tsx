@@ -1,10 +1,10 @@
 import {
   StyleSheet, View, SafeAreaView, ScrollView,
-  TouchableOpacity, Linking, TextInput,
+  TouchableOpacity, Linking, TextInput, Animated, Easing,
 } from 'react-native';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
@@ -62,6 +62,19 @@ const FAQ_ITEMS: Record<Language, FaqItem[]> = {
     { category: 'community', q: '¿Cuáles son las normas de la comunidad?', a: 'Buscamos una comunidad de aprendizaje respetuosa. El lenguaje ofensivo, la publicidad y el discurso de odio pueden ser moderados.' },
   ],
 };
+
+/** FAQ 답변 — 열릴 때 ease-out 200ms로 페이드인 (닫힐 때는 바로 언마운트라 애니메이션 없음) */
+function FaqAnswerReveal({ text }: { text: string }) {
+  const opacity = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(opacity, { toValue: 1, duration: 200, easing: Easing.out(Easing.ease), useNativeDriver: true }).start();
+  }, []);
+  return (
+    <Animated.View style={[styles.faqAnswerBox, { opacity }]}>
+      <Text style={styles.faqAnswer}>{text}</Text>
+    </Animated.View>
+  );
+}
 
 /** Figma: 229:3352 — 고객센터 (카테고리 필터 + FAQ 아코디언 + 문의하기) */
 export default function SupportScreen() {
@@ -173,11 +186,7 @@ export default function SupportScreen() {
                     style={open ? { transform: [{ rotate: '180deg' }] } : undefined}
                   />
                 </TouchableOpacity>
-                {open && (
-                  <View style={styles.faqAnswerBox}>
-                    <Text style={styles.faqAnswer}>{item.a}</Text>
-                  </View>
-                )}
+                {open && <FaqAnswerReveal text={item.a} />}
               </View>
             );
           })}
@@ -288,8 +297,9 @@ const styles = StyleSheet.create({
   },
   faqAnswer: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20, fontFamily: undefined },
 
+  /* marginHorizontal 없음 — scroll의 paddingHorizontal:24가 이미 검색창과 동일한 폭을 준다 */
   contactCard: {
-    marginHorizontal: 24, marginTop: 24,
+    marginTop: 24,
     padding: 16, borderRadius: 10,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.textTertiary,
     gap: 4,
@@ -299,7 +309,7 @@ const styles = StyleSheet.create({
   contactSub: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
 
   /* 인앱 문의하기 (로그인 사용자) */
-  inquirySection: { marginHorizontal: 24, marginTop: 24, gap: 10 },
+  inquirySection: { marginTop: 24, gap: 10 },
   inquiryInput: {
     minHeight: 88, borderRadius: 10, padding: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,

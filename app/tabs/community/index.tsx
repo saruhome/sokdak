@@ -116,17 +116,6 @@ export default function CommunityScreen() {
                 </TouchableOpacity>
               ))}
             </View>
-
-            {/* ── 게시판 종류 뱃지 행 – Figma: Display/Community/게시판 종류 */}
-            <View style={styles.boardBadgeRow}>
-              {(['궁금해요', 'Q&A', '질문하기'] as PostBoard[]).map(b => (
-                <TouchableOpacity key={b} onPress={() => setActiveTab(b)}>
-                  <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[b].bg }]}>
-                    <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[b].fg }]}>{getBoardLabel(b, language)}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
           </>
         }
         renderItem={({ item }) => (
@@ -237,17 +226,16 @@ const styles = StyleSheet.create({
   },
   boardTabText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textTertiary },
 
-  /* 게시판 뱃지 행 */
-  boardBadgeRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingVertical: 10 },
+  /* 게시판 뱃지 — 사전 화면 단어 태그(wordBadge)와 동일 크기 */
   boardBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 12, paddingVertical: 4,
+    paddingHorizontal: 8, paddingVertical: 2,
     borderRadius: 12,
   },
-  boardBadgeText: { fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold' },
+  boardBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   /* List/Item/Post (Figma node 730:4885) */
-  postItem: { paddingHorizontal: 16, minHeight: 92, justifyContent: 'center' },
+  postItem: { paddingHorizontal: 24, minHeight: 92, justifyContent: 'center' },
   postItemInner: { paddingVertical: 12, gap: 8 },
   postTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   postDate: { fontSize: 11, color: Colors.textTertiary },
@@ -257,7 +245,7 @@ const styles = StyleSheet.create({
   postStats: { flexDirection: 'row', gap: 10 },
   metaText: { fontSize: 11, color: Colors.textTertiary },
 
-  separator: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 16 },
+  separator: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 24 },
   emptyWrap: { paddingVertical: 60, alignItems: 'center', gap: 8 },
   emptyText: { fontSize: 14, color: Colors.textTertiary },
 

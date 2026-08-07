@@ -376,8 +376,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.divider,
   },
-  boardBadge: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
-  boardBadgeText: { fontSize: 11, fontWeight: '700' },
+  /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
+  boardBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
+  boardBadgeText: { fontSize: 10, fontWeight: '700' },
   accordionLabel: { flex: 1, fontSize: 14, color: Colors.textSecondary },
   accordionArrow: { fontSize: 12, color: Colors.textTertiary },
 

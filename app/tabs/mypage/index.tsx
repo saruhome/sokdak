@@ -9,6 +9,7 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { authStore } from '../../../constants/authStore';
+import { hasUnseenReply } from '../../../constants/support';
 import { languageStore } from '../../../constants/languageStore';
 import ProfileAvatar from '@/components/ProfileAvatar';
 import { AppIcon } from '@/components/AppIcon';
@@ -28,6 +29,7 @@ export default function MyPageScreen() {
   const [likedCount, setLikedCount] = useState(authStore.getLikedPostIds().length);
   const [isPremium, setIsPremium] = useState(authStore.isPremium());
   const [streakCount, setStreakCount] = useState(authStore.getStreakCount());
+  const [hasUnseenTicketReply, setHasUnseenTicketReply] = useState(false);
   const [language, setLanguage] = useState(languageStore.getLanguage());
   const user = authStore.getUser();
   const t = (key: Parameters<typeof languageStore.t>[0]) => languageStore.t(key);
@@ -40,6 +42,7 @@ export default function MyPageScreen() {
       setLikedCount(authStore.getLikedPostIds().length);
       setIsPremium(authStore.isPremium());
       setStreakCount(authStore.getStreakCount());
+      if (authStore.isLoggedIn()) hasUnseenReply().then(setHasUnseenTicketReply);
     }, []),
   );
 
@@ -158,6 +161,7 @@ export default function MyPageScreen() {
 
         <TouchableOpacity style={styles.supportRow} onPress={() => router.push('/tabs/mypage/support')} activeOpacity={0.8}>
           <Text style={styles.supportLabel}>{t('customerService')}</Text>
+          {hasUnseenTicketReply && <View style={styles.supportDot} />}
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.85}>
@@ -235,8 +239,9 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border,
   },
 
-  supportRow: { marginTop: 24, paddingVertical: 16, alignItems: 'center' },
+  supportRow: { marginTop: 24, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   supportLabel: { fontSize: 16, color: Colors.textSecondary, fontFamily: undefined },
+  supportDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.error },
 
   logoutBtn: {
     marginTop: 12, height: 48, borderRadius: 10,

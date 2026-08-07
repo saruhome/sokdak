@@ -10,7 +10,7 @@ import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
 import { authStore } from '../../../constants/authStore';
-import { fetchMyTickets, submitTicket, type SupportTicket } from '../../../constants/support';
+import { fetchMyTickets, submitTicket, markRepliesSeen, type SupportTicket } from '../../../constants/support';
 import { AppIcon } from '@/components/AppIcon';
 import { Mail, ChevronDown, ChevronRight, Search, Mic } from 'lucide-react-native';
 
@@ -77,7 +77,10 @@ export default function SupportScreen() {
 
   useFocusEffect(useCallback(() => {
     setLoggedIn(authStore.isLoggedIn());
-    if (authStore.isLoggedIn()) fetchMyTickets().then(setTickets);
+    if (authStore.isLoggedIn()) {
+      fetchMyTickets().then(setTickets);
+      markRepliesSeen();
+    }
   }, []));
 
   const items = FAQ_ITEMS[language];

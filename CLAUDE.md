@@ -286,8 +286,14 @@ create trigger profiles_block_client_premium_write
   시도해도 UPDATE 정책이 없어 조용히 0행 처리됨(`is_premium`과 달리 이번엔 처음부터 갭 없이
   설계). `constants/support.ts`(`fetchMyTickets`/`submitTicket`), `app/tabs/mypage/support.tsx`
   에 문의 폼 + 내 문의 내역(답변 대기/답변 완료 pill) 추가 — 로그인 유저 전용이며, 비로그인은
-  기존 `mailto:` 카드 그대로 폴백. 답변 도착 푸시/인앱 알림은 스킵(필요해지면 `notifications`
-  트리거 패턴 재사용해서 추가).
+  기존 `mailto:` 카드 그대로 폴백.
+- ✅ 답변 도착 알림 — `notifications` 테이블(actor_id/post_id NOT NULL이라 운영진 답변엔
+  안 맞음)을 재사용하지 않고, `authStore`의 guest-bookmark AsyncStorage 패턴을 그대로 가져와
+  `constants/support.ts`에 `hasUnseenReply`/`markRepliesSeen` 추가 — 새 컬럼도 새 RLS 정책도
+  없이 "마지막으로 확인한 시각"만 기기 로컬에 저장(`sokdak.support.lastSeenReplyAt.<userId>`).
+  마이페이지 "고객센터" 행에 답변 미확인 시 빨간 점(`app/tabs/mypage/index.tsx`), 문의 화면
+  진입 시 확인 처리. 여러 기기 동기화는 안 됨(로컬 저장이라 기기마다 따로) — 필요해지면
+  `profiles`에 `last_seen_reply_at` 컬럼 추가해 서버 저장으로 바꿀 것.
 
 ## 개발 컨벤션
 

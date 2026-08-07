@@ -257,6 +257,28 @@ mypage.tsx를 mypage/index.tsx + Stack(_layout.tsx)으로 전환하고 6개 서�
   리마인더, 퀴즈/챌린지 엔진, 개인화 추천 엔진, 오프라인 사전 다운로드, "광고 없음"(광고 시스템
   자체가 없음), `community/[id].tsx` 변경(요청 기능 중 해당 화면에 구체적으로 매핑되는 게 없음).
 
+**정식 출시 시 실행할 잠금 SQL** (사용자 테스트 기간엔 적용하지 말 것 — `premium.tsx`의 체험
+토글이 이 이후로 막힘). 실결제 연동 붙이는 시점에 Supabase SQL Editor 또는
+`apply_migration`으로 실행:
+```sql
+create or replace function block_client_premium_write()
+returns trigger as $$
+begin
+  if new.is_premium is distinct from old.is_premium and auth.role() <> 'service_role' then
+    raise exception 'is_premium은 서버(결제 웹훅)에서만 변경할 수 있어요';
+  end if;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger profiles_block_client_premium_write
+  before update on profiles
+  for each row execute function block_client_premium_write();
+```
+결제 웹훅은 `service_role` 키로 업데이트하므로 영향 없음. 적용 후 `premium.tsx`의 체험
+토글 버튼은 그대로 두면 에러만 뜨고 조용히 실패하니, 이 SQL을 실행하는 김에 해당 화면도
+"프리미엄은 결제로만 이용 가능해요" 안내로 같이 바꿀 것.
+
 ## 개발 컨벤션
 
 ### 파일 규칙

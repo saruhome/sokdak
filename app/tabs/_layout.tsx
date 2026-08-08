@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Colors } from '../../constants/Colors';
 import { TabIcon, type TabIconName } from '@/components/icons/TabIcon';
 import { languageStore } from '../../constants/languageStore';
+import { authStore } from '../../constants/authStore';
 
 /**
  * Figma(Navigation/BottomBar.svg): 아이콘·라벨 색은 활성/비활성 상태와 무관하게
@@ -23,17 +24,23 @@ function DoubleTapTabButton({
   onLongPress,
   accessibilityState,
   rootRoute,
+  requireAuth,
 }: {
   children: ReactNode;
   onPress?: () => void;
   onLongPress?: () => void;
   accessibilityState?: { selected?: boolean };
   rootRoute: string;
+  requireAuth?: boolean;
 }) {
   const router = useRouter();
   const [lastPress, setLastPress] = useState<number>(0);
 
   const handlePress = () => {
+    if (requireAuth && !authStore.isLoggedIn()) {
+      router.push('/auth/login');
+      return;
+    }
     const now = Date.now();
     if (accessibilityState?.selected && now - lastPress < 400) {
       router.replace(rootRoute);
@@ -132,7 +139,7 @@ export default function TabLayout() {
           title: languageStore.t('community'),
           tabBarIcon: ({ focused }) => <TabBarIcon name="community" focused={focused} />,
           tabBarButton: props => (
-            <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.community} />
+            <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.community} requireAuth />
           ),
         })}
       />

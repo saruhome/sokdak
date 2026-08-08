@@ -87,10 +87,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginTop: 32,
     gap: 11,
-    height: 158,
+    height: 187,
   },
-  jjaekiImg: { width: 69, height: 91, transform: [{ scaleX: -1 }] },
-  horangImg: { width: 102, height: 158 },
+  /* 원본 비율(255:300)에 맞춘 폭(77)이라 레터박스 없이 박스 바닥 = 발끝 */
+  jjaekiImg: { width: 77, height: 91, transform: [{ scaleX: -1 }] },
+  /* 콘텐츠 높이가 쨱이의 2배(83.1×2≈166)가 되도록 계산한 크기(원본 비율 217:400 유지).
+   * horang-full.png는 발밑에 투명 여백이 있어(45/400) 박스 바닥과 발끝이 안 맞아
+   * marginBottom 음수로 그 여백만큼 아래로 당겨 발끝을 쨱이와 맞춘다. */
+  horangImg: { width: 101, height: 187, marginBottom: -21 },
 
   socialSection: { width: '100%', maxWidth: 282, alignSelf: 'center', marginTop: 40, gap: 16 },
 
@@ -104,7 +108,7 @@ const styles = StyleSheet.create({
   /* ── 회원가입 링크 ── */
   signupRow: {
     flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'center', gap: 6, marginTop: 32,
+    justifyContent: 'center', gap: 6, marginTop: 8,
   },
   signupPrompt: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
   signupLink: { fontSize: 14, fontWeight: '600', color: Colors.navBar, textDecorationLine: 'underline' },

@@ -118,6 +118,11 @@ export default function HomeScreen() {
     heroPausedRef.current = false;
   };
 
+  /* 커뮤니티는 회원 전용 — 비로그인이면 목적지 대신 로그인 화면으로 보낸다 */
+  const openCommunity = (path: string) => {
+    router.push(authStore.isLoggedIn() ? path : '/auth/login');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Home (375×44, bg #52514e) — 실제 SokDak 워드마크 SVG */}
@@ -259,7 +264,7 @@ export default function HomeScreen() {
             <Text style={styles.sectionTitle}>{t('community')}</Text>
             <View style={styles.sectionSubRow}>
               <Text style={styles.sectionSub}>{t('communitySub')}</Text>
-              <TouchableOpacity style={styles.moreLink} onPress={() => router.push('/tabs/community')}>
+              <TouchableOpacity style={styles.moreLink} onPress={() => openCommunity('/tabs/community')}>
                 <Text style={styles.moreLinkText}>{t('moreLink')}</Text>
                 <Text style={styles.moreLinkArrow}>›</Text>
               </TouchableOpacity>
@@ -273,7 +278,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               key={post.id}
               style={[styles.postItem, i > 0 && styles.postItemBorder]}
-              onPress={() => router.push(`/tabs/community/${post.id}`)}
+              onPress={() => openCommunity(`/tabs/community/${post.id}`)}
               activeOpacity={0.75}
             >
               <View style={styles.postItemLeft}>
@@ -343,7 +348,7 @@ const styles = StyleSheet.create({
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
   },
   /* 태그→제목→소제목 간격을 오늘의 실전 표현 카드(exprRow)와 동일하게: gap 6 + 제목에 marginTop 2 */
-  heroContent: { gap: 6 },
+  heroContent: { gap: 6, marginBottom: 20 }, // heroCard는 justifyContent:'flex-end'라 marginBottom만큼 문구가 위로 올라감
   heroBadge: {
     alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2,
     borderRadius: 12,

@@ -22,6 +22,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { Star, Volume2, MessageCircle } from 'lucide-react-native';
 import { WordVideo } from '@/components/WordVideo';
 import { FocusIcon } from '@/components/icons/FocusIcon';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 const AVATAR_HORANG = require('../../../assets/characters/horang.png');
 const AVATAR_JJAEKI = require('../../../assets/characters/jjaeki.png');
@@ -107,7 +108,7 @@ export default function WordDetailScreen() {
       {/* ── TopAppBar ── */}
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.iconBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backIcon}>‹</Text>
+          <BackIcon size={24} color={Colors.navBarIconActive} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle} numberOfLines={1}>{word.word}</Text>
         <AppIcon
@@ -306,7 +307,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar,
   },
   iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.navBarIconActive, lineHeight: 34, marginTop: -2 },
   topBarTitle: { flex: 1, fontSize: 18, fontWeight: '600', color: Colors.navBarIconActive, textAlign: 'center' },
 
   scroll: { flex: 1 },

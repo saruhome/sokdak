@@ -9,6 +9,7 @@ import { safeGoBack } from '../../../constants/navigation';
 import { Toggle } from '@/components/Toggle';
 import { authStore, type NotificationPrefs } from '../../../constants/authStore';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 type NotificationKey = keyof NotificationPrefs;
 
@@ -114,7 +115,7 @@ export default function NotificationsScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backIcon}>‹</Text>
+          <BackIcon size={24} color={Colors.navBarIconActive} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{t('notificationSettings')}</Text>
         <View style={styles.backBtn} />
@@ -153,7 +154,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.navBarIconActive, lineHeight: 34 },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.navBarIconActive },
 
   scroll: { padding: 20, paddingBottom: 40 },

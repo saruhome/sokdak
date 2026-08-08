@@ -12,9 +12,10 @@ import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS, getBoardLabel, type PostBoard } from '../../../constants/mockPosts';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
-import { Camera, Link2, Type, Bold, Italic } from 'lucide-react-native';
+import { Camera, Link2, Type, Bold, Italic, Check } from 'lucide-react-native';
 import { authStore } from '../../../constants/authStore';
 import { createPost, fetchPost, updatePost, uploadPostImage } from '../../../constants/community';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 const BOARD_OPTIONS: PostBoard[] = ['궁금해요', 'Q&A', '질문하기'];
 
@@ -172,7 +173,7 @@ export default function WritePostScreen() {
         {/* ── TopAppBar – Figma: Navigation/TopAppBar/Write with Title(724:4248), state=작성 전/완료 */}
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.backBtn} onPress={handleCancel}>
-            <Text style={styles.backIcon}>‹</Text>
+            <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>{t('writeTitle')}</Text>
           <TouchableOpacity
@@ -219,7 +220,7 @@ export default function WritePostScreen() {
                     {opt === 'Q&A'      && t('boardDescQA')}
                     {opt === '질문하기' && t('boardDescAsk')}
                   </Text>
-                  {board === opt && <Text style={{ fontSize: 14, color: BOARD_COLORS[opt].fg }}>✓</Text>}
+                  {board === opt && <AppIcon icon={Check} size={16} color={BOARD_COLORS[opt].fg} />}
                 </TouchableOpacity>
               ))}
             </View>
@@ -358,7 +359,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34, marginTop: -2 },
   topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: Colors.textPrimary },
   submitBtn: { paddingHorizontal: 12, height: 44, alignItems: 'center', justifyContent: 'center' },
   submitText: { fontSize: 14, fontWeight: '600', color: Colors.textTertiary },

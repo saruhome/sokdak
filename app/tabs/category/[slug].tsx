@@ -1,14 +1,16 @@
 import { StyleSheet, View, SafeAreaView, TouchableOpacity } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { useLocalSearchParams, router } from 'expo-router';
-import { useMemo } from 'react';
+import { useLocalSearchParams, useFocusEffect, router } from 'expo-router';
+import { useCallback, useMemo } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { getCategoryBySlug, getCategoryName } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
+import { authStore } from '../../../constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
 import { WordListView } from '@/components/WordListView';
 import { Bell } from 'lucide-react-native';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 /** Figma: 229:11360 — 카테고리 상세.
  *  "카테고리로 걸러진 단어 목록"이라는 점에서 사전 화면과 동일해 WordListView를 공유하고,
@@ -18,6 +20,12 @@ export default function CategoryDetailScreen() {
   const t = languageStore.t;
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const category = getCategoryBySlug(slug);
+
+  /* 그리드 카드 탭은 이미 프리미엄 화면으로 우회시키지만, 딥링크·뒤로가기로 직접 들어오는
+   * 경로까지 막으려면 여기서도 한 번 더 확인해야 한다(커뮤니티 게이트와 동일한 이유) */
+  useFocusEffect(useCallback(() => {
+    if (category?.premiumOnly && !authStore.isPremium()) router.replace('/tabs/mypage/premium');
+  }, [category?.premiumOnly]));
 
   /* WordListView가 배열 재생성으로 매번 리셋되지 않도록 slug 기준으로 메모 */
   const initialCategorySlugs = useMemo(() => (slug ? [slug] : []), [slug]);
@@ -38,7 +46,7 @@ export default function CategoryDetailScreen() {
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar (375×44, bg #52514e) */}
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backIcon}>‹</Text>
+          <BackIcon size={24} color={Colors.navBarIconActive} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{getCategoryName(category, language)}</Text>
         <View style={styles.topBarBell}>
@@ -62,7 +70,6 @@ const styles = StyleSheet.create({
   },
   topBarTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   backBtn: { position: 'absolute', left: 6, width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.navBarIconActive, lineHeight: 34 },
   topBarBell: { position: 'absolute', right: 6, width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   /* Figma: data-badge="on" — 벨 아이콘 우측 상단 알림 점 */
   notifDot: {

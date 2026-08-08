@@ -15,8 +15,11 @@ export type Category = {
   colorBg: string;
   /** Figma "Catogory/{name}_2" — 텍스트/아이콘 전경 톤 */
   colorFg: string;
-  /** Figma "Selection/Card/Category" 에셋에서 추출한 카테고리별 일러스트 배경 */
-  image: number;
+  /** Figma "Selection/Card/Category" 에셋에서 추출한 카테고리별 일러스트 배경 —
+   * 신규 카테고리는 실사진 에셋이 없을 수 있어 optional(없으면 colorBg 단색 카드로 대체) */
+  image?: number;
+  /** true면 비프리미엄 유저는 카드 탭 시 프리미엄 업그레이드 화면으로 우회 */
+  premiumOnly?: boolean;
 };
 
 /**
@@ -34,6 +37,8 @@ export const CATEGORIES: Category[] = [
   { slug: 'consonant',       name: '초성\n모음집',    nameEn: 'Consonant\nSlang', nameJa: '子音字\nコレクション', nameVi: 'Bộ sưu tập\nphụ âm',    nameEs: 'Colección de\nconsonantes', emoji: '🔤', description: 'ㅋㅋ, ㅠㅠ 같은 초성 줄임말 모음',        colorBg: '#E8A880', colorFg: '#C85107', image: require('../assets/categories/consonant.jpg') },
   { slug: 'muhandoejeon',    name: '무한도전',        nameEn: 'Infinite\nChallenge', nameJa: '無限挑戦',          nameVi: 'Vô Hạn\nThử Thách',     nameEs: 'Desafío\nInfinito',    emoji: '😄',  description: '무한도전에서 비롯된 유행어',              colorBg: '#B0AEA8', colorFg: '#333333', image: require('../assets/categories/muhandoejeon.jpg') },
   { slug: 'outdated-slang',  name: '한물 간\n신조어',  nameEn: 'Outdated\nSlang',  nameJa: '古い\n新造語',          nameVi: 'Từ lóng\nlỗi thời',     nameEs: 'Jerga\npasada de moda', emoji: '🕰️', description: '한때 유행했지만 지금은 잘 안 쓰는 말',    colorBg: '#C8B898', colorFg: '#AF5B23', image: require('../assets/categories/outdated-slang.jpg') },
+  // ponytail: 전용 일러스트 에셋이 없어 단색 카드(colorBg)로 대체 — 실제 에셋 추출되면 image 필드 추가
+  { slug: 'slang',           name: '속어',            nameEn: 'Slang',           nameJa: '俗語',                  nameVi: 'Tiếng lóng',            nameEs: 'Jerga',                emoji: '🔥',  description: '거친 표현·비속어 등 실제 대화에서 쓰이는 속어', colorBg: '#3A3A3A', colorFg: '#E2B55D', premiumOnly: true },
 ];
 
 export function getCategoryBySlug(slug: string): Category | undefined {

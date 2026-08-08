@@ -11,7 +11,8 @@ import { CATEGORIES, getCategoryName } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { JjaekiQuestion } from '@/components/icons/JjaekiQuestion';
 import { AppIcon } from '@/components/AppIcon';
-import { Search, Mic, Clock } from 'lucide-react-native';
+import { Search, Mic, Clock, ChevronRight, X } from 'lucide-react-native';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 const RECOMMENDED_SLUGS = ['consonant', 'kpop', 'exclamation'];
 
@@ -59,7 +60,7 @@ export default function CategorySearchScreen() {
       {/* ── TopBar: 다크 헤더 + 검색 인풋 ── */}
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backIcon}>‹</Text>
+          <BackIcon size={24} color={Colors.navBarIconActive} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{t('categorySearchTitle')}</Text>
         <View style={styles.backBtn} />
@@ -112,7 +113,7 @@ export default function CategorySearchScreen() {
                   <Text style={styles.resultName}>{getCategoryName(item, language)}</Text>
                   <Text style={styles.resultDesc} numberOfLines={1}>{item.description}</Text>
                 </View>
-                <Text style={styles.resultArrow}>›</Text>
+                <AppIcon icon={ChevronRight} size={18} color={Colors.border} />
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -148,7 +149,7 @@ export default function CategorySearchScreen() {
                     <Text style={styles.recentText}>{term}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => removeRecent(term)} hitSlop={8}>
-                    <Text style={styles.recentRemove}>✕</Text>
+                    <AppIcon icon={X} size={14} color={Colors.textTertiary} />
                   </TouchableOpacity>
                 </View>
               ))
@@ -186,7 +187,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.navBarIconActive, lineHeight: 34 },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.navBarIconActive },
 
   searchBarWrap: { paddingHorizontal: 20, paddingVertical: 12 },
@@ -209,7 +209,6 @@ const styles = StyleSheet.create({
   },
   recentRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   recentText: { fontSize: 15, color: Colors.textPrimary },
-  recentRemove: { fontSize: 14, color: Colors.textTertiary, padding: 4 },
 
   chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   chip: { paddingHorizontal: 18, paddingVertical: 10, borderRadius: 20 },
@@ -230,5 +229,4 @@ const styles = StyleSheet.create({
   resultText: { flex: 1, gap: 2 },
   resultName: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
   resultDesc: { fontSize: 12, color: Colors.textTertiary },
-  resultArrow: { fontSize: 18, color: Colors.border },
 });

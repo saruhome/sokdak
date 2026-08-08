@@ -12,7 +12,7 @@ import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
 import { fetchUnreadNotificationCount } from '../../../constants/notifications';
 import { AppIcon } from '@/components/AppIcon';
-import { Search, Mic, Bell, Star, ChevronDown } from 'lucide-react-native';
+import { Search, Mic, Bell, Star, ChevronDown, Crown } from 'lucide-react-native';
 import { SCREEN_WIDTH } from '../../../constants/layout';
 
 const HORANG_ICON = require('../../../assets/Callout Card/image 146.png');
@@ -41,6 +41,7 @@ export default function CategoryScreen() {
   const [sortMode, setSortMode] = useState<SortMode>('인기순');
   const [, forceUpdate] = useState(0);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+  const [isPremium, setIsPremium] = useState(authStore.isPremium());
   const [words, setWords] = useState<Word[]>([]);
   /* 항상 같은(가장 인기 있는) 카테고리 대신, 잘 안 찾아보는 카테고리부터 랜덤하게 추천 —
    * 화면을 다시 열 때마다 바뀌도록 마운트당 한 번만 뽑고, 좋아요 토글 등 재렌더로는 안 바뀌게 고정한다. */
@@ -48,7 +49,13 @@ export default function CategoryScreen() {
 
   useFocusEffect(useCallback(() => {
     fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
+    setIsPremium(authStore.isPremium());
   }, []));
+
+  useEffect(() => {
+    const unsub = authStore.subscribe(() => setIsPremium(authStore.isPremium()));
+    return () => { unsub(); };
+  }, []);
 
   useEffect(() => {
     fetchWords().then(data => {
@@ -178,31 +185,42 @@ export default function CategoryScreen() {
         renderItem={({ item }) => {
           const liked = authStore.isCategoryLiked(item.slug);
           const labelColor = getCategoryLabelColor(item.colorBg, item.colorFg);
+          const locked = item.premiumOnly && !isPremium;
+          const CardBg: any = item.image ? ImageBackground : View;
+          const cardBgProps = item.image
+            ? { source: item.image, imageStyle: styles.cardBgImage, style: styles.cardBg }
+            : { style: [styles.cardBg, { backgroundColor: item.colorBg }] };
           return (
             <TouchableOpacity
               style={styles.categoryCard}
-              onPress={() => router.push(`/tabs/category/${item.slug}`)}
+              onPress={() => router.push(locked ? '/tabs/mypage/premium' : `/tabs/category/${item.slug}`)}
               activeOpacity={0.85}
             >
-              <ImageBackground source={item.image} style={styles.cardBg} imageStyle={styles.cardBgImage}>
+              <CardBg {...cardBgProps}>
                 <View style={styles.cardOverlay} />
                 <View style={styles.cardTopRow}>
                   <Image source={MIC_ICON} style={styles.micIcon} />
-                  <TouchableOpacity
-                  style={styles.likeBtn}
-                  onPress={e => {
-                    e.stopPropagation?.();
-                    handleToggleLike(item);
-                  }}
-                  hitSlop={8}
-                >
-                    <AppIcon
-                      icon={Star}
-                      size={24}
-                      color={Colors.textEmphasis}
-                      fill={liked ? ACTIVE_STAR_COLOR : 'none'}
-                    />
-                  </TouchableOpacity>
+                  {item.premiumOnly ? (
+                    <View style={styles.likeBtn}>
+                      <AppIcon icon={Crown} size={20} color={Colors.premium} />
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.likeBtn}
+                      onPress={e => {
+                        e.stopPropagation?.();
+                        handleToggleLike(item);
+                      }}
+                      hitSlop={8}
+                    >
+                      <AppIcon
+                        icon={Star}
+                        size={24}
+                        color={Colors.textEmphasis}
+                        fill={liked ? ACTIVE_STAR_COLOR : 'none'}
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
                 <View style={styles.cardTextWrap}>
                   <Text
@@ -214,7 +232,7 @@ export default function CategoryScreen() {
                     {getCategoryName(item, language)}
                   </Text>
                 </View>
-              </ImageBackground>
+              </CardBg>
             </TouchableOpacity>
           );
         }}

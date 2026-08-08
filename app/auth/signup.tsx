@@ -9,8 +9,9 @@ import { useState } from 'react';
 import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
 import { AppIcon } from '@/components/AppIcon';
-import { User, Mail, Lock, type LucideIcon } from 'lucide-react-native';
+import { User, Mail, Lock, Check, type LucideIcon } from 'lucide-react-native';
 import { authStore } from '../../constants/authStore';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 const JJAEKI_AVATAR = require('../../assets/characters/jjaeki.png');
 
@@ -78,7 +79,7 @@ function Checkbox({ checked, onToggle, label, required }: {
   return (
     <TouchableOpacity style={cb.row} onPress={onToggle} activeOpacity={0.7}>
       <View style={[cb.box, checked && cb.boxChecked]}>
-        {checked && <Text style={cb.check}>✓</Text>}
+        {checked && <AppIcon icon={Check} size={14} color="#fff" />}
       </View>
       <Text style={cb.label}>{label}</Text>
       {required && <Text style={cb.required}>(필수)</Text>}
@@ -94,7 +95,6 @@ const cb = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   boxChecked: { backgroundColor: Colors.navBar, borderColor: Colors.navBar },
-  check: { fontSize: 13, color: '#fff', fontWeight: '800' },
   label: { flex: 1, fontSize: 14, color: Colors.textPrimary },
   required: { fontSize: 12, color: Colors.error, fontWeight: '600' },
 });
@@ -166,7 +166,7 @@ export default function SignupScreen() {
         {/* ── TopAppBar ── Figma node 1293:20263 — 다크 헤더 */}
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-            <Text style={styles.backIcon}>‹</Text>
+            <BackIcon size={24} color={Colors.navBarIconActive} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>회원가입</Text>
           <View style={{ width: 44 }} />
@@ -281,7 +281,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8, backgroundColor: Colors.navBar,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.navBarIconActive, lineHeight: 34, marginTop: -2 },
   topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: Colors.navBarIconActive },
 
   scroll: { flex: 1 },

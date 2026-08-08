@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
 import { authStore } from '../../constants/authStore';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 const JJAEKI_AVATAR = require('../../assets/characters/jjaeki.png');
 
@@ -142,7 +143,7 @@ export default function EmailLoginScreen() {
             style={styles.backBtn}
             onPress={() => (mode === 'forgot' ? goBackToLogin() : safeGoBack())}
           >
-            <Text style={styles.backIcon}>‹</Text>
+            <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>{mode === 'login' ? '이메일로 로그인' : '비밀번호 찾기'}</Text>
           <View style={{ width: 44 }} />
@@ -276,7 +277,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34, marginTop: -2 },
   topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: Colors.textPrimary },
 
   scroll: { flex: 1 },

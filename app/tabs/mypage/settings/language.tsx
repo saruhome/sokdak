@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { Colors } from '../../../../constants/Colors';
 import { safeGoBack } from '../../../../constants/navigation';
 import { languageStore, type Language } from '../../../../constants/languageStore';
+import { BackIcon } from '@/components/icons/SocialIcons';
+import { AppIcon } from '@/components/AppIcon';
+import { Check } from 'lucide-react-native';
 
 const LANGUAGE_OPTIONS: { label: string; value: Language }[] = [
   { label: '한국어', value: 'ko' },
@@ -31,7 +34,7 @@ export default function LanguageSettingsScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backIcon}>‹</Text>
+          <BackIcon size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{languageStore.t('languageSettings')}</Text>
         <View style={styles.backBtn} />
@@ -48,7 +51,7 @@ export default function LanguageSettingsScreen() {
             <Text style={[styles.optionLabel, language === option.value && styles.optionLabelActive]}>
               {option.label}
             </Text>
-            {language === option.value && <Text style={styles.optionCheck}>✓</Text>}
+            {language === option.value && <AppIcon icon={Check} size={18} color={Colors.navBar} />}
           </TouchableOpacity>
         ))}
       </View>
@@ -63,7 +66,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34 },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
 
   content: { padding: 24, gap: 12 },
@@ -75,5 +77,4 @@ const styles = StyleSheet.create({
   optionRowActive: { borderColor: Colors.navBar },
   optionLabel: { fontSize: 15, color: Colors.textPrimary },
   optionLabelActive: { fontWeight: '700' },
-  optionCheck: { fontSize: 16, color: Colors.navBar },
 });

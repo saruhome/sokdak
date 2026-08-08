@@ -16,6 +16,7 @@ import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
 } from '@/components/WordFilterBar';
 import { Star, Volume2 } from 'lucide-react-native';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 const ACTIVE_STAR_COLOR = '#FACC15';
 
@@ -74,7 +75,7 @@ export default function SavedWordsScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backIcon}>‹</Text>
+          <BackIcon size={24} color={Colors.navBarIconActive} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{t('favoritesTitle')}</Text>
         <View style={styles.backBtn} />
@@ -215,7 +216,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.navBarIconActive, lineHeight: 34 },
   topBarTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
 
   content: { paddingBottom: 40 },

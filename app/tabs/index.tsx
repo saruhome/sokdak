@@ -19,7 +19,7 @@ import { languageStore, useLanguage } from '../../constants/languageStore';
 import { authStore } from '../../constants/authStore';
 import { SokDakLogo } from '@/components/icons/SokDakLogo';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Search, Bell, Eye, Heart, MessageCircle, Crown } from 'lucide-react-native';
+import { Search, Bell, Eye, Heart, MessageCircle, Crown, ChevronRight } from 'lucide-react-native';
 
 /** 날짜(YYYY-MM-DD)를 시드로 결정적 난수를 뽑아 오늘 하루 동안은 항상 같은 결과가 나오게 한다 */
 function pickDaily<T>(items: T[], count: number, seed: string): T[] {
@@ -226,7 +226,7 @@ export default function HomeScreen() {
                 onPress={() => router.push({ pathname: '/tabs/dictionary', params: { sort: 'recent' } })}
               >
                 <Text style={styles.moreLinkText}>{t('moreLink')}</Text>
-                <Text style={styles.moreLinkArrow}>›</Text>
+                <AppIcon icon={ChevronRight} size={14} color={Colors.textSecondary} />
               </TouchableOpacity>
             </View>
           </View>
@@ -266,7 +266,7 @@ export default function HomeScreen() {
               <Text style={styles.sectionSub}>{t('communitySub')}</Text>
               <TouchableOpacity style={styles.moreLink} onPress={() => openCommunity('/tabs/community')}>
                 <Text style={styles.moreLinkText}>{t('moreLink')}</Text>
-                <Text style={styles.moreLinkArrow}>›</Text>
+                <AppIcon icon={ChevronRight} size={14} color={Colors.textSecondary} />
               </TouchableOpacity>
             </View>
           </View>
@@ -381,7 +381,6 @@ const styles = StyleSheet.create({
   sectionSub: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined, flexShrink: 1 },
   moreLink: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   moreLinkText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  moreLinkArrow: { fontSize: 14, color: Colors.textSecondary, fontFamily: undefined },
 
   /* 오늘의 실전 표현 카드 */
   exprCard: {

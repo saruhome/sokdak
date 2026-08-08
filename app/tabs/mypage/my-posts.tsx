@@ -12,6 +12,7 @@ import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle, Pencil, Bookmark } from 'lucide-react-native';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 type ActivityTab = 'written' | 'commented' | 'liked' | 'saved';
 
@@ -57,7 +58,7 @@ export default function MyPostsScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backIcon}>‹</Text>
+          <BackIcon size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{t('myActivity')}</Text>
         <View style={styles.backBtn} />
@@ -137,7 +138,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34 },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
 
   tabs: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: Colors.divider },

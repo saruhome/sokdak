@@ -10,6 +10,7 @@ import { safeGoBack } from '../../../constants/navigation';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
+import { BackIcon } from '@/components/icons/SocialIcons';
 import {
   Crown, Infinity as InfinityIcon, Download, MapPin, RotateCcw, Sparkles, Gem,
 } from 'lucide-react-native';
@@ -57,7 +58,7 @@ export default function PremiumScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backIcon}>‹</Text>
+          <BackIcon size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{t('premiumTitle')}</Text>
         <View style={styles.backBtn} />
@@ -111,7 +112,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34 },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
 
   scroll: { padding: 24, paddingBottom: 40 },

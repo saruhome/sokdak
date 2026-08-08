@@ -14,7 +14,8 @@ import { fetchPosts, type CommunityPostSummary } from '../../constants/community
 import { CATEGORIES, getCategoryBySlug } from '../../constants/categories';
 import { authStore } from '../../constants/authStore';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Search, BookOpen, Heart, Star, Eye, MessageCircle, Inbox } from 'lucide-react-native';
+import { Search, BookOpen, Heart, Star, Eye, MessageCircle, Inbox, X } from 'lucide-react-native';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 type ResultTab = 'word' | 'community';
 
@@ -108,7 +109,7 @@ export default function SearchScreen() {
       {/* ── TopBar: 뒤로가기 + 검색 인풋 ── */}
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-          <Text style={styles.backIcon}>‹</Text>
+          <BackIcon size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
         <TextInput
           style={styles.searchInput}
@@ -149,7 +150,7 @@ export default function SearchScreen() {
                       <Text style={styles.recentChipText}>{term}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => removeRecent(term)} hitSlop={8}>
-                      <Text style={styles.recentChipRemove}>✕</Text>
+                      <AppIcon icon={X} size={11} color={Colors.textTertiary} />
                     </TouchableOpacity>
                   </View>
                 ))}
@@ -359,7 +360,6 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34 },
   searchInput: {
     flex: 1,
     height: 36,
@@ -388,7 +388,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
   },
   recentChipText: { fontSize: 13, color: Colors.textPrimary },
-  recentChipRemove: { fontSize: 11, color: Colors.textTertiary },
 
   popularRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, gap: 12 },
   popularRank: { width: 18, fontSize: 13, fontWeight: '700', color: Colors.textTertiary },

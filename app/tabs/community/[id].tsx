@@ -21,7 +21,7 @@ import { AppIcon, IconStat } from '@/components/AppIcon';
 import { PostRichText } from '@/components/PostRichText';
 import {
   Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye,
-  Pencil, Trash2, Flag, Ban, ChevronLeft,
+  Pencil, Trash2, Flag, Ban, ChevronLeft, X,
 } from 'lucide-react-native';
 
 const ACTIVE_STAR_COLOR = '#FACC15';
@@ -521,7 +521,7 @@ export default function PostDetailScreen() {
             <View style={styles.replyingBanner}>
               <Text style={styles.replyingText}>{t('replyingLabel')}</Text>
               <TouchableOpacity onPress={() => { setReplyingTo(null); setCommentText(''); }}>
-                <Text style={styles.replyingClose}>✕</Text>
+                <AppIcon icon={X} size={14} color={Colors.textTertiary} />
               </TouchableOpacity>
             </View>
           )}
@@ -832,7 +832,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   replyingText: { flex: 1, fontSize: 12, color: Colors.navBar, fontWeight: '600' },
-  replyingClose: { fontSize: 14, color: Colors.textTertiary, padding: 4 },
   commentInputRow: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 12, paddingVertical: 8, gap: 8,

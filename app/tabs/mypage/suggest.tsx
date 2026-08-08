@@ -12,6 +12,7 @@ import { CATEGORIES, getCategoryName } from '../../../constants/categories';
 import { authStore } from '../../../constants/authStore';
 import { submitWordSuggestion } from '../../../constants/suggestions';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 /** Figma: 229:3332(입력 전) / 229:3342(입력 후) — 신조어 제안 폼
  * word_suggestions 테이블에 실제로 저장됨 — 운영팀은 Supabase 대시보드에서 검토 */
@@ -62,7 +63,7 @@ export default function SuggestScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-            <Text style={styles.backIcon}>‹</Text>
+            <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>{t('suggestTitle')}</Text>
           <View style={styles.backBtn} />
@@ -107,7 +108,7 @@ export default function SuggestScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-            <Text style={styles.backIcon}>‹</Text>
+            <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>{t('suggestTitle')}</Text>
           <View style={styles.backBtn} />
@@ -211,7 +212,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34 },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
 
   scroll: { padding: 24, paddingBottom: 100 },

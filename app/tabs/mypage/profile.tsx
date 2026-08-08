@@ -12,6 +12,7 @@ import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
+import { BackIcon } from '@/components/icons/SocialIcons';
 
 /** featured: 기본으로 노출 — 한국·일본 다음으로 한국어 학습 인구가 많은 8개국 (세종학당 수강생 통계 기준) */
 const COUNTRY_OPTIONS = [
@@ -187,7 +188,7 @@ export default function ProfileScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
-            <Text style={styles.backIcon}>‹</Text>
+            <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>{t('myInfoTitle')}</Text>
           <TouchableOpacity
@@ -305,7 +306,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { fontSize: 28, color: Colors.textPrimary, lineHeight: 34 },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
   saveBtn: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 16, backgroundColor: Colors.border, marginRight: 4 },
   saveBtnText: { fontSize: 14, fontWeight: '700', color: Colors.textTertiary },

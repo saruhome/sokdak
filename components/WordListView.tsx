@@ -98,10 +98,18 @@ export function WordListView({
     return filtered.filter(w => getInitialConsonant(w.word) === consonant);
   }, [filtered, showConsonantRow, consonant]);
 
-  /* 비로그인도 즐겨찾기 가능 — 세션 동안 유지되고 로그인 시 계정으로 이관된다(authStore).
-   * 저장 해제는 한도와 무관하게 항상 허용, 새로 저장할 때만 무료 한도(FREE_WORD_SAVE_LIMIT) 체크. */
+  /* 단어 저장은 회원 전용(무료 회원 최대 FREE_WORD_SAVE_LIMIT개, 프리미엄 무제한).
+   * 저장 해제는 한도와 무관하게 항상 허용, 새로 저장할 때만 로그인·한도 체크. */
   const toggleSave = (id: string) => {
-    if (!authStore.isWordSaved(id) && !authStore.canSaveMoreWords()) {
+    const alreadySaved = authStore.isWordSaved(id);
+    if (!alreadySaved && !authStore.isLoggedIn()) {
+      Alert.alert(t('loginRequiredTitle'), t('loginRequiredSave'), [
+        { text: t('cancelLabel'), style: 'cancel' },
+        { text: t('goToLogin'), onPress: () => router.push('/auth/login') },
+      ]);
+      return;
+    }
+    if (!alreadySaved && !authStore.canSaveMoreWords()) {
       Alert.alert(t('saveLimitReachedTitle'), t('saveLimitReachedMessage'));
       return;
     }

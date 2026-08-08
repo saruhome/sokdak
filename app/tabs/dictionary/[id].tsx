@@ -58,6 +58,16 @@ export default function WordDetailScreen() {
     }, [word]),
   );
 
+  /* 속어 등 프리미엄 전용 카테고리 단어는 상세 진입 자체를 막는다 —
+   * 카테고리 그리드/상세 화면과 동일한 게이트(app/tabs/category/[slug].tsx 참고) */
+  useFocusEffect(
+    useCallback(() => {
+      if (word && getCategoryBySlug(word.category)?.premiumOnly && !authStore.isPremium()) {
+        router.replace('/tabs/mypage/premium');
+      }
+    }, [word]),
+  );
+
   if (word === undefined) {
     return (
       <SafeAreaView style={styles.notFound}>
@@ -92,9 +102,16 @@ export default function WordDetailScreen() {
     ? word.romanization
     : `${word.romanization} · ${koreanReading}`;
 
-  /* 비로그인도 즐겨찾기 가능 — 세션 동안 유지되고 로그인 시 계정으로 이관된다(authStore).
-   * 저장 해제는 한도와 무관하게 항상 허용, 새로 저장할 때만 무료 한도 체크. */
+  /* 단어 저장은 회원 전용(무료 회원 최대 3개, 프리미엄 무제한).
+   * 저장 해제는 한도와 무관하게 항상 허용, 새로 저장할 때만 로그인·한도 체크. */
   const handleSave = () => {
+    if (!saved && !authStore.isLoggedIn()) {
+      Alert.alert(t('loginRequiredTitle'), t('loginRequiredSave'), [
+        { text: t('cancelLabel'), style: 'cancel' },
+        { text: t('goToLogin'), onPress: () => router.push('/auth/login') },
+      ]);
+      return;
+    }
     if (!saved && !authStore.canSaveMoreWords()) {
       Alert.alert(t('saveLimitReachedTitle'), t('saveLimitReachedMessage'));
       return;

@@ -62,7 +62,15 @@ type TranslationKey =
   | 'myInquiriesTitle'
   | 'inquiryPlaceholder'
   | 'inquirySubmitBtn'
-  | 'inquirySubmittedAlert'
+  | 'inquiryTypeLabel'
+  | 'inquiryTypePlaceholder'
+  | 'inquiryContentLabel'
+  | 'inquirySubmittedTitle'
+  | 'inquirySubmittedSub'
+  | 'inquiryReceiptTypeLabel'
+  | 'inquiryReceiptNumberLabel'
+  | 'inquiryReceiptEtaLabel'
+  | 'inquiryEtaValue'
   | 'inquiryEmptyText'
   | 'inquiryStatusOpen'
   | 'inquiryStatusAnswered'
@@ -111,6 +119,13 @@ type TranslationKey =
   | 'loginRequiredTitle'
   | 'loginRequiredLike'
   | 'loginRequiredComment'
+  | 'loginRequiredSave'
+  | 'loginRequiredCategoryLike'
+  | 'loginRequiredTts'
+  | 'categoryLikeLimitReachedTitle'
+  | 'categoryLikeLimitReachedMessage'
+  | 'ttsLimitReachedTitle'
+  | 'ttsLimitReachedMessage'
   | 'cancelLabel'
   | 'goToLogin'
   | 'commentFailedTitle'
@@ -327,9 +342,17 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     contactMailUnavailableTitle: '메일 앱을 열 수 없어요',
     contactMailUnavailableBody: 'support@sokdak.app 으로 직접 문의해주세요.',
     myInquiriesTitle: '내 문의 내역',
-    inquiryPlaceholder: '문의 내용을 입력해주세요',
-    inquirySubmitBtn: '문의 보내기',
-    inquirySubmittedAlert: '문의가 접수됐어요. 답변이 오면 여기서 확인할 수 있어요.',
+    inquiryPlaceholder: '문의 내용을 입력하세요',
+    inquirySubmitBtn: '제출하기',
+    inquiryTypeLabel: '문의 유형',
+    inquiryTypePlaceholder: '유형을 선택하세요',
+    inquiryContentLabel: '문의 내용',
+    inquirySubmittedTitle: '문의가 접수됐어요!',
+    inquirySubmittedSub: '영업일 기준 1~2일 내에 이메일로 답변 드릴게요.',
+    inquiryReceiptTypeLabel: '유형',
+    inquiryReceiptNumberLabel: '접수번호',
+    inquiryReceiptEtaLabel: '예상 답변',
+    inquiryEtaValue: '영업일 1~2일',
     inquiryEmptyText: '아직 보낸 문의가 없어요',
     inquiryStatusOpen: '답변 대기',
     inquiryStatusAnswered: '답변 완료',
@@ -378,6 +401,13 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     loginRequiredTitle: '로그인이 필요해요',
     loginRequiredLike: '좋아요를 누르려면 먼저 로그인해주세요.',
     loginRequiredComment: '댓글을 작성하려면 먼저 로그인해주세요.',
+    loginRequiredSave: '단어를 저장하려면 먼저 로그인해주세요.',
+    loginRequiredCategoryLike: '카테고리를 즐겨찾기하려면 먼저 로그인해주세요.',
+    loginRequiredTts: '발음 듣기는 로그인 후 이용할 수 있어요.',
+    categoryLikeLimitReachedTitle: '즐겨찾기 한도에 도달했어요',
+    categoryLikeLimitReachedMessage: '무료 회원은 카테고리를 최대 2개까지 즐겨찾기할 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 즐겨찾기할 수 있어요.',
+    ttsLimitReachedTitle: '오늘 발음 듣기를 다 썼어요',
+    ttsLimitReachedMessage: '무료 회원은 하루 3개까지 발음을 들을 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 들을 수 있어요.',
     cancelLabel: '취소',
     goToLogin: '로그인하러 가기',
     commentFailedTitle: '댓글 등록 실패',
@@ -524,7 +554,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     premiumActivatedAlert: '프리미엄이 활성화됐어요!',
     premiumComingSoonNote: '실제 결제는 준비 중이에요. 지금은 체험판으로 먼저 만나보세요.',
     saveLimitReachedTitle: '저장 한도에 도달했어요',
-    saveLimitReachedMessage: '무료 회원은 단어를 최대 15개까지 저장할 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 저장할 수 있어요.',
+    saveLimitReachedMessage: '무료 회원은 단어를 최대 3개까지 저장할 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 저장할 수 있어요.',
     dictionaryPremiumBannerText: '무제한 저장 · 오프라인 사전은 프리미엄에서',
 
     todayExpressionTitle: '오늘의 실전 표현',
@@ -594,8 +624,16 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     contactMailUnavailableBody: 'Please reach us directly at support@sokdak.app.',
     myInquiriesTitle: 'My Inquiries',
     inquiryPlaceholder: 'Type your inquiry here',
-    inquirySubmitBtn: 'Send Inquiry',
-    inquirySubmittedAlert: "Your inquiry has been sent. You'll see the reply here once we answer.",
+    inquirySubmitBtn: 'Submit',
+    inquiryTypeLabel: 'Inquiry type',
+    inquiryTypePlaceholder: 'Select a type',
+    inquiryContentLabel: 'Details',
+    inquirySubmittedTitle: 'Your inquiry is in!',
+    inquirySubmittedSub: "We'll reply by email within 1–2 business days.",
+    inquiryReceiptTypeLabel: 'Type',
+    inquiryReceiptNumberLabel: 'Reference #',
+    inquiryReceiptEtaLabel: 'Expected reply',
+    inquiryEtaValue: '1–2 business days',
     inquiryEmptyText: "You haven't sent any inquiries yet",
     inquiryStatusOpen: 'Awaiting reply',
     inquiryStatusAnswered: 'Answered',
@@ -644,6 +682,13 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     loginRequiredTitle: 'Login required',
     loginRequiredLike: 'Please log in to like this post.',
     loginRequiredComment: 'Please log in to write a comment.',
+    loginRequiredSave: 'Please log in to save this word.',
+    loginRequiredCategoryLike: 'Please log in to favorite this category.',
+    loginRequiredTts: 'Log in to listen to pronunciations.',
+    categoryLikeLimitReachedTitle: "You've reached your favorites limit",
+    categoryLikeLimitReachedMessage: 'Free members can favorite up to 2 categories. Upgrade to Premium for unlimited favorites.',
+    ttsLimitReachedTitle: "You've used today's pronunciation plays",
+    ttsLimitReachedMessage: 'Free members can listen to 3 pronunciations a day. Upgrade to Premium for unlimited listening.',
     cancelLabel: 'Cancel',
     goToLogin: 'Go to login',
     commentFailedTitle: 'Failed to post comment',
@@ -790,7 +835,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     premiumActivatedAlert: 'Premium is now active!',
     premiumComingSoonNote: 'Real payment is coming soon. Try it as a trial for now.',
     saveLimitReachedTitle: "You've reached your save limit",
-    saveLimitReachedMessage: 'Free members can save up to 15 words. Upgrade to Premium for unlimited saves.',
+    saveLimitReachedMessage: 'Free members can save up to 3 words. Upgrade to Premium for unlimited saves.',
     dictionaryPremiumBannerText: 'Unlimited saves & offline dictionary with Premium',
 
     todayExpressionTitle: "Today's Real-Life Expression",
@@ -860,8 +905,16 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     contactMailUnavailableBody: 'support@sokdak.app まで直接お問い合わせください。',
     myInquiriesTitle: '問い合わせ履歴',
     inquiryPlaceholder: 'お問い合わせ内容を入力してください',
-    inquirySubmitBtn: '問い合わせを送る',
-    inquirySubmittedAlert: 'お問い合わせを受け付けました。回答が届くとここで確認できます。',
+    inquirySubmitBtn: '送信する',
+    inquiryTypeLabel: '問い合わせ種類',
+    inquiryTypePlaceholder: '種類を選択してください',
+    inquiryContentLabel: '問い合わせ内容',
+    inquirySubmittedTitle: 'お問い合わせを受け付けました！',
+    inquirySubmittedSub: '営業日基準1〜2日以内にメールで回答いたします。',
+    inquiryReceiptTypeLabel: '種類',
+    inquiryReceiptNumberLabel: '受付番号',
+    inquiryReceiptEtaLabel: '回答予定',
+    inquiryEtaValue: '営業日1〜2日',
     inquiryEmptyText: 'まだ送った問い合わせがありません',
     inquiryStatusOpen: '回答待ち',
     inquiryStatusAnswered: '回答済み',
@@ -910,6 +963,13 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     loginRequiredTitle: 'ログインが必要です',
     loginRequiredLike: 'いいねをするにはログインしてください。',
     loginRequiredComment: 'コメントを書くにはログインしてください。',
+    loginRequiredSave: '単語を保存するにはログインしてください。',
+    loginRequiredCategoryLike: 'カテゴリーをお気に入りにするにはログインしてください。',
+    loginRequiredTts: '発音を聞くにはログインが必要です。',
+    categoryLikeLimitReachedTitle: 'お気に入り上限に達しました',
+    categoryLikeLimitReachedMessage: '無料会員はカテゴリーを最大2個までお気に入りにできます。プレミアムにアップグレードすると無制限にお気に入りにできます。',
+    ttsLimitReachedTitle: '本日の発音再生回数を使い切りました',
+    ttsLimitReachedMessage: '無料会員は1日3回まで発音を聞けます。プレミアムにアップグレードすると無制限に聞けます。',
     cancelLabel: 'キャンセル',
     goToLogin: 'ログインする',
     commentFailedTitle: 'コメントの投稿に失敗しました',
@@ -1056,7 +1116,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     premiumActivatedAlert: 'プレミアムが有効になりました！',
     premiumComingSoonNote: '実際の決済は準備中です。今はお試し版でご利用ください。',
     saveLimitReachedTitle: '保存上限に達しました',
-    saveLimitReachedMessage: '無料会員は単語を最大15個まで保存できます。プレミアムにアップグレードすると無制限に保存できます。',
+    saveLimitReachedMessage: '無料会員は単語を最大3個まで保存できます。プレミアムにアップグレードすると無制限に保存できます。',
     dictionaryPremiumBannerText: '無制限保存・オフライン辞書はプレミアムで',
 
     todayExpressionTitle: '今日の実践表現',
@@ -1126,8 +1186,16 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     contactMailUnavailableBody: 'Vui lòng liên hệ trực tiếp qua support@sokdak.app.',
     myInquiriesTitle: 'Yêu cầu của tôi',
     inquiryPlaceholder: 'Nhập nội dung yêu cầu của bạn',
-    inquirySubmitBtn: 'Gửi yêu cầu',
-    inquirySubmittedAlert: 'Yêu cầu của bạn đã được gửi. Bạn sẽ thấy câu trả lời ở đây khi có.',
+    inquirySubmitBtn: 'Gửi',
+    inquiryTypeLabel: 'Loại yêu cầu',
+    inquiryTypePlaceholder: 'Chọn loại yêu cầu',
+    inquiryContentLabel: 'Nội dung yêu cầu',
+    inquirySubmittedTitle: 'Yêu cầu của bạn đã được gửi!',
+    inquirySubmittedSub: 'Chúng tôi sẽ trả lời qua email trong 1-2 ngày làm việc.',
+    inquiryReceiptTypeLabel: 'Loại',
+    inquiryReceiptNumberLabel: 'Mã yêu cầu',
+    inquiryReceiptEtaLabel: 'Thời gian phản hồi dự kiến',
+    inquiryEtaValue: '1-2 ngày làm việc',
     inquiryEmptyText: 'Bạn chưa gửi yêu cầu nào',
     inquiryStatusOpen: 'Đang chờ trả lời',
     inquiryStatusAnswered: 'Đã trả lời',
@@ -1176,6 +1244,13 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     loginRequiredTitle: 'Cần đăng nhập',
     loginRequiredLike: 'Vui lòng đăng nhập để thích bài viết này.',
     loginRequiredComment: 'Vui lòng đăng nhập để viết bình luận.',
+    loginRequiredSave: 'Vui lòng đăng nhập để lưu từ này.',
+    loginRequiredCategoryLike: 'Vui lòng đăng nhập để yêu thích danh mục này.',
+    loginRequiredTts: 'Đăng nhập để nghe phát âm.',
+    categoryLikeLimitReachedTitle: 'Bạn đã đạt giới hạn yêu thích',
+    categoryLikeLimitReachedMessage: 'Thành viên miễn phí chỉ yêu thích được tối đa 2 danh mục. Nâng cấp Premium để yêu thích không giới hạn.',
+    ttsLimitReachedTitle: 'Bạn đã dùng hết lượt nghe phát âm hôm nay',
+    ttsLimitReachedMessage: 'Thành viên miễn phí chỉ nghe được 3 lượt phát âm mỗi ngày. Nâng cấp Premium để nghe không giới hạn.',
     cancelLabel: 'Hủy',
     goToLogin: 'Đến trang đăng nhập',
     commentFailedTitle: 'Đăng bình luận thất bại',
@@ -1322,7 +1397,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     premiumActivatedAlert: 'Premium đã được kích hoạt!',
     premiumComingSoonNote: 'Thanh toán thật đang được chuẩn bị. Hãy dùng thử miễn phí trước nhé.',
     saveLimitReachedTitle: 'Bạn đã đạt giới hạn lưu từ',
-    saveLimitReachedMessage: 'Thành viên miễn phí chỉ lưu được tối đa 15 từ. Nâng cấp Premium để lưu không giới hạn.',
+    saveLimitReachedMessage: 'Thành viên miễn phí chỉ lưu được tối đa 3 từ. Nâng cấp Premium để lưu không giới hạn.',
     dictionaryPremiumBannerText: 'Lưu không giới hạn & từ điển ngoại tuyến với Premium',
 
     todayExpressionTitle: 'Cụm từ thực tế hôm nay',
@@ -1392,8 +1467,16 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     contactMailUnavailableBody: 'Contáctanos directamente en support@sokdak.app.',
     myInquiriesTitle: 'Mis consultas',
     inquiryPlaceholder: 'Escribe tu consulta aquí',
-    inquirySubmitBtn: 'Enviar consulta',
-    inquirySubmittedAlert: 'Tu consulta fue enviada. Verás la respuesta aquí cuando la tengamos.',
+    inquirySubmitBtn: 'Enviar',
+    inquiryTypeLabel: 'Tipo de consulta',
+    inquiryTypePlaceholder: 'Selecciona un tipo',
+    inquiryContentLabel: 'Detalles de la consulta',
+    inquirySubmittedTitle: '¡Tu consulta fue enviada!',
+    inquirySubmittedSub: 'Te responderemos por correo en 1-2 días hábiles.',
+    inquiryReceiptTypeLabel: 'Tipo',
+    inquiryReceiptNumberLabel: 'N.º de referencia',
+    inquiryReceiptEtaLabel: 'Respuesta estimada',
+    inquiryEtaValue: '1-2 días hábiles',
     inquiryEmptyText: 'Todavía no has enviado ninguna consulta',
     inquiryStatusOpen: 'Esperando respuesta',
     inquiryStatusAnswered: 'Respondida',
@@ -1442,6 +1525,13 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     loginRequiredTitle: 'Inicio de sesión requerido',
     loginRequiredLike: 'Inicia sesión para darle me gusta a esta publicación.',
     loginRequiredComment: 'Inicia sesión para escribir un comentario.',
+    loginRequiredSave: 'Inicia sesión para guardar esta palabra.',
+    loginRequiredCategoryLike: 'Inicia sesión para marcar esta categoría como favorita.',
+    loginRequiredTts: 'Inicia sesión para escuchar la pronunciación.',
+    categoryLikeLimitReachedTitle: 'Has alcanzado tu límite de favoritos',
+    categoryLikeLimitReachedMessage: 'Los miembros gratuitos pueden marcar hasta 2 categorías como favoritas. Mejora a Premium para favoritos ilimitados.',
+    ttsLimitReachedTitle: 'Has agotado tus reproducciones de hoy',
+    ttsLimitReachedMessage: 'Los miembros gratuitos pueden escuchar 3 pronunciaciones al día. Mejora a Premium para escuchar sin límite.',
     cancelLabel: 'Cancelar',
     goToLogin: 'Ir a iniciar sesión',
     commentFailedTitle: 'Error al publicar el comentario',
@@ -1588,7 +1678,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     premiumActivatedAlert: '¡Premium está activado!',
     premiumComingSoonNote: 'El pago real está en camino. Por ahora, pruébalo gratis.',
     saveLimitReachedTitle: 'Has alcanzado tu límite de guardado',
-    saveLimitReachedMessage: 'Los miembros gratuitos pueden guardar hasta 15 palabras. Mejora a Premium para guardado ilimitado.',
+    saveLimitReachedMessage: 'Los miembros gratuitos pueden guardar hasta 3 palabras. Mejora a Premium para guardado ilimitado.',
     dictionaryPremiumBannerText: 'Guardado ilimitado y diccionario sin conexión con Premium',
 
     todayExpressionTitle: 'Expresión real de hoy',

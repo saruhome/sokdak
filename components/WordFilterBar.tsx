@@ -1,12 +1,13 @@
-import { StyleSheet, View, Modal, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { useState } from 'react';
 import { Colors, getCategoryLabelColor, getReadableTextColor } from '@/constants/Colors';
 import { CATEGORIES, getCategoryBySlug, getCategoryName } from '@/constants/categories';
 import { languageStore, useLanguage } from '@/constants/languageStore';
-import { SCREEN_WIDTH } from '@/constants/layout';
+import { SCREEN_HEIGHT } from '@/constants/layout';
 import { type Word } from '@/constants/words';
 import { AppIcon } from '@/components/AppIcon';
+import { BottomSheet } from '@/components/BottomSheet';
 import { ChevronDown, List, X, RotateCcw } from 'lucide-react-native';
 
 export const SORT_TABS = ['인기순', '최신순', 'ㄱㄴㄷ순'] as const;
@@ -130,61 +131,57 @@ export function WordFilterBar({
       )}
 
       {/* Figma: Filter/Category/Bottom sheet — 아래에서 올라오고, 바깥을 누르면 닫힌다 */}
-      <Modal visible={pickerOpen} transparent animationType="slide" onRequestClose={() => setPickerOpen(false)}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setPickerOpen(false)}>
-          <TouchableOpacity style={styles.modalSheet} activeOpacity={1}>
-            <View style={styles.grabHandle} />
-            <View style={styles.modalHint}>
-              <Text style={styles.modalHintText} numberOfLines={1}>{t('modalHint')}</Text>
-            </View>
+      <BottomSheet visible={pickerOpen} onClose={() => setPickerOpen(false)} panelStyle={styles.modalSheet}>
+        <View style={styles.grabHandle} />
+        <View style={styles.modalHint}>
+          <Text style={styles.modalHintText} numberOfLines={1}>{t('modalHint')}</Text>
+        </View>
 
-            <ScrollView contentContainerStyle={styles.chipGrid}>
-              <View style={styles.chipGridHeader}>
-                <Text style={styles.chipGridTitle}>{t('categoryFilterLabel')}</Text>
-                <Text style={styles.chipCount}>
-                  {categorySlugs.length}
-                  <Text style={styles.chipCountTotal}>/{CATEGORIES.length}</Text>
-                </Text>
-              </View>
-              <View style={styles.chipGridRow}>
-                {CATEGORIES.map(c => {
-                  const on = categorySlugs.includes(c.slug);
-                  return (
-                    <TouchableOpacity
-                      key={c.slug}
-                      style={[styles.pickChip, on && { backgroundColor: c.colorBg, borderColor: c.colorBg }]}
-                      onPress={() => onToggleCategory(c.slug)}
-                      activeOpacity={0.8}
-                    >
-                      <Text
-                        style={[
-                          styles.pickChipText,
-                          { color: on ? getReadableTextColor(c.colorBg) : getCategoryLabelColor(c.colorBg, c.colorFg) },
-                        ]}
-                        numberOfLines={1}
-                      >
-                        {getCategoryName(c, language)}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </ScrollView>
+        <ScrollView contentContainerStyle={styles.chipGrid}>
+          <View style={styles.chipGridHeader}>
+            <Text style={styles.chipGridTitle}>{t('categoryFilterLabel')}</Text>
+            <Text style={styles.chipCount}>
+              {categorySlugs.length}
+              <Text style={styles.chipCountTotal}>/{CATEGORIES.length}</Text>
+            </Text>
+          </View>
+          <View style={styles.chipGridRow}>
+            {CATEGORIES.map(c => {
+              const on = categorySlugs.includes(c.slug);
+              return (
+                <TouchableOpacity
+                  key={c.slug}
+                  style={[styles.pickChip, on && { backgroundColor: c.colorBg, borderColor: c.colorBg }]}
+                  onPress={() => onToggleCategory(c.slug)}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={[
+                      styles.pickChipText,
+                      { color: on ? getReadableTextColor(c.colorBg) : getCategoryLabelColor(c.colorBg, c.colorFg) },
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {getCategoryName(c, language)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
 
-            <View style={styles.modalFooter}>
-              <TouchableOpacity style={styles.modalReset} onPress={onClearCategories}>
-                <AppIcon icon={RotateCcw} size={16} color={Colors.textTertiary} />
-                <Text style={styles.modalResetText}>{t('resetLabel')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modalApply} onPress={() => setPickerOpen(false)}>
-                <Text style={styles.modalApplyText}>
-                  {language === 'ko' ? `총 ${categorySlugs.length}개 적용하기` : `${t('applyLabel')} ${categorySlugs.length}`}
-                </Text>
-              </TouchableOpacity>
-            </View>
+        <View style={styles.modalFooter}>
+          <TouchableOpacity style={styles.modalReset} onPress={onClearCategories}>
+            <AppIcon icon={RotateCcw} size={16} color={Colors.textTertiary} />
+            <Text style={styles.modalResetText}>{t('resetLabel')}</Text>
           </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+          <TouchableOpacity style={styles.modalApply} onPress={() => setPickerOpen(false)}>
+            <Text style={styles.modalApplyText}>
+              {language === 'ko' ? `총 ${categorySlugs.length}개 적용하기` : `${t('applyLabel')} ${categorySlugs.length}`}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheet>
     </>
   );
 }
@@ -229,19 +226,14 @@ const styles = StyleSheet.create({
   consonantChipText: { fontSize: 13, color: Colors.textSecondary, fontFamily: undefined },
   consonantChipTextActive: { color: Colors.navBarIconActive, fontWeight: '700' },
 
-  /* Figma 인터랙션: 배경 검정 25% + 바깥 탭으로 닫기.
-   * RN Modal은 웹에서 DeviceFrame(360px 고정 프레임) 밖 document.body로 그대로 포탈되므로
-   * width를 SCREEN_WIDTH로 잡고 가운데 정렬해야 프레임과 같은 폭으로 보인다(네이티브에선
-   * SCREEN_WIDTH가 실제 기기 폭이라 기존과 동일하게 꽉 채운다). */
-  modalBackdrop: {
-    flex: 1, width: '100%', maxWidth: SCREEN_WIDTH, alignSelf: 'center',
-    backgroundColor: 'rgba(0,0,0,0.25)', justifyContent: 'flex-end',
-  },
+  /* maxHeight를 '80%'로 두면 BottomSheet의 Animated.View 래퍼가 높이를 못 정해(퍼센트
+   * 기준이 되는 부모 높이가 콘텐츠 크기에 따라 달라지는 순환 참조) 시트 아래로 빈 공간이
+   * 생겨 하단 탭바가 그대로 드러났다 — 고정 px 기준(SCREEN_HEIGHT)으로 바꿔 해결. */
   modalSheet: {
     backgroundColor: Colors.background,
     borderTopLeftRadius: 24, borderTopRightRadius: 24,
     borderWidth: 1, borderColor: Colors.border,
-    paddingTop: 16, maxHeight: '80%',
+    paddingTop: 16, maxHeight: SCREEN_HEIGHT * 0.8,
   },
   grabHandle: {
     alignSelf: 'center', width: 96, height: 4, borderRadius: 2,

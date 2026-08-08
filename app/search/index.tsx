@@ -52,6 +52,10 @@ export default function SearchScreen() {
       ]);
       return;
     }
+    if (!authStore.isWordSaved(id) && !authStore.canSaveMoreWords()) {
+      Alert.alert('저장 한도에 도달했어요', '무료 회원은 단어를 최대 3개까지 저장할 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 저장할 수 있어요.');
+      return;
+    }
     authStore.toggleWordSaved(id);
     setSavedIds(authStore.getSavedWordIds());
   };

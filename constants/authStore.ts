@@ -19,12 +19,6 @@ const AUTH_REDIRECT_URL = Linking.createURL('/auth/callback');
 type AuthListener = (loggedIn: boolean) => void;
 type BookmarkListener = () => void;
 
-/* 비로그인(게스트) 즐겨찾기 로컬 보관 키 — 로그인하면 DB로 이관 후 비운다. */
-const GUEST_SAVED_KEY = 'sokdak.guest.savedWords';
-const GUEST_SAVED_POSTS_KEY = 'sokdak.guest.savedPosts';
-const GUEST_LIKED_POSTS_KEY = 'sokdak.guest.likedPosts';
-const GUEST_LIKED_CATEGORIES_KEY = 'sokdak.guest.likedCategories';
-
 export type SokDakUser = {
   id: string;
   name: string;
@@ -38,9 +32,11 @@ export type SokDakUser = {
   streakCount: number;
 };
 
-/** ponytail: 무료 사용자(게스트 포함) 저장 단어 상한. 프리미엄은 무제한.
+/** ponytail: 무료 회원 저장 단어/좋아요 카테고리/TTS 일일 상한. 프리미엄은 무제한.
  *  실제 결제 연동 전까지는 클라이언트 상수 — 서버에서 강제하는 값이 아니라 UX 가드일 뿐이다. */
-export const FREE_WORD_SAVE_LIMIT = 15;
+export const FREE_WORD_SAVE_LIMIT = 3;
+export const FREE_CATEGORY_LIKE_LIMIT = 2;
+export const FREE_TTS_DAILY_LIMIT = 3;
 
 export type NotificationPrefs = {
   newSlang: boolean;
@@ -61,13 +57,19 @@ const _listeners = new Set<AuthListener>();
 const _savedWordIds = new Set<string>();
 const _savedPostIds = new Set<string>();
 const _likedPostIds = new Set<string>();
-/** 좋아요 한 댓글 — 로그인 계정에만 의미가 있어 게스트 이관 로직 없이 로그인 시에만 채운다 */
+/** 좋아요 한 댓글 — 로그인 계정에만 의미가 있어 로그인 시에만 채운다 */
 const _likedCommentIds = new Set<string>();
 /** 좋아요 한 카테고리 — DB 테이블이 아직 없어 세션 동안만 유지(로그아웃/새로고침 시 초기화) */
 const _likedCategorySlugs = new Set<string>();
-/** 차단한 유저 — 로그인 계정에만 의미가 있어 게스트 이관 로직 없이 로그인 시에만 채운다 */
+/** 차단한 유저 — 로그인 계정에만 의미가 있어 로그인 시에만 채운다 */
 const _blockedUserIds = new Set<string>();
 const _bookmarkListeners = new Set<BookmarkListener>();
+
+/** 무료 회원 TTS 일일 재생 횟수 — 계정+날짜별로 기기에 저장(서버 강제 아님, UX 가드).
+ *  ponytail: 세션이 자정을 넘겨 계속 켜져 있으면 갱신은 다음 recordTtsPlay/canPlayTtsToday
+ *  호출 시점에 반영된다 — 실시간 자정 리셋 타이머는 만들지 않았다. */
+let _ttsPlaysToday = 0;
+let _ttsPlaysDate = '';
 
 let _initialized = false;
 let _initPromise: Promise<void> | null = null;
@@ -78,55 +80,21 @@ function notifyAuth() {
 
 function notifyBookmarks() {
   _bookmarkListeners.forEach(fn => fn());
-  persistGuestBookmarks();
-}
-
-/** 게스트 즐겨찾기를 기기에 저장 — 로그인 상태에선 DB가 소스라 저장하지 않는다. */
-function persistGuestBookmarks() {
-  if (_user) return;
-  Promise.all([
-    AsyncStorage.setItem(GUEST_SAVED_KEY, JSON.stringify(Array.from(_savedWordIds))),
-    AsyncStorage.setItem(GUEST_SAVED_POSTS_KEY, JSON.stringify(Array.from(_savedPostIds))),
-    AsyncStorage.setItem(GUEST_LIKED_POSTS_KEY, JSON.stringify(Array.from(_likedPostIds))),
-    AsyncStorage.setItem(GUEST_LIKED_CATEGORIES_KEY, JSON.stringify(Array.from(_likedCategorySlugs))),
-  ]).catch(() => { /* 저장 실패해도 세션 내 동작에는 영향 없음 */ });
-}
-
-/** 앱 시작 시(비로그인) 기기에 저장된 게스트 즐겨찾기 복원 */
-async function loadGuestBookmarks() {
-  const read = async (key: string): Promise<string[]> => {
-    try {
-      const raw = await AsyncStorage.getItem(key);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : [];
-    } catch {
-      return []; /* 손상된 값이면 무시하고 빈 상태로 시작 */
-    }
-  };
-  const [saved, savedPosts, likedPosts, likedCategories] = await Promise.all([
-    read(GUEST_SAVED_KEY),
-    read(GUEST_SAVED_POSTS_KEY),
-    read(GUEST_LIKED_POSTS_KEY),
-    read(GUEST_LIKED_CATEGORIES_KEY),
-  ]);
-  saved.forEach(id => _savedWordIds.add(id));
-  savedPosts.forEach(id => _savedPostIds.add(id));
-  likedPosts.forEach(id => _likedPostIds.add(id));
-  likedCategories.forEach(slug => _likedCategorySlugs.add(slug));
-}
-
-function clearGuestBookmarkStorage() {
-  Promise.all([
-    AsyncStorage.removeItem(GUEST_SAVED_KEY),
-    AsyncStorage.removeItem(GUEST_SAVED_POSTS_KEY),
-    AsyncStorage.removeItem(GUEST_LIKED_POSTS_KEY),
-    AsyncStorage.removeItem(GUEST_LIKED_CATEGORIES_KEY),
-  ]).catch(() => {});
 }
 
 function todayString() {
   return new Date().toISOString().slice(0, 10);
+}
+
+function ttsStorageKey(userId: string) {
+  return `sokdak.tts.${userId}.${todayString()}`;
+}
+
+async function loadTtsPlaysToday(userId: string) {
+  const today = todayString();
+  const raw = await AsyncStorage.getItem(ttsStorageKey(userId));
+  _ttsPlaysToday = raw ? parseInt(raw, 10) || 0 : 0;
+  _ttsPlaysDate = today;
 }
 
 /** 오늘 처음 로그인/세션 복원 시 연속 학습일(streak)을 갱신한다.
@@ -169,11 +137,6 @@ async function fetchProfile(userId: string, email: string): Promise<SokDakUser> 
 }
 
 async function fetchBookmarks(userId: string) {
-  /* 로그인 전 게스트 상태에서 저장해 둔 항목 — 아래에서 계정으로 이관한다. */
-  const guestSaved = Array.from(_savedWordIds);
-  const guestLiked = Array.from(_likedPostIds);
-  const guestSavedPosts = Array.from(_savedPostIds);
-
   const [savedRes, likedRes, savedPostsRes, likedCommentsRes] = await Promise.all([
     supabase.from('saved_words').select('word_id').eq('user_id', userId),
     supabase.from('post_likes').select('post_id').eq('user_id', userId),
@@ -190,32 +153,15 @@ async function fetchBookmarks(userId: string) {
   _likedCommentIds.clear();
   likedCommentsRes.data?.forEach(row => _likedCommentIds.add(row.comment_id));
 
-  /* 게스트 저장분을 계정에 병합 (이미 있는 건 제외). 실패 시 로컬에도 반영하지 않는다. */
-  const newSaved = guestSaved.filter(id => !_savedWordIds.has(id));
-  const newSavedPosts = guestSavedPosts.filter(id => !_savedPostIds.has(id));
-  const newLiked = guestLiked.filter(id => !_likedPostIds.has(id));
-
-  if (newSaved.length > 0) {
-    const { error } = await supabase
-      .from('saved_words')
-      .insert(newSaved.map(word_id => ({ user_id: userId, word_id })));
-    if (!error) newSaved.forEach(id => _savedWordIds.add(id));
-  }
-  if (newSavedPosts.length > 0) {
-    const { error } = await supabase
-      .from('saved_posts')
-      .insert(newSavedPosts.map(post_id => ({ user_id: userId, post_id })));
-    if (!error) newSavedPosts.forEach(id => _savedPostIds.add(id));
-  }
-  if (newLiked.length > 0) {
-    const { error } = await supabase
-      .from('post_likes')
-      .insert(newLiked.map(post_id => ({ user_id: userId, post_id })));
-    if (!error) newLiked.forEach(id => _likedPostIds.add(id));
+  /* 무료 한도(3개)가 15개에서 낮아지며 이미 그 이상 저장해 둔 회원이 생길 수 있어,
+   * 로그인 시 초과분을 강제로 정리한다(오래된 순 — DB에서 받은 순서 그대로 앞 N개만 유지). */
+  if (!_user?.isPremium && _savedWordIds.size > FREE_WORD_SAVE_LIMIT) {
+    const excess = Array.from(_savedWordIds).slice(FREE_WORD_SAVE_LIMIT);
+    const { error } = await supabase.from('saved_words').delete().eq('user_id', userId).in('word_id', excess);
+    if (!error) excess.forEach(id => _savedWordIds.delete(id));
   }
 
-  /* 계정으로 옮겼으니 기기에 남은 게스트 사본은 정리 */
-  clearGuestBookmarkStorage();
+  await loadTtsPlaysToday(userId);
 }
 
 async function fetchBlockedUsers(userId: string) {
@@ -229,10 +175,13 @@ async function applySession(userId: string | undefined, email: string | undefine
     _isLoggedIn = false;
     _user = null;
     _savedWordIds.clear();
+    _savedPostIds.clear();
     _likedPostIds.clear();
     _likedCommentIds.clear();
     _likedCategorySlugs.clear();
     _blockedUserIds.clear();
+    _ttsPlaysToday = 0;
+    _ttsPlaysDate = '';
     notifyAuth();
     notifyBookmarks();
     return;
@@ -252,18 +201,11 @@ export const authStore = {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
         await applySession(data.session.user.id, data.session.user.email);
-      } else {
-        /* 게스트: applySession의 로그아웃 분기는 세트를 비우므로 호출하지 않고,
-         * 기기에 저장해 둔 즐겨찾기를 복원한 뒤 구독자에게 알린다. */
-        await loadGuestBookmarks();
-        notifyAuth();
-        notifyBookmarks();
       }
       _initialized = true;
 
       supabase.auth.onAuthStateChange((event, session) => {
-        /* 구독 직후 즉시 발행되는 INITIAL_SESSION은 위에서 이미 처리했다.
-         * 그대로 흘려보내면 게스트 분기에서 복원한 즐겨찾기를 로그아웃 분기가 지워버린다. */
+        /* 구독 직후 즉시 발행되는 INITIAL_SESSION은 위에서 이미 처리했다 */
         if (event === 'INITIAL_SESSION') return;
         applySession(session?.user.id, session?.user.email);
       });
@@ -333,6 +275,8 @@ export const authStore = {
     _savedPostIds.clear();
     _likedPostIds.clear();
     _likedCategorySlugs.clear();
+    _ttsPlaysToday = 0;
+    _ttsPlaysDate = '';
     notifyAuth();
     notifyBookmarks();
   },
@@ -419,9 +363,26 @@ export const authStore = {
     return { error: null };
   },
   getStreakCount: () => _user?.streakCount ?? 0,
-  /** 무료 사용자(게스트 포함) 단어 저장 상한 체크 — 이미 저장된 단어를 해제하는 건 항상 허용,
+  /** 무료 회원 단어 저장 상한 체크 — 이미 저장된 단어를 해제하는 건 항상 허용,
    *  새로 추가할 때만 막는다. 화면에서 toggleWordSaved 호출 전에 확인한다. */
   canSaveMoreWords: () => _user?.isPremium === true || _savedWordIds.size < FREE_WORD_SAVE_LIMIT,
+  /** 무료 회원 카테고리 좋아요 상한 — 단어 저장과 동일한 패턴, 해제는 항상 허용 */
+  canLikeMoreCategories: () => _user?.isPremium === true || _likedCategorySlugs.size < FREE_CATEGORY_LIKE_LIMIT,
+
+  /** 무료 회원 TTS 일일 재생 상한. 비로그인은 애초에 speakWord에서 로그인 요구로 막는다. */
+  canPlayTtsToday: () => {
+    if (_user?.isPremium) return true;
+    if (!_user) return false;
+    if (_ttsPlaysDate !== todayString()) return true; // 날짜가 바뀌었으면 아직 오늘 재생 없음
+    return _ttsPlaysToday < FREE_TTS_DAILY_LIMIT;
+  },
+  recordTtsPlay() {
+    if (!_user || _user.isPremium) return;
+    const today = todayString();
+    if (_ttsPlaysDate !== today) { _ttsPlaysDate = today; _ttsPlaysToday = 0; }
+    _ttsPlaysToday += 1;
+    AsyncStorage.setItem(ttsStorageKey(_user.id), String(_ttsPlaysToday)).catch(() => {});
+  },
 
   /** 회원탈퇴 — DB의 delete_own_account()가 auth.users를 지우면 profiles/저장한 단어/게시글 등이
    *  전부 CASCADE로 함께 삭제된다. 성공하면 로컬 세션도 정리. */
@@ -437,15 +398,14 @@ export const authStore = {
     return () => _listeners.delete(fn);
   },
 
-  /* ── 저장한 단어 ── */
+  /* ── 저장한 단어 (로그인 전용 — 화면에서 isLoggedIn() 확인 후 호출할 것) ── */
   isWordSaved: (id: string) => _savedWordIds.has(id),
   toggleWordSaved(id: string) {
+    if (!_user) return;
     const wasSaved = _savedWordIds.has(id);
     if (wasSaved) _savedWordIds.delete(id); else _savedWordIds.add(id);
     notifyBookmarks();
 
-    /* 비로그인(게스트)은 세션 메모리에만 유지 — 로그인 시 fetchBookmarks가 계정으로 이관한다. */
-    if (!_user) return;
     const userId = _user.id;
 
     const write = wasSaved
@@ -528,6 +488,7 @@ export const authStore = {
   /* ── 좋아요 한 카테고리 (세션 전용, DB 미연동) ── */
   isCategoryLiked: (slug: string) => _likedCategorySlugs.has(slug),
   toggleCategoryLiked(slug: string) {
+    if (!_user) return;
     if (_likedCategorySlugs.has(slug)) _likedCategorySlugs.delete(slug); else _likedCategorySlugs.add(slug);
     notifyBookmarks();
   },

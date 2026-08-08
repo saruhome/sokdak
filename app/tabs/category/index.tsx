@@ -11,6 +11,7 @@ import { fetchWords, type Word } from '../../../constants/words';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
 import { fetchUnreadNotificationCount } from '../../../constants/notifications';
+import { Alert } from '@/constants/alert';
 import { AppIcon } from '@/components/AppIcon';
 import { Search, Mic, Bell, Star, ChevronDown, Crown } from 'lucide-react-native';
 import { SCREEN_WIDTH } from '../../../constants/layout';
@@ -79,10 +80,21 @@ export default function CategoryScreen() {
       : getCategoryName(a, language).localeCompare(getCategoryName(b, language), language)
   );
 
-  /* 단어 즐겨찾기(별)와 동일하게 비로그인도 허용 — 세션/로컬에 유지되고 로그인 시 계정으로 이관된다.
-   * 예전엔 여기서 로그인 유도 Alert을 띄웠는데, react-native-web은 Alert을 구현하지 않아
-   * 웹에서는 하트를 눌러도 아무 반응이 없었다. */
+  /* 카테고리 즐겨찾기는 회원 전용(무료 회원 최대 2개, 프리미엄 무제한).
+   * 해제는 한도와 무관하게 항상 허용, 새로 추가할 때만 로그인·한도 체크. */
   const handleToggleLike = (category: Category) => {
+    const alreadyLiked = authStore.isCategoryLiked(category.slug);
+    if (!alreadyLiked && !authStore.isLoggedIn()) {
+      Alert.alert(t('loginRequiredTitle'), t('loginRequiredCategoryLike'), [
+        { text: t('cancelLabel'), style: 'cancel' },
+        { text: t('goToLogin'), onPress: () => router.push('/auth/login') },
+      ]);
+      return;
+    }
+    if (!alreadyLiked && !authStore.canLikeMoreCategories()) {
+      Alert.alert(t('categoryLikeLimitReachedTitle'), t('categoryLikeLimitReachedMessage'));
+      return;
+    }
     authStore.toggleCategoryLiked(category.slug);
     forceUpdate(n => n + 1);
   };

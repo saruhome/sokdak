@@ -4,7 +4,9 @@ import { Dimensions, Platform } from 'react-native';
 export const DEVICE_WIDTH = 360;
 export const DEVICE_HEIGHT = 800;
 
-/** 화면 폭: 웹 프리뷰는 360 고정 프레임(app/_layout.tsx DeviceFrame) 기준,
- *  네이티브는 실제 기기 폭. Dimensions를 직접 쓰지 말고 이 값을 사용할 것. */
+/** 화면 폭/높이: 웹 프리뷰는 360×800 고정 프레임(app/_layout.tsx DeviceFrame) 기준,
+ *  네이티브는 실제 기기 크기. Dimensions를 직접 쓰지 말고 이 값을 사용할 것. */
 export const SCREEN_WIDTH =
   Platform.OS === 'web' ? DEVICE_WIDTH : Dimensions.get('window').width;
+export const SCREEN_HEIGHT =
+  Platform.OS === 'web' ? DEVICE_HEIGHT : Dimensions.get('window').height;

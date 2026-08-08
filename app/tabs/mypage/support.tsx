@@ -12,7 +12,25 @@ import { languageStore, useLanguage, type Language } from '../../../constants/la
 import { authStore } from '../../../constants/authStore';
 import { fetchMyTickets, submitTicket, markRepliesSeen, type SupportTicket } from '../../../constants/support';
 import { AppIcon } from '@/components/AppIcon';
-import { Mail, ChevronDown, ChevronRight, Search, Mic } from 'lucide-react-native';
+import { BottomSheet } from '@/components/BottomSheet';
+import { Mail, ChevronDown, ChevronRight, Search, Mic, Check } from 'lucide-react-native';
+
+type InquiryTypeSlug = 'account' | 'bug' | 'billing' | 'suggestion' | 'other';
+const INQUIRY_TYPE_SLUGS: InquiryTypeSlug[] = ['account', 'bug', 'billing', 'suggestion', 'other'];
+const INQUIRY_TYPE_LABELS: Record<Language, Record<InquiryTypeSlug, string>> = {
+  ko: { account: '로그인/계정', bug: '오류 신고', billing: '결제/프리미엄', suggestion: '제안/의견', other: '기타' },
+  en: { account: 'Login/Account', bug: 'Bug report', billing: 'Billing/Premium', suggestion: 'Suggestion', other: 'Other' },
+  ja: { account: 'ログイン/アカウント', bug: '不具合報告', billing: '決済/プレミアム', suggestion: '提案/意見', other: 'その他' },
+  vi: { account: 'Đăng nhập/Tài khoản', bug: 'Báo lỗi', billing: 'Thanh toán/Premium', suggestion: 'Đề xuất/Ý kiến', other: 'Khác' },
+  es: { account: 'Inicio de sesión/Cuenta', bug: 'Reporte de error', billing: 'Pago/Premium', suggestion: 'Sugerencia', other: 'Otro' },
+};
+
+/* ponytail: support_tickets에 접수번호 컬럼이 없어 row id에서 짧은 코드를 파생시킴 —
+ * 실제 순번이 필요해지면 serial 컬럼 추가. */
+function ticketNumberFrom(id?: string) {
+  if (!id) return '—';
+  return '#' + id.replace(/-/g, '').slice(-8).toUpperCase();
+}
 
 type FaqCategorySlug = 'all' | 'howTo' | 'account' | 'suggest' | 'community';
 const FAQ_CATEGORY_SLUGS: FaqCategorySlug[] = ['all', 'howTo', 'account', 'suggest', 'community'];
@@ -85,8 +103,12 @@ export default function SupportScreen() {
   const [query, setQuery] = useState('');
   const [loggedIn, setLoggedIn] = useState(authStore.isLoggedIn());
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [formOpen, setFormOpen] = useState(false);
+  const [inquiryType, setInquiryType] = useState<InquiryTypeSlug | null>(null);
+  const [typePickerOpen, setTypePickerOpen] = useState(false);
   const [ticketMessage, setTicketMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [receipt, setReceipt] = useState<{ typeLabel: string; number: string } | null>(null);
 
   useFocusEffect(useCallback(() => {
     setLoggedIn(authStore.isLoggedIn());
@@ -117,14 +139,20 @@ export default function SupportScreen() {
 
   const handleSubmitTicket = async () => {
     const message = ticketMessage.trim();
-    if (!message || submitting) return;
+    if (!message || !inquiryType || submitting) return;
     setSubmitting(true);
-    const { error } = await submitTicket(message);
+    const typeLabel = INQUIRY_TYPE_LABELS[language][inquiryType];
+    /* ponytail: 문의 유형 전용 컬럼이 없어 메시지 앞에 라벨을 붙여 저장 —
+     * 유형별 집계/필터링이 필요해지면 support_tickets에 type 컬럼 추가. */
+    const { error } = await submitTicket(`[${typeLabel}] ${message}`);
+    if (error) { setSubmitting(false); Alert.alert(t('saveFailedTitle'), error); return; }
+    const latest = await fetchMyTickets();
+    setTickets(latest);
     setSubmitting(false);
-    if (error) { Alert.alert(t('saveFailedTitle'), error); return; }
     setTicketMessage('');
-    Alert.alert(t('inquirySubmittedAlert'));
-    fetchMyTickets().then(setTickets);
+    setInquiryType(null);
+    setFormOpen(false);
+    setReceipt({ typeLabel, number: ticketNumberFrom(latest[0]?.id) });
   };
 
   return (
@@ -196,23 +224,12 @@ export default function SupportScreen() {
          *  비로그인은 기존 mailto 카드로 폴백(추가 인프라 없이 이미 동작하던 경로 재사용) */}
         {loggedIn ? (
           <View style={styles.inquirySection}>
-            <Text style={styles.contactTitle}>{t('contactDirectly')}</Text>
-            <TextInput
-              style={styles.inquiryInput}
-              placeholder={t('inquiryPlaceholder')}
-              placeholderTextColor={Colors.textTertiary}
-              value={ticketMessage}
-              onChangeText={setTicketMessage}
-              multiline
-              numberOfLines={4}
-            />
-            <TouchableOpacity
-              style={[styles.inquirySubmitBtn, (!ticketMessage.trim() || submitting) && styles.inquirySubmitBtnDisabled]}
-              onPress={handleSubmitTicket}
-              disabled={!ticketMessage.trim() || submitting}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.inquirySubmitBtnText}>{t('inquirySubmitBtn')}</Text>
+            <TouchableOpacity style={styles.inquiryTriggerCard} onPress={() => setFormOpen(true)} activeOpacity={0.85}>
+              <View style={styles.contactTitleRow}>
+                <AppIcon icon={Mail} size={16} color={Colors.textPrimary} />
+                <Text style={styles.contactTitle}>{t('contactDirectly')}</Text>
+              </View>
+              <AppIcon icon={ChevronRight} size={16} color={Colors.textTertiary} />
             </TouchableOpacity>
 
             <Text style={[styles.contactTitle, styles.myInquiriesTitle]}>{t('myInquiriesTitle')}</Text>
@@ -248,6 +265,77 @@ export default function SupportScreen() {
           </TouchableOpacity>
         )}
       </ScrollView>
+
+      {/* ── 직접 문의하기 폼 시트 ── */}
+      <BottomSheet visible={formOpen} onClose={() => setFormOpen(false)} panelStyle={styles.sheetPanel}>
+        <View style={styles.sheetHandle} />
+        <Text style={styles.sheetTitle}>{t('contactDirectly')}</Text>
+
+        <View style={styles.formField}>
+          <Text style={styles.formLabel}>{t('inquiryTypeLabel')}</Text>
+          <TouchableOpacity style={styles.typeSelect} onPress={() => setTypePickerOpen(true)} activeOpacity={0.8}>
+            <Text style={[styles.typeSelectText, inquiryType && styles.typeSelectTextFilled]}>
+              {inquiryType ? INQUIRY_TYPE_LABELS[language][inquiryType] : t('inquiryTypePlaceholder')}
+            </Text>
+            <AppIcon icon={ChevronDown} size={16} color={Colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.formField}>
+          <Text style={styles.formLabel}>{t('inquiryContentLabel')}</Text>
+          <TextInput
+            style={styles.inquiryInput}
+            placeholder={t('inquiryPlaceholder')}
+            placeholderTextColor={Colors.textTertiary}
+            value={ticketMessage}
+            onChangeText={setTicketMessage}
+            multiline
+            numberOfLines={4}
+          />
+        </View>
+
+        <View style={styles.sheetDivider} />
+        <TouchableOpacity
+          style={[styles.inquirySubmitBtn, (!ticketMessage.trim() || !inquiryType || submitting) && styles.inquirySubmitBtnDisabled]}
+          onPress={handleSubmitTicket}
+          disabled={!ticketMessage.trim() || !inquiryType || submitting}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.inquirySubmitBtnText}>{t('inquirySubmitBtn')}</Text>
+        </TouchableOpacity>
+      </BottomSheet>
+
+      {/* ── 문의 유형 선택 시트 ── */}
+      <BottomSheet visible={typePickerOpen} onClose={() => setTypePickerOpen(false)} panelStyle={styles.typePickerSheet}>
+        <View style={styles.sheetHandle} />
+        {INQUIRY_TYPE_SLUGS.map(slug => (
+          <TouchableOpacity
+            key={slug}
+            style={styles.typeOptionRow}
+            onPress={() => { setInquiryType(slug); setTypePickerOpen(false); }}
+          >
+            <Text style={styles.typeOptionText}>{INQUIRY_TYPE_LABELS[language][slug]}</Text>
+          </TouchableOpacity>
+        ))}
+      </BottomSheet>
+
+      {/* ── 접수 완료 ── */}
+      <BottomSheet visible={!!receipt} onClose={() => setReceipt(null)} panelStyle={styles.receiptPanel}>
+        <View style={styles.sheetHandle} />
+        <View style={styles.receiptCheckBadge}>
+          <AppIcon icon={Check} size={28} color={Colors.textPrimary} />
+        </View>
+        <Text style={styles.receiptTitle}>{t('inquirySubmittedTitle')}</Text>
+        <Text style={styles.receiptSub}>{t('inquirySubmittedSub')}</Text>
+        <View style={styles.receiptDetails}>
+          <Text style={styles.receiptDetailLabel}>{t('inquiryReceiptTypeLabel')}</Text>
+          <Text style={styles.receiptDetailValue}>{receipt?.typeLabel}</Text>
+          <Text style={styles.receiptDetailLabel}>{t('inquiryReceiptNumberLabel')}</Text>
+          <Text style={styles.receiptDetailValue}>{receipt?.number}</Text>
+          <Text style={styles.receiptDetailLabel}>{t('inquiryReceiptEtaLabel')}</Text>
+          <Text style={styles.receiptDetailValue}>{t('inquiryEtaValue')}</Text>
+        </View>
+      </BottomSheet>
     </SafeAreaView>
   );
 }
@@ -308,14 +396,20 @@ const styles = StyleSheet.create({
   contactTitle: { fontSize: 15, color: Colors.textPrimary, fontFamily: undefined, fontWeight: '600' },
   contactSub: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
 
-  /* 인앱 문의하기 (로그인 사용자) */
+  /* 인앱 문의하기 (로그인 사용자) — 폼은 시트로 열리고, 이 행은 그 트리거 */
   inquirySection: { marginTop: 24, gap: 10 },
+  inquiryTriggerCard: {
+    padding: 16, borderRadius: 10,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.textTertiary,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+  },
   inquiryInput: {
     minHeight: 88, borderRadius: 10, padding: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
     fontSize: 14, color: Colors.textPrimary, textAlignVertical: 'top',
   },
   inquirySubmitBtn: {
+    alignSelf: 'stretch',
     height: 44, borderRadius: 10, backgroundColor: Colors.navBar,
     alignItems: 'center', justifyContent: 'center',
   },
@@ -343,4 +437,57 @@ const styles = StyleSheet.create({
   },
   ticketReplyLabel: { fontSize: 11, fontWeight: '600', color: Colors.accent },
   ticketReplyText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined },
+
+  /* ── 문의하기/유형선택/접수완료 공용 바텀시트 ── */
+  sheetPanel: {
+    backgroundColor: Colors.background,
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    borderWidth: 1, borderColor: Colors.border, borderBottomWidth: 0,
+    paddingHorizontal: 24, paddingTop: 12, paddingBottom: 32,
+    gap: 16, alignItems: 'center',
+  },
+  sheetHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: Colors.border, marginBottom: 4 },
+  sheetTitle: { alignSelf: 'flex-start', fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
+  sheetDivider: { alignSelf: 'stretch', height: 1, backgroundColor: Colors.border },
+
+  formField: { alignSelf: 'stretch', gap: 8 },
+  formLabel: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary, fontFamily: undefined },
+  typeSelect: {
+    height: 44, paddingHorizontal: 16, borderRadius: 10,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+  },
+  typeSelectText: { fontSize: 13, color: Colors.textTertiary, fontFamily: undefined },
+  typeSelectTextFilled: { color: Colors.textPrimary },
+
+  typePickerSheet: {
+    backgroundColor: Colors.background,
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    borderWidth: 1, borderColor: Colors.border, borderBottomWidth: 0,
+    paddingHorizontal: 24, paddingTop: 12, paddingBottom: 32,
+    alignItems: 'center',
+  },
+  typeOptionRow: {
+    alignSelf: 'stretch', paddingVertical: 14,
+    borderBottomWidth: 1, borderBottomColor: Colors.divider,
+  },
+  typeOptionText: { fontSize: 15, color: Colors.textPrimary, fontFamily: undefined },
+
+  receiptPanel: {
+    backgroundColor: Colors.background,
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    borderWidth: 1, borderColor: Colors.border, borderBottomWidth: 0,
+    paddingHorizontal: 24, paddingTop: 12, paddingBottom: 40,
+    gap: 20, alignItems: 'center',
+  },
+  receiptCheckBadge: {
+    width: 72, height: 72, borderRadius: 36, marginTop: 12,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  receiptTitle: { fontSize: 19, fontWeight: '700', fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, textAlign: 'center' },
+  receiptSub: { fontSize: 12, color: Colors.textSecondary, textAlign: 'center', marginTop: -12 },
+  receiptDetails: { alignSelf: 'stretch', gap: 3 },
+  receiptDetailLabel: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  receiptDetailValue: { fontSize: 13, color: Colors.textPrimary, fontFamily: undefined, marginBottom: 6 },
 });

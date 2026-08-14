@@ -313,6 +313,27 @@ export const authStore = {
     return { error: null };
   },
 
+  /** 커뮤니티 게시 전 약관·운영정책 동의 여부를 서버 기준으로 확인한다. */
+  async hasAcceptedCommunityGuidelines() {
+    if (!_user) return false;
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('community_guidelines_accepted_at')
+      .eq('id', _user.id)
+      .single();
+    return !error && !!data?.community_guidelines_accepted_at;
+  },
+
+  /** 정책 화면에서 사용자가 명시적으로 확인한 시각을 기록한다. */
+  async acceptCommunityGuidelines() {
+    if (!_user) return { error: '로그인이 필요해요.' };
+    const { error } = await supabase
+      .from('profiles')
+      .update({ community_guidelines_accepted_at: new Date().toISOString() })
+      .eq('id', _user.id);
+    return { error: error?.message ?? null };
+  },
+
   /** 이메일 변경 — Supabase가 새 주소로 확인 메일을 보내고, 확인 후에 실제로 바뀐다. */
   async updateEmail(email: string) {
     const { error } = await supabase.auth.updateUser({ email });
@@ -347,21 +368,9 @@ export const authStore = {
   },
 
   /* ── 프리미엄 ──
-   * ponytail: 실제 결제 SDK(Google Play Billing/Stripe) 연동 전 임시 구조 — setPremiumStatus를
-   * "테스트 활성화" 버튼이 직접 호출한다. 나중에 결제 웹훅이 서버에서 이 컬럼을 갱신하도록
-   * 바꾸면 되고, 화면 쪽은 authStore.isPremium()만 보므로 수정할 필요가 없다.
-   * 주의: profiles UPDATE RLS가 본인 행 전체를 허용하므로, 지금은 클라이언트가 직접
-   * is_premium을 켤 수 있다 — 실 결제 연동 시 이 컬럼은 반드시 서버(webhook/서비스 롤)만
-   * 쓰도록 RLS를 좁혀야 한다(컬럼 단위 정책 또는 트리거로 클라이언트 UPDATE 차단). */
+   * entitlement는 결제 서버의 영수증 검증·웹훅만 갱신해야 한다. 앱은 현재 서버가 전달한
+   * 상태를 읽기만 하며, 클라이언트에서 is_premium을 직접 쓰는 경로는 제공하지 않는다. */
   isPremium: () => _user?.isPremium ?? false,
-  async setPremiumStatus(isPremium: boolean) {
-    if (!_user) return { error: '로그인이 필요해요.' };
-    const { error } = await supabase.from('profiles').update({ is_premium: isPremium }).eq('id', _user.id);
-    if (error) return { error: error.message };
-    _user = { ..._user, isPremium };
-    notifyAuth();
-    return { error: null };
-  },
   getStreakCount: () => _user?.streakCount ?? 0,
   /** 무료 회원 단어 저장 상한 체크 — 이미 저장된 단어를 해제하는 건 항상 허용,
    *  새로 추가할 때만 막는다. 화면에서 toggleWordSaved 호출 전에 확인한다. */
@@ -395,7 +404,7 @@ export const authStore = {
 
   subscribe(fn: AuthListener) {
     _listeners.add(fn);
-    return () => _listeners.delete(fn);
+    return () => { _listeners.delete(fn); };
   },
 
   /* ── 저장한 단어 (로그인 전용 — 화면에서 isLoggedIn() 확인 후 호출할 것) ── */
@@ -508,6 +517,6 @@ export const authStore = {
 
   subscribeBookmarks(fn: BookmarkListener) {
     _bookmarkListeners.add(fn);
-    return () => _bookmarkListeners.delete(fn);
+    return () => { _bookmarkListeners.delete(fn); };
   },
 };

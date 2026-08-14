@@ -17,6 +17,7 @@ import {
   updateComment, deleteComment, reportComment,
   type CommunityComment, type CommunityPostDetail,
 } from '../../../constants/community';
+import { validateCommunityText } from '../../../constants/communitySafety';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { PostRichText } from '@/components/PostRichText';
 import {
@@ -114,6 +115,13 @@ export default function PostDetailScreen() {
 
   const handleSend = async () => {
     if (!commentText.trim()) return;
+
+    const safety = validateCommunityText(commentText, 'comment');
+    if (!safety.ok) {
+      Alert.alert('게시할 수 없는 내용이에요', safety.message);
+      return;
+    }
+
     if (!authStore.isLoggedIn()) {
       Alert.alert(t('loginRequiredTitle'), t('loginRequiredComment'), [
         { text: t('cancelLabel'), style: 'cancel' },
@@ -121,6 +129,20 @@ export default function PostDetailScreen() {
       ]);
       return;
     }
+
+    const acceptedGuidelines = await authStore.hasAcceptedCommunityGuidelines();
+    if (!acceptedGuidelines) {
+      Alert.alert(
+        '운영정책 동의가 필요해요',
+        '안전한 커뮤니티 운영을 위해 댓글을 작성하기 전에 운영정책에 동의해주세요.',
+        [
+          { text: t('cancelLabel'), style: 'cancel' },
+          { text: '운영정책 보기', onPress: () => router.push('/tabs/mypage/community-guidelines') },
+        ],
+      );
+      return;
+    }
+
     setSendingComment(true);
     const { error } = await createComment({
       postId: post.id,

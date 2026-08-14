@@ -15,6 +15,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { Camera, Link2, Type, Bold, Italic, Check } from 'lucide-react-native';
 import { authStore } from '../../../constants/authStore';
 import { createPost, fetchPost, updatePost, uploadPostImage } from '../../../constants/community';
+import { validateCommunityPost } from '../../../constants/communitySafety';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
 const BOARD_OPTIONS: PostBoard[] = ['궁금해요', 'Q&A', '질문하기'];
@@ -135,6 +136,26 @@ export default function WritePostScreen() {
       Alert.alert(t('validationTitle'), t('validationMessage'));
       return;
     }
+
+    const safety = validateCommunityPost(title, content);
+    if (!safety.ok) {
+      Alert.alert('게시할 수 없는 내용이에요', safety.message);
+      return;
+    }
+
+    const acceptedGuidelines = await authStore.hasAcceptedCommunityGuidelines();
+    if (!acceptedGuidelines) {
+      Alert.alert(
+        '운영정책 동의가 필요해요',
+        '안전한 커뮤니티 운영을 위해 게시글을 작성하기 전에 운영정책에 동의해주세요.',
+        [
+          { text: '취소', style: 'cancel' },
+          { text: '운영정책 보기', onPress: () => router.push('/tabs/mypage/community-guidelines') },
+        ],
+      );
+      return;
+    }
+
     setSubmitting(true);
     const params = { board, title: title.trim(), content: content.trim() };
     const { error, id } = editId

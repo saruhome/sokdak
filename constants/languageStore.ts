@@ -1737,7 +1737,7 @@ export const languageStore = {
   },
   subscribe: (fn: (language: Language) => void) => {
     _listeners.add(fn);
-    return () => _listeners.delete(fn);
+    return () => { _listeners.delete(fn); };
   },
   t: (key: TranslationKey) => TRANSLATIONS[_language][key],
 };

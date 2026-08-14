@@ -266,6 +266,7 @@ export type Database = {
         Row: {
           avatar_emoji: string
           avatar_url: string | null
+          community_guidelines_accepted_at: string | null
           created_at: string
           id: string
           is_premium: boolean
@@ -281,6 +282,7 @@ export type Database = {
         Insert: {
           avatar_emoji?: string
           avatar_url?: string | null
+          community_guidelines_accepted_at?: string | null
           created_at?: string
           id: string
           is_premium?: boolean
@@ -296,6 +298,7 @@ export type Database = {
         Update: {
           avatar_emoji?: string
           avatar_url?: string | null
+          community_guidelines_accepted_at?: string | null
           created_at?: string
           id?: string
           is_premium?: boolean

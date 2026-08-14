@@ -157,6 +157,22 @@ export default function MyPageScreen() {
             </Text>
             <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.settingRow}
+            onPress={() => router.push('/tabs/mypage/community-guidelines')}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.groupRowLabel}>커뮤니티 운영정책</Text>
+            <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.settingRow}
+            onPress={() => router.push('/tabs/mypage/legal')}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.groupRowLabel}>법률 및 개인정보</Text>
+            <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.supportRow} onPress={() => router.push('/tabs/mypage/support')} activeOpacity={0.8}>

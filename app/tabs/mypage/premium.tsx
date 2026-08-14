@@ -1,9 +1,7 @@
 import {
   StyleSheet, View, SafeAreaView, ScrollView, TouchableOpacity,
 } from 'react-native';
-import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
-import { useState } from 'react';
 import { router } from 'expo-router';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
@@ -24,14 +22,17 @@ const FEATURES = [
   { icon: Gem,          labelKey: 'premiumFeatureExclusiveContent' } as const,
 ];
 
-/** 프리미엄 업그레이드 화면 — 실제 결제 SDK 연동 전이라 "체험 시작하기"가 profiles.is_premium을
- * 바로 켠다. 나중에 Google Play Billing/Stripe 웹훅이 같은 컬럼을 갱신하도록 바꾸면
- * 이 화면과 authStore.isPremium()을 쓰는 다른 화면들은 그대로 둬도 된다. */
+/**
+ * 프리미엄 안내 화면.
+ *
+ * 실제 스토어 결제와 서버 영수증 검증이 연결되기 전에는 이 화면에서 entitlement를
+ * 변경하지 않는다. 유료 권한은 결제 웹훅이 서버에서만 갱신해야 하며, 현재는 기존
+ * 멤버십 상태를 표시하고 출시 준비 안내만 제공한다.
+ */
 export default function PremiumScreen() {
   useLanguage();
   const t = languageStore.t;
-  const [busy, setBusy] = useState(false);
-  const [isPremium, setIsPremiumLocal] = useState(authStore.isPremium());
+  const isPremium = authStore.isPremium();
 
   if (!authStore.isLoggedIn()) {
     return (
@@ -43,16 +44,6 @@ export default function PremiumScreen() {
       </SafeAreaView>
     );
   }
-
-  const handleToggle = async () => {
-    setBusy(true);
-    const next = !isPremium;
-    const { error } = await authStore.setPremiumStatus(next);
-    setBusy(false);
-    if (error) { Alert.alert(t('saveFailedTitle'), error); return; }
-    setIsPremiumLocal(next);
-    if (next) Alert.alert(t('premiumActivatedAlert'));
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -88,17 +79,12 @@ export default function PremiumScreen() {
           ))}
         </View>
 
-        <TouchableOpacity
-          style={[styles.ctaBtn, isPremium && styles.ctaBtnActive]}
-          onPress={handleToggle}
-          disabled={busy}
-          activeOpacity={0.85}
-        >
-          <Text style={[styles.ctaBtnText, isPremium && styles.ctaBtnTextActive]}>
-            {isPremium ? t('premiumDeactivateTestBtn') : t('premiumActivateTestBtn')}
+        <View style={styles.pendingCard}>
+          <Text style={styles.pendingTitle}>{t('premiumComingSoonNote')}</Text>
+          <Text style={styles.pendingBody}>
+            결제 기능은 스토어 결제와 서버 검증이 완료된 뒤 제공됩니다. 현재 이 화면에서는 회원 등급이 변경되지 않습니다.
           </Text>
-        </TouchableOpacity>
-        <Text style={styles.comingSoonNote}>{t('premiumComingSoonNote')}</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -106,16 +92,13 @@ export default function PremiumScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
-
   topBar: {
     height: 44, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
-
   scroll: { padding: 24, paddingBottom: 40 },
-
   hero: {
     alignItems: 'center', gap: 8, paddingVertical: 24, paddingHorizontal: 16,
     backgroundColor: Colors.navBar, borderRadius: 16, marginBottom: 24,
@@ -128,7 +111,6 @@ const styles = StyleSheet.create({
     borderRadius: 14, backgroundColor: Colors.premium + '20', borderWidth: 1, borderColor: Colors.premium,
   },
   activeBadgeText: { fontSize: 12, fontWeight: '700', color: Colors.premium },
-
   featureList: { gap: 14, marginBottom: 28 },
   featureRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   featureIconWrap: {
@@ -137,16 +119,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.premium + '15',
   },
   featureLabel: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontWeight: '500' },
-
-  ctaBtn: {
-    height: 52, borderRadius: 12, backgroundColor: Colors.premium,
-    alignItems: 'center', justifyContent: 'center',
+  pendingCard: {
+    gap: 8, padding: 16, borderRadius: 12,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
-  ctaBtnActive: { backgroundColor: Colors.divider, borderWidth: 1, borderColor: Colors.border },
-  ctaBtnText: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  ctaBtnTextActive: { color: Colors.textSecondary },
-  comingSoonNote: { fontSize: 11, color: Colors.textTertiary, textAlign: 'center', marginTop: 12, lineHeight: 16 },
-
+  pendingTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center' },
+  pendingBody: { fontSize: 12, lineHeight: 18, color: Colors.textSecondary, textAlign: 'center' },
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
   notFoundText: { fontSize: 16, color: Colors.textSecondary },
   notFoundBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8, backgroundColor: Colors.navBar },

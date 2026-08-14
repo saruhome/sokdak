@@ -18,6 +18,8 @@ export default function MyPageLayout() {
       <Stack.Screen name="support" />
       <Stack.Screen name="notifications" />
       <Stack.Screen name="premium" />
+      <Stack.Screen name="community-guidelines" />
+      <Stack.Screen name="legal" />
     </Stack>
   );
 }

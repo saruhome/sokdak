@@ -135,6 +135,7 @@ export default function WordDetailScreen() {
           color={saved ? '#FACC15' : undefined}
           style={styles.iconBtn}
           onPress={handleSave}
+          accessibilityLabel={t('a11ySaveWord')}
         />
       </View>
 
@@ -177,7 +178,14 @@ export default function WordDetailScreen() {
               <View style={styles.wordTitleRow}>
                 <Text style={styles.wordTitle}>{word.word}</Text>
                 {reading && <Text style={styles.reading}>{reading}</Text>}
-                <AppIcon icon={Volume2} size={18} style={styles.soundBtn} onPress={() => speakWord(word)} />
+                <AppIcon
+                  icon={Volume2}
+                  size={18}
+                  style={styles.soundBtn}
+                  hitSlop={4}
+                  onPress={() => speakWord(word)}
+                  accessibilityLabel={t('a11yPlayPronunciation')}
+                />
               </View>
               {categories.length > 0 && (
                 <View style={styles.badgeRow}>

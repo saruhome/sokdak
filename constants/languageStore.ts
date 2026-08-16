@@ -126,6 +126,9 @@ type TranslationKey =
   | 'categoryLikeLimitReachedMessage'
   | 'ttsLimitReachedTitle'
   | 'ttsLimitReachedMessage'
+  | 'a11ySaveWord'
+  | 'a11yPlayPronunciation'
+  | 'a11yLikeCategory'
   | 'cancelLabel'
   | 'goToLogin'
   | 'commentFailedTitle'
@@ -408,6 +411,9 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     categoryLikeLimitReachedMessage: '무료 회원은 카테고리를 최대 2개까지 즐겨찾기할 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 즐겨찾기할 수 있어요.',
     ttsLimitReachedTitle: '오늘 발음 듣기를 다 썼어요',
     ttsLimitReachedMessage: '무료 회원은 하루 3개까지 발음을 들을 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 들을 수 있어요.',
+    a11ySaveWord: '단어 저장',
+    a11yPlayPronunciation: '발음 듣기',
+    a11yLikeCategory: '카테고리 즐겨찾기',
     cancelLabel: '취소',
     goToLogin: '로그인하러 가기',
     commentFailedTitle: '댓글 등록 실패',
@@ -689,6 +695,9 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     categoryLikeLimitReachedMessage: 'Free members can favorite up to 2 categories. Upgrade to Premium for unlimited favorites.',
     ttsLimitReachedTitle: "You've used today's pronunciation plays",
     ttsLimitReachedMessage: 'Free members can listen to 3 pronunciations a day. Upgrade to Premium for unlimited listening.',
+    a11ySaveWord: 'Save word',
+    a11yPlayPronunciation: 'Play pronunciation',
+    a11yLikeCategory: 'Favorite category',
     cancelLabel: 'Cancel',
     goToLogin: 'Go to login',
     commentFailedTitle: 'Failed to post comment',
@@ -970,6 +979,9 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     categoryLikeLimitReachedMessage: '無料会員はカテゴリーを最大2個までお気に入りにできます。プレミアムにアップグレードすると無制限にお気に入りにできます。',
     ttsLimitReachedTitle: '本日の発音再生回数を使い切りました',
     ttsLimitReachedMessage: '無料会員は1日3回まで発音を聞けます。プレミアムにアップグレードすると無制限に聞けます。',
+    a11ySaveWord: '単語を保存',
+    a11yPlayPronunciation: '発音を再生',
+    a11yLikeCategory: 'カテゴリーをお気に入りに追加',
     cancelLabel: 'キャンセル',
     goToLogin: 'ログインする',
     commentFailedTitle: 'コメントの投稿に失敗しました',
@@ -1251,6 +1263,9 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     categoryLikeLimitReachedMessage: 'Thành viên miễn phí chỉ yêu thích được tối đa 2 danh mục. Nâng cấp Premium để yêu thích không giới hạn.',
     ttsLimitReachedTitle: 'Bạn đã dùng hết lượt nghe phát âm hôm nay',
     ttsLimitReachedMessage: 'Thành viên miễn phí chỉ nghe được 3 lượt phát âm mỗi ngày. Nâng cấp Premium để nghe không giới hạn.',
+    a11ySaveWord: 'Lưu từ',
+    a11yPlayPronunciation: 'Nghe phát âm',
+    a11yLikeCategory: 'Yêu thích danh mục',
     cancelLabel: 'Hủy',
     goToLogin: 'Đến trang đăng nhập',
     commentFailedTitle: 'Đăng bình luận thất bại',
@@ -1532,6 +1547,9 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     categoryLikeLimitReachedMessage: 'Los miembros gratuitos pueden marcar hasta 2 categorías como favoritas. Mejora a Premium para favoritos ilimitados.',
     ttsLimitReachedTitle: 'Has agotado tus reproducciones de hoy',
     ttsLimitReachedMessage: 'Los miembros gratuitos pueden escuchar 3 pronunciaciones al día. Mejora a Premium para escuchar sin límite.',
+    a11ySaveWord: 'Guardar palabra',
+    a11yPlayPronunciation: 'Reproducir pronunciación',
+    a11yLikeCategory: 'Marcar categoría como favorita',
     cancelLabel: 'Cancelar',
     goToLogin: 'Ir a iniciar sesión',
     commentFailedTitle: 'Error al publicar el comentario',

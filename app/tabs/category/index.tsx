@@ -17,7 +17,6 @@ import { Search, Mic, Bell, Star, ChevronDown, Crown } from 'lucide-react-native
 import { SCREEN_WIDTH } from '../../../constants/layout';
 
 const HORANG_ICON = require('../../../assets/Callout Card/image 146.png');
-const MIC_ICON = require('../../../assets/categories/icon-mic.png');
 const ACTIVE_STAR_COLOR = '#FACC15';
 const RECOMMEND_CARD_LEFT = 24; // FlatList contentContainerStyle paddingHorizontal과 동일
 const RECOMMEND_BUBBLE_MAX_WIDTH = SCREEN_WIDTH / 2 - RECOMMEND_CARD_LEFT + 40;
@@ -211,7 +210,6 @@ export default function CategoryScreen() {
               <CardBg {...cardBgProps}>
                 <View style={styles.cardOverlay} />
                 <View style={styles.cardTopRow}>
-                  <Image source={MIC_ICON} style={styles.micIcon} />
                   {item.premiumOnly ? (
                     <View style={styles.likeBtn}>
                       <AppIcon icon={Crown} size={20} color={Colors.premium} />
@@ -224,6 +222,7 @@ export default function CategoryScreen() {
                         handleToggleLike(item);
                       }}
                       hitSlop={8}
+                      accessibilityLabel={t('a11yLikeCategory')}
                     >
                       <AppIcon
                         icon={Star}
@@ -350,10 +349,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.3)',
   },
   cardTopRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingLeft: 12, paddingTop: 6, paddingRight: 4,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end',
+    paddingTop: 6, paddingRight: 4,
   },
-  micIcon: { width: 16, height: 16, tintColor: '#1A1A1A' },
   likeBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   likeIcon: { width: 24, height: 24 },
   cardTextWrap: { position: 'absolute', left: 12, right: 12, bottom: 10 },

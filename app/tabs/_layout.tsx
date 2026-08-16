@@ -1,5 +1,6 @@
 import { Tabs, useRouter } from 'expo-router';
 import { TouchableOpacity, View } from 'react-native';
+import { AppText as Text } from '@/components/AppText';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Colors } from '../../constants/Colors';
 import { TabIcon, type TabIconName } from '@/components/icons/TabIcon';
@@ -7,13 +8,16 @@ import { languageStore } from '../../constants/languageStore';
 import { authStore } from '../../constants/authStore';
 
 /**
- * Figma(Navigation/BottomBar.svg): 아이콘·라벨 색은 활성/비활성 상태와 무관하게
- * 항상 동일하고, 활성 탭만 배경 하이라이트(rounded pill, #333333)로 구분한다.
- */
-function TabBarIcon({ name, focused }: { name: TabIconName; focused: boolean }) {
+ * Figma(Navigation/BottomBar.svg) 원안은 아이콘·라벨 색이 활성/비활성 무관하게 항상 동일하고
+ * pill 배경만으로 구분하지만, 첫 진입 사용자(특히 외국인 학습자)가 탭 의미를 바로 읽기 어렵다는
+ * UX 피드백에 따라 의도적으로 벗어남: 활성 탭만 라벨을 보여주고, 아이콘/라벨 색도 함께 바꾼다. */
+function TabBarIcon({ name, label, focused }: { name: TabIconName; label: string; focused: boolean }) {
   return (
-    <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-      <TabIcon name={name} size={22} color="#C5C5C5" />
+    <View style={styles.tabContent}>
+      <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
+        <TabIcon name={name} size={22} color={focused ? Colors.navBarIconActive : Colors.navBarIconMuted} />
+      </View>
+      {focused && <Text style={styles.tabLabel}>{label}</Text>}
     </View>
   );
 }
@@ -101,7 +105,7 @@ export default function TabLayout() {
         name="index"
         options={({ route }) => ({
           title: languageStore.t('home'),
-          tabBarIcon: ({ focused }) => <TabBarIcon name="home" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="home" label={languageStore.t('home')} focused={focused} />,
           tabBarButton: props => (
             <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.index} />
           ),
@@ -113,7 +117,7 @@ export default function TabLayout() {
         name="category"
         options={({ route }) => ({
           title: languageStore.t('category'),
-          tabBarIcon: ({ focused }) => <TabBarIcon name="category" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="category" label={languageStore.t('category')} focused={focused} />,
           tabBarButton: props => (
             <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.category} />
           ),
@@ -125,7 +129,7 @@ export default function TabLayout() {
         name="dictionary"
         options={({ route }) => ({
           title: languageStore.t('dictionary'),
-          tabBarIcon: ({ focused }) => <TabBarIcon name="dictionary" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="dictionary" label={languageStore.t('dictionary')} focused={focused} />,
           tabBarButton: props => (
             <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.dictionary} />
           ),
@@ -137,7 +141,7 @@ export default function TabLayout() {
         name="community"
         options={({ route }) => ({
           title: languageStore.t('community'),
-          tabBarIcon: ({ focused }) => <TabBarIcon name="community" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="community" label={languageStore.t('community')} focused={focused} />,
           tabBarButton: props => (
             <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.community} requireAuth />
           ),
@@ -149,7 +153,7 @@ export default function TabLayout() {
         name="mypage"
         options={({ route }) => ({
           title: languageStore.t('mypage'),
-          tabBarIcon: ({ focused }) => <TabBarIcon name="mypage" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="mypage" label={languageStore.t('mypage')} focused={focused} />,
           tabBarButton: props => (
             <DoubleTapTabButton {...props as any} rootRoute={ROOT_TAB_ROUTE.mypage} />
           ),
@@ -160,12 +164,21 @@ export default function TabLayout() {
 }
 
 const styles = {
+  tabContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
+  } as const,
   iconWrap: {
     width: 44, height: 28, borderRadius: 14,
     alignItems: 'center', justifyContent: 'center',
   } as const,
   iconWrapActive: {
     backgroundColor: '#333333',
+  } as const,
+  tabLabel: {
+    fontSize: 10, fontWeight: '600',
+    color: Colors.navBarIconActive,
   } as const,
   tabButton: {
     flex: 1,

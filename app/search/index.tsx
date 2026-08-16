@@ -287,7 +287,8 @@ export default function SearchScreen() {
                           fill={saved ? '#FACC15' : undefined}
                           color={saved ? '#FACC15' : undefined}
                           onPress={() => toggleSave(item.id)}
-                          hitSlop={8}
+                          hitSlop={14}
+                          accessibilityLabel="단어 저장"
                         />
                       </View>
                     </TouchableOpacity>

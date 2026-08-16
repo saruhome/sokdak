@@ -20,8 +20,6 @@ import { BackIcon } from '@/components/icons/SocialIcons';
 
 const ACTIVE_STAR_COLOR = '#FACC15';
 
-const MIC_ICON = require('../../../assets/categories/icon-mic.png');
-
 /** Figma: 229:3738(즐겨찾기) — 좋아요 한 카테고리 + 저장한 단어를 함께 보여주는 화면 */
 export default function SavedWordsScreen() {
   const language = useLanguage();
@@ -112,7 +110,6 @@ export default function SavedWordsScreen() {
                     <View style={StyleSheet.absoluteFill}>
                       <View style={styles.categoryCardOverlay} />
                     </View>
-                    <Image source={MIC_ICON} style={styles.micIcon} />
                     <TouchableOpacity
                       style={styles.likeBtn}
                       onPress={e => {
@@ -120,6 +117,7 @@ export default function SavedWordsScreen() {
                         handleToggleCategory(category.slug);
                       }}
                       hitSlop={8}
+                      accessibilityLabel={t('a11yLikeCategory')}
                     >
                       <AppIcon
                         icon={Star}
@@ -180,10 +178,15 @@ export default function SavedWordsScreen() {
                   <View style={styles.wordItemRight}>
                     <AppIcon
                       icon={Star} size={18} fill={ACTIVE_STAR_COLOR} color={ACTIVE_STAR_COLOR}
-                      style={styles.iconBtn} hitSlop={6}
+                      style={styles.iconBtn} hitSlop={8}
                       onPress={() => handleRemoveWord(word.id)}
+                      accessibilityLabel={t('a11ySaveWord')}
                     />
-                    <AppIcon icon={Volume2} size={18} style={styles.iconBtn} onPress={() => speakWord(word)} />
+                    <AppIcon
+                      icon={Volume2} size={18} style={styles.iconBtn} hitSlop={8}
+                      onPress={() => speakWord(word)}
+                      accessibilityLabel={t('a11yPlayPronunciation')}
+                    />
                   </View>
                 </TouchableOpacity>
               );
@@ -237,8 +240,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(255,255,255,0.3)',
   },
-  micIcon: { position: 'absolute', left: 12, top: 12, width: 16, height: 16, tintColor: '#1A1A1A' },
-  starIcon: { position: 'absolute', right: 12, top: 12 },
   likeBtn: {
     position: 'absolute', right: 4, top: 4, width: 28, height: 28,
     alignItems: 'center', justifyContent: 'center',

@@ -253,8 +253,16 @@ export function WordListView({
                   style={styles.iconBtn}
                   hitSlop={6}
                   onPress={() => toggleSave(item.id)}
+                  accessibilityLabel={t('a11ySaveWord')}
                 />
-                <AppIcon icon={Volume2} size={20} style={styles.iconBtn} onPress={() => speakWord(item)} />
+                <AppIcon
+                  icon={Volume2}
+                  size={20}
+                  style={styles.iconBtn}
+                  hitSlop={6}
+                  onPress={() => speakWord(item)}
+                  accessibilityLabel={t('a11yPlayPronunciation')}
+                />
               </View>
             </TouchableOpacity>
           );

@@ -27,6 +27,7 @@ export function AppIcon({
   onPress,
   hitSlop,
   style,
+  accessibilityLabel,
 }: {
   icon: LucideIcon;
   size?: number;
@@ -37,6 +38,8 @@ export function AppIcon({
   onPress?: (event: GestureResponderEvent) => void;
   hitSlop?: number;
   style?: StyleProp<ViewStyle>;
+  /** onPress가 있는 아이콘 버튼의 스크린리더 라벨 — 텍스트가 없는 버튼이라 꼭 넘겨줄 것 */
+  accessibilityLabel?: string;
 }) {
   const [hovered, setHovered] = useState(false);
   const stroke = hovered ? hoverColor : color;
@@ -48,6 +51,8 @@ export function AppIcon({
       onHoverOut={() => setHovered(false)}
       hitSlop={hitSlop}
       style={style}
+      accessibilityRole={onPress ? 'button' : undefined}
+      accessibilityLabel={onPress ? accessibilityLabel : undefined}
     >
       <Icon size={size} color={stroke} strokeWidth={1.5} absoluteStrokeWidth fill={fill ?? 'none'} />
     </Pressable>

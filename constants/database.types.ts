@@ -262,54 +262,72 @@ export type Database = {
           },
         ]
       }
-      profiles: {
+      account_settings: {
         Row: {
-          avatar_emoji: string
-          avatar_url: string | null
           community_guidelines_accepted_at: string | null
           created_at: string
-          id: string
           is_premium: boolean
           last_active_date: string | null
           last_seen_reply_at: string | null
-          level: string
-          nickname: string
           notification_prefs: Json
           phone: string | null
           streak_count: number
           timezone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          community_guidelines_accepted_at?: string | null
+          created_at?: string
+          is_premium?: boolean
+          last_active_date?: string | null
+          last_seen_reply_at?: string | null
+          notification_prefs?: Json
+          phone?: string | null
+          streak_count?: number
+          timezone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          community_guidelines_accepted_at?: string | null
+          created_at?: string
+          is_premium?: boolean
+          last_active_date?: string | null
+          last_seen_reply_at?: string | null
+          notification_prefs?: Json
+          phone?: string | null
+          streak_count?: number
+          timezone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_emoji: string
+          avatar_url: string | null
+          created_at: string
+          id: string
+          level: string
+          nickname: string
         }
         Insert: {
           avatar_emoji?: string
           avatar_url?: string | null
-          community_guidelines_accepted_at?: string | null
           created_at?: string
           id: string
-          is_premium?: boolean
-          last_active_date?: string | null
-          last_seen_reply_at?: string | null
           level?: string
           nickname: string
-          notification_prefs?: Json
-          phone?: string | null
-          streak_count?: number
-          timezone?: string
         }
         Update: {
           avatar_emoji?: string
           avatar_url?: string | null
-          community_guidelines_accepted_at?: string | null
           created_at?: string
           id?: string
-          is_premium?: boolean
-          last_active_date?: string | null
-          last_seen_reply_at?: string | null
           level?: string
           nickname?: string
-          notification_prefs?: Json
-          phone?: string | null
-          streak_count?: number
-          timezone?: string
         }
         Relationships: []
       }
@@ -594,7 +612,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_current_community_policy: {
+        Args: {
+          p_app_version?: string | null
+          p_locale: string
+          p_platform?: string | null
+          p_source?: string | null
+        }
+        Returns: {
+          accepted_at: string
+          policy_key: string
+          policy_locale: string
+          policy_version: string
+        }[]
+      }
       delete_own_account: { Args: never; Returns: undefined }
+      has_accepted_current_community_policy: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

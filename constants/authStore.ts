@@ -134,31 +134,38 @@ async function bumpStreak(userId: string, lastActiveDate: string | null, current
   const nextStreak = lastActiveDate === yesterday ? currentStreak + 1 : 1;
 
   const { error } = await supabase
-    .from('profiles')
+    .from('account_settings')
     .update({ streak_count: nextStreak, last_active_date: today })
-    .eq('id', userId);
+    .eq('user_id', userId);
   return error ? currentStreak : nextStreak;
 }
 
 async function fetchProfile(userId: string, email: string): Promise<SokDakUser> {
-  const { data } = await supabase
-    .from('profiles')
-    .select('nickname, avatar_emoji, avatar_url, phone, timezone, level, is_premium, streak_count, last_active_date')
-    .eq('id', userId)
-    .single();
+  const [{ data: profile }, { data: settings }] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('nickname, avatar_emoji, avatar_url, level')
+      .eq('id', userId)
+      .single(),
+    supabase
+      .from('account_settings')
+      .select('phone, timezone, is_premium, streak_count, last_active_date')
+      .eq('user_id', userId)
+      .single(),
+  ]);
 
-  const streakCount = await bumpStreak(userId, data?.last_active_date ?? null, data?.streak_count ?? 0);
+  const streakCount = await bumpStreak(userId, settings?.last_active_date ?? null, settings?.streak_count ?? 0);
 
   return {
     id: userId,
     email,
-    name: data?.nickname ?? email.split('@')[0],
-    emoji: data?.avatar_emoji ?? '🐦',
-    avatarUrl: data?.avatar_url ?? null,
-    phone: data?.phone ?? null,
-    timezone: data?.timezone ?? 'UTC',
-    level: data?.level ?? '초급',
-    isPremium: data?.is_premium ?? false,
+    name: profile?.nickname ?? email.split('@')[0],
+    emoji: profile?.avatar_emoji ?? '🐦',
+    avatarUrl: profile?.avatar_url ?? null,
+    phone: settings?.phone ?? null,
+    timezone: settings?.timezone ?? 'UTC',
+    level: profile?.level ?? '초급',
+    isPremium: settings?.is_premium ?? false,
     streakCount,
   };
 }
@@ -317,17 +324,30 @@ export const authStore = {
     name: string; emoji: string; avatarUrl: string | null; phone: string | null; timezone: string;
   }>) {
     if (!_user) return { error: '로그인이 필요해요.' };
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        ...(patch.name !== undefined ? { nickname: patch.name } : {}),
-        ...(patch.emoji !== undefined ? { avatar_emoji: patch.emoji } : {}),
-        ...(patch.avatarUrl !== undefined ? { avatar_url: patch.avatarUrl } : {}),
-        ...(patch.phone !== undefined ? { phone: patch.phone } : {}),
-        ...(patch.timezone !== undefined ? { timezone: patch.timezone } : {}),
-      })
-      .eq('id', _user.id);
-    if (error) return { error: error.message };
+
+    if (patch.name !== undefined || patch.emoji !== undefined || patch.avatarUrl !== undefined) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          ...(patch.name !== undefined ? { nickname: patch.name } : {}),
+          ...(patch.emoji !== undefined ? { avatar_emoji: patch.emoji } : {}),
+          ...(patch.avatarUrl !== undefined ? { avatar_url: patch.avatarUrl } : {}),
+        })
+        .eq('id', _user.id);
+      if (error) return { error: error.message };
+    }
+
+    if (patch.phone !== undefined || patch.timezone !== undefined) {
+      const { error } = await supabase
+        .from('account_settings')
+        .update({
+          ...(patch.phone !== undefined ? { phone: patch.phone } : {}),
+          ...(patch.timezone !== undefined ? { timezone: patch.timezone } : {}),
+        })
+        .eq('user_id', _user.id);
+      if (error) return { error: error.message };
+    }
+
     _user = {
       ..._user,
       ...(patch.name !== undefined ? { name: patch.name } : {}),
@@ -340,25 +360,40 @@ export const authStore = {
     return { error: null };
   },
 
-  /** 커뮤니티 게시 전 약관·운영정책 동의 여부를 서버 기준으로 확인한다. */
+  /**
+   * 커뮤니티 게시 전, 서버가 판정한 최신 활성 정책 버전에 동의했는지 확인한다.
+   * 단순 timestamp 캐시는 정책 개정 후에도 남을 수 있으므로 권한 판단에 사용하지 않는다.
+   */
   async hasAcceptedCommunityGuidelines() {
     if (!_user) return false;
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('community_guidelines_accepted_at')
-      .eq('id', _user.id)
-      .single();
-    return !error && !!data?.community_guidelines_accepted_at;
+    const { data, error } = await supabase.rpc('has_accepted_current_community_policy');
+    return !error && data === true;
   },
 
-  /** 정책 화면에서 사용자가 명시적으로 확인한 시각을 기록한다. */
-  async acceptCommunityGuidelines() {
-    if (!_user) return { error: '로그인이 필요해요.' };
-    const { error } = await supabase
-      .from('profiles')
-      .update({ community_guidelines_accepted_at: new Date().toISOString() })
-      .eq('id', _user.id);
-    return { error: error?.message ?? null };
+  /**
+   * 정책 화면에서 사용자가 명시적으로 동의하면 서버 RPC가 정책 버전·언어·원문
+   * 해시·서버 시각을 append-only 동의 이력에 기록한다. 현재 UI 언어는 정책
+   * 전문을 표시한 언어와 같아야 하므로 호출 화면이 locale을 명시적으로 넘긴다.
+   */
+  async acceptCommunityGuidelines({
+    locale,
+    source = 'community_onboarding',
+    appVersion,
+    platform,
+  }: {
+    locale: 'ko' | 'en' | 'ja' | 'es' | 'vi';
+    source?: 'community_onboarding' | 'post_gate' | 'comment_gate' | 'policy_update' | 'account_settings';
+    appVersion?: string;
+    platform?: 'android' | 'ios' | 'web';
+  }) {
+    if (!_user) return { error: '로그인이 필요해요.', consent: null };
+    const { data, error } = await supabase.rpc('accept_current_community_policy', {
+      p_locale: locale,
+      p_source: source,
+      p_app_version: appVersion ?? null,
+      p_platform: platform ?? null,
+    });
+    return { error: error?.message ?? null, consent: data?.[0] ?? null };
   },
 
   /** 이메일 변경 — Supabase가 새 주소로 확인 메일을 보내고, 확인 후에 실제로 바뀐다. */
@@ -378,9 +413,9 @@ export const authStore = {
   async fetchNotificationPrefs(): Promise<NotificationPrefs> {
     if (!_user) return DEFAULT_NOTIFICATION_PREFS;
     const { data } = await supabase
-      .from('profiles')
+      .from('account_settings')
       .select('notification_prefs')
-      .eq('id', _user.id)
+      .eq('user_id', _user.id)
       .single();
     return { ...DEFAULT_NOTIFICATION_PREFS, ...(data?.notification_prefs as Partial<NotificationPrefs> ?? {}) };
   },
@@ -388,9 +423,9 @@ export const authStore = {
   async updateNotificationPrefs(prefs: NotificationPrefs) {
     if (!_user) return { error: '로그인이 필요해요.' };
     const { error } = await supabase
-      .from('profiles')
+      .from('account_settings')
       .update({ notification_prefs: prefs })
-      .eq('id', _user.id);
+      .eq('user_id', _user.id);
     return { error: error?.message ?? null };
   },
 
@@ -420,11 +455,12 @@ export const authStore = {
     AsyncStorage.setItem(ttsStorageKey(_user.id), String(_ttsPlaysToday)).catch(() => {});
   },
 
-  /** 회원탈퇴 — DB의 delete_own_account()가 auth.users를 지우면 profiles/저장한 단어/게시글 등이
-   *  전부 CASCADE로 함께 삭제된다. 성공하면 로컬 세션도 정리. */
+  /** 회원탈퇴 — 인증된 호출자를 Edge Function에서 검증한 뒤, 서비스 역할로 Auth·연관 DB 데이터와
+   *  본인 게시 이미지 Storage 객체를 정리한다. 클라이언트는 privileged RPC를 직접 실행하지 않는다. */
   async deleteAccount() {
-    const { error } = await supabase.rpc('delete_own_account');
+    const { data, error } = await supabase.functions.invoke('delete-account', { method: 'POST' });
     if (error) return { error: error.message };
+    if (!data?.deleted) return { error: '회원탈퇴 처리 결과를 확인할 수 없어요.' };
     await supabase.auth.signOut();
     return { error: null };
   },

@@ -1,0 +1,2 @@
+report_id,received_at,tester_id,platform,device_model,os_version,app_build,area,severity,reproduction_steps,expected_behavior,actual_behavior,attachment_reference,consent_to_contact,status,owner,target_fix_build,resolution_note
+BETA-001,YYYY-MM-DDThh:mm:ssZ,TESTER-001,iOS,iPhone model,iOS version,build number,authentication,P0,"1. ...","...","...","restricted-link-or-none",yes,open,unassigned,unassigned,""

@@ -240,18 +240,30 @@ export async function reportPost(params: { postId: string; reportedUserId: strin
   return { error: error?.message ?? null };
 }
 
-/** 글쓰기용 사진 첨부 — Supabase Storage 'post-images' 버킷(공개)에 업로드 후 공개 URL 반환 */
+const MAX_POST_IMAGE_BYTES = 5 * 1024 * 1024;
+const POST_IMAGE_EXTENSIONS: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+};
+
+/** 글쓰기용 사진 첨부 — 서버 Storage 제한과 동일하게 형식·용량을 검사한 뒤 공개 버킷에 업로드한다. */
 export async function uploadPostImage(uri: string): Promise<{ url: string | null; error: string | null }> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { url: null, error: '로그인이 필요해요.' };
 
   const response = await fetch(uri);
   const blob = await response.blob();
-  const ext = blob.type?.split('/')[1] ?? 'jpg';
+  const contentType = blob.type.toLowerCase();
+  const ext = POST_IMAGE_EXTENSIONS[contentType];
+  if (!ext) return { url: null, error: 'JPEG, PNG 또는 WebP 이미지만 첨부할 수 있어요.' };
+  if (blob.size > MAX_POST_IMAGE_BYTES) {
+    return { url: null, error: '이미지 파일은 5MB 이하만 첨부할 수 있어요.' };
+  }
   const path = `${user.id}/${Date.now()}.${ext}`;
 
   const { error } = await supabase.storage.from('post-images').upload(path, blob, {
-    contentType: blob.type || 'image/jpeg',
+    contentType,
   });
   if (error) return { url: null, error: error.message };
 

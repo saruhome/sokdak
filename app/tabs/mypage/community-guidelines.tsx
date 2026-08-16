@@ -8,10 +8,12 @@ import { BackIcon } from '@/components/icons/SocialIcons';
 import { Colors } from '@/constants/Colors';
 import { COMMUNITY_GUIDELINES, COMMUNITY_GUIDELINES_VERSION } from '@/constants/communitySafety';
 import { authStore } from '@/constants/authStore';
+import { useLanguage } from '@/constants/languageStore';
 import { safeGoBack } from '@/constants/navigation';
 import { Check, ShieldAlert } from 'lucide-react-native';
 
 export default function CommunityGuidelinesScreen() {
+  const language = useLanguage();
   const [submitting, setSubmitting] = useState(false);
   const [accepted, setAccepted] = useState(false);
 
@@ -26,7 +28,10 @@ export default function CommunityGuidelinesScreen() {
     }
 
     setSubmitting(true);
-    const { error } = await authStore.acceptCommunityGuidelines();
+    const { error } = await authStore.acceptCommunityGuidelines({
+      locale: language,
+      source: 'community_onboarding',
+    });
     setSubmitting(false);
     if (error) {
       Alert.alert('동의 저장에 실패했어요', error);

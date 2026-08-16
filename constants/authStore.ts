@@ -97,6 +97,33 @@ async function loadTtsPlaysToday(userId: string) {
   _ttsPlaysDate = today;
 }
 
+type BookmarkTable = 'saved_words' | 'saved_posts' | 'post_likes' | 'comment_likes';
+
+/** id 하나를 (user_id, <idColumn>) 조인 테이블에 낙관적으로 insert/delete하는 공용 토글.
+ * toggleWordSaved/togglePostSaved/togglePostLiked/toggleCommentLiked가 테이블·컬럼명만 바꿔 공유한다.
+ * requireLogin이 true면 비로그인일 때 로컬 Set도 건드리지 않고 그냥 no-op(단어 저장 전용). */
+function toggleBookmark(set: Set<string>, id: string, table: BookmarkTable, idColumn: string, requireLogin: boolean) {
+  if (requireLogin && !_user) return;
+
+  const was = set.has(id);
+  if (was) set.delete(id); else set.add(id);
+  notifyBookmarks();
+
+  if (!_user) return;
+  const userId = _user.id;
+
+  // ponytail: 테이블/컬럼이 런타임 문자열이라 Supabase의 리터럴 유니언 타입과 안 맞음 — any로 우회.
+  const write = was
+    ? supabase.from(table).delete().eq('user_id', userId).eq(idColumn, id)
+    : (supabase.from(table) as any).insert({ user_id: userId, [idColumn]: id });
+
+  write.then(({ error }: { error: unknown }) => {
+    if (!error) return;
+    if (was) set.add(id); else set.delete(id);
+    notifyBookmarks();
+  });
+}
+
 /** 오늘 처음 로그인/세션 복원 시 연속 학습일(streak)을 갱신한다.
  * 어제까지 활동 → +1, 그보다 오래됐으면 1로 리셋, 오늘 이미 반영했으면 그대로 둔다. */
 async function bumpStreak(userId: string, lastActiveDate: string | null, currentStreak: number) {
@@ -409,90 +436,22 @@ export const authStore = {
 
   /* ── 저장한 단어 (로그인 전용 — 화면에서 isLoggedIn() 확인 후 호출할 것) ── */
   isWordSaved: (id: string) => _savedWordIds.has(id),
-  toggleWordSaved(id: string) {
-    if (!_user) return;
-    const wasSaved = _savedWordIds.has(id);
-    if (wasSaved) _savedWordIds.delete(id); else _savedWordIds.add(id);
-    notifyBookmarks();
-
-    const userId = _user.id;
-
-    const write = wasSaved
-      ? supabase.from('saved_words').delete().eq('user_id', userId).eq('word_id', id)
-      : supabase.from('saved_words').insert({ user_id: userId, word_id: id });
-
-    write.then(({ error }) => {
-      if (!error) return;
-      // 실패 시 롤백
-      if (wasSaved) _savedWordIds.add(id); else _savedWordIds.delete(id);
-      notifyBookmarks();
-    });
-  },
+  toggleWordSaved(id: string) { toggleBookmark(_savedWordIds, id, 'saved_words', 'word_id', true); },
   getSavedWordIds: () => Array.from(_savedWordIds),
 
   /* ── 저장한 게시글 ── */
   isPostSaved: (id: string) => _savedPostIds.has(id),
-  togglePostSaved(id: string) {
-    const wasSaved = _savedPostIds.has(id);
-    if (wasSaved) _savedPostIds.delete(id); else _savedPostIds.add(id);
-    notifyBookmarks();
-
-    if (!_user) return;
-    const userId = _user.id;
-    const write = wasSaved
-      ? supabase.from('saved_posts').delete().eq('user_id', userId).eq('post_id', id)
-      : supabase.from('saved_posts').insert({ user_id: userId, post_id: id });
-
-    write.then(({ error }) => {
-      if (!error) return;
-      if (wasSaved) _savedPostIds.add(id); else _savedPostIds.delete(id);
-      notifyBookmarks();
-    });
-  },
+  togglePostSaved(id: string) { toggleBookmark(_savedPostIds, id, 'saved_posts', 'post_id', false); },
   getSavedPostIds: () => Array.from(_savedPostIds),
 
   /* ── 좋아요 한 게시글 ── */
   isPostLiked: (id: string) => _likedPostIds.has(id),
-  togglePostLiked(id: string) {
-    const wasLiked = _likedPostIds.has(id);
-    if (wasLiked) _likedPostIds.delete(id); else _likedPostIds.add(id);
-    notifyBookmarks();
-
-    if (!_user) return;
-    const userId = _user.id;
-
-    const write = wasLiked
-      ? supabase.from('post_likes').delete().eq('user_id', userId).eq('post_id', id)
-      : supabase.from('post_likes').insert({ user_id: userId, post_id: id });
-
-    write.then(({ error }) => {
-      if (!error) return;
-      if (wasLiked) _likedPostIds.add(id); else _likedPostIds.delete(id);
-      notifyBookmarks();
-    });
-  },
+  togglePostLiked(id: string) { toggleBookmark(_likedPostIds, id, 'post_likes', 'post_id', false); },
   getLikedPostIds: () => Array.from(_likedPostIds),
 
   /* ── 좋아요 한 댓글 ── */
   isCommentLiked: (id: string) => _likedCommentIds.has(id),
-  toggleCommentLiked(id: string) {
-    const wasLiked = _likedCommentIds.has(id);
-    if (wasLiked) _likedCommentIds.delete(id); else _likedCommentIds.add(id);
-    notifyBookmarks();
-
-    if (!_user) return;
-    const userId = _user.id;
-
-    const write = wasLiked
-      ? supabase.from('comment_likes').delete().eq('user_id', userId).eq('comment_id', id)
-      : supabase.from('comment_likes').insert({ user_id: userId, comment_id: id });
-
-    write.then(({ error }) => {
-      if (!error) return;
-      if (wasLiked) _likedCommentIds.add(id); else _likedCommentIds.delete(id);
-      notifyBookmarks();
-    });
-  },
+  toggleCommentLiked(id: string) { toggleBookmark(_likedCommentIds, id, 'comment_likes', 'comment_id', false); },
 
   /* ── 좋아요 한 카테고리 (세션 전용, DB 미연동) ── */
   isCategoryLiked: (slug: string) => _likedCategorySlugs.has(slug),

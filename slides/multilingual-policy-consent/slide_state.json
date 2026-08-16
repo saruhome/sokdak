@@ -1,0 +1,126 @@
+{
+  "project_info": {
+    "title": "SokDak 다국어 커뮤니티 정책 동의 시스템",
+    "created": 1786886383.72,
+    "last_updated": 1786886525.385,
+    "total_slides": 11
+  },
+  "slides": [
+    {
+      "id": "cover",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "community_challenge",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "timestamp_gap",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "consent_ledger",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "server_enforcement",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "language_coverage",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "onboarding_flow",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "visual_system",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "production_rollout",
+      "state": "edited",
+      "pageNum": 9
+    },
+    {
+      "id": "quality_gate",
+      "state": "edited",
+      "pageNum": 10
+    },
+    {
+      "id": "next_decisions",
+      "state": "edited",
+      "pageNum": 11
+    }
+  ],
+  "outline": [
+    {
+      "id": "cover",
+      "title": "SokDak 다국어 커뮤니티 정책 동의 시스템",
+      "summary": "한국 거주 외국인 학습자를 위한 안전한 참여 경험과 증빙 가능한 동의 원장을 소개한다."
+    },
+    {
+      "id": "community_challenge",
+      "title": "커뮤니티 참여의 핵심 과제",
+      "summary": "1차 대상 언어권과 가입 후 필수 정책 확인이라는 제품·운영 요구를 제시한다.",
+      "image_plan": "/home/ubuntu/sokdak/design-proposals/sokdak-community-guest-redesign.png - Community tab view showing logged out state and rules enforcement"
+    },
+    {
+      "id": "timestamp_gap",
+      "title": "Timestamp만으로는 증명할 수 없습니다",
+      "summary": "기존 스키마 불일치와 단일 timestamp 기반 동의 기록의 한계를 설명한다."
+    },
+    {
+      "id": "consent_ledger",
+      "title": "동의를 감사 가능한 원장으로",
+      "summary": "정책 버전, 번역본, 동의 이력 테이블이 함께 만드는 증빙 구조를 설명한다."
+    },
+    {
+      "id": "server_enforcement",
+      "title": "서버가 최신 동의만 인정합니다",
+      "summary": "전용 RPC와 게시·댓글 트리거로 구현한 최신 정책 동의 강제를 제시한다."
+    },
+    {
+      "id": "language_coverage",
+      "title": "5개 언어를 동등한 참여 경로로",
+      "summary": "한국어·영어·일본어·스페인어·베트남어의 현지화 우선점과 원문 해시 증빙을 비교한다.",
+      "image_plan": "/home/ubuntu/sokdak/design-proposals/community-guidelines-ja.png - Table comparing 5 UI languages, localization priorities, and SHA-256 evidence"
+    },
+    {
+      "id": "onboarding_flow",
+      "title": "온보딩은 안전을 안내로 만듭니다",
+      "summary": "환영 화면에서 가이드라인 확인과 참여 활성화로 이어지는 2단계 사용자 흐름을 보여준다.",
+      "image_plan": "/home/ubuntu/sokdak/design-proposals/community-onboarding-en.png - Onboarding step 1 UI showing welcome message and three core principles"
+    },
+    {
+      "id": "visual_system",
+      "title": "브랜드를 유지하고 읽기 부담은 낮춥니다",
+      "summary": "SokDak 디자인 언어와 언어별 텍스트 확장을 고려한 UI 원칙을 시각 목업과 함께 제시한다.",
+      "image_plan": "/home/ubuntu/sokdak/design-proposals/sokdak-home-redesign.png - Brand UI guidelines showing ivory background, dark olive header, and coral CTA"
+    },
+    {
+      "id": "production_rollout",
+      "title": "운영 배포는 세 단계로 통제합니다",
+      "summary": "migration, 정책 게시·시드, 실제 계정 E2E 검증의 순서와 차단 기준을 설명한다."
+    },
+    {
+      "id": "quality_gate",
+      "title": "품질 게이트가 회귀를 차단합니다",
+      "summary": "GitHub Actions의 의존성·TypeScript·Expo·릴리스 구성·migration·번들 검사 항목을 요약한다."
+    },
+    {
+      "id": "next_decisions",
+      "title": "비공개 베타의 다음 결정",
+      "summary": "정책 전문 확정, 운영 DB 배포, Android 베타 E2E, CI 반영의 실행 순서를 제시한다."
+    }
+  ]
+}

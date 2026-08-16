@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #E8F3EC; color: #0A4A25; position: relative; }
+    .header { padding-top: 62px; padding-left: 120px; position: relative; z-index: 2; }
+    .number { font-family: Georgia, 'Times New Roman', serif; font-size: 128px; color: #D90429; line-height: 0.76; position: absolute; top: 48px; right: 60px; opacity: 0.92; }
+    h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 48px; line-height: 1.04; letter-spacing: -0.04em; }
+    .subtitle { font-family: Arial, sans-serif; font-size: 18px; color: #607064; margin-top: 16px; }
+
+    .content { padding-top: 60px; padding-left: 120px; padding-right: 120px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+    .check-item { border-left: 8px solid #D90429; padding-left: 20px; min-height: 100px; }
+    .check-title { font-family: Arial, sans-serif; font-size: 22px; font-weight: bold; color: #0A4A25; margin-bottom: 12px; }
+    .check-desc { font-family: Arial, sans-serif; font-size: 18px; line-height: 1.45; color: #2D3748; }
+
+    .footer-note { margin-top: 70px; background: #DDEBE2; padding-top: 24px; min-height: 76px; padding-left: 32px; border-left: 8px solid #0A4A25; font-family: Arial, sans-serif; font-size: 20px; color: #0A4A25; font-weight: 700; letter-spacing: -0.02em; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <h1>품질 게이트가 회귀를 차단합니다</h1>
+      <p class="subtitle">출시 전 모든 변경사항을 검증하는 GitHub Actions 파이프라인</p>
+      <p class="number">10</p>
+    </header>
+    <main class="content">
+      <div class="grid">
+        <div class="check-item">
+          <div class="check-title">정적 분석 및 의존성</div>
+          <div class="check-desc">Node 22 환경에서 <code>npm ci</code>를 통한 의존성 고정 및 TypeScript 정적 타입 검사를 수행합니다.</div>
+        </div>
+        <div class="check-item">
+          <div class="check-title">Expo 및 릴리스 구성</div>
+          <div class="check-desc">Expo 프로젝트의 건강 상태를 진단하고, 릴리스에 필요한 환경변수 계약을 검증합니다.</div>
+        </div>
+        <div class="check-item">
+          <div class="check-title">데이터베이스 마이그레이션</div>
+          <div class="check-desc">빈 마이그레이션 파일이 포함되는 것을 방지하여 운영 DB 반영 시의 오류를 사전에 차단합니다.</div>
+        </div>
+        <div class="check-item">
+          <div class="check-title">웹 번들 빌드</div>
+          <div class="check-desc">프로덕션 환경을 위한 웹 번들 빌드 성공 여부를 확인하여 정적 검증 역할을 유지합니다.</div>
+        </div>
+      </div>
+      <div class="footer-note">
+        워크플로 파일 반영 후 첫 실행이 모든 통과 조건의 출발점이 됩니다.
+      </div>
+    </main>
+  </div>
+</body>
+</html>

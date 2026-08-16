@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #E8F3EC; color: #0A4A25; display: grid; grid-template-columns: 610px 670px; }
+    .left { padding-top: 72px; padding-left: 120px; padding-right: 35px; position: relative; }
+    .number { font-family: Georgia, 'Times New Roman', serif; font-size: 138px; line-height: 0.8; color: #D90429; opacity: 0.92; }
+    h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 48px; line-height: 1.06; letter-spacing: -0.045em; margin-top: -32px; position: relative; }
+    .lead { font-family: Arial, sans-serif; font-size: 20px; line-height: 1.45; color: #43514A; margin-top: 26px; max-width: 420px; }
+    .points { margin-top: 42px; display: grid; gap: 17px; }
+    .point { display: grid; grid-template-columns: 26px 1fr; gap: 13px; align-items: start; font-family: Arial, sans-serif; font-size: 18px; line-height: 1.34; color: #2D3748; }
+    .dot { width: 12px; height: 12px; margin-top: 6px; background: #D90429; }
+    .right { display: flex; justify-content: center; align-items: center; background: #DDEBE2; }
+    .image-wrap { width: 420px; height: 650px; display: flex; align-items: center; justify-content: center; }
+    .image-wrap img { width: 390px; height: 640px; object-fit: contain; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <section class="left">
+      <p class="number">08</p>
+      <h1>브랜드를 유지하고<br>읽기 부담은 낮춥니다</h1>
+      <p class="lead">SokDak 디자인 언어와 언어별 텍스트 확장을 고려한 UI 원칙을 적용합니다.</p>
+      <div class="points">
+        <div class="point"><span class="dot"></span><span><strong>SokDak 일관성 유지:</strong> 아이보리 배경, 다크 올리브 헤더, 코랄 CTA를 사용합니다.</span></div>
+        <div class="point"><span class="dot"></span><span><strong>친근한 안내:</strong> 따뜻한 호랑이 마스코트가 안전한 참여를 안내합니다.</span></div>
+        <div class="point"><span class="dot"></span><span><strong>접근성 확보:</strong> 버튼 56dp 이상, 아이콘과 문구 조합, 충분한 여백을 제공합니다.</span></div>
+        <div class="point"><span class="dot"></span><span><strong>유연한 텍스트 영역:</strong> 스페인어 확장, 일본어 CJK, 베트남어 성조를 고려합니다.</span></div>
+      </div>
+    </section>
+    <section class="right">
+      <div class="image-wrap"><img src="/home/ubuntu/sokdak/design-proposals/sokdak-home-redesign.png" alt="SokDak 브랜드 UI 가이드라인"></div>
+    </section>
+  </div>
+</body>
+</html>

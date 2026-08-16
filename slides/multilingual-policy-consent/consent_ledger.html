@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #E8F3EC; color: #0A4A25; position: relative; }
+    .header { height: 196px; padding-top: 62px; padding-left: 120px; position: relative; }
+    .number { font-family: Georgia, 'Times New Roman', serif; font-size: 128px; color: #D90429; line-height: 0.76; position: absolute; top: 48px; left: 925px; }
+    h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 48px; line-height: 1.04; letter-spacing: -0.04em; max-width: 760px; }
+    .subtitle { font-family: Arial, sans-serif; font-size: 20px; color: #607064; margin-top: 16px; }
+
+    .content { padding-left: 120px; padding-right: 120px; margin-top: 40px; }
+    .tables-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 50px; }
+    .table-col { border-left: 8px solid #D90429; padding-left: 24px; min-height: 240px; }
+
+    .table-name { font-family: 'Courier New', Courier, monospace; font-size: 22px; font-weight: 700; color: #0A4A25; margin-top: 8px; line-height: 1.2; }
+    .table-role { font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; color: #D90429; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 24px; }
+
+    .table-desc { font-family: Arial, sans-serif; font-size: 18px; color: #2D3748; margin-top: 16px; }
+    .table-desc ul { list-style-type: none; }
+    .table-desc li { margin-top: 14px; position: relative; padding-left: 16px; line-height: 1.4; }
+    .table-desc li::before { content: "■"; color: #0A4A25; font-size: 9px; position: absolute; left: 0; top: 6px; }
+
+    .footer-note { margin-top: 70px; background: #DDEBE2; padding-top: 24px; min-height: 76px; padding-left: 32px; border-left: 8px solid #0A4A25; font-family: Arial, sans-serif; font-size: 20px; color: #0A4A25; font-weight: 700; letter-spacing: -0.02em; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <h1>동의를 하나의<br>감사 가능한 원장으로</h1>
+      <p class="subtitle">정책 버전, 번역본, 동의 이력 테이블이 함께 만드는 완결된 증빙 구조</p>
+      <p class="number">04</p>
+    </header>
+    <main class="content">
+      <div class="tables-grid">
+        <div class="table-col">
+          <p class="table-name">community_policy_<br>versions</p>
+          <p class="table-role">Master Policy</p>
+          <div class="table-desc">
+            <ul>
+              <li>정책 키 및 Semantic 버전</li>
+              <li>정책 효력 발생 시각</li>
+              <li>한국어 원문 SHA-256 해시</li>
+            </ul>
+          </div>
+        </div>
+        <div class="table-col">
+          <p class="table-name">community_policy_<br>locales</p>
+          <p class="table-role">Translations</p>
+          <div class="table-desc">
+            <ul>
+              <li>언어별 공개 URL</li>
+              <li>표시 원문 SHA-256 해시</li>
+              <li>번역 및 검토 상태</li>
+            </ul>
+          </div>
+        </div>
+        <div class="table-col">
+          <p class="table-name">community_policy_<br>consents</p>
+          <p class="table-role">Evidence Ledger</p>
+          <div class="table-desc">
+            <ul>
+              <li>사용자 식별자 (User ID)</li>
+              <li>동의한 정책 버전 및 표시 언어</li>
+              <li>서버 기준 수락 시각</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">
+        사용자와 정책 버전 조합은 1회만 기록되며, 새 정책은 기존 기록을 덮어쓰지 않고 새 행으로 보존됩니다.
+      </div>
+    </main>
+  </div>
+</body>
+</html>

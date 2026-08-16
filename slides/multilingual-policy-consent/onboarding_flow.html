@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #E8F3EC; color: #0A4A25; display: grid; grid-template-columns: 650px 630px; }
+    .left { padding-top: 72px; padding-left: 120px; padding-right: 40px; position: relative; }
+    .number { font-family: Georgia, 'Times New Roman', serif; font-size: 138px; line-height: 0.8; color: #D90429; opacity: 0.92; }
+    h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 48px; line-height: 1.1; letter-spacing: -0.045em; margin-top: -32px; position: relative; }
+    .content-box { margin-top: 50px; }
+    .step { margin-top: 30px; border-left: 8px solid #D90429; padding-left: 20px; min-height: 80px; }
+    .step-title { font-family: Arial, sans-serif; font-size: 22px; font-weight: bold; color: #0A4A25; margin-bottom: 10px; }
+    .step-desc { font-family: Arial, sans-serif; font-size: 18px; line-height: 1.4; color: #2D3748; }
+    .bullet-list { margin-top: 40px; padding-left: 20px; }
+    .bullet-item { font-family: Arial, sans-serif; font-size: 18px; line-height: 1.5; color: #43514A; margin-top: 12px; position: relative; }
+    .bullet-item::before { content: "•"; color: #D90429; font-size: 24px; position: absolute; left: -20px; top: -2px; }
+    .right { display: flex; justify-content: center; align-items: center; background: #DDEBE2; padding-top: 40px; }
+    .image-wrap { width: 360px; height: 640px; display: flex; align-items: center; justify-content: center; background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .image-wrap img { width: 360px; height: 640px; object-fit: contain; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <section class="left">
+      <p class="number">07</p>
+      <h1>온보딩은 안전을<br>안내로 만듭니다</h1>
+
+      <div class="content-box">
+        <div class="step">
+          <div class="step-title">1단계: 환영과 원칙</div>
+          <div class="step-desc">환영 메시지와 함께 커뮤니티의 세 가지 핵심 참여 원칙을 부드럽게 제시합니다.</div>
+        </div>
+
+        <div class="step">
+          <div class="step-title">2단계: 확인과 동의</div>
+          <div class="step-desc">전체 정책 링크, 필수 체크박스, 그리고 명확한 버전 표시를 통해 동의를 구합니다.</div>
+        </div>
+
+        <div class="bullet-list">
+          <div class="bullet-item">동의 전에는 커뮤니티 <strong>둘러보기만</strong> 허용됩니다.</div>
+          <div class="bullet-item">동의를 완료한 후에만 <strong>게시글 및 댓글 작성</strong> 흐름이 활성화됩니다.</div>
+        </div>
+      </div>
+    </section>
+    <section class="right">
+      <div class="image-wrap">
+        <img src="/home/ubuntu/sokdak/design-proposals/community-onboarding-en.png" alt="Community Onboarding Step 1">
+      </div>
+    </section>
+  </div>
+</body>
+</html>

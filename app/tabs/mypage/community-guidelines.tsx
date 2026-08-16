@@ -78,6 +78,7 @@ export default function CommunityGuidelinesScreen() {
           onPress={() => setAccepted(previous => !previous)}
           activeOpacity={0.8}
           accessibilityRole="checkbox"
+          accessibilityLabel="커뮤니티 운영정책 동의"
           accessibilityState={{ checked: accepted }}
         >
           <View style={[styles.checkbox, accepted && styles.checkboxSelected]}>
@@ -91,6 +92,9 @@ export default function CommunityGuidelinesScreen() {
           onPress={handleAccept}
           disabled={!accepted || submitting}
           activeOpacity={0.85}
+          accessibilityRole="button"
+          accessibilityLabel={submitting ? '운영정책 동의 저장 중' : '운영정책 동의하고 계속하기'}
+          accessibilityState={{ disabled: !accepted || submitting, busy: submitting }}
         >
           <Text style={styles.acceptBtnText}>{submitting ? '저장 중...' : '동의하고 계속하기'}</Text>
         </TouchableOpacity>

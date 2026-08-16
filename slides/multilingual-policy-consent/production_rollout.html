@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #E8F3EC; color: #0A4A25; position: relative; }
+    .header { padding-top: 62px; padding-left: 120px; position: relative; z-index: 2; }
+    .number { font-family: Georgia, 'Times New Roman', serif; font-size: 128px; color: #D90429; line-height: 0.76; position: absolute; top: 48px; right: 60px; opacity: 0.92; }
+    h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 48px; line-height: 1.04; letter-spacing: -0.04em; }
+    .subtitle { font-family: Arial, sans-serif; font-size: 20px; color: #607064; margin-top: 16px; }
+
+    .steps-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding-top: 70px; padding-left: 120px; padding-right: 120px; }
+
+    .step-card { border-top: 6px solid #D90429; padding-top: 24px; min-height: 220px; }
+    .step-number { font-family: Georgia, 'Times New Roman', serif; font-size: 56px; color: #D90429; line-height: 1; }
+    .step-title { font-family: Arial, sans-serif; font-size: 24px; font-weight: bold; color: #0A4A25; margin-top: 16px; }
+
+    .step-desc { font-family: Arial, sans-serif; font-size: 18px; color: #2D3748; margin-top: 20px; }
+    .step-desc ul { list-style-type: none; }
+    .step-desc li { margin-top: 12px; position: relative; padding-left: 16px; line-height: 1.4; }
+    .step-desc li::before { content: "■"; color: #0A4A25; font-size: 9px; position: absolute; left: 0; top: 6px; }
+
+    .monitoring-box { margin-top: 60px; margin-left: 120px; margin-right: 120px; background: #DDEBE2; padding-top: 28px; min-height: 100px; padding-left: 32px; border-left: 8px solid #0A4A25; }
+    .monitoring-title { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #D90429; text-transform: uppercase; letter-spacing: 0.1em; }
+    .monitoring-text { font-family: Arial, sans-serif; font-size: 20px; color: #0A4A25; font-weight: bold; margin-top: 12px; letter-spacing: -0.02em; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <h1>운영 배포는 세 단계로 통제합니다</h1>
+      <p class="subtitle">Migration, 정책 게시·시드, 실제 계정 E2E 검증의 순서와 차단 기준</p>
+      <p class="number">09</p>
+    </header>
+
+    <main>
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-title">Migration 적용</div>
+          <div class="step-desc">
+            <ul>
+              <li>계획된 유지보수 창에서 실행</li>
+              <li>테이블, RLS, RPC 생성</li>
+              <li>게시글 및 댓글 트리거 교체</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-title">정책 시드 실행</div>
+          <div class="step-desc">
+            <ul>
+              <li>Migration 직후 시드(Seed) 실행</li>
+              <li>Active 정책 1개 등록</li>
+              <li>Published locale 5개 등록</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-title">E2E 검증</div>
+          <div class="step-desc">
+            <ul>
+              <li>테스트 계정으로 직접 검증</li>
+              <li>동의 전 게시 거부 확인</li>
+              <li>동의 후 언어별 원장 기록 확인</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="monitoring-box">
+        <div class="monitoring-title">Post-Deployment Monitoring</div>
+        <div class="monitoring-text">
+          배포 후 24시간 동안 동의 실패, 정책 번역 부재, 비정상적인 게시 거부를 집중 모니터링합니다.
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

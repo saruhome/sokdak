@@ -12,11 +12,12 @@ import { languageStore, useLanguage, type Language } from '@/constants/languageS
 import { authStore } from '@/constants/authStore';
 import { speakWord } from '@/constants/speech';
 import { AppIcon } from '@/components/AppIcon';
+import { VoiceSearchButton } from '@/components/VoiceSearchButton';
 import { Alert } from '@/constants/alert';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
 } from '@/components/WordFilterBar';
-import { Search, Star, Volume2, Mic, Heart } from 'lucide-react-native';
+import { Search, Star, Volume2, Heart } from 'lucide-react-native';
 import { SCREEN_WIDTH } from '@/constants/layout';
 
 const JJAEKI_ICON = require('../assets/characters/jjaeki-full.png');
@@ -92,6 +93,11 @@ export function WordListView({
     return sortWords(base, sortIndex);
   }, [words, sortIndex, query, categorySlugs]);
 
+  const voiceSearchContext = useMemo(
+    () => words.map(word => word.word).filter(Boolean).slice(0, 100),
+    [words],
+  );
+
   const showConsonantRow = sortIndex === 2;
   const visible = useMemo(() => {
     if (!showConsonantRow || consonant === '전체') return filtered;
@@ -142,7 +148,7 @@ export function WordListView({
                 returnKeyType="search"
                 clearButtonMode="while-editing"
               />
-              <AppIcon icon={Mic} size={15} />
+              <VoiceSearchButton onTranscript={setQuery} contextualStrings={voiceSearchContext} />
             </View>
 
             {/* ── 추천 단어 배너 – Figma: Callout Card/Recommend_짹이 ── */}
@@ -291,7 +297,7 @@ const styles = StyleSheet.create({
   searchWrap: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     marginHorizontal: 24, marginTop: 16,
-    height: 36, backgroundColor: Colors.surface,
+    minHeight: 44, backgroundColor: Colors.surface,
     borderWidth: 1, borderColor: Colors.border, borderRadius: 8,
     paddingHorizontal: 12,
   },

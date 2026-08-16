@@ -96,6 +96,12 @@ type TranslationKey =
   | 'allLabel'
   | 'noSearchResults'
   | 'wordSearchPlaceholder'
+  | 'voiceSearchLabel'
+  | 'voiceSearchStopLabel'
+  | 'voiceSearchListening'
+  | 'voiceSearchPermissionMessage'
+  | 'voiceSearchNoMatchMessage'
+  | 'voiceSearchUnavailableMessage'
   | 'modalHint'
   | 'resetLabel'
   | 'applyLabel'
@@ -381,6 +387,12 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     allLabel: '전체',
     noSearchResults: '검색 결과가 없어요',
     wordSearchPlaceholder: '단어 검색',
+    voiceSearchLabel: '음성 검색',
+    voiceSearchStopLabel: '음성 검색 중지',
+    voiceSearchListening: '듣고 있어요. 한국어 단어를 말해 보세요.',
+    voiceSearchPermissionMessage: '마이크 권한을 허용한 뒤 음성 검색을 사용해 주세요.',
+    voiceSearchNoMatchMessage: '말한 내용을 인식하지 못했어요. 다시 말해 보세요.',
+    voiceSearchUnavailableMessage: '음성 인식 서비스를 사용할 수 없어요. 기기 설정과 인터넷 연결을 확인해 주세요.',
     modalHint: '선택한 카테고리에 해당하는 단어만 보여드려요',
     resetLabel: '초기화',
     applyLabel: '적용하기',
@@ -665,6 +677,12 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     allLabel: 'All',
     noSearchResults: 'No results found',
     wordSearchPlaceholder: 'Search words',
+    voiceSearchLabel: 'Voice search',
+    voiceSearchStopLabel: 'Stop voice search',
+    voiceSearchListening: 'Listening. Say a Korean word.',
+    voiceSearchPermissionMessage: 'Allow microphone access to use voice search.',
+    voiceSearchNoMatchMessage: "We couldn't recognize that. Please try again.",
+    voiceSearchUnavailableMessage: 'Voice search is unavailable. Check your device settings and internet connection.',
     modalHint: "We'll only show words in the categories you pick",
     resetLabel: 'Reset',
     applyLabel: 'Apply',
@@ -949,6 +967,12 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     allLabel: 'すべて',
     noSearchResults: '検索結果がありません',
     wordSearchPlaceholder: '単語を検索',
+    voiceSearchLabel: '音声検索',
+    voiceSearchStopLabel: '音声検索を停止',
+    voiceSearchListening: '聞き取り中です。韓国語の単語を話してください。',
+    voiceSearchPermissionMessage: '音声検索を使うにはマイクへのアクセスを許可してください。',
+    voiceSearchNoMatchMessage: '音声を認識できませんでした。もう一度話してください。',
+    voiceSearchUnavailableMessage: '音声認識サービスを利用できません。端末の設定とインターネット接続を確認してください。',
     modalHint: '選択したカテゴリーに該当する単語のみ表示します',
     resetLabel: 'リセット',
     applyLabel: '適用する',
@@ -1233,6 +1257,12 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     allLabel: 'Tất cả',
     noSearchResults: 'Không có kết quả tìm kiếm',
     wordSearchPlaceholder: 'Tìm từ',
+    voiceSearchLabel: 'Tìm kiếm bằng giọng nói',
+    voiceSearchStopLabel: 'Dừng tìm kiếm bằng giọng nói',
+    voiceSearchListening: 'Đang nghe. Hãy nói một từ tiếng Hàn.',
+    voiceSearchPermissionMessage: 'Hãy cho phép truy cập micrô để dùng tính năng tìm kiếm bằng giọng nói.',
+    voiceSearchNoMatchMessage: 'Không nhận diện được nội dung bạn nói. Hãy thử lại.',
+    voiceSearchUnavailableMessage: 'Không thể dùng dịch vụ nhận dạng giọng nói. Hãy kiểm tra cài đặt thiết bị và kết nối internet.',
     modalHint: 'Chỉ hiển thị các từ thuộc danh mục bạn đã chọn',
     resetLabel: 'Đặt lại',
     applyLabel: 'Áp dụng',
@@ -1517,6 +1547,12 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     allLabel: 'Todos',
     noSearchResults: 'No se encontraron resultados',
     wordSearchPlaceholder: 'Buscar palabras',
+    voiceSearchLabel: 'Búsqueda por voz',
+    voiceSearchStopLabel: 'Detener búsqueda por voz',
+    voiceSearchListening: 'Escuchando. Di una palabra en coreano.',
+    voiceSearchPermissionMessage: 'Permite el acceso al micrófono para usar la búsqueda por voz.',
+    voiceSearchNoMatchMessage: 'No pudimos reconocer lo que dijiste. Inténtalo de nuevo.',
+    voiceSearchUnavailableMessage: 'No se puede usar el reconocimiento de voz. Revisa la configuración del dispositivo y la conexión a internet.',
     modalHint: 'Solo mostraremos palabras de las categorías que elijas',
     resetLabel: 'Restablecer',
     applyLabel: 'Aplicar',

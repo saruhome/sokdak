@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #E8F3EC; color: #0A4A25; position: relative; }
+    .header { padding-top: 62px; padding-left: 120px; position: relative; z-index: 2; }
+    .number { font-family: Georgia, 'Times New Roman', serif; font-size: 128px; color: #D90429; line-height: 0.76; position: absolute; top: 48px; right: 60px; opacity: 0.92; }
+    h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 48px; line-height: 1.04; letter-spacing: -0.04em; }
+    .subtitle { font-family: Arial, sans-serif; font-size: 18px; color: #607064; margin-top: 16px; }
+    .content { display: grid; grid-template-columns: 680px 380px; gap: 60px; padding-top: 50px; padding-left: 120px; }
+
+    .table-container { margin-top: 20px; }
+    .table-header { display: grid; grid-template-columns: 120px 1fr 180px; padding-bottom: 12px; border-bottom: 2px solid #0A4A25; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #0A4A25; }
+    .table-row { display: grid; grid-template-columns: 120px 1fr 180px; padding-top: 20px; padding-bottom: 20px; border-bottom: 1px solid #C7D3CB; font-family: Arial, sans-serif; align-items: center; }
+    .lang-name { font-size: 18px; font-weight: bold; color: #2D3748; }
+    .lang-desc { font-size: 16px; line-height: 1.4; color: #43514A; padding-right: 20px; }
+    .lang-hash { font-size: 14px; font-family: monospace; color: #D90429; background: #F7F2EA; padding: 4px 8px; display: inline-block; }
+
+    /* Reduced image column height by 8px to eliminate overflow (724 -> 716) */
+    .image-wrap { display: flex; justify-content: center; align-items: flex-start; background: #DDEBE2; padding-top: 30px; height: 512px; }
+    .image-wrap img { width: 280px; height: 452px; object-fit: contain; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <h1>5개 언어를 동등한 참여 경로로</h1>
+      <p class="subtitle">각 언어권의 특성을 반영한 UX와 개별 원문 해시 증빙</p>
+      <p class="number">06</p>
+    </header>
+    <main class="content">
+      <section class="table-container">
+        <div class="table-header">
+          <div>UI 언어</div>
+          <div>현지화 우선점</div>
+          <div>정책 증빙</div>
+        </div>
+        <div class="table-row">
+          <div class="lang-name">한국어</div>
+          <div class="lang-desc">기준 원문으로서의 명확성과 가독성 확보</div>
+          <div><span class="lang-hash">canonical SHA-256</span></div>
+        </div>
+        <div class="table-row">
+          <div class="lang-name">English</div>
+          <div class="lang-desc">직접적이고 짧은 문장, 명확한 동사 중심 CTA</div>
+          <div><span class="lang-hash">en 원문 SHA-256</span></div>
+        </div>
+        <div class="table-row">
+          <div class="lang-name">日本語</div>
+          <div class="lang-desc">CJK 행간 확보 및 문자 잘림 방지, 영문 혼용 최소화</div>
+          <div><span class="lang-hash">ja 원문 SHA-256</span></div>
+        </div>
+        <div class="table-row">
+          <div class="lang-name">Español</div>
+          <div class="lang-desc">긴 문구의 자연스러운 줄바꿈 및 버튼 확장 고려</div>
+          <div><span class="lang-hash">es 원문 SHA-256</span></div>
+        </div>
+        <div class="table-row">
+          <div class="lang-name">Tiếng Việt</div>
+          <div class="lang-desc">성조 부호가 잘리지 않는 넉넉한 행간 확보</div>
+          <div><span class="lang-hash">vi 원문 SHA-256</span></div>
+        </div>
+      </section>
+      <section class="image-wrap">
+        <img src="/home/ubuntu/sokdak/design-proposals/community-guidelines-ja.png" alt="일본어 커뮤니티 가이드라인 목업">
+      </section>
+    </main>
+  </div>
+</body>
+</html>

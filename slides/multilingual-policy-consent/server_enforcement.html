@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #E8F3EC; color: #0A4A25; position: relative; overflow: hidden; }
+    .header { padding-top: 80px; padding-left: 120px; position: relative; z-index: 2; }
+    .number { font-family: Georgia, 'Times New Roman', serif; font-size: 140px; color: #D90429; line-height: 0.75; position: absolute; top: 50px; left: 1020px; opacity: 0.9; }
+    h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 52px; line-height: 1.1; letter-spacing: -0.03em; max-width: 800px; }
+    .subtitle { font-family: Arial, sans-serif; font-size: 22px; color: #43514A; margin-top: 20px; max-width: 700px; line-height: 1.4; }
+
+    .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding-top: 70px; padding-left: 120px; padding-right: 120px; }
+
+    .tech-section { border-left: 8px solid #D90429; padding-left: 24px; min-height: 320px; }
+    .tech-title { font-family: Georgia, 'Times New Roman', serif; font-size: 28px; color: #0A4A25; margin-bottom: 30px; }
+
+    .tech-item { margin-bottom: 35px; }
+    .tech-item-name { font-family: 'Courier New', Courier, monospace; font-size: 20px; font-weight: bold; color: #D90429; margin-bottom: 10px; background: #F7F2EA; display: inline-block; padding: 4px 8px; }
+    .tech-item-desc { font-family: Arial, sans-serif; font-size: 18px; line-height: 1.5; color: #2D3748; }
+
+    .highlight-box { background: #0A4A25; color: #E8F3EC; padding: 24px 30px; margin-top: 20px; }
+    .highlight-text { font-family: Arial, sans-serif; font-size: 18px; line-height: 1.5; }
+    .highlight-text strong { color: #D90429; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <h1>서버가 최신 동의만 인정합니다</h1>
+      <p class="subtitle">클라이언트의 조작을 원천 차단하고, 전용 RPC와 DB 트리거를 통해 권한을 엄격하게 통제합니다.</p>
+      <p class="number">05</p>
+    </header>
+
+    <main class="content-grid">
+      <!-- Left Column: RPCs -->
+      <section class="tech-section">
+        <h2 class="tech-title">RPC 기반 동의 및 검증</h2>
+
+        <div class="tech-item">
+          <div class="tech-item-name">accept_current_community_policy</div>
+          <p class="tech-item-desc">로그인 상태, 요청 언어, 활성 번역본을 서버에서 직접 검증합니다. 검증 통과 시 <strong>동의 원장과 UI 캐시를 단일 트랜잭션으로 갱신</strong>하여 데이터 정합성을 보장합니다.</p>
+        </div>
+
+        <div class="tech-item">
+          <div class="tech-item-name">has_accepted_current_community_policy</div>
+          <p class="tech-item-desc">클라이언트가 화면 게이트(UI) 상태를 판정할 때 사용하는 읽기 전용 RPC입니다. 단순 캐시가 아닌 <strong>실제 원장 기반의 최신 상태</strong>를 반환합니다.</p>
+        </div>
+      </section>
+
+      <!-- Right Column: Triggers -->
+      <section class="tech-section">
+        <h2 class="tech-title">DB 트리거 최종 강제</h2>
+
+        <div class="tech-item">
+          <div class="tech-item-name">posts & comments INSERT Trigger</div>
+          <p class="tech-item-desc">사용자가 게시글이나 댓글을 작성하는 순간, 데이터베이스 레벨에서 개입합니다. 최신 활성 정책에 대한 동의 이력이 원장에 존재하는지 <strong>최종적으로 확인</strong>합니다.</p>
+        </div>
+
+        <div class="highlight-box">
+          <p class="highlight-text">
+            클라이언트 앱이 변조되거나 API를 직접 호출하는 우회 시도가 발생하더라도, <strong>DB 트리거가 쓰기 작업을 원천 차단</strong>하여 커뮤니티의 안전을 지킵니다.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

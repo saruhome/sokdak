@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #E8F3EC; color: #0A4A25; position: relative; overflow: hidden; }
+    .header { padding-top: 80px; padding-left: 120px; position: relative; z-index: 2; }
+    .number { font-family: Georgia, 'Times New Roman', serif; font-size: 140px; color: #D90429; line-height: 0.75; position: absolute; top: 50px; left: 1020px; opacity: 0.9; }
+    h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 52px; line-height: 1.1; letter-spacing: -0.03em; max-width: 800px; }
+    .subtitle { font-family: Arial, sans-serif; font-size: 22px; color: #43514A; margin-top: 20px; max-width: 700px; line-height: 1.4; }
+
+    .steps-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; row-gap: 60px; padding-top: 80px; padding-left: 120px; padding-right: 120px; }
+    .step-item { border-top: 4px solid #0A4A25; padding-top: 24px; }
+    .step-header { display: flex; align-items: flex-start; }
+    .step-num { font-family: Georgia, 'Times New Roman', serif; font-size: 36px; color: #D90429; font-weight: bold; width: 60px; line-height: 1; }
+    .step-title { font-family: Arial, sans-serif; font-size: 26px; font-weight: bold; color: #0A4A25; line-height: 1.2; }
+    .step-desc { font-family: Arial, sans-serif; font-size: 19px; line-height: 1.5; color: #2D3748; margin-top: 16px; margin-left: 60px; }
+
+    .highlight { color: #D90429; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <h1>비공개 베타의 다음 결정</h1>
+      <p class="subtitle">출시 전 최종 점검 및 운영 환경 반영을 위한 4단계 실행 순서</p>
+      <p class="number">11</p>
+    </header>
+
+    <main class="steps-grid">
+      <div class="step-item">
+        <div class="step-header">
+          <div class="step-num">01</div>
+          <div class="step-title">정책 전문 확정</div>
+        </div>
+        <div class="step-desc">정책 전문 5개 언어본 검토를 완료하고, 버전 URL 및 <span class="highlight">SHA-256 해시값</span>을 최종 확정합니다.</div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-header">
+          <div class="step-num">02</div>
+          <div class="step-title">운영 DB 배포</div>
+        </div>
+        <div class="step-desc">운영 DB migration과 시드(Seed) 데이터를 <span class="highlight">동일한 유지보수 창</span>에서 실행하여 정합성을 보장합니다.</div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-header">
+          <div class="step-num">03</div>
+          <div class="step-title">Android 베타 E2E</div>
+        </div>
+        <div class="step-desc">새로운 Android 베타 빌드에서 실제 사용자의 <span class="highlight">정책 동의 흐름과 권한 제어</span>가 정상 작동하는지 E2E 테스트를 진행합니다.</div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-header">
+          <div class="step-num">04</div>
+          <div class="step-title">CI 품질 게이트 반영</div>
+        </div>
+        <div class="step-desc">CI 품질 게이트 워크플로를 GitHub 웹 UI를 통해 수동 반영하거나, <span class="highlight">Workflows: write</span> 권한을 부여하여 파이프라인을 완성합니다.</div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

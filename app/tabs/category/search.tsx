@@ -71,15 +71,24 @@ export default function CategorySearchScreen() {
           <AppIcon icon={Search} size={15} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search"
+            placeholder={t('categorySearchPlaceholder')}
             placeholderTextColor={Colors.textTertiary}
             value={query}
             onChangeText={handleChangeText}
             onSubmitEditing={() => handleSubmit(query)}
             returnKeyType="search"
             autoFocus
-            clearButtonMode="while-editing"
           />
+          {query.length > 0 && (
+            <AppIcon
+              icon={X}
+              size={16}
+              color={Colors.textSecondary}
+              hitSlop={8}
+              onPress={() => handleChangeText('')}
+              accessibilityLabel={t('clearCategorySearch')}
+            />
+          )}
           <AppIcon icon={Mic} size={15} />
         </View>
       </View>
@@ -90,7 +99,7 @@ export default function CategorySearchScreen() {
           <View style={styles.noResultsWrap}>
             <JjaekiQuestion size={96} />
             <Text style={styles.noResultsText}>
-              '{submittedQuery}' {t('noCategoryResultsPrefix')}{'\n'}{t('noCategoryResultsSuffix')}
+              {t('noCategoryResults').replace('{query}', submittedQuery ?? '')}
             </Text>
             <TouchableOpacity onPress={() => router.push('/tabs/mypage/suggest')}>
               <Text style={styles.suggestLink}>{t('suggestToTeam')}</Text>

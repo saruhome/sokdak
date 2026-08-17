@@ -1,7 +1,5 @@
-import {
-  StyleSheet, View, SafeAreaView, TextInput,
-  TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform,
-} from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import ProfileAvatar from '@/components/ProfileAvatar';

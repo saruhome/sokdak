@@ -10,6 +10,8 @@ import { NotoSerifKR_600SemiBold } from '@expo-google-fonts/noto-serif-kr/600Sem
 import { Colors } from '../constants/Colors';
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../constants/layout';
 import { authStore } from '../constants/authStore';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppErrorBoundary } from '@/components/AppErrorBoundary';
 
 const SPLASH = require('../assets/splash-screen.png');
 
@@ -81,20 +83,24 @@ export default function RootLayout() {
 
   return (
     <DeviceFrame>
-      <StatusBar style="dark" />
-      <Stack>
-        <Stack.Screen name="tabs" options={{ headerShown: false }} />
-        <Stack.Screen name="auth"  options={{ headerShown: false }} />
-        <Stack.Screen name="search" options={{ headerShown: false }} />
-        <Stack.Screen name="notifications" options={{ headerShown: false }} />
-      </Stack>
-      {splashVisible && (
-        <Animated.Image
-          source={SPLASH}
-          style={[StyleSheet.absoluteFill, styles.splash, { opacity: splashFade }]}
-          resizeMode="contain"
-        />
-      )}
+      <SafeAreaProvider>
+        <AppErrorBoundary>
+          <StatusBar style="dark" />
+          <Stack>
+            <Stack.Screen name="tabs" options={{ headerShown: false }} />
+            <Stack.Screen name="auth"  options={{ headerShown: false }} />
+            <Stack.Screen name="search" options={{ headerShown: false }} />
+            <Stack.Screen name="notifications" options={{ headerShown: false }} />
+          </Stack>
+          {splashVisible && (
+            <Animated.Image
+              source={SPLASH}
+              style={[StyleSheet.absoluteFill, styles.splash, { opacity: splashFade }]}
+              resizeMode="contain"
+            />
+          )}
+        </AppErrorBoundary>
+      </SafeAreaProvider>
     </DeviceFrame>
   );
 }

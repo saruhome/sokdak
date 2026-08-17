@@ -1,7 +1,5 @@
-import {
-  StyleSheet, View, SafeAreaView, ScrollView,
-  TouchableOpacity, Linking, TextInput, Animated, Easing,
-} from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Linking, TextInput, Animated, Easing } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';

@@ -1,7 +1,5 @@
-import {
-  StyleSheet, View, SafeAreaView, TextInput, Modal,
-  TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform,
-} from 'react-native';
+import { StyleSheet, View, TextInput, Modal, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import { router, useLocalSearchParams } from 'expo-router';

@@ -1,7 +1,5 @@
-import {
-  StyleSheet, View, Image, SafeAreaView,
-  TouchableOpacity, ScrollView,
-} from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/Colors';

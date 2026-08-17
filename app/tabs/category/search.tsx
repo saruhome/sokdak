@@ -1,7 +1,5 @@
-import {
-  StyleSheet, View, SafeAreaView,
-  TextInput, ScrollView, TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, View, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';

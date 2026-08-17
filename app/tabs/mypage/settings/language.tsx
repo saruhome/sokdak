@@ -1,4 +1,5 @@
-import { StyleSheet, View, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { useEffect, useState } from 'react';
 import { Colors } from '../../../../constants/Colors';

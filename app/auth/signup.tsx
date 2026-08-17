@@ -1,7 +1,5 @@
-import {
-  StyleSheet, View, Image, SafeAreaView, ScrollView,
-  TextInput, TouchableOpacity, KeyboardAvoidingView, Platform,
-} from 'react-native';
+import { StyleSheet, View, Image, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';

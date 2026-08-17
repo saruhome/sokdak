@@ -1,8 +1,5 @@
-import {
-  StyleSheet, View, SafeAreaView, ScrollView,
-  TouchableOpacity, Platform, Image,
-  type NativeSyntheticEvent, type NativeScrollEvent,
-} from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Platform, Image, type NativeSyntheticEvent, type NativeScrollEvent } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';

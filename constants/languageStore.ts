@@ -96,6 +96,8 @@ type TranslationKey =
   | 'allLabel'
   | 'noSearchResults'
   | 'wordSearchPlaceholder'
+  | 'clearWordSearch'
+  | 'translationSearchMatch'
   | 'voiceSearchLabel'
   | 'voiceSearchStopLabel'
   | 'voiceSearchListening'
@@ -393,6 +395,8 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     allLabel: '전체',
     noSearchResults: '검색 결과가 없어요',
     wordSearchPlaceholder: '단어·의미·로마자 검색',
+    clearWordSearch: '검색어 지우기',
+    translationSearchMatch: '번역 의미 일치:',
     voiceSearchLabel: '음성 검색',
     voiceSearchStopLabel: '음성 검색 중지',
     voiceSearchListening: '듣고 있어요. 한국어 단어를 말해 보세요.',
@@ -689,6 +693,8 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     allLabel: 'All',
     noSearchResults: 'No results found',
     wordSearchPlaceholder: 'Search words, meanings, or romanization',
+    clearWordSearch: 'Clear search',
+    translationSearchMatch: 'Meaning match:',
     voiceSearchLabel: 'Voice search',
     voiceSearchStopLabel: 'Stop voice search',
     voiceSearchListening: 'Listening. Say a Korean word.',
@@ -985,6 +991,8 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     allLabel: 'すべて',
     noSearchResults: '検索結果がありません',
     wordSearchPlaceholder: '単語・意味・ローマ字を検索',
+    clearWordSearch: '検索語を消去',
+    translationSearchMatch: '意味の一致:',
     voiceSearchLabel: '音声検索',
     voiceSearchStopLabel: '音声検索を停止',
     voiceSearchListening: '聞き取り中です。韓国語の単語を話してください。',
@@ -1281,6 +1289,8 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     allLabel: 'Tất cả',
     noSearchResults: 'Không có kết quả tìm kiếm',
     wordSearchPlaceholder: 'Tìm từ, nghĩa hoặc phiên âm',
+    clearWordSearch: 'Xóa nội dung tìm kiếm',
+    translationSearchMatch: 'Khớp nghĩa:',
     voiceSearchLabel: 'Tìm kiếm bằng giọng nói',
     voiceSearchStopLabel: 'Dừng tìm kiếm bằng giọng nói',
     voiceSearchListening: 'Đang nghe. Hãy nói một từ tiếng Hàn.',
@@ -1577,6 +1587,8 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     allLabel: 'Todos',
     noSearchResults: 'No se encontraron resultados',
     wordSearchPlaceholder: 'Buscar palabras, significados o romanización',
+    clearWordSearch: 'Borrar búsqueda',
+    translationSearchMatch: 'Coincidencia de significado:',
     voiceSearchLabel: 'Búsqueda por voz',
     voiceSearchStopLabel: 'Detener búsqueda por voz',
     voiceSearchListening: 'Escuchando. Di una palabra en coreano.',

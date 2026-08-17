@@ -13,12 +13,12 @@ import { authStore } from '@/constants/authStore';
 import { speakWord } from '@/constants/speech';
 import { AppIcon } from '@/components/AppIcon';
 import { VoiceSearchButton } from '@/components/VoiceSearchButton';
-import { wordMatchesSearch } from '@/constants/wordSearch';
+import { getWordSearchMatch, wordMatchesSearch } from '@/constants/wordSearch';
 import { Alert } from '@/constants/alert';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
 } from '@/components/WordFilterBar';
-import { Search, Star, Volume2, Heart } from 'lucide-react-native';
+import { Search, Star, Volume2, Heart, X } from 'lucide-react-native';
 import { SCREEN_WIDTH } from '@/constants/layout';
 
 const JJAEKI_ICON = require('../assets/characters/jjaeki-full.png');
@@ -146,8 +146,17 @@ export function WordListView({
                 value={query}
                 onChangeText={setQuery}
                 returnKeyType="search"
-                clearButtonMode="while-editing"
               />
+              {query.length > 0 && (
+                <AppIcon
+                  icon={X}
+                  size={16}
+                  color={Colors.textSecondary}
+                  hitSlop={8}
+                  onPress={() => setQuery('')}
+                  accessibilityLabel={t('clearWordSearch')}
+                />
+              )}
               <VoiceSearchButton onTranscript={setQuery} contextualStrings={voiceSearchContext} />
             </View>
 
@@ -212,6 +221,8 @@ export function WordListView({
           const category = getCategoryBySlug(item.category);
           const secondaryCategory = item.secondaryCategory ? getCategoryBySlug(item.secondaryCategory) : undefined;
           const saved = savedIds.includes(item.id);
+          const searchMatch = getWordSearchMatch(item, query);
+          const translationSearchMatch = searchMatch?.field === 'translation' ? searchMatch.translation : null;
           return (
             <TouchableOpacity
               style={[
@@ -243,7 +254,17 @@ export function WordListView({
                   )}
                 </View>
                 <View style={styles.wordBottomRow}>
-                  <Text style={styles.wordDesc} numberOfLines={1}>{item.shortDesc}</Text>
+                  {translationSearchMatch ? (
+                    <Text
+                      style={styles.searchMatchEvidence}
+                      numberOfLines={1}
+                      testID={`translation-search-match-${item.id}`}
+                    >
+                      {t('translationSearchMatch')} {translationSearchMatch.lang}
+                    </Text>
+                  ) : (
+                    <Text style={styles.wordDesc} numberOfLines={1}>{item.shortDesc}</Text>
+                  )}
                   <View style={styles.likeRow}>
                     <AppIcon icon={Heart} size={11} color={Colors.textTertiary} />
                     <Text style={styles.likeCount}>{item.likes}</Text>
@@ -364,6 +385,7 @@ const styles = StyleSheet.create({
   wordBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12, flexShrink: 0 },
   wordBadgeText: { fontSize: 10, fontWeight: '600' },
   wordDesc: { flexShrink: 1, fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  searchMatchEvidence: { flexShrink: 1, fontSize: 11, color: Colors.point1, fontFamily: undefined, fontWeight: '600' },
   wordItemRight: { alignItems: 'center', gap: 4 },
   iconBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
 

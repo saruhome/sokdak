@@ -1,5 +1,9 @@
 import type { Word } from '@/constants/words';
 
+export type WordSearchMatch =
+  | { field: 'word' | 'romanization' | 'shortDesc' | 'category' | 'secondaryCategory' }
+  | { field: 'translation'; translation: Word['translations'][number] };
+
 /**
  * 검색 입력과 단어 메타데이터를 비교하기 위한 정규화 함수.
  *
@@ -16,15 +20,34 @@ export function normalizeWordSearchText(value: string): string {
     .replace(/[\s\-_'’.,/()]+/g, '');
 }
 
-function getSearchableFields(word: Word): string[] {
-  return [
-    word.word,
-    word.romanization,
-    word.shortDesc,
-    word.category,
-    word.secondaryCategory ?? '',
-    ...word.translations.map(translation => translation.text),
+function includesNormalizedSearchText(value: string, normalizedQuery: string) {
+  return normalizeWordSearchText(value).includes(normalizedQuery);
+}
+
+/**
+ * 검색어와 처음 일치한 단어 메타데이터 필드를 반환한다.
+ * 화면은 번역 의미가 일치한 경우에만 그 근거를 표시해, 외국어 사용자가 검색 결과의
+ * 이유를 이해하도록 돕는다. 빈 검색어는 전체 목록을 보여 주는 상태이므로 근거가 없다.
+ */
+export function getWordSearchMatch(word: Word, query: string): WordSearchMatch | null {
+  const normalizedQuery = normalizeWordSearchText(query);
+  if (!normalizedQuery) return null;
+
+  const primaryFields: Array<[Exclude<WordSearchMatch['field'], 'translation'>, string]> = [
+    ['word', word.word],
+    ['romanization', word.romanization],
+    ['shortDesc', word.shortDesc],
+    ['category', word.category],
+    ['secondaryCategory', word.secondaryCategory ?? ''],
   ];
+
+  const primaryMatch = primaryFields.find(([, value]) => includesNormalizedSearchText(value, normalizedQuery));
+  if (primaryMatch) return { field: primaryMatch[0] };
+
+  const translation = word.translations.find(candidate =>
+    includesNormalizedSearchText(candidate.text, normalizedQuery),
+  );
+  return translation ? { field: 'translation', translation } : null;
 }
 
 /**
@@ -32,10 +55,5 @@ function getSearchableFields(word: Word): string[] {
  * 번역 `lang` 값은 표시용 메타데이터이므로 국가 이모지나 표기 형식과 관계없이 text를 검색한다.
  */
 export function wordMatchesSearch(word: Word, query: string): boolean {
-  const normalizedQuery = normalizeWordSearchText(query);
-  if (!normalizedQuery) return true;
-
-  return getSearchableFields(word).some(field =>
-    normalizeWordSearchText(field).includes(normalizedQuery),
-  );
+  return getWordSearchMatch(word, query) !== null || !normalizeWordSearchText(query);
 }

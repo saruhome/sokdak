@@ -6,6 +6,7 @@ const sampleWord = {
   word: 'ㄹㅇ',
   romanization: 'Ri-Eol',
   category: 'frequently-used',
+  secondaryCategory: 'daily-life',
   shortDesc: '진짜라는 뜻의 줄임말',
   meanings: [],
   usage: '',
@@ -20,36 +21,86 @@ const sampleWord = {
   ],
 } as Word;
 
+const untranslatedWord = {
+  ...sampleWord,
+  id: 'untranslated',
+  word: '신조어',
+  romanization: 'Sin-Jo-Eo',
+  shortDesc: '새로 생긴 말',
+  category: 'new-slang',
+  secondaryCategory: undefined,
+  translations: [],
+} as Word;
+
 describe('wordMatchesSearch', () => {
-  it('한국어 표제어와 짧은 설명의 부분 일치를 찾는다', () => {
-    expect(wordMatchesSearch(sampleWord, 'ㄹㅇ')).toBe(true);
-    expect(wordMatchesSearch(sampleWord, '진짜')).toBe(true);
+  it.each([
+    ['한국어 표제어', 'ㄹㅇ'],
+    ['한국어 짧은 설명', '진짜'],
+    ['주 카테고리', 'frequently'],
+    ['보조 카테고리', 'daily life'],
+  ])('%s의 부분 일치를 찾는다', (_label, query) => {
+    expect(wordMatchesSearch(sampleWord, query)).toBe(true);
   });
 
-  it('로마자의 대소문자·공백·하이픈 차이를 무시한다', () => {
-    expect(wordMatchesSearch(sampleWord, 'ri eol')).toBe(true);
-    expect(wordMatchesSearch(sampleWord, 'RIEOL')).toBe(true);
+  it.each([
+    'Ri-Eol',
+    'ri eol',
+    'RIEOL',
+    '  ri - eol  ',
+    'Ｒｉ－Ｅｏｌ',
+  ])('로마자 변형 입력 %p을 같은 표기로 취급한다', query => {
+    expect(wordMatchesSearch(sampleWord, query)).toBe(true);
   });
 
-  it('영어와 일본어 번역 의미를 검색한다', () => {
-    expect(wordMatchesSearch(sampleWord, 'serious')).toBe(true);
-    expect(wordMatchesSearch(sampleWord, 'マジ')).toBe(true);
+  it.each([
+    ['영어 번역의 앞부분', 'for real'],
+    ['영어 번역의 중간 부분', 'serious'],
+    ['일본어 번역의 부분', 'マジ'],
+    ['베트남어 번역의 원문', 'tuyệt vời'],
+    ['베트남어 번역의 무악센트 표기', 'tuyet voi'],
+    ['스페인어 번역의 원문', 'qué increíble'],
+    ['스페인어 번역의 무악센트 표기', 'que increible'],
+  ])('%s을 검색한다', (_label, query) => {
+    expect(wordMatchesSearch(sampleWord, query)).toBe(true);
   });
 
-  it('베트남어와 스페인어 번역은 악센트를 생략해도 검색한다', () => {
-    expect(wordMatchesSearch(sampleWord, 'tuyet voi')).toBe(true);
-    expect(wordMatchesSearch(sampleWord, 'que increible')).toBe(true);
+  it('번역의 lang 표시값 형식과 무관하게 text를 검색한다', () => {
+    const customLanguageLabel = {
+      ...sampleWord,
+      translations: [{ lang: 'custom-display-label', text: 'Voice-first slang' }],
+    } as Word;
+
+    expect(wordMatchesSearch(customLanguageLabel, 'voice first')).toBe(true);
   });
 
-  it('빈 검색어는 모든 단어를 포함하고, 관련 없는 검색어는 제외한다', () => {
-    expect(wordMatchesSearch(sampleWord, '   ')).toBe(true);
-    expect(wordMatchesSearch(sampleWord, 'unrelated term')).toBe(false);
+  it('번역이 비어 있어도 한국어·로마자 검색은 정상 동작한다', () => {
+    expect(wordMatchesSearch(untranslatedWord, '신조')).toBe(true);
+    expect(wordMatchesSearch(untranslatedWord, 'sin jo eo')).toBe(true);
+    expect(wordMatchesSearch(untranslatedWord, 'voice first')).toBe(false);
+  });
+
+  it.each(['   ', '\n\t', ''])('빈 검색어 %p는 모든 단어를 포함한다', query => {
+    expect(wordMatchesSearch(sampleWord, query)).toBe(true);
+  });
+
+  it.each([
+    'unrelated term',
+    'マジではない',
+    'completelydifferent',
+  ])('부분 일치하지 않는 검색어 %p는 제외한다', query => {
+    expect(wordMatchesSearch(sampleWord, query)).toBe(false);
   });
 });
 
 describe('normalizeWordSearchText', () => {
-  it('라틴 문자 악센트와 단어 구분자를 정규화한다', () => {
-    expect(normalizeWordSearchText('Qué-Increíble')).toBe('queincreible');
-    expect(normalizeWordSearchText('T-M-I')).toBe('tmi');
+  it.each([
+    ['Qué-Increíble', 'queincreible'],
+    ['T-M-I', 'tmi'],
+    ['  For / Real  ', 'forreal'],
+    ['Thật sự tuyệt vời', 'thatsutuyetvoi'],
+    ['Đúng rồi', 'dungroi'],
+    ['Ｒｉ－Ｅｏｌ', 'rieol'],
+  ])('%p를 %p로 정규화한다', (input, expected) => {
+    expect(normalizeWordSearchText(input)).toBe(expected);
   });
 });

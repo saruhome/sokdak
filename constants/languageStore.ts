@@ -110,6 +110,9 @@ type TranslationKey =
   | 'voiceSearchOpenSettingsLabel'
   | 'voiceSearchRetryPermissionLabel'
   | 'voiceSearchSettingsOpenError'
+  | 'errorBoundaryTitle'
+  | 'errorBoundaryBody'
+  | 'errorBoundaryRetry'
   | 'modalHint'
   | 'resetLabel'
   | 'applyLabel'
@@ -410,6 +413,9 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     voiceSearchOpenSettingsLabel: '설정으로 이동',
     voiceSearchRetryPermissionLabel: '권한 다시 요청',
     voiceSearchSettingsOpenError: '설정을 열 수 없어요. 기기 설정에서 SokDak의 마이크 권한을 직접 허용해 주세요.',
+    errorBoundaryTitle: '화면을 불러오지 못했어요',
+    errorBoundaryBody: '잠시 후 다시 시도해 주세요.',
+    errorBoundaryRetry: '다시 시도',
     modalHint: '선택한 카테고리에 해당하는 단어만 보여드려요',
     resetLabel: '초기화',
     applyLabel: '적용하기',
@@ -709,6 +715,9 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     voiceSearchOpenSettingsLabel: 'Open settings',
     voiceSearchRetryPermissionLabel: 'Ask again',
     voiceSearchSettingsOpenError: 'We could not open settings. Allow microphone access for SokDak in your device settings.',
+    errorBoundaryTitle: "We couldn't load this screen",
+    errorBoundaryBody: 'Please try again in a moment.',
+    errorBoundaryRetry: 'Try again',
     modalHint: "We'll only show words in the categories you pick",
     resetLabel: 'Reset',
     applyLabel: 'Apply',
@@ -1008,6 +1017,9 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     voiceSearchOpenSettingsLabel: '設定を開く',
     voiceSearchRetryPermissionLabel: 'もう一度許可をリクエスト',
     voiceSearchSettingsOpenError: '設定を開けませんでした。端末の設定でSokDakのマイク権限を直接許可してください。',
+    errorBoundaryTitle: '画面を読み込めませんでした',
+    errorBoundaryBody: 'しばらくしてからもう一度お試しください。',
+    errorBoundaryRetry: 'もう一度試す',
     modalHint: '選択したカテゴリーに該当する単語のみ表示します',
     resetLabel: 'リセット',
     applyLabel: '適用する',
@@ -1307,6 +1319,9 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     voiceSearchOpenSettingsLabel: 'Mở cài đặt',
     voiceSearchRetryPermissionLabel: 'Yêu cầu lại',
     voiceSearchSettingsOpenError: 'Không thể mở cài đặt. Hãy cho phép micrô cho SokDak trong cài đặt thiết bị.',
+    errorBoundaryTitle: 'Không thể tải màn hình này',
+    errorBoundaryBody: 'Vui lòng thử lại sau ít phút.',
+    errorBoundaryRetry: 'Thử lại',
     modalHint: 'Chỉ hiển thị các từ thuộc danh mục bạn đã chọn',
     resetLabel: 'Đặt lại',
     applyLabel: 'Áp dụng',
@@ -1606,6 +1621,9 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     voiceSearchOpenSettingsLabel: 'Abrir ajustes',
     voiceSearchRetryPermissionLabel: 'Solicitar permiso de nuevo',
     voiceSearchSettingsOpenError: 'No pudimos abrir los ajustes. Permite el micrófono para SokDak en los ajustes del dispositivo.',
+    errorBoundaryTitle: 'No pudimos cargar esta pantalla',
+    errorBoundaryBody: 'Vuelve a intentarlo en unos instantes.',
+    errorBoundaryRetry: 'Reintentar',
     modalHint: 'Solo mostraremos palabras de las categorías que elijas',
     resetLabel: 'Restablecer',
     applyLabel: 'Aplicar',

@@ -7,11 +7,13 @@ import { useFonts } from 'expo-font';
 // 전부 딸려온다 — 서브패스로 필요한 웨이트만 개별 import.
 import { NotoSerifKR_400Regular } from '@expo-google-fonts/noto-serif-kr/400Regular';
 import { NotoSerifKR_600SemiBold } from '@expo-google-fonts/noto-serif-kr/600SemiBold';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../constants/layout';
 import { authStore } from '../constants/authStore';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AppErrorBoundary } from '@/components/AppErrorBoundary';
+import { languageStore } from '../constants/languageStore';
+import { reportAppError } from '../constants/errorReporting';
+import { RouteAwareAppErrorBoundary } from '@/components/AppErrorBoundary';
 
 const SPLASH = require('../assets/splash-screen.png');
 
@@ -50,19 +52,31 @@ export default function RootLayout() {
     NotoSerifKR_600SemiBold,
   });
   const [authReady, setAuthReady] = useState(authStore.isInitialized());
-  /* 폰트·세션 로딩이 빨리 끝나도 스플래시가 깜빡이고 사라지지 않도록 최소 노출 시간 확보 */
+  const [languageReady, setLanguageReady] = useState(languageStore.isInitialized());
+  /* 폰트·세션·언어 로딩이 빨리 끝나도 스플래시가 깜빡이고 사라지지 않도록 최소 노출 시간 확보 */
   const [splashDone, setSplashDone] = useState(false);
   /* fade out이 끝나야 언마운트 — 그 전까지 앱 위에 겹쳐 둔다 */
   const [splashVisible, setSplashVisible] = useState(true);
   const splashFade = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    authStore.initialize().then(() => setAuthReady(true));
+    authStore.initialize()
+      .catch(error => {
+        reportAppError(error, { source: 'auth_initialization', route: 'root' });
+      })
+      .finally(() => setAuthReady(true));
+
+    languageStore.initialize()
+      .catch(error => {
+        reportAppError(error, { source: 'language_initialization', route: 'root' });
+      })
+      .finally(() => setLanguageReady(true));
+
     const t = setTimeout(() => setSplashDone(true), 1500);
     return () => clearTimeout(t);
   }, []);
 
-  const ready = fontsLoaded && authReady && splashDone;
+  const ready = fontsLoaded && authReady && languageReady && splashDone;
 
   useEffect(() => {
     if (!ready) return;
@@ -73,33 +87,31 @@ export default function RootLayout() {
     }).start(() => setSplashVisible(false));
   }, [ready, splashFade]);
 
-  if (!ready) {
-    return (
-      <DeviceFrame>
-        <Image source={SPLASH} style={styles.splash} resizeMode="contain" />
-      </DeviceFrame>
-    );
-  }
-
   return (
     <DeviceFrame>
       <SafeAreaProvider>
-        <AppErrorBoundary>
-          <StatusBar style="dark" />
-          <Stack>
-            <Stack.Screen name="tabs" options={{ headerShown: false }} />
-            <Stack.Screen name="auth"  options={{ headerShown: false }} />
-            <Stack.Screen name="search" options={{ headerShown: false }} />
-            <Stack.Screen name="notifications" options={{ headerShown: false }} />
-          </Stack>
-          {splashVisible && (
-            <Animated.Image
-              source={SPLASH}
-              style={[StyleSheet.absoluteFill, styles.splash, { opacity: splashFade }]}
-              resizeMode="contain"
-            />
+        <RouteAwareAppErrorBoundary>
+          {!ready ? (
+            <Image source={SPLASH} style={styles.splash} resizeMode="contain" />
+          ) : (
+            <>
+              <StatusBar style="dark" />
+              <Stack>
+                <Stack.Screen name="tabs" options={{ headerShown: false }} />
+                <Stack.Screen name="auth" options={{ headerShown: false }} />
+                <Stack.Screen name="search" options={{ headerShown: false }} />
+                <Stack.Screen name="notifications" options={{ headerShown: false }} />
+              </Stack>
+              {splashVisible && (
+                <Animated.Image
+                  source={SPLASH}
+                  style={[StyleSheet.absoluteFill, styles.splash, { opacity: splashFade }]}
+                  resizeMode="contain"
+                />
+              )}
+            </>
           )}
-        </AppErrorBoundary>
+        </RouteAwareAppErrorBoundary>
       </SafeAreaProvider>
     </DeviceFrame>
   );

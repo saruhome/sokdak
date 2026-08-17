@@ -1,64 +1,58 @@
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { usePathname } from 'expo-router';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { Colors } from '@/constants/Colors';
-import { languageStore, type Language } from '@/constants/languageStore';
+import { languageStore, useLanguage } from '@/constants/languageStore';
+import { reportAppError } from '@/constants/errorReporting';
 
-type ErrorCopy = {
-  title: string;
-  body: string;
-  retry: string;
-};
-
-const ERROR_COPY: Record<Language, ErrorCopy> = {
-  ko: {
-    title: '화면을 불러오지 못했어요',
-    body: '잠시 후 다시 시도해 주세요.',
-    retry: '다시 시도',
-  },
-  en: {
-    title: "We couldn't load this screen",
-    body: 'Please try again in a moment.',
-    retry: 'Try again',
-  },
-  ja: {
-    title: '画面を読み込めませんでした',
-    body: 'しばらくしてからもう一度お試しください。',
-    retry: 'もう一度試す',
-  },
-  vi: {
-    title: 'Không thể tải màn hình này',
-    body: 'Vui lòng thử lại sau ít phút.',
-    retry: 'Thử lại',
-  },
-  es: {
-    title: 'No pudimos cargar esta pantalla',
-    body: 'Vuelve a intentarlo en unos instantes.',
-    retry: 'Reintentar',
-  },
+type AppErrorBoundaryProps = {
+  children: ReactNode;
+  route?: string;
 };
 
 function AppErrorFallback({ resetErrorBoundary }: FallbackProps) {
-  const copy = ERROR_COPY[languageStore.getLanguage()];
+  // 언어 설정 화면 등에서 locale이 바뀌면 fallback도 즉시 다시 번역한다.
+  useLanguage();
+  const t = languageStore.t;
 
   return (
-    <View style={styles.container} accessibilityRole="alert">
-      <Text style={styles.title}>{copy.title}</Text>
-      <Text style={styles.body}>{copy.body}</Text>
+    <View style={styles.container} accessibilityRole="alert" accessibilityLiveRegion="assertive">
+      <Text style={styles.title}>{t('errorBoundaryTitle')}</Text>
+      <Text style={styles.body}>{t('errorBoundaryBody')}</Text>
       <Pressable
         style={styles.retryButton}
         onPress={resetErrorBoundary}
         accessibilityRole="button"
-        accessibilityLabel={copy.retry}
+        accessibilityLabel={t('errorBoundaryRetry')}
       >
-        <Text style={styles.retryText}>{copy.retry}</Text>
+        <Text style={styles.retryText}>{t('errorBoundaryRetry')}</Text>
       </Pressable>
     </View>
   );
 }
 
-export function AppErrorBoundary({ children }: { children: ReactNode }) {
-  return <ErrorBoundary FallbackComponent={AppErrorFallback}>{children}</ErrorBoundary>;
+export function AppErrorBoundary({ children, route = 'unknown' }: AppErrorBoundaryProps) {
+  return (
+    <ErrorBoundary
+      FallbackComponent={AppErrorFallback}
+      onError={(error, info) => {
+        reportAppError(error, {
+          source: 'render_boundary',
+          route,
+          componentStack: info.componentStack ?? undefined,
+        });
+      }}
+    >
+      {children}
+    </ErrorBoundary>
+  );
+}
+
+/** Expo Router 컨텍스트에서 현재 경로를 자동 기록하는 앱 루트 전용 경계. */
+export function RouteAwareAppErrorBoundary({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  return <AppErrorBoundary route={pathname || 'root'}>{children}</AppErrorBoundary>;
 }
 
 const styles = StyleSheet.create({

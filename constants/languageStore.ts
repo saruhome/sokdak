@@ -102,6 +102,12 @@ type TranslationKey =
   | 'voiceSearchPermissionMessage'
   | 'voiceSearchNoMatchMessage'
   | 'voiceSearchUnavailableMessage'
+  | 'voiceSearchPermissionTitle'
+  | 'voiceSearchPermissionRationale'
+  | 'voiceSearchPermissionSettingsMessage'
+  | 'voiceSearchOpenSettingsLabel'
+  | 'voiceSearchRetryPermissionLabel'
+  | 'voiceSearchSettingsOpenError'
   | 'modalHint'
   | 'resetLabel'
   | 'applyLabel'
@@ -393,6 +399,12 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     voiceSearchPermissionMessage: '마이크 권한을 허용한 뒤 음성 검색을 사용해 주세요.',
     voiceSearchNoMatchMessage: '말한 내용을 인식하지 못했어요. 다시 말해 보세요.',
     voiceSearchUnavailableMessage: '음성 인식 서비스를 사용할 수 없어요. 기기 설정과 인터넷 연결을 확인해 주세요.',
+    voiceSearchPermissionTitle: '마이크 권한이 필요해요',
+    voiceSearchPermissionRationale: '마이크를 허용하면 말로 한국어 단어를 검색할 수 있어요.',
+    voiceSearchPermissionSettingsMessage: '마이크 권한이 꺼져 있어요. Android 설정에서 마이크를 허용한 뒤 다시 시도해 주세요.',
+    voiceSearchOpenSettingsLabel: '설정으로 이동',
+    voiceSearchRetryPermissionLabel: '권한 다시 요청',
+    voiceSearchSettingsOpenError: '설정을 열 수 없어요. 기기 설정에서 SokDak의 마이크 권한을 직접 허용해 주세요.',
     modalHint: '선택한 카테고리에 해당하는 단어만 보여드려요',
     resetLabel: '초기화',
     applyLabel: '적용하기',
@@ -683,6 +695,12 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     voiceSearchPermissionMessage: 'Allow microphone access to use voice search.',
     voiceSearchNoMatchMessage: "We couldn't recognize that. Please try again.",
     voiceSearchUnavailableMessage: 'Voice search is unavailable. Check your device settings and internet connection.',
+    voiceSearchPermissionTitle: 'Microphone permission is needed',
+    voiceSearchPermissionRationale: 'Allow microphone access to search Korean words by voice.',
+    voiceSearchPermissionSettingsMessage: 'Microphone access is turned off. Allow it in Android settings, then try again.',
+    voiceSearchOpenSettingsLabel: 'Open settings',
+    voiceSearchRetryPermissionLabel: 'Ask again',
+    voiceSearchSettingsOpenError: 'We could not open settings. Allow microphone access for SokDak in your device settings.',
     modalHint: "We'll only show words in the categories you pick",
     resetLabel: 'Reset',
     applyLabel: 'Apply',
@@ -973,6 +991,12 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     voiceSearchPermissionMessage: '音声検索を使うにはマイクへのアクセスを許可してください。',
     voiceSearchNoMatchMessage: '音声を認識できませんでした。もう一度話してください。',
     voiceSearchUnavailableMessage: '音声認識サービスを利用できません。端末の設定とインターネット接続を確認してください。',
+    voiceSearchPermissionTitle: 'マイクの権限が必要です',
+    voiceSearchPermissionRationale: 'マイクを許可すると、韓国語の単語を声で検索できます。',
+    voiceSearchPermissionSettingsMessage: 'マイクの権限がオフです。Androidの設定でマイクを許可してから、もう一度試してください。',
+    voiceSearchOpenSettingsLabel: '設定を開く',
+    voiceSearchRetryPermissionLabel: 'もう一度許可を求める',
+    voiceSearchSettingsOpenError: '設定を開けませんでした。端末の設定でSokDakのマイク権限を直接許可してください。',
     modalHint: '選択したカテゴリーに該当する単語のみ表示します',
     resetLabel: 'リセット',
     applyLabel: '適用する',
@@ -1263,6 +1287,12 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     voiceSearchPermissionMessage: 'Hãy cho phép truy cập micrô để dùng tính năng tìm kiếm bằng giọng nói.',
     voiceSearchNoMatchMessage: 'Không nhận diện được nội dung bạn nói. Hãy thử lại.',
     voiceSearchUnavailableMessage: 'Không thể dùng dịch vụ nhận dạng giọng nói. Hãy kiểm tra cài đặt thiết bị và kết nối internet.',
+    voiceSearchPermissionTitle: 'Cần quyền dùng micrô',
+    voiceSearchPermissionRationale: 'Hãy cho phép dùng micrô để tìm từ tiếng Hàn bằng giọng nói.',
+    voiceSearchPermissionSettingsMessage: 'Quyền dùng micrô đang tắt. Hãy cho phép trong cài đặt Android rồi thử lại.',
+    voiceSearchOpenSettingsLabel: 'Mở cài đặt',
+    voiceSearchRetryPermissionLabel: 'Yêu cầu lại',
+    voiceSearchSettingsOpenError: 'Không thể mở cài đặt. Hãy cho phép micrô cho SokDak trong cài đặt thiết bị.',
     modalHint: 'Chỉ hiển thị các từ thuộc danh mục bạn đã chọn',
     resetLabel: 'Đặt lại',
     applyLabel: 'Áp dụng',
@@ -1553,6 +1583,12 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     voiceSearchPermissionMessage: 'Permite el acceso al micrófono para usar la búsqueda por voz.',
     voiceSearchNoMatchMessage: 'No pudimos reconocer lo que dijiste. Inténtalo de nuevo.',
     voiceSearchUnavailableMessage: 'No se puede usar el reconocimiento de voz. Revisa la configuración del dispositivo y la conexión a internet.',
+    voiceSearchPermissionTitle: 'Se necesita permiso para el micrófono',
+    voiceSearchPermissionRationale: 'Permite el micrófono para buscar palabras coreanas con la voz.',
+    voiceSearchPermissionSettingsMessage: 'El permiso del micrófono está desactivado. Permítelo en los ajustes de Android y vuelve a intentarlo.',
+    voiceSearchOpenSettingsLabel: 'Abrir ajustes',
+    voiceSearchRetryPermissionLabel: 'Solicitar de nuevo',
+    voiceSearchSettingsOpenError: 'No pudimos abrir los ajustes. Permite el micrófono para SokDak en los ajustes del dispositivo.',
     modalHint: 'Solo mostraremos palabras de las categorías que elijas',
     resetLabel: 'Restablecer',
     applyLabel: 'Aplicar',

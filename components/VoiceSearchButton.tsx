@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Linking, Platform, StyleSheet, View } from 'react-native';
 import {
   ExpoSpeechRecognitionModule,
   useSpeechRecognitionEvent,
@@ -7,6 +7,7 @@ import {
 } from 'expo-speech-recognition';
 import { AppText as Text } from '@/components/AppText';
 import { AppIcon } from '@/components/AppIcon';
+import { VoiceSearchPermissionDialog } from '@/components/VoiceSearchPermissionDialog';
 import { Alert } from '@/constants/alert';
 import { Colors } from '@/constants/Colors';
 import { languageStore, useLanguage } from '@/constants/languageStore';
@@ -38,6 +39,11 @@ export function VoiceSearchButton({
   useLanguage();
   const t = languageStore.t;
   const [recognizing, setRecognizing] = useState(false);
+  const [permissionDialogMode, setPermissionDialogMode] = useState<'retry' | 'settings' | null>(null);
+
+  const showPermissionDialog = useCallback((canAskAgain?: boolean) => {
+    setPermissionDialogMode(canAskAgain === false ? 'settings' : 'retry');
+  }, []);
 
   const showNoMatch = useCallback(() => {
     Alert.alert(t('voiceSearchLabel'), t('voiceSearchNoMatchMessage'));
@@ -58,6 +64,12 @@ export function VoiceSearchButton({
   useSpeechRecognitionEvent('error', event => {
     setRecognizing(false);
     if (event.error === 'aborted') return;
+    if (event.error === 'not-allowed') {
+      void ExpoSpeechRecognitionModule.getPermissionsAsync()
+        .then(permission => showPermissionDialog(permission.canAskAgain))
+        .catch(() => showPermissionDialog(false));
+      return;
+    }
     Alert.alert(t('voiceSearchLabel'), getErrorMessage(event.error));
   });
 
@@ -75,7 +87,7 @@ export function VoiceSearchButton({
 
       const permission = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
       if (!permission.granted) {
-        Alert.alert(t('permissionNeededTitle'), t('voiceSearchPermissionMessage'));
+        showPermissionDialog(permission.canAskAgain);
         return;
       }
 
@@ -92,7 +104,21 @@ export function VoiceSearchButton({
       setRecognizing(false);
       Alert.alert(t('voiceSearchLabel'), t('voiceSearchUnavailableMessage'));
     }
-  }, [contextualStrings, t]);
+  }, [contextualStrings, showPermissionDialog, t]);
+
+  const handleRetryPermission = () => {
+    setPermissionDialogMode(null);
+    void startRecognition();
+  };
+
+  const handleOpenSettings = useCallback(async () => {
+    setPermissionDialogMode(null);
+    try {
+      await Linking.openSettings();
+    } catch {
+      Alert.alert(t('voiceSearchLabel'), t('voiceSearchSettingsOpenError'));
+    }
+  }, [t]);
 
   const handlePress = () => {
     if (recognizing) {
@@ -118,6 +144,12 @@ export function VoiceSearchButton({
           {t('voiceSearchListening')}
         </Text>
       )}
+      <VoiceSearchPermissionDialog
+        mode={permissionDialogMode}
+        onClose={() => setPermissionDialogMode(null)}
+        onRetryPermission={handleRetryPermission}
+        onOpenSettings={handleOpenSettings}
+      />
     </View>
   );
 }

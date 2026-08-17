@@ -13,6 +13,7 @@ import { authStore } from '@/constants/authStore';
 import { speakWord } from '@/constants/speech';
 import { AppIcon } from '@/components/AppIcon';
 import { VoiceSearchButton } from '@/components/VoiceSearchButton';
+import { wordMatchesSearch } from '@/constants/wordSearch';
 import { Alert } from '@/constants/alert';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
@@ -86,10 +87,9 @@ export function WordListView({
   }, [words, categorySlugs]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
     const base = words
       .filter(w => matchesCategories(w, categorySlugs))
-      .filter(w => !q || w.word.includes(q) || w.shortDesc.includes(q) || w.category.toLowerCase().includes(q));
+      .filter(w => wordMatchesSearch(w, query));
     return sortWords(base, sortIndex);
   }, [words, sortIndex, query, categorySlugs]);
 

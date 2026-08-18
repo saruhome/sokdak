@@ -18,6 +18,8 @@ import { SokDakLogo } from '@/components/icons/SokDakLogo';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Search, Bell, Eye, Heart, MessageCircle, Crown, ChevronRight } from 'lucide-react-native';
 
+const JJAEKI_WAVE = require('../../assets/characters/transparent/jjaeki-wave.png');
+
 /** 날짜(YYYY-MM-DD)를 시드로 결정적 난수를 뽑아 오늘 하루 동안은 항상 같은 결과가 나오게 한다 */
 function pickDaily<T>(items: T[], count: number, seed: string): T[] {
   let h = 0;
@@ -115,9 +117,9 @@ export default function HomeScreen() {
     heroPausedRef.current = false;
   };
 
-  /* 커뮤니티는 회원 전용 — 비로그인이면 목적지 대신 로그인 화면으로 보낸다 */
+  /* 커뮤니티 탐색은 게스트에게도 열어두고, 작성·반응 등은 각 행동 화면에서 로그인으로 안내한다. */
   const openCommunity = (path: string) => {
-    router.push(authStore.isLoggedIn() ? path : '/auth/login');
+    router.push(path);
   };
 
   return (
@@ -138,6 +140,19 @@ export default function HomeScreen() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+        {/* ── 홈 학습 히어로 ── 오늘의 학습 목적을 먼저 제시하고 사전 탐색으로 연결 */}
+        <View style={styles.learningHero}>
+          <View style={styles.learningHeroCopy}>
+            <Text style={styles.learningHeroEyebrow}>{t('todayExpressionTitle')}</Text>
+            <Text style={styles.learningHeroTitle}>{t('todayExpressionSub')}</Text>
+            <TouchableOpacity style={styles.learningHeroCta} onPress={() => router.push('/tabs/dictionary')} activeOpacity={0.85}>
+              <Text style={styles.learningHeroCtaText}>{t('dictionary')}</Text>
+              <AppIcon icon={ChevronRight} size={16} color={Colors.navBarIconActive} />
+            </TouchableOpacity>
+          </View>
+          <Image source={JJAEKI_WAVE} style={styles.learningHeroCharacter} resizeMode="contain" accessible={false} />
+        </View>
+
         {/* ── 히어로 캐러셀 ── Figma: Card/Recommend2 (375×250) */}
         <View>
           <ScrollView
@@ -327,6 +342,19 @@ const styles = StyleSheet.create({
   },
 
   content: { paddingBottom: 24 },
+
+  learningHero: {
+    minHeight: 148, marginHorizontal: 16, marginTop: 16, padding: 18,
+    borderRadius: 16, overflow: 'hidden', backgroundColor: Colors.navBar,
+    flexDirection: 'row', alignItems: 'center', shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.16, shadowRadius: 8, elevation: 4,
+  },
+  learningHeroCopy: { flex: 1, zIndex: 1, paddingRight: 8 },
+  learningHeroEyebrow: { fontSize: 11, fontWeight: '700', color: Colors.point1, marginBottom: 6 },
+  learningHeroTitle: { fontSize: 21, lineHeight: 30, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
+  learningHeroCta: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 2, marginTop: 14 },
+  learningHeroCtaText: { fontSize: 13, fontWeight: '700', color: Colors.navBarIconActive },
+  learningHeroCharacter: { width: 118, height: 118, marginRight: -18, marginBottom: -12 },
 
   /* 히어로 캐러셀 */
   heroCard: {

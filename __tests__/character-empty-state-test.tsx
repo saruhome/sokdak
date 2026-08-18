@@ -2,7 +2,7 @@ import { fireEvent, render } from '@testing-library/react-native';
 import { CharacterEmptyState } from '@/components/CharacterEmptyState';
 
 describe('CharacterEmptyState', () => {
-  const image = require('../assets/characters/poses/horang-reading.png');
+  const image = require('../assets/characters/transparent/horang-reading.png');
 
   it('renders the character as decorative content and exposes the localized CTA', async () => {
     const onPressCta = jest.fn();

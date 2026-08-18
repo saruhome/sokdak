@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, Text } from 'react-native';
-import { render, userEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 
 jest.mock('expo-router', () => {
   const React = require('react');
@@ -71,14 +71,12 @@ describe('<CommunityScreen /> empty state', () => {
 
   it('shows Jjaeki reading with a localized write CTA when no posts exist', async () => {
     const screen = await render(<CommunityScreen />);
-    const user = userEvent.setup();
-
     await waitFor(() => expect(screen.getByTestId('community-posts-empty-state')).toBeTruthy());
 
     expect(screen.getByText('No posts yet')).toBeTruthy();
     expect(screen.queryByText('Hot posts')).toBeNull();
 
-    await user.press(screen.getByLabelText('Write a post'));
+    fireEvent.press(screen.getByLabelText('Write a post'));
     expect(router.push).toHaveBeenCalledWith('/auth/login');
   });
 });

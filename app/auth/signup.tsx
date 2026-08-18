@@ -11,7 +11,7 @@ import { User, Mail, Lock, Check, type LucideIcon } from 'lucide-react-native';
 import { authStore } from '../../constants/authStore';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
-const JJAEKI_AVATAR = require('../../assets/characters/jjaeki.png');
+const JJAEKI_AVATAR = require('../../assets/characters/transparent/jjaeki.png');
 
 /* ── List/Item/Log up (327×48) 재사용 컴포넌트 — Figma 1293:20263: 라벨 없이 아이콘+플레이스홀더 */
 function FormField({

@@ -1,14 +1,8 @@
-import { Stack, router, useFocusEffect } from 'expo-router';
-import { useCallback } from 'react';
+import { Stack } from 'expo-router';
 import { Colors } from '../../../constants/Colors';
-import { authStore } from '../../../constants/authStore';
 
-/** 커뮤니티는 회원 전용 — 탭바 외 딥링크·뒤로가기 등 다른 경로로 들어와도 여기서 한 번에 막는다 */
+/** 게시글 탐색은 게스트에게도 열어두고, 작성·댓글·반응 등 쓰기 행동은 각 화면에서 로그인으로 안내한다. */
 export default function CommunityLayout() {
-  useFocusEffect(useCallback(() => {
-    if (!authStore.isLoggedIn()) router.replace('/auth/login');
-  }, []));
-
   return (
     <Stack
       screenOptions={{

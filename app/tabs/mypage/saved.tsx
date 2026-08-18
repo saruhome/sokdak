@@ -19,7 +19,7 @@ import { Star, Volume2 } from 'lucide-react-native';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
 const ACTIVE_STAR_COLOR = '#FACC15';
-const HORANG_READING = require('../../../assets/characters/poses/horang-reading.png');
+const HORANG_READING = require('../../../assets/characters/transparent/horang-reading.png');
 
 /** Figma: 229:3738(즐겨찾기) — 좋아요 한 카테고리 + 저장한 단어를 함께 보여주는 화면 */
 export default function SavedWordsScreen() {

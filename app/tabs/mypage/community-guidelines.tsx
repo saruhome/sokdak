@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { router } from 'expo-router';
@@ -45,9 +45,9 @@ export default function CommunityGuidelinesScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()} accessibilityLabel="뒤로가기">
+        <Pressable style={styles.backBtn} onPress={() => safeGoBack()} accessibilityLabel="뒤로가기">
           <BackIcon size={24} color={Colors.textPrimary} />
-        </TouchableOpacity>
+        </Pressable>
         <Text style={styles.topBarTitle}>커뮤니티 운영정책</Text>
         <View style={styles.backBtn} />
       </View>
@@ -74,10 +74,9 @@ export default function CommunityGuidelinesScreen() {
           ))}
         </View>
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.checkRow, accepted && styles.checkRowSelected]}
           onPress={() => setAccepted(previous => !previous)}
-          activeOpacity={0.8}
           accessibilityRole="checkbox"
           accessibilityLabel="커뮤니티 운영정책 동의"
           accessibilityState={{ checked: accepted }}
@@ -86,19 +85,18 @@ export default function CommunityGuidelinesScreen() {
             {accepted && <AppIcon icon={Check} size={14} color={Colors.navBarIconActive} />}
           </View>
           <Text style={styles.checkText}>운영정책을 읽었으며 이에 동의합니다.</Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.acceptBtn, (!accepted || submitting) && styles.acceptBtnDisabled]}
           onPress={handleAccept}
           disabled={!accepted || submitting}
-          activeOpacity={0.85}
           accessibilityRole="button"
           accessibilityLabel={submitting ? '운영정책 동의 저장 중' : '운영정책 동의하고 계속하기'}
           accessibilityState={{ disabled: !accepted || submitting, busy: submitting }}
         >
           <Text style={styles.acceptBtnText}>{submitting ? '저장 중...' : '동의하고 계속하기'}</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         <Text style={styles.version}>정책 버전 {COMMUNITY_GUIDELINES_VERSION}</Text>
       </ScrollView>

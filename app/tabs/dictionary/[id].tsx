@@ -17,8 +17,8 @@ import { WordVideo } from '@/components/WordVideo';
 import { FocusIcon } from '@/components/icons/FocusIcon';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
-const AVATAR_HORANG = require('../../../assets/characters/horang.png');
-const AVATAR_JJAEKI = require('../../../assets/characters/jjaeki.png');
+const AVATAR_HORANG = require('../../../assets/characters/transparent/horang.png');
+const AVATAR_JJAEKI = require('../../../assets/characters/transparent/jjaeki.png');
 
 /** Figma node 683:3679(속닥 Sokdak) — Selection/Chip/Dictionary/Combined */
 export default function WordDetailScreen() {

@@ -13,7 +13,7 @@ import { AppIcon, IconStat } from '@/components/AppIcon';
 import { CharacterEmptyState } from '@/components/CharacterEmptyState';
 import { Eye, Heart, MessageCircle, Pencil, Bell } from 'lucide-react-native';
 
-const JJAEKI_READING = require('../../../assets/characters/poses/jjaeki-reading.png');
+const JJAEKI_READING = require('../../../assets/characters/transparent/jjaeki-reading.png');
 
 type BoardTab = '전체' | PostBoard;
 const BOARD_TABS: BoardTab[] = ['전체', '궁금해요', 'Q&A', '질문하기'];

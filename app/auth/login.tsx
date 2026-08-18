@@ -7,8 +7,8 @@ import { safeGoBack } from '../../constants/navigation';
 import { BackIcon } from '@/components/icons/SocialIcons';
 import { SokDakLogo } from '@/components/icons/SokDakLogo';
 
-const AVATAR_JJAEKI = require('../../assets/characters/jjaeki-full.png');
-const AVATAR_HORANG = require('../../assets/characters/horang-full.png');
+const AVATAR_JJAEKI = require('../../assets/characters/transparent/jjaeki-full.png');
+const AVATAR_HORANG = require('../../assets/characters/transparent/horang-full.png');
 
 /** Figma node 1288:16671(속닥 Sokdak) — 로그인 페이지
  *  소셜 로그인(Facebook/Google/Apple)은 Supabase 쪽 OAuth 프로바이더 설정(클라이언트 ID·

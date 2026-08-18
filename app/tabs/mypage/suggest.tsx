@@ -12,7 +12,7 @@ import { submitWordSuggestion } from '../../../constants/suggestions';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
-const HORANG_CHEER = require('../../../assets/characters/poses/horang-cheer.png');
+const HORANG_CHEER = require('../../../assets/characters/transparent/horang-cheer.png');
 
 /** Figma: 229:3332(입력 전) / 229:3342(입력 후) — 신조어 제안 폼
  * word_suggestions 테이블에 실제로 저장됨 — 운영팀은 Supabase 대시보드에서 검토 */

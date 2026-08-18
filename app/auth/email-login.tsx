@@ -8,7 +8,7 @@ import { safeGoBack } from '../../constants/navigation';
 import { authStore } from '../../constants/authStore';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
-const JJAEKI_AVATAR = require('../../assets/characters/jjaeki.png');
+const JJAEKI_AVATAR = require('../../assets/characters/transparent/jjaeki.png');
 
 /* ── List/Item/Log up (327×48) 재사용 컴포넌트 — auth/signup.tsx와 동일 패턴 ── */
 function FormField({

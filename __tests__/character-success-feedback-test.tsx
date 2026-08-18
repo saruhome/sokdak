@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native';
 import { CharacterSuccessFeedback } from '@/components/CharacterSuccessFeedback';
 
 describe('CharacterSuccessFeedback', () => {
-  const image = require('../assets/characters/poses/horang-cheer.png');
+  const image = require('../assets/characters/transparent/horang-cheer.png');
 
   it('announces the localized success state without exposing the decorative character', async () => {
     const screen = await render(

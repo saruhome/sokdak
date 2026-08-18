@@ -178,9 +178,11 @@ export default function MyPageScreen() {
           {hasUnseenTicketReply && <View style={styles.supportDot} />}
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.85}>
-          <Text style={styles.logoutText}>{t('logout')}</Text>
-        </TouchableOpacity>
+        {loggedIn && (
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.85}>
+            <Text style={styles.logoutText}>{t('logout')}</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

@@ -23,9 +23,9 @@ import {
 import { Search, Star, Volume2, Heart, X } from 'lucide-react-native';
 import { SCREEN_WIDTH } from '@/constants/layout';
 
-const JJAEKI_ICON = require('../assets/characters/jjaeki-full.png');
-const JJAEKI_QUESTION = require('../assets/characters/poses/jjaeki-question.png');
-const HORANG_CHEER = require('../assets/characters/poses/horang-cheer.png');
+const JJAEKI_ICON = require('../assets/characters/transparent/jjaeki-full.png');
+const JJAEKI_QUESTION = require('../assets/characters/transparent/jjaeki-question.png');
+const HORANG_CHEER = require('../assets/characters/transparent/horang-cheer.png');
 const TIP_CARD_LEFT = 24; // searchWrap과 동일한 marginHorizontal
 const TIP_BUBBLE_MAX_WIDTH = SCREEN_WIDTH / 2 - TIP_CARD_LEFT + 40;
 const TIP_BUBBLE_PAD = 12;

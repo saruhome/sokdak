@@ -10,7 +10,10 @@ import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { fetchUnreadNotificationCount } from '../../../constants/notifications';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Eye, Heart, MessageCircle, Pencil, Inbox, Bell } from 'lucide-react-native';
+import { CharacterEmptyState } from '@/components/CharacterEmptyState';
+import { Eye, Heart, MessageCircle, Pencil, Bell } from 'lucide-react-native';
+
+const JJAEKI_READING = require('../../../assets/characters/poses/jjaeki-reading.png');
 
 type BoardTab = '전체' | PostBoard;
 const BOARD_TABS: BoardTab[] = ['전체', '궁금해요', 'Q&A', '질문하기'];
@@ -39,6 +42,7 @@ export default function CommunityScreen() {
     () => activeTab === '전체' ? posts : posts.filter(p => p.board === activeTab),
     [activeTab, posts],
   );
+  const goToWrite = () => router.push(authStore.isLoggedIn() ? '/tabs/community/write' : '/auth/login');
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -57,36 +61,38 @@ export default function CommunityScreen() {
         ListHeaderComponent={
           <>
             {/* ── 화제의 게시글 – Figma: Card/Post/Preview 220×144 가로 스크롤 */}
-            <View style={styles.featuredSection}>
-              <Text style={styles.sectionTitle}>{t('hotPosts')}</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {featured.map(post => (
-                  <TouchableOpacity
-                    key={post.id}
-                    style={styles.featuredCard}
-                    onPress={() => router.push(`/tabs/community/${post.id}`)}
-                    activeOpacity={0.8}
-                  >
-                    <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[post.board].bg }]}>
-                      <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[post.board].fg }]}>
-                        {getBoardLabel(post.board, language)}
-                      </Text>
-                    </View>
-                    <View style={styles.featuredCardBody}>
-                      <Text style={styles.featuredCardTitle} numberOfLines={1}>
-                        {post.title}
-                      </Text>
-                      <Text style={styles.featuredCardSub}>{post.views} · {post.createdAt}</Text>
-                      <View style={styles.featuredCardMeta}>
-                        <IconStat icon={Eye} value={post.views} textStyle={styles.metaText} />
-                        <IconStat icon={Heart} value={post.likes} textStyle={styles.metaText} />
-                        <IconStat icon={MessageCircle} value={post.commentCount} textStyle={styles.metaText} />
+            {featured.length > 0 ? (
+              <View style={styles.featuredSection}>
+                <Text style={styles.sectionTitle}>{t('hotPosts')}</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {featured.map(post => (
+                    <TouchableOpacity
+                      key={post.id}
+                      style={styles.featuredCard}
+                      onPress={() => router.push(`/tabs/community/${post.id}`)}
+                      activeOpacity={0.8}
+                    >
+                      <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[post.board].bg }]}>
+                        <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[post.board].fg }]}>
+                          {getBoardLabel(post.board, language)}
+                        </Text>
                       </View>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+                      <View style={styles.featuredCardBody}>
+                        <Text style={styles.featuredCardTitle} numberOfLines={1}>
+                          {post.title}
+                        </Text>
+                        <Text style={styles.featuredCardSub}>{post.views} · {post.createdAt}</Text>
+                        <View style={styles.featuredCardMeta}>
+                          <IconStat icon={Eye} value={post.views} textStyle={styles.metaText} />
+                          <IconStat icon={Heart} value={post.likes} textStyle={styles.metaText} />
+                          <IconStat icon={MessageCircle} value={post.commentCount} textStyle={styles.metaText} />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            ) : null}
 
             {/* ── 상단메뉴 – Figma: state=Default/궁금해요/Q&A/질문하기 */}
             <View style={styles.boardTabs}>
@@ -152,8 +158,13 @@ export default function CommunityScreen() {
             </View>
           ) : (
             <View style={styles.emptyWrap}>
-              <AppIcon icon={Inbox} size={36} color={Colors.textTertiary} />
-              <Text style={styles.emptyText}>{t('noPostsYet')}</Text>
+              <CharacterEmptyState
+                image={JJAEKI_READING}
+                title={t('noPostsYet')}
+                ctaLabel={t('writeTitle')}
+                onPressCta={goToWrite}
+                testID="community-posts-empty-state"
+              />
             </View>
           )
         }
@@ -163,7 +174,7 @@ export default function CommunityScreen() {
       {/* ── FAB 글쓰기 – Figma: Controls/Icon/write (50×50, 우하단) */}
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => router.push(authStore.isLoggedIn() ? '/tabs/community/write' : '/auth/login')}
+        onPress={goToWrite}
         activeOpacity={0.85}
       >
         {/* 다크 FAB 위라 밝은색으로 대비 확보 */}
@@ -244,8 +255,7 @@ const styles = StyleSheet.create({
   metaText: { fontSize: 11, color: Colors.textTertiary },
 
   separator: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 24 },
-  emptyWrap: { paddingVertical: 60, alignItems: 'center', gap: 8 },
-  emptyText: { fontSize: 14, color: Colors.textTertiary },
+  emptyWrap: { paddingVertical: 40, alignItems: 'center' },
 
   /* FAB */
   fab: {

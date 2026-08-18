@@ -14,6 +14,7 @@ import { speakWord } from '@/constants/speech';
 import { AppIcon } from '@/components/AppIcon';
 import { VoiceSearchButton } from '@/components/VoiceSearchButton';
 import { CharacterEmptyState } from '@/components/CharacterEmptyState';
+import { CharacterSuccessFeedback } from '@/components/CharacterSuccessFeedback';
 import { getWordSearchMatch, wordMatchesSearch } from '@/constants/wordSearch';
 import { Alert } from '@/constants/alert';
 import {
@@ -24,6 +25,7 @@ import { SCREEN_WIDTH } from '@/constants/layout';
 
 const JJAEKI_ICON = require('../assets/characters/jjaeki-full.png');
 const JJAEKI_QUESTION = require('../assets/characters/poses/jjaeki-question.png');
+const HORANG_CHEER = require('../assets/characters/poses/horang-cheer.png');
 const TIP_CARD_LEFT = 24; // searchWrap과 동일한 marginHorizontal
 const TIP_BUBBLE_MAX_WIDTH = SCREEN_WIDTH / 2 - TIP_CARD_LEFT + 40;
 const TIP_BUBBLE_PAD = 12;
@@ -65,6 +67,7 @@ export function WordListView({
   const [consonant, setConsonant] = useState<string>('전체');
   const [categorySlugs, setCategorySlugs] = useState<string[]>(initialCategorySlugs);
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
+  const [savedFeedbackWord, setSavedFeedbackWord] = useState<string | null>(null);
   /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
   const [hintIndex] = useState(() => Math.floor(Math.random() * JJAEKI_HINTS.ko.length));
   /* 말풍선 폭을 첫째 줄(힌트 문구) 실측 너비에 맞춰 늘였다 줄였다 하기 위한 측정값 */
@@ -80,6 +83,11 @@ export function WordListView({
     const unsub = authStore.subscribeBookmarks(() => setSavedIds(authStore.getSavedWordIds()));
     return () => { unsub(); };
   }, []);
+  useEffect(() => {
+    if (!savedFeedbackWord) return;
+    const timeout = setTimeout(() => setSavedFeedbackWord(null), 2400);
+    return () => clearTimeout(timeout);
+  }, [savedFeedbackWord]);
 
   /* 추천 배너 단어 — 항상 인기 단어 대신, (필터가 걸려 있으면 그 안에서) 좋아요가 적어
    * 잘 안 찾아보는 단어부터 랜덤하게 고른다. 필터가 바뀔 때만 다시 뽑는다. */
@@ -108,8 +116,8 @@ export function WordListView({
 
   /* 단어 저장은 회원 전용(무료 회원 최대 FREE_WORD_SAVE_LIMIT개, 프리미엄 무제한).
    * 저장 해제는 한도와 무관하게 항상 허용, 새로 저장할 때만 로그인·한도 체크. */
-  const toggleSave = (id: string) => {
-    const alreadySaved = authStore.isWordSaved(id);
+  const toggleSave = (word: Word) => {
+    const alreadySaved = authStore.isWordSaved(word.id);
     if (!alreadySaved && !authStore.isLoggedIn()) {
       Alert.alert(t('loginRequiredTitle'), t('loginRequiredSave'), [
         { text: t('cancelLabel'), style: 'cancel' },
@@ -121,8 +129,9 @@ export function WordListView({
       Alert.alert(t('saveLimitReachedTitle'), t('saveLimitReachedMessage'));
       return;
     }
-    authStore.toggleWordSaved(id);
+    authStore.toggleWordSaved(word.id);
     setSavedIds(authStore.getSavedWordIds());
+    if (!alreadySaved) setSavedFeedbackWord(word.word);
   };
 
   const toggleCategory = (slug: string) => {
@@ -130,7 +139,7 @@ export function WordListView({
   };
 
   return (
-    <>
+    <View style={styles.root}>
       <FlatList
         data={visible}
         keyExtractor={item => item.id}
@@ -281,7 +290,7 @@ export function WordListView({
                   color={saved ? '#FACC15' : undefined}
                   style={styles.iconBtn}
                   hitSlop={6}
-                  onPress={() => toggleSave(item.id)}
+                  onPress={() => toggleSave(item)}
                   accessibilityLabel={t('a11ySaveWord')}
                 />
                 <AppIcon
@@ -313,13 +322,29 @@ export function WordListView({
         }
         contentContainerStyle={visible.length === 0 ? { flexGrow: 1 } : styles.listContent}
       />
-
-    </>
+      {savedFeedbackWord ? (
+        <View pointerEvents="none" style={styles.saveFeedbackWrap}>
+          <CharacterSuccessFeedback
+            image={HORANG_CHEER}
+            title={t('savedLabel')}
+            word={savedFeedbackWord}
+            testID="word-saved-success-feedback"
+          />
+        </View>
+      ) : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: { flex: 1 },
   listContent: { paddingBottom: 24 },
+  saveFeedbackWrap: {
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 16,
+  },
 
   searchWrap: {
     flexDirection: 'row', alignItems: 'center', gap: 8,

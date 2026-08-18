@@ -1,4 +1,4 @@
-import { StyleSheet, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, Image, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
@@ -11,6 +11,8 @@ import { authStore } from '../../../constants/authStore';
 import { submitWordSuggestion } from '../../../constants/suggestions';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { BackIcon } from '@/components/icons/SocialIcons';
+
+const HORANG_CHEER = require('../../../assets/characters/poses/horang-cheer.png');
 
 /** Figma: 229:3332(입력 전) / 229:3342(입력 후) — 신조어 제안 폼
  * word_suggestions 테이블에 실제로 저장됨 — 운영팀은 Supabase 대시보드에서 검토 */
@@ -68,7 +70,12 @@ export default function SuggestScreen() {
         </View>
 
         <View style={styles.doneWrap}>
-          <Text style={styles.doneEmoji}>🎉</Text>
+          <Image
+            source={HORANG_CHEER}
+            style={styles.doneCharacter}
+            resizeMode="contain"
+            accessible={false}
+          />
           <Text style={styles.doneTitle}>{t('suggestDoneTitle')}</Text>
           <Text style={styles.doneDesc}>
             {t('suggestDoneDescPrefix')}{word}{t('suggestDoneDescSuffix')}
@@ -260,7 +267,7 @@ const styles = StyleSheet.create({
 
   /* 입력 후 */
   doneWrap: { flex: 1, alignItems: 'center', paddingHorizontal: 32, paddingTop: 48 },
-  doneEmoji: { fontSize: 52, marginBottom: 16 },
+  doneCharacter: { width: 132, height: 132, marginBottom: 12 },
   doneTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, marginBottom: 8 },
   doneDesc: { fontSize: 13, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20, marginBottom: 28 },
 

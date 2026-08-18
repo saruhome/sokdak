@@ -85,6 +85,7 @@ jest.mock('@/constants/languageStore', () => ({
       goToLogin: 'Go to login',
       saveLimitReachedTitle: 'Save limit reached',
       saveLimitReachedMessage: 'Save limit reached',
+      savedLabel: 'Saved',
     }[key] ?? key),
   },
 }));
@@ -104,6 +105,7 @@ jest.mock('@/constants/speech', () => ({ speakWord: jest.fn() }));
 jest.mock('@/constants/alert', () => ({ Alert: { alert: jest.fn() } }));
 
 import { fetchWords } from '@/constants/words';
+import { authStore } from '@/constants/authStore';
 import { WordListView } from '@/components/WordListView';
 
 const mockFetchWords = fetchWords as jest.Mock;
@@ -190,6 +192,18 @@ describe('<WordListView /> multilingual search flow', () => {
       expect(screen.getByText('Meaning match: 🇻🇳 VI')).toBeTruthy();
     });
     expect(screen.queryByText('갓생')).toBeNull();
+  });
+
+  it('shows a Horang cheer feedback after a user adds a word to saved words', async () => {
+    const screen = await renderLoadedList();
+    const user = userEvent.setup();
+
+    await user.press(screen.getAllByLabelText('Save word')[0]);
+
+    expect(authStore.toggleWordSaved).toHaveBeenCalledWith('1');
+    expect(screen.getByTestId('word-saved-success-feedback')).toBeTruthy();
+    expect(screen.getByText('Saved')).toBeTruthy();
+    expect(screen.getByText('“핵인싸”')).toBeTruthy();
   });
 
   it('uses the localized empty state when no searchable field matches', async () => {

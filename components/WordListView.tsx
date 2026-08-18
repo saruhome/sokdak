@@ -13,6 +13,7 @@ import { authStore } from '@/constants/authStore';
 import { speakWord } from '@/constants/speech';
 import { AppIcon } from '@/components/AppIcon';
 import { VoiceSearchButton } from '@/components/VoiceSearchButton';
+import { CharacterEmptyState } from '@/components/CharacterEmptyState';
 import { getWordSearchMatch, wordMatchesSearch } from '@/constants/wordSearch';
 import { Alert } from '@/constants/alert';
 import {
@@ -22,6 +23,7 @@ import { Search, Star, Volume2, Heart, X } from 'lucide-react-native';
 import { SCREEN_WIDTH } from '@/constants/layout';
 
 const JJAEKI_ICON = require('../assets/characters/jjaeki-full.png');
+const JJAEKI_QUESTION = require('../assets/characters/poses/jjaeki-question.png');
 const TIP_CARD_LEFT = 24; // searchWrap과 동일한 marginHorizontal
 const TIP_BUBBLE_MAX_WIDTH = SCREEN_WIDTH / 2 - TIP_CARD_LEFT + 40;
 const TIP_BUBBLE_PAD = 12;
@@ -301,7 +303,11 @@ export function WordListView({
             </View>
           ) : (
             <View style={styles.emptyWrap}>
-              <Text style={styles.emptyText}>{t('noSearchResults')}</Text>
+              <CharacterEmptyState
+                image={JJAEKI_QUESTION}
+                title={t('noSearchResults')}
+                testID="dictionary-search-empty-state"
+              />
             </View>
           )
         }
@@ -389,8 +395,7 @@ const styles = StyleSheet.create({
   wordItemRight: { alignItems: 'center', gap: 4 },
   iconBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
 
-  emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 60 },
-  emptyText: { fontSize: 14, color: Colors.textTertiary },
+  emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 40 },
 
   /* 카테고리 선택 모달 */
 });

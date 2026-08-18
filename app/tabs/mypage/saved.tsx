@@ -11,6 +11,7 @@ import { getCategoryBySlug, getCategoryName, type Category } from '../../../cons
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { speakWord } from '@/constants/speech';
 import { AppIcon } from '@/components/AppIcon';
+import { CharacterEmptyState } from '@/components/CharacterEmptyState';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
 } from '@/components/WordFilterBar';
@@ -18,6 +19,7 @@ import { Star, Volume2 } from 'lucide-react-native';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
 const ACTIVE_STAR_COLOR = '#FACC15';
+const HORANG_READING = require('../../../assets/characters/poses/horang-reading.png');
 
 /** Figma: 229:3738(즐겨찾기) — 좋아요 한 카테고리 + 저장한 단어를 함께 보여주는 화면 */
 export default function SavedWordsScreen() {
@@ -31,6 +33,7 @@ export default function SavedWordsScreen() {
   const [consonant, setConsonant] = useState<string>('전체');
   const [filterSlugs, setFilterSlugs] = useState<string[]>([]);
   const [allWords, setAllWords] = useState<Word[]>([]);
+  const [wordsLoaded, setWordsLoaded] = useState(false);
 
   const sync = useCallback(() => {
     setSavedIds(authStore.getSavedWordIds());
@@ -42,7 +45,12 @@ export default function SavedWordsScreen() {
     const unsub = authStore.subscribeBookmarks(sync);
     return () => { unsub(); };
   }, [sync]);
-  useEffect(() => { fetchWords().then(setAllWords); }, []);
+  useEffect(() => {
+    fetchWords().then(data => {
+      setAllWords(data);
+      setWordsLoaded(true);
+    });
+  }, []);
 
   const savedWords = savedIds
     .map(id => allWords.find(w => w.id === id))
@@ -80,16 +88,18 @@ export default function SavedWordsScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* ── 총 단어 수 + 정렬/카테고리 트리거 ── */}
-        <WordFilterBar
-          total={words.length}
-          sortIndex={sortIndex}
-          onCycleSort={() => setSortIndex(p => (p + 1) % SORT_TABS.length)}
-          categorySlugs={filterSlugs}
-          onToggleCategory={slug => setFilterSlugs(prev => prev.includes(slug) ? prev.filter(s => s !== slug) : [...prev, slug])}
-          onClearCategories={() => setFilterSlugs([])}
-          consonant={consonant}
-          onSelectConsonant={setConsonant}
-        />
+        {words.length > 0 && (
+          <WordFilterBar
+            total={words.length}
+            sortIndex={sortIndex}
+            onCycleSort={() => setSortIndex(p => (p + 1) % SORT_TABS.length)}
+            categorySlugs={filterSlugs}
+            onToggleCategory={slug => setFilterSlugs(prev => prev.includes(slug) ? prev.filter(s => s !== slug) : [...prev, slug])}
+            onClearCategories={() => setFilterSlugs([])}
+            consonant={consonant}
+            onSelectConsonant={setConsonant}
+          />
+        )}
 
         {/* ── 좋아요 한 카테고리 ── */}
         {likedCategories.length > 0 && (
@@ -193,16 +203,15 @@ export default function SavedWordsScreen() {
           </View>
         </View>
 
-        {words.length === 0 && likedCategories.length === 0 && (
+        {wordsLoaded && words.length === 0 && likedCategories.length === 0 && (
           <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>{t('noFavoritesYet')}</Text>
-            <TouchableOpacity
-              style={styles.emptyCta}
-              onPress={() => router.push('/tabs/dictionary')}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.emptyCtaText}>{t('browseDictionary')}</Text>
-            </TouchableOpacity>
+            <CharacterEmptyState
+              image={HORANG_READING}
+              title={t('noFavoritesYet')}
+              ctaLabel={t('browseDictionary')}
+              onPressCta={() => router.push('/tabs/dictionary')}
+              testID="saved-words-empty-state"
+            />
           </View>
         )}
       </ScrollView>

@@ -9,8 +9,10 @@ import { safeGoBack } from '../../constants/navigation';
 import { fetchWords, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
-import { CATEGORIES, getCategoryBySlug } from '../../constants/categories';
+import { CATEGORIES, getCategoryBySlug, getCategoryName } from '../../constants/categories';
 import { authStore } from '../../constants/authStore';
+import { tFor, useLanguage } from '../../constants/languageStore';
+import { wordMatchesSearch } from '../../constants/wordSearch';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Search, BookOpen, Heart, Star, Eye, MessageCircle, Inbox, X } from 'lucide-react-native';
 import { BackIcon } from '@/components/icons/SocialIcons';
@@ -18,16 +20,18 @@ import { BackIcon } from '@/components/icons/SocialIcons';
 type ResultTab = 'word' | 'community';
 
 export default function SearchScreen() {
+  const language = useLanguage();
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
-  const [recent, setRecent] = useState<string[]>(['킹받다', '갑분싸', '핵인싸']);
+  const [recent, setRecent] = useState<string[]>([]);
   const [resultTab, setResultTab] = useState<ResultTab>('word');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [savedIds, setSavedIds] = useState<string[]>(authStore.getSavedWordIds());
   const [communityPosts, setCommunityPosts] = useState<CommunityPostSummary[]>([]);
   const [allWords, setAllWords] = useState<Word[]>([]);
-  /** Figma: 인기 검색어 — likes 상위 8개 단어로 구성 */
-  const [popularSearches, setPopularSearches] = useState<string[]>([]);
+  const tr = (key: Parameters<typeof tFor>[1]) => tFor(language, key);
+  const trWith = (key: Parameters<typeof tFor>[1], values: Record<string, string | number>) =>
+    Object.entries(values).reduce((text, [name, value]) => text.replace(`{${name}}`, String(value)), tr(key));
 
   useFocusEffect(useCallback(() => { setSavedIds(authStore.getSavedWordIds()); }, []));
   useEffect(() => {
@@ -36,22 +40,19 @@ export default function SearchScreen() {
   }, []);
   useEffect(() => { fetchPosts().then(setCommunityPosts); }, []);
   useEffect(() => {
-    fetchWords().then(data => {
-      setAllWords(data);
-      setPopularSearches([...data].sort((a, b) => b.likes - a.likes).slice(0, 8).map(w => w.word));
-    });
+    fetchWords().then(setAllWords);
   }, []);
 
   const toggleSave = (id: string) => {
     if (!authStore.isLoggedIn()) {
-      Alert.alert('로그인이 필요해요', '단어를 저장하려면 먼저 로그인해주세요.', [
-        { text: '취소', style: 'cancel' },
-        { text: '로그인하러 가기', onPress: () => router.push('/auth/login') },
+      Alert.alert(tr('loginRequiredTitle'), tr('loginRequiredSave'), [
+        { text: tr('cancelLabel'), style: 'cancel' },
+        { text: tr('goToLogin'), onPress: () => router.push('/auth/login') },
       ]);
       return;
     }
     if (!authStore.isWordSaved(id) && !authStore.canSaveMoreWords()) {
-      Alert.alert('저장 한도에 도달했어요', '무료 회원은 단어를 최대 3개까지 저장할 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 저장할 수 있어요.');
+      Alert.alert(tr('saveLimitReachedTitle'), tr('saveLimitReachedMessage'));
       return;
     }
     authStore.toggleWordSaved(id);
@@ -79,18 +80,17 @@ export default function SearchScreen() {
 
   /* ── 입력 중 자동완성 (Figma: 229:2723) ── */
   const suggestions = useMemo<Word[]>(() => {
-    const q = query.trim().toLowerCase();
+    const q = query.trim();
     if (!q) return [];
     return allWords
-      .filter(w => w.word.toLowerCase().includes(q) || w.shortDesc.includes(q))
+      .filter(w => wordMatchesSearch(w, q))
       .slice(0, 6);
   }, [allWords, query]);
 
   /* ── 검색 결과 (Figma: 229:2750 단어 / 229:2772 필터 / 229:2794 없음) ── */
   const wordResults = useMemo<Word[]>(() => {
-    const q = submittedQuery?.trim().toLowerCase() ?? '';
-    let base = allWords.filter(w =>
-      w.word.toLowerCase().includes(q) || w.shortDesc.includes(q) || w.category.toLowerCase().includes(q));
+    const q = submittedQuery?.trim() ?? '';
+    let base = allWords.filter(w => wordMatchesSearch(w, q));
     if (categoryFilter) base = base.filter(w => w.category === categoryFilter);
     return base;
   }, [allWords, submittedQuery, categoryFilter]);
@@ -110,12 +110,12 @@ export default function SearchScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopBar: 뒤로가기 + 검색 인풋 ── */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()} accessibilityLabel={tr('goBack')}>
           <BackIcon size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
         <TextInput
           style={styles.searchInput}
-          placeholder="단어, 게시글을 검색해보세요"
+          placeholder={tr('wordSearchPlaceholder')}
           placeholderTextColor={Colors.textTertiary}
           value={query}
           onChangeText={handleChangeText}
@@ -123,6 +123,7 @@ export default function SearchScreen() {
           returnKeyType="search"
           autoFocus
           clearButtonMode="while-editing"
+          accessibilityLabel={tr('wordSearchPlaceholder')}
         />
       </View>
 
@@ -135,15 +136,18 @@ export default function SearchScreen() {
         >
           <View style={styles.section}>
             <View style={styles.sectionHeaderRow}>
-              <Text style={styles.sectionTitle}>최근 검색어</Text>
+              <Text style={styles.sectionTitle}>{tr('recentSearches')}</Text>
               {recent.length > 0 && (
                 <TouchableOpacity onPress={() => setRecent([])}>
-                  <Text style={styles.sectionAction}>전체삭제</Text>
+                  <Text style={styles.sectionAction}>{tr('clearAll')}</Text>
                 </TouchableOpacity>
               )}
             </View>
             {recent.length === 0 ? (
-              <Text style={styles.emptyHint}>최근 검색한 단어가 여기에 표시돼요</Text>
+              <View style={styles.emptySearchHintWrap}>
+                <Text style={styles.emptyHint}>{tr('noRecentSearches')}</Text>
+                <Text style={styles.emptyHint}>{tr('trySearchingCategory')}</Text>
+              </View>
             ) : (
               <View style={styles.chipWrap}>
                 {recent.map(term => (
@@ -151,7 +155,7 @@ export default function SearchScreen() {
                     <TouchableOpacity onPress={() => handleSubmit(term)}>
                       <Text style={styles.recentChipText}>{term}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => removeRecent(term)} hitSlop={8}>
+                    <TouchableOpacity onPress={() => removeRecent(term)} hitSlop={8} accessibilityLabel={tr('clearWordSearch')}>
                       <AppIcon icon={X} size={11} color={Colors.textTertiary} />
                     </TouchableOpacity>
                   </View>
@@ -160,20 +164,6 @@ export default function SearchScreen() {
             )}
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>인기 검색어</Text>
-            {popularSearches.map((term, i) => (
-              <TouchableOpacity
-                key={term}
-                style={styles.popularRow}
-                onPress={() => handleSubmit(term)}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.popularRank, i < 3 && styles.popularRankTop]}>{i + 1}</Text>
-                <Text style={styles.popularTerm}>{term}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
         </ScrollView>
       )}
 
@@ -191,7 +181,7 @@ export default function SearchScreen() {
             >
               <AppIcon icon={Search} size={15} style={styles.suggestIconWrap} />
               <Text style={styles.suggestQueryText} numberOfLines={1}>
-                '{query}' 검색
+                {trWith('globalSearchSubmit', { query })}
               </Text>
             </TouchableOpacity>
           }
@@ -218,7 +208,7 @@ export default function SearchScreen() {
               style={[styles.resultTab, resultTab === 'word' && styles.resultTabActive]}
             >
               <Text style={[styles.resultTabText, resultTab === 'word' && styles.resultTabTextActive]}>
-                단어 {wordResults.length}
+                {trWith('globalSearchWordResults', { count: wordResults.length })}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -226,7 +216,7 @@ export default function SearchScreen() {
               style={[styles.resultTab, resultTab === 'community' && styles.resultTabActive]}
             >
               <Text style={[styles.resultTabText, resultTab === 'community' && styles.resultTabTextActive]}>
-                게시글 {postResults.length}
+                {trWith('globalSearchPostResults', { count: postResults.length })}
               </Text>
             </TouchableOpacity>
           </View>
@@ -245,7 +235,7 @@ export default function SearchScreen() {
                   style={[styles.filterChip, categoryFilter === null && styles.filterChipActive]}
                 >
                   <Text style={[styles.filterChipText, categoryFilter === null && styles.filterChipTextActive]}>
-                    전체
+                    {tr('allLabel')}
                   </Text>
                 </TouchableOpacity>
                 {CATEGORIES.map(c => (
@@ -255,7 +245,7 @@ export default function SearchScreen() {
                     style={[styles.filterChip, categoryFilter === c.slug && styles.filterChipActive]}
                   >
                     <Text style={[styles.filterChipText, categoryFilter === c.slug && styles.filterChipTextActive]}>
-                      {c.emoji} {c.name}
+                      {c.emoji} {getCategoryName(c, language).replace(/\n/g, ' ')}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -277,7 +267,10 @@ export default function SearchScreen() {
                         <Text style={styles.wordDesc} numberOfLines={1}>{item.shortDesc}</Text>
                       </View>
                       <View style={styles.wordRight}>
-                        <Text style={styles.wordCategory}>{getCategoryBySlug(item.category)?.name ?? item.category}</Text>
+                        <Text style={styles.wordCategory}>{(() => {
+                          const category = getCategoryBySlug(item.category);
+                          return category ? getCategoryName(category, language).replace(/\n/g, ' ') : item.category;
+                        })()}</Text>
                         <IconStat icon={Heart} value={item.likes} textStyle={styles.wordLikes} />
                         <AppIcon
                           icon={Star}
@@ -297,8 +290,8 @@ export default function SearchScreen() {
                 ListEmptyComponent={
                   <View style={styles.resultEmptyWrap}>
                     <AppIcon icon={Search} size={36} color={Colors.textTertiary} />
-                    <Text style={styles.resultEmptyTitle}>'{submittedQuery}'에 대한 검색 결과가 없어요</Text>
-                    <Text style={styles.resultEmptyHint}>다른 검색어로 시도해보세요</Text>
+                    <Text style={styles.resultEmptyTitle}>{trWith('globalSearchNoWordResults', { query: submittedQuery ?? '' })}</Text>
+                    <Text style={styles.resultEmptyHint}>{tr('trySearchingCategory')}</Text>
                   </View>
                 }
                 contentContainerStyle={wordResults.length === 0 ? { flex: 1 } : undefined}
@@ -337,8 +330,8 @@ export default function SearchScreen() {
               ListEmptyComponent={
                 <View style={styles.resultEmptyWrap}>
                   <AppIcon icon={Inbox} size={36} color={Colors.textTertiary} />
-                  <Text style={styles.resultEmptyTitle}>'{submittedQuery}'에 대한 게시글이 없어요</Text>
-                  <Text style={styles.resultEmptyHint}>다른 검색어로 시도해보세요</Text>
+                  <Text style={styles.resultEmptyTitle}>{trWith('globalSearchNoPostResults', { query: submittedQuery ?? '' })}</Text>
+                  <Text style={styles.resultEmptyHint}>{tr('trySearchingCategory')}</Text>
                 </View>
               }
               contentContainerStyle={postResults.length === 0 ? { flex: 1 } : undefined}
@@ -381,6 +374,7 @@ const styles = StyleSheet.create({
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   sectionTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
   sectionAction: { fontSize: 12, color: Colors.textTertiary },
+  emptySearchHintWrap: { gap: 4 },
   emptyHint: { fontSize: 13, color: Colors.textTertiary },
 
   chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
@@ -391,11 +385,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
   },
   recentChipText: { fontSize: 13, color: Colors.textPrimary },
-
-  popularRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, gap: 12 },
-  popularRank: { width: 18, fontSize: 13, fontWeight: '700', color: Colors.textTertiary },
-  popularRankTop: { color: Colors.accent },
-  popularTerm: { fontSize: 14, color: Colors.textPrimary },
 
   /* 자동완성 */
   suggestRow: {

@@ -97,6 +97,11 @@ type TranslationKey =
   | 'noSearchResults'
   | 'wordSearchPlaceholder'
   | 'clearWordSearch'
+  | 'globalSearchSubmit'
+  | 'globalSearchWordResults'
+  | 'globalSearchPostResults'
+  | 'globalSearchNoWordResults'
+  | 'globalSearchNoPostResults'
   | 'translationSearchMatch'
   | 'voiceSearchLabel'
   | 'voiceSearchStopLabel'
@@ -400,6 +405,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     noSearchResults: '검색 결과가 없어요',
     wordSearchPlaceholder: '단어·의미·로마자 검색',
     clearWordSearch: '검색어 지우기',
+    globalSearchSubmit: '“{query}” 검색',
+    globalSearchWordResults: '단어 {count}',
+    globalSearchPostResults: '게시글 {count}',
+    globalSearchNoWordResults: '“{query}”에 대한 검색 결과가 없어요',
+    globalSearchNoPostResults: '“{query}”에 대한 게시글이 없어요',
     translationSearchMatch: '번역 의미 일치:',
     voiceSearchLabel: '음성 검색',
     voiceSearchStopLabel: '음성 검색 중지',
@@ -702,6 +712,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     noSearchResults: 'No results found',
     wordSearchPlaceholder: 'Search words, meanings, or romanization',
     clearWordSearch: 'Clear search',
+    globalSearchSubmit: 'Search “{query}”',
+    globalSearchWordResults: 'Words {count}',
+    globalSearchPostResults: 'Posts {count}',
+    globalSearchNoWordResults: 'No words found for “{query}”',
+    globalSearchNoPostResults: 'No posts found for “{query}”',
     translationSearchMatch: 'Matches translation:',
     voiceSearchLabel: 'Voice search',
     voiceSearchStopLabel: 'Stop voice search',
@@ -1004,6 +1019,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     noSearchResults: '検索結果がありません',
     wordSearchPlaceholder: '単語・意味・ローマ字を検索',
     clearWordSearch: '検索語を消去',
+    globalSearchSubmit: '「{query}」を検索',
+    globalSearchWordResults: '単語 {count}',
+    globalSearchPostResults: '投稿 {count}',
+    globalSearchNoWordResults: '「{query}」の検索結果はありません',
+    globalSearchNoPostResults: '「{query}」の投稿はありません',
     translationSearchMatch: '翻訳の意味と一致:',
     voiceSearchLabel: '音声検索',
     voiceSearchStopLabel: '音声検索を停止',
@@ -1306,6 +1326,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     noSearchResults: 'Không có kết quả tìm kiếm',
     wordSearchPlaceholder: 'Tìm từ, nghĩa hoặc phiên âm',
     clearWordSearch: 'Xóa nội dung tìm kiếm',
+    globalSearchSubmit: 'Tìm “{query}”',
+    globalSearchWordResults: 'Từ {count}',
+    globalSearchPostResults: 'Bài viết {count}',
+    globalSearchNoWordResults: 'Không tìm thấy từ nào cho “{query}”',
+    globalSearchNoPostResults: 'Không tìm thấy bài viết nào cho “{query}”',
     translationSearchMatch: 'Khớp với nghĩa dịch:',
     voiceSearchLabel: 'Tìm kiếm bằng giọng nói',
     voiceSearchStopLabel: 'Dừng tìm kiếm bằng giọng nói',
@@ -1608,6 +1633,11 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     noSearchResults: 'No se encontraron resultados',
     wordSearchPlaceholder: 'Buscar palabras, significados o romanización',
     clearWordSearch: 'Limpiar búsqueda',
+    globalSearchSubmit: 'Buscar “{query}”',
+    globalSearchWordResults: 'Palabras {count}',
+    globalSearchPostResults: 'Publicaciones {count}',
+    globalSearchNoWordResults: 'No se encontraron palabras para “{query}”',
+    globalSearchNoPostResults: 'No se encontraron publicaciones para “{query}”',
     translationSearchMatch: 'Coincide con la traducción:',
     voiceSearchLabel: 'Búsqueda por voz',
     voiceSearchStopLabel: 'Detener búsqueda por voz',

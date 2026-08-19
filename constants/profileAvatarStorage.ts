@@ -1,6 +1,7 @@
 import { supabase } from '@/constants/supabase';
 
 export const PROFILE_AVATAR_BUCKET = 'profile-avatars';
+export const PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS = 60 * 60;
 const MAX_PROFILE_AVATAR_BYTES = 2 * 1024 * 1024;
 
 const PROFILE_AVATAR_EXTENSIONS: Record<string, string> = {
@@ -26,7 +27,7 @@ export async function createProfileAvatarSignedUrl(path: string | null | undefin
 
   const { data, error } = await supabase.storage
     .from(PROFILE_AVATAR_BUCKET)
-    .createSignedUrl(storageObjectPath(path), 60 * 60);
+    .createSignedUrl(storageObjectPath(path), PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS);
   return error ? null : data.signedUrl;
 }
 

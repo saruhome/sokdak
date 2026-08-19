@@ -11,6 +11,7 @@ import { safeGoBack } from '../../../constants/navigation';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { BackIcon } from '@/components/icons/SocialIcons';
+import { removeProfileAvatar, uploadProfileAvatar } from '@/constants/profileAvatarStorage';
 
 /** featured: 기본으로 노출 — 한국·일본 다음으로 한국어 학습 인구가 많은 8개국 (세종학당 수강생 통계 기준) */
 const COUNTRY_OPTIONS = [
@@ -98,7 +99,9 @@ export default function ProfileScreen() {
         c.ko.includes(countryQuery.trim()),
       )
     : COUNTRY_OPTIONS.filter(c => c.featured);
-  const [avatarUrl, setAvatarUrl] = useState<string | null | undefined>(user?.avatarUrl ?? null);
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null | undefined>(user?.avatarUrl ?? null);
+  const [avatarChange, setAvatarChange] = useState<'unchanged' | 'replace' | 'remove'>('unchanged');
+  const [pendingAvatar, setPendingAvatar] = useState<{ uri: string; mimeType?: string | null } | null>(null);
 
   if (!user) {
     return (
@@ -127,12 +130,17 @@ export default function ProfileScreen() {
       quality: 0.7,
     });
     if (!result.canceled && result.assets[0]?.uri) {
-      setAvatarUrl(result.assets[0].uri);
+      const asset = result.assets[0];
+      setPendingAvatar({ uri: asset.uri, mimeType: asset.mimeType });
+      setAvatarPreviewUrl(asset.uri);
+      setAvatarChange('replace');
     }
   };
 
   const removePhoto = () => {
-    setAvatarUrl(null);
+    setPendingAvatar(null);
+    setAvatarPreviewUrl(null);
+    setAvatarChange('remove');
   };
 
   const handleSave = async () => {
@@ -141,10 +149,28 @@ export default function ProfileScreen() {
       return;
     }
     setSaving(true);
+    let nextAvatarPath = user.avatarPath ?? null;
+    let uploadedAvatarPath: string | null = null;
+
+    if (avatarChange === 'replace' && pendingAvatar) {
+      const upload = await uploadProfileAvatar(pendingAvatar);
+      if (upload.error || !upload.path) {
+        setSaving(false);
+        Alert.alert(t('saveFailedTitle'), upload.error ?? t('saveFailedTitle'));
+        return;
+      }
+      nextAvatarPath = upload.path;
+      uploadedAvatarPath = upload.path;
+    } else if (avatarChange === 'remove') {
+      nextAvatarPath = null;
+    }
+
     const { error } = await authStore.updateUser({
-      name: name.trim(), emoji, avatarUrl: avatarUrl ?? null,
+      name: name.trim(), emoji,
+      ...(avatarChange === 'unchanged' ? {} : { avatarPath: nextAvatarPath }),
       timezone: timezone.trim() || 'UTC',
     });
+    if (error && uploadedAvatarPath) await removeProfileAvatar(uploadedAvatarPath);
     if (!error && email.trim() !== user.email) {
       const res = await authStore.updateEmail(email.trim());
       if (res.error) { setSaving(false); Alert.alert(t('saveFailedTitle'), res.error); return; }
@@ -158,6 +184,9 @@ export default function ProfileScreen() {
     if (error) {
       Alert.alert(t('saveFailedTitle'), error);
       return;
+    }
+    if (avatarChange !== 'unchanged' && user.avatarPath !== nextAvatarPath) {
+      await removeProfileAvatar(user.avatarPath);
     }
     Alert.alert(t('saveCompleteTitle'), t('saveCompleteMessage'), [{ text: t('confirmLabel'), onPress: () => safeGoBack() }]);
   };
@@ -202,7 +231,7 @@ export default function ProfileScreen() {
 
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.profileHeader}>
-            <ProfileAvatar uri={avatarUrl} emoji={emoji} size={76} style={styles.avatarPreview} />
+            <ProfileAvatar uri={avatarPreviewUrl} emoji={emoji} size={76} style={styles.avatarPreview} />
             <View style={styles.profileNameBox}>
               <Text style={styles.fieldLabel}>{t('nicknameLabel')}</Text>
               <TextInput
@@ -258,9 +287,9 @@ export default function ProfileScreen() {
           <Text style={styles.avatarHint}>{t('profileIconHint')}</Text>
           <View style={styles.avatarActionRow}>
             <TouchableOpacity style={styles.photoBtn} onPress={pickPhoto} activeOpacity={0.8}>
-              <Text style={styles.photoBtnText}>{avatarUrl ? t('changePhoto') : t('addPhoto')}</Text>
+              <Text style={styles.photoBtnText}>{avatarPreviewUrl ? t('changePhoto') : t('addPhoto')}</Text>
             </TouchableOpacity>
-            {avatarUrl ? (
+            {avatarPreviewUrl ? (
               <TouchableOpacity style={styles.photoRemoveBtn} onPress={removePhoto} activeOpacity={0.8}>
                 <Text style={styles.photoRemoveText}>{t('removePhoto')}</Text>
               </TouchableOpacity>

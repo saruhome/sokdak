@@ -10,6 +10,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
 import { supabase } from './supabase';
+import { createProfileAvatarSignedUrl, isProfileAvatarPath } from './profileAvatarStorage';
 
 /** 이메일 인증·비밀번호 재설정 링크가 돌아올 주소.
  *  네이티브는 앱 스킴(sokdak://), 웹은 현재 오리진으로 자동 해석된다.
@@ -24,6 +25,9 @@ export type SokDakUser = {
   name: string;
   email: string;
   emoji: string;
+  /** DB에 저장되는 private Storage 상대 경로 또는 기존 공개 URL. */
+  avatarPath?: string | null;
+  /** 화면에서만 쓰는 signed URL 또는 기존 공개 URL. */
   avatarUrl?: string | null;
   phone?: string | null;
   timezone: string;
@@ -37,6 +41,8 @@ export type SokDakUser = {
 export const FREE_WORD_SAVE_LIMIT = 3;
 export const FREE_CATEGORY_LIKE_LIMIT = 2;
 export const FREE_TTS_DAILY_LIMIT = 3;
+/** 결제가 비활성인 비공개 베타에서는 유료 제한·자동 삭제를 적용하지 않는다. */
+export const BETA_UNLIMITED_ENTITLEMENTS = true;
 
 export type NotificationPrefs = {
   newSlang: boolean;
@@ -155,13 +161,16 @@ async function fetchProfile(userId: string, email: string): Promise<SokDakUser> 
   ]);
 
   const streakCount = await bumpStreak(userId, settings?.last_active_date ?? null, settings?.streak_count ?? 0);
+  const avatarPath = profile?.avatar_url ?? null;
+  const signedAvatarUrl = await createProfileAvatarSignedUrl(avatarPath);
 
   return {
     id: userId,
     email,
     name: profile?.nickname ?? email.split('@')[0],
     emoji: profile?.avatar_emoji ?? '🐦',
-    avatarUrl: profile?.avatar_url ?? null,
+    avatarPath,
+    avatarUrl: signedAvatarUrl ?? (isProfileAvatarPath(avatarPath) ? null : avatarPath),
     phone: settings?.phone ?? null,
     timezone: settings?.timezone ?? 'UTC',
     level: profile?.level ?? '초급',
@@ -186,14 +195,6 @@ async function fetchBookmarks(userId: string) {
   savedPostsRes.data?.forEach(row => _savedPostIds.add(row.post_id));
   _likedCommentIds.clear();
   likedCommentsRes.data?.forEach(row => _likedCommentIds.add(row.comment_id));
-
-  /* 무료 한도(3개)가 15개에서 낮아지며 이미 그 이상 저장해 둔 회원이 생길 수 있어,
-   * 로그인 시 초과분을 강제로 정리한다(오래된 순 — DB에서 받은 순서 그대로 앞 N개만 유지). */
-  if (!_user?.isPremium && _savedWordIds.size > FREE_WORD_SAVE_LIMIT) {
-    const excess = Array.from(_savedWordIds).slice(FREE_WORD_SAVE_LIMIT);
-    const { error } = await supabase.from('saved_words').delete().eq('user_id', userId).in('word_id', excess);
-    if (!error) excess.forEach(id => _savedWordIds.delete(id));
-  }
 
   await loadTtsPlaysToday(userId);
 }
@@ -321,17 +322,17 @@ export const authStore = {
   },
 
   async updateUser(patch: Partial<{
-    name: string; emoji: string; avatarUrl: string | null; phone: string | null; timezone: string;
+    name: string; emoji: string; avatarPath: string | null; phone: string | null; timezone: string;
   }>) {
     if (!_user) return { error: '로그인이 필요해요.' };
 
-    if (patch.name !== undefined || patch.emoji !== undefined || patch.avatarUrl !== undefined) {
+    if (patch.name !== undefined || patch.emoji !== undefined || patch.avatarPath !== undefined) {
       const { error } = await supabase
         .from('profiles')
         .update({
           ...(patch.name !== undefined ? { nickname: patch.name } : {}),
           ...(patch.emoji !== undefined ? { avatar_emoji: patch.emoji } : {}),
-          ...(patch.avatarUrl !== undefined ? { avatar_url: patch.avatarUrl } : {}),
+          ...(patch.avatarPath !== undefined ? { avatar_url: patch.avatarPath } : {}),
         })
         .eq('id', _user.id);
       if (error) return { error: error.message };
@@ -348,11 +349,18 @@ export const authStore = {
       if (error) return { error: error.message };
     }
 
+    const signedAvatarUrl = patch.avatarPath !== undefined
+      ? await createProfileAvatarSignedUrl(patch.avatarPath)
+      : undefined;
+
     _user = {
       ..._user,
       ...(patch.name !== undefined ? { name: patch.name } : {}),
       ...(patch.emoji !== undefined ? { emoji: patch.emoji } : {}),
-      ...(patch.avatarUrl !== undefined ? { avatarUrl: patch.avatarUrl } : {}),
+      ...(patch.avatarPath !== undefined ? {
+        avatarPath: patch.avatarPath,
+        avatarUrl: signedAvatarUrl ?? (isProfileAvatarPath(patch.avatarPath) ? null : patch.avatarPath),
+      } : {}),
       ...(patch.phone !== undefined ? { phone: patch.phone } : {}),
       ...(patch.timezone !== undefined ? { timezone: patch.timezone } : {}),
     };
@@ -436,19 +444,20 @@ export const authStore = {
   getStreakCount: () => _user?.streakCount ?? 0,
   /** 무료 회원 단어 저장 상한 체크 — 이미 저장된 단어를 해제하는 건 항상 허용,
    *  새로 추가할 때만 막는다. 화면에서 toggleWordSaved 호출 전에 확인한다. */
-  canSaveMoreWords: () => _user?.isPremium === true || _savedWordIds.size < FREE_WORD_SAVE_LIMIT,
+  canSaveMoreWords: () => BETA_UNLIMITED_ENTITLEMENTS || _user?.isPremium === true || _savedWordIds.size < FREE_WORD_SAVE_LIMIT,
   /** 무료 회원 카테고리 좋아요 상한 — 단어 저장과 동일한 패턴, 해제는 항상 허용 */
-  canLikeMoreCategories: () => _user?.isPremium === true || _likedCategorySlugs.size < FREE_CATEGORY_LIKE_LIMIT,
+  canLikeMoreCategories: () => BETA_UNLIMITED_ENTITLEMENTS || _user?.isPremium === true || _likedCategorySlugs.size < FREE_CATEGORY_LIKE_LIMIT,
 
   /** 무료 회원 TTS 일일 재생 상한. 비로그인은 애초에 speakWord에서 로그인 요구로 막는다. */
   canPlayTtsToday: () => {
+    if (BETA_UNLIMITED_ENTITLEMENTS) return Boolean(_user);
     if (_user?.isPremium) return true;
     if (!_user) return false;
     if (_ttsPlaysDate !== todayString()) return true; // 날짜가 바뀌었으면 아직 오늘 재생 없음
     return _ttsPlaysToday < FREE_TTS_DAILY_LIMIT;
   },
   recordTtsPlay() {
-    if (!_user || _user.isPremium) return;
+    if (!_user || _user.isPremium || BETA_UNLIMITED_ENTITLEMENTS) return;
     const today = todayString();
     if (_ttsPlaysDate !== today) { _ttsPlaysDate = today; _ttsPlaysToday = 0; }
     _ttsPlaysToday += 1;

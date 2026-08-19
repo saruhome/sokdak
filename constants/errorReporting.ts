@@ -25,6 +25,14 @@ export type AppErrorReporter = (payload: AppErrorPayload) => void;
 
 let externalReporter: AppErrorReporter | null = null;
 
+function redactSensitiveText(value: string) {
+  return value
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[redacted-email]')
+    .replace(/\bBearer\s+[^\s,;]+/gi, 'Bearer [redacted]')
+    .replace(/\b(access_token|refresh_token|token|api[_-]?key|password|authorization)\s*[:=]\s*[^\s,;]+/gi, '$1=[redacted]')
+    .replace(/(?:\+?\d{1,3}[\s.-]?)?(?:\d{2,4}[\s.-]?){2,4}\d{2,4}/g, '[redacted-phone]');
+}
+
 /**
  * 향후 Sentry 등 중앙 오류 수집 SDK가 준비되면 앱 시작 시 reporter를 등록한다.
  * SDK가 없을 때는 프로덕션에서 원격 전송을 하지 않으며, 개발 환경에서만 진단 로그를 남긴다.
@@ -37,14 +45,14 @@ function toErrorSummary(error: unknown) {
   if (error instanceof Error) {
     return {
       errorName: error.name || 'Error',
-      // 사용자 입력·서버 응답의 무분별한 전송을 피하기 위해 길이를 제한한다.
-      errorMessage: error.message.slice(0, 500),
+      // 사용자 입력·서버 응답의 무분별한 전송을 피하기 위해 민감정보를 마스킹하고 길이를 제한한다.
+      errorMessage: redactSensitiveText(error.message).slice(0, 500),
     };
   }
 
   return {
     errorName: 'UnknownError',
-    errorMessage: String(error).slice(0, 500),
+    errorMessage: redactSensitiveText(String(error)).slice(0, 500),
   };
 }
 

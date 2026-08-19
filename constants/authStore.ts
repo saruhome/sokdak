@@ -15,6 +15,10 @@ import {
   isProfileAvatarPath,
   PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS,
 } from './profileAvatarStorage';
+import {
+  notifyPrivateSignedMediaChanged,
+  registerPrivateSignedMediaResource,
+} from './privateSignedMediaRegistry';
 
 /** 이메일 인증·비밀번호 재설정 링크가 돌아올 주소.
  *  네이티브는 앱 스킴(sokdak://), 웹은 현재 오리진으로 자동 해석된다.
@@ -93,6 +97,11 @@ function notifyBookmarks() {
   _bookmarkListeners.forEach(fn => fn());
 }
 
+function setProfileAvatarSignedUrlExpiresAt(value: number | null) {
+  _profileAvatarSignedUrlExpiresAt = value;
+  notifyPrivateSignedMediaChanged();
+}
+
 function todayString() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -168,9 +177,9 @@ async function fetchProfile(userId: string, email: string): Promise<SokDakUser> 
   const streakCount = await bumpStreak(userId, settings?.last_active_date ?? null, settings?.streak_count ?? 0);
   const avatarPath = profile?.avatar_url ?? null;
   const signedAvatarUrl = await createProfileAvatarSignedUrl(avatarPath);
-  _profileAvatarSignedUrlExpiresAt = signedAvatarUrl
+  setProfileAvatarSignedUrlExpiresAt(signedAvatarUrl
     ? Date.now() + PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS * 1000
-    : null;
+    : null);
 
   return {
     id: userId,
@@ -217,7 +226,7 @@ async function applySession(userId: string | undefined, email: string | undefine
   if (!userId || !email) {
     _isLoggedIn = false;
     _user = null;
-    _profileAvatarSignedUrlExpiresAt = null;
+    setProfileAvatarSignedUrlExpiresAt(null);
     _savedWordIds.clear();
     _savedPostIds.clear();
     _likedPostIds.clear();
@@ -315,7 +324,7 @@ export const authStore = {
     await supabase.auth.signOut();
     _isLoggedIn = false;
     _user = null;
-    _profileAvatarSignedUrlExpiresAt = null;
+    setProfileAvatarSignedUrlExpiresAt(null);
     _savedWordIds.clear();
     _savedPostIds.clear();
     _likedPostIds.clear();
@@ -363,9 +372,9 @@ export const authStore = {
       ? await createProfileAvatarSignedUrl(patch.avatarPath)
       : undefined;
     if (patch.avatarPath !== undefined) {
-      _profileAvatarSignedUrlExpiresAt = signedAvatarUrl
+      setProfileAvatarSignedUrlExpiresAt(signedAvatarUrl
         ? Date.now() + PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS * 1000
-        : null;
+        : null);
     }
 
     _user = {
@@ -390,7 +399,7 @@ export const authStore = {
     const signedAvatarUrl = await createProfileAvatarSignedUrl(_user.avatarPath);
     if (!signedAvatarUrl) return { error: '프로필 사진 링크를 새로 만들 수 없어요.' };
 
-    _profileAvatarSignedUrlExpiresAt = Date.now() + PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS * 1000;
+    setProfileAvatarSignedUrlExpiresAt(Date.now() + PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS * 1000);
     _user = { ..._user, avatarUrl: signedAvatarUrl };
     notifyAuth();
     return { error: null };
@@ -554,3 +563,9 @@ export const authStore = {
     return () => { _bookmarkListeners.delete(fn); };
   },
 };
+
+registerPrivateSignedMediaResource({
+  id: 'profile-avatar',
+  getExpiresAt: () => _profileAvatarSignedUrlExpiresAt,
+  refresh: () => authStore.refreshProfileAvatarSignedUrl(),
+});

@@ -4,16 +4,8 @@ import {
   AVATAR_SIGNED_URL_REFRESH_BUFFER_MS,
   useRefreshProfileAvatarSignedUrl,
 } from '@/hooks/useRefreshProfileAvatarSignedUrl';
-import { authStore } from '@/constants/authStore';
+import { registerPrivateSignedMediaResource } from '@/constants/privateSignedMediaRegistry';
 import { reportAppError } from '@/constants/errorReporting';
-
-jest.mock('@/constants/authStore', () => ({
-  authStore: {
-    refreshProfileAvatarSignedUrl: jest.fn(),
-    getProfileAvatarSignedUrlExpiresAt: jest.fn(),
-    subscribe: jest.fn(() => jest.fn()),
-  },
-}));
 
 jest.mock('@/constants/errorReporting', () => ({ reportAppError: jest.fn() }));
 
@@ -24,12 +16,20 @@ function HookProbe() {
 
 describe('useRefreshProfileAvatarSignedUrl', () => {
   let appStateListener: ((state: 'active' | 'background' | 'inactive') => void) | null = null;
+  const refresh = jest.fn();
+  const getExpiresAt = jest.fn();
+  let unregisterResource: (() => void) | null = null;
 
   beforeEach(() => {
     jest.clearAllMocks();
     appStateListener = null;
-    (authStore.refreshProfileAvatarSignedUrl as jest.Mock).mockResolvedValue({ error: null });
-    (authStore.getProfileAvatarSignedUrlExpiresAt as jest.Mock).mockReturnValue(null);
+    refresh.mockResolvedValue({ error: null });
+    getExpiresAt.mockReturnValue(null);
+    unregisterResource = registerPrivateSignedMediaResource({
+      id: 'test-profile-avatar',
+      getExpiresAt,
+      refresh,
+    });
     jest.spyOn(AppState, 'addEventListener').mockImplementation(((_event: 'change', listener: (state: 'active' | 'background' | 'inactive') => void) => {
       appStateListener = listener as typeof appStateListener;
       return { remove: jest.fn() } as any;
@@ -37,6 +37,7 @@ describe('useRefreshProfileAvatarSignedUrl', () => {
   });
 
   afterEach(() => {
+    unregisterResource?.();
     jest.restoreAllMocks();
   });
 
@@ -47,11 +48,11 @@ describe('useRefreshProfileAvatarSignedUrl', () => {
     appStateListener?.('background');
     appStateListener?.('active');
 
-    await waitFor(() => expect(authStore.refreshProfileAvatarSignedUrl).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
   });
 
   it('reports a refresh failure without interrupting the foreground transition', async () => {
-    (authStore.refreshProfileAvatarSignedUrl as jest.Mock).mockResolvedValue({ error: 'signed URL failed' });
+    refresh.mockResolvedValue({ error: 'signed URL failed' });
     render(<HookProbe />);
 
     await waitFor(() => expect(appStateListener).not.toBeNull());
@@ -66,7 +67,7 @@ describe('useRefreshProfileAvatarSignedUrl', () => {
 
   it('schedules the next refresh five minutes before URL expiry while active', async () => {
     const expiresAt = Date.now() + AVATAR_SIGNED_URL_REFRESH_BUFFER_MS + 45_000;
-    (authStore.getProfileAvatarSignedUrlExpiresAt as jest.Mock).mockReturnValue(expiresAt);
+    getExpiresAt.mockReturnValue(expiresAt);
 
     render(<HookProbe />);
 
@@ -74,7 +75,7 @@ describe('useRefreshProfileAvatarSignedUrl', () => {
     const setTimeoutSpy = jest.spyOn(globalThis, 'setTimeout');
     appStateListener?.('active');
 
-    expect(authStore.getProfileAvatarSignedUrlExpiresAt).toHaveBeenCalled();
+    expect(getExpiresAt).toHaveBeenCalled();
     const [, delay] = setTimeoutSpy.mock.calls.at(-1) ?? [];
     expect(delay).toBeGreaterThan(44_000);
     expect(delay).toBeLessThanOrEqual(45_000);

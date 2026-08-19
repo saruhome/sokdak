@@ -14,6 +14,7 @@ import { authStore } from '../constants/authStore';
 import { languageStore } from '../constants/languageStore';
 import { reportAppError } from '../constants/errorReporting';
 import { RouteAwareAppErrorBoundary } from '@/components/AppErrorBoundary';
+import { useRefreshProfileAvatarSignedUrl } from '@/hooks/useRefreshProfileAvatarSignedUrl';
 
 const SPLASH = require('../assets/splash-screen.png');
 
@@ -47,6 +48,7 @@ const frameStyles = StyleSheet.create({
 });
 
 export default function RootLayout() {
+  useRefreshProfileAvatarSignedUrl();
   const [fontsLoaded] = useFonts({
     NotoSerifKR_400Regular,
     NotoSerifKR_600SemiBold,

@@ -5,7 +5,7 @@ import { AppText as Text } from '@/components/AppText';
 import ProfileAvatar from '@/components/ProfileAvatar';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { authStore } from '../../../constants/authStore';
@@ -102,6 +102,12 @@ export default function ProfileScreen() {
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null | undefined>(user?.avatarUrl ?? null);
   const [avatarChange, setAvatarChange] = useState<'unchanged' | 'replace' | 'remove'>('unchanged');
   const [pendingAvatar, setPendingAvatar] = useState<{ uri: string; mimeType?: string | null } | null>(null);
+
+  useEffect(() => {
+    return authStore.subscribe(() => {
+      if (avatarChange === 'unchanged') setAvatarPreviewUrl(authStore.getUser()?.avatarUrl ?? null);
+    });
+  }, [avatarChange]);
 
   if (!user) {
     return (

@@ -368,6 +368,18 @@ export const authStore = {
     return { error: null };
   },
 
+  /** 앱이 foreground로 복귀할 때 private 아바타의 짧은 수명 signed URL만 재발급한다. */
+  async refreshProfileAvatarSignedUrl() {
+    if (!_user || !isProfileAvatarPath(_user.avatarPath)) return { error: null };
+
+    const signedAvatarUrl = await createProfileAvatarSignedUrl(_user.avatarPath);
+    if (!signedAvatarUrl) return { error: '프로필 사진 링크를 새로 만들 수 없어요.' };
+
+    _user = { ..._user, avatarUrl: signedAvatarUrl };
+    notifyAuth();
+    return { error: null };
+  },
+
   /**
    * 커뮤니티 게시 전, 서버가 판정한 최신 활성 정책 버전에 동의했는지 확인한다.
    * 단순 timestamp 캐시는 정책 개정 후에도 남을 수 있으므로 권한 판단에 사용하지 않는다.

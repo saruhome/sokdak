@@ -29,6 +29,7 @@ export default function MyPageScreen() {
   const [streakCount, setStreakCount] = useState(authStore.getStreakCount());
   const [hasUnseenTicketReply, setHasUnseenTicketReply] = useState(false);
   const [language, setLanguage] = useState(languageStore.getLanguage());
+  const [, setProfileVersion] = useState(0);
   const user = authStore.getUser();
   const t = (key: Parameters<typeof languageStore.t>[0]) => languageStore.t(key);
 
@@ -50,6 +51,7 @@ export default function MyPageScreen() {
       setLoggedIn(loggedIn);
       setIsPremium(authStore.isPremium());
       setStreakCount(authStore.getStreakCount());
+      setProfileVersion(version => version + 1);
     });
     const unsubBookmarks = authStore.subscribeBookmarks(() => {
       setSavedCount(authStore.getSavedWordIds().length);

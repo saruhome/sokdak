@@ -13,6 +13,23 @@ function json(body: Record<string, unknown>, status = 200) {
   });
 }
 
+async function removeUserStorageObjects(
+  admin: ReturnType<typeof createClient>,
+  bucket: "post-images" | "profile-avatars",
+  userId: string,
+) {
+  const { data: files, error: listError } = await admin.storage
+    .from(bucket)
+    .list(userId, { limit: 1000, sortBy: { column: "name", order: "asc" } });
+  if (listError) throw new Error(`Could not list ${bucket}: ${listError.message}`);
+
+  const paths = files?.filter(file => file.name).map(file => `${userId}/${file.name}`) ?? [];
+  if (paths.length === 0) return;
+
+  const { error: removeError } = await admin.storage.from(bucket).remove(paths);
+  if (removeError) throw new Error(`Could not remove ${bucket}: ${removeError.message}`);
+}
+
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -40,23 +57,17 @@ Deno.serve(async (request) => {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  // Post images are stored under the authenticated user's UUID. Remove Storage
-  // objects first because deleting auth.users only cascades relational records.
-  const { data: files, error: listError } = await admin.storage
-    .from("post-images")
-    .list(user.id, { limit: 1000, sortBy: { column: "name", order: "asc" } });
-  if (listError) {
-    console.error("Could not list account Storage objects", { userId: user.id, error: listError.message });
+  // Auth 삭제는 관계형 레코드만 cascade한다. UUID 폴더 기반의 public 게시 이미지와
+  // private 프로필 사진은 서비스 역할로 먼저 정리해 고아 Storage 객체를 남기지 않는다.
+  try {
+    await removeUserStorageObjects(admin, "post-images", user.id);
+    await removeUserStorageObjects(admin, "profile-avatars", user.id);
+  } catch (error) {
+    console.error("Could not remove account Storage objects", {
+      userId: user.id,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return json({ error: "Account deletion is temporarily unavailable" }, 500);
-  }
-
-  if (files && files.length > 0) {
-    const paths = files.filter(file => file.name).map(file => `${user.id}/${file.name}`);
-    const { error: removeError } = await admin.storage.from("post-images").remove(paths);
-    if (removeError) {
-      console.error("Could not remove account Storage objects", { userId: user.id, error: removeError.message });
-      return json({ error: "Account deletion is temporarily unavailable" }, 500);
-    }
   }
 
   // Deleting auth.users cascades to profiles and relational records via existing FKs.

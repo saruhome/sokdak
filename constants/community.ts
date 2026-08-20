@@ -4,6 +4,7 @@
  */
 import { supabase } from './supabase';
 import { authStore } from './authStore';
+import { isProfileAvatarPath } from './profileAvatarStorage';
 import type { PostBoard } from './mockPosts';
 
 /** 차단한 유저의 글은 목록에서 뺀다 — 모든 목록 조회가 이 한 곳을 거치게 해서 한 번만 처리 */
@@ -50,11 +51,13 @@ export type CommunityPostDetail = CommunityPostSummary & { comments: CommunityCo
 
 type ProfileRow = { nickname: string; avatar_emoji: string; avatar_url?: string | null; level: string } | null;
 
-function toAuthor(profile: ProfileRow): CommunityAuthor {
+/** 공개 커뮤니티에는 private Storage 객체 경로나 signed URL을 전달하지 않는다. */
+export function toCommunityAuthor(profile: ProfileRow): CommunityAuthor {
+  const avatarUrl = profile?.avatar_url ?? null;
   return {
     name: profile?.nickname ?? '탈퇴한 사용자',
     emoji: profile?.avatar_emoji ?? '👤',
-    avatarUrl: profile?.avatar_url ?? null,
+    avatarUrl: isProfileAvatarPath(avatarUrl) ? null : avatarUrl,
     level: profile?.level ?? '초급',
   };
 }
@@ -76,7 +79,7 @@ function mapPostSummaryRow(row: any): CommunityPostSummary {
     board: row.board as PostBoard,
     title: row.title,
     content: row.content,
-    author: toAuthor(row.profiles as ProfileRow),
+    author: toCommunityAuthor(row.profiles as ProfileRow),
     createdAt: toDate(row.created_at),
     views: row.view_count,
     likes: (row.post_likes as { count: number }[])[0]?.count ?? 0,
@@ -156,7 +159,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
   rows.forEach(r => byId.set(r.id, {
     id: r.id,
     authorId: r.author_id,
-    author: toAuthor(r.profiles as ProfileRow),
+    author: toCommunityAuthor(r.profiles as ProfileRow),
     content: r.content,
     createdAt: toDate(r.created_at),
     likes: (r.comment_likes as { count: number }[])[0]?.count ?? 0,
@@ -181,7 +184,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
     board: post.board as PostBoard,
     title: post.title,
     content: post.content,
-    author: toAuthor(post.profiles as ProfileRow),
+    author: toCommunityAuthor(post.profiles as ProfileRow),
     createdAt: toDate(post.created_at),
     views: post.view_count + 1,
     likes: (post.post_likes as { count: number }[])[0]?.count ?? 0,

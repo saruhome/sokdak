@@ -38,6 +38,7 @@ const JJAEKI_HINTS: Record<Language, string[]> = {
   ja: ['これも知らないの？まあ、見てみれば？', 'これは知っておかないとね', 'まさかこれも知らないなんてことないよね？', '知っておくと得するかもよ。知らなくても別にいいけど'],
   vi: ['Cái này cũng không biết à? Thôi thì xem đi.', 'Cái này thì phải biết chứ.', 'Đừng nói là cái này cũng không biết đấy nhé?', 'Biết thì tốt. Không biết cũng chẳng sao.'],
   es: ['¿Tampoco sabes esto? Bueno, échale un vistazo.', 'Esto sí que deberías saberlo.', 'No me digas que esto tampoco lo sabías.', 'Podría venirte bien saberlo. O no, tú verás.'],
+  de: ['Das weißt du auch nicht? Na gut, schau es dir an.', 'Das solltest du wirklich kennen.', 'Sag nicht, dass du das auch nicht weißt.', 'Kann nützlich sein. Oder auch nicht, wie du willst.'],
 };
 
 /**

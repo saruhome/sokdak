@@ -34,12 +34,12 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-async function explicitlyAgree(screen: Awaited<ReturnType<typeof render>>) {
+async function explicitlyAgree(screen: Awaited<ReturnType<typeof render>>, name = checkboxName) {
   await act(async () => {
-    fireEvent.press(screen.getByRole('checkbox', { name: checkboxName }));
+    fireEvent.press(screen.getByRole('checkbox', { name }));
   });
   await waitFor(() => {
-    expect(screen.getByRole('checkbox', { name: checkboxName }).props.accessibilityState)
+    expect(screen.getByRole('checkbox', { name }).props.accessibilityState)
       .toMatchObject({ checked: true });
   });
 }
@@ -70,6 +70,24 @@ describe('<CommunityGuidelinesScreen />', () => {
     await act(async () => { consent.resolve({ error: null, consent: { policy_locale: 'vi' } }); });
     expect(mockAlert).toHaveBeenCalledWith('운영정책에 동의했어요', '안전한 커뮤니티를 위해 함께 지켜주세요.');
     expect(mockSafeGoBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders German consent copy and sends the German locale to the consent ledger', async () => {
+    mockUseLanguage.mockReturnValue('de');
+    const consent = deferred<{ error: null; consent: { policy_locale: string } }>();
+    mockAuthStore.acceptCommunityGuidelines.mockReturnValue(consent.promise);
+    const screen = await render(<CommunityGuidelinesScreen />);
+
+    expect(screen.getByText('Community-Regeln')).toBeTruthy();
+    const germanCheckboxLabel = 'Ich habe die Community-Regeln gelesen und stimme ihnen zu.';
+    expect(screen.getByRole('checkbox', { name: germanCheckboxLabel })).toBeTruthy();
+    await explicitlyAgree(screen, germanCheckboxLabel);
+    fireEvent.press(screen.getByRole('button', { name: 'Zustimmen und fortfahren' }));
+
+    await waitFor(() => expect(mockAuthStore.acceptCommunityGuidelines).toHaveBeenCalledWith({
+      locale: 'de', source: 'community_onboarding',
+    }));
+    await act(async () => { consent.resolve({ error: null, consent: { policy_locale: 'de' } }); });
   });
 
   it('routes an unauthenticated user to login without writing a consent record', async () => {

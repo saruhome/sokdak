@@ -32,6 +32,10 @@ const CONTENT_ITEMS: Record<Language, { key: NotificationKey; label: string; des
     { key: 'newSlang',     label: 'Jerga y categorías nuevas', desc: 'Recibe avisos sobre jerga nueva' },
     { key: 'popularSlang', label: 'Jerga y categorías populares', desc: 'Recibe avisos sobre las palabras más buscadas' },
   ],
+  de: [
+    { key: 'newSlang',     label: 'Neuer Slang und Kategorien', desc: 'Erhalte Hinweise zu neuem Slang' },
+    { key: 'popularSlang', label: 'Beliebter Slang und Kategorien', desc: 'Erhalte Hinweise zu den meistgesuchten Wörtern' },
+  ],
 };
 
 const COMMUNITY_ITEMS: Record<Language, { key: NotificationKey; label: string; desc: string }[]> = {
@@ -59,6 +63,11 @@ const COMMUNITY_ITEMS: Record<Language, { key: NotificationKey; label: string; d
     { key: 'popularPost', label: 'Publicaciones destacadas', desc: 'Recibe avisos sobre las mejores publicaciones' },
     { key: 'like',        label: 'Me gusta', desc: 'Recibe avisos cuando a alguien le guste tu publicación' },
     { key: 'comment',     label: 'Comentarios', desc: 'Recibe avisos cuando alguien comente tu publicación' },
+  ],
+  de: [
+    { key: 'popularPost', label: 'Beliebte Beiträge', desc: 'Erhalte Hinweise zu den besten Beiträgen' },
+    { key: 'like',        label: 'Gefällt mir', desc: 'Erhalte eine Benachrichtigung, wenn jemand deinen Beitrag liked' },
+    { key: 'comment',     label: 'Kommentare', desc: 'Erhalte eine Benachrichtigung, wenn jemand deinen Beitrag kommentiert' },
   ],
 };
 

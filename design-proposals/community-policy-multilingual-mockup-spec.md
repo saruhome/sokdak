@@ -1,6 +1,6 @@
 # SokDak 다국어 커뮤니티 온보딩·가이드라인 목업 명세
 
-이 명세는 한국에 거주하는 영어·일본어·스페인어·베트남어 원어민을 위한 **가입 후 첫 커뮤니티 진입** 흐름을 정의한다. 모든 화면은 Android 우선의 세로형 모바일 화면이며, 읽기만 허용하는 일반 커뮤니티 화면과 달리 이 흐름은 사용자가 게시글 또는 댓글을 작성하기 전에 반드시 운영정책을 확인하고 동의하도록 유도한다.
+이 명세는 한국에 거주하는 영어·일본어·스페인어·베트남어·독일어 원어민을 위한 **가입 후 첫 커뮤니티 진입** 흐름을 정의한다. 모든 화면은 Android 우선의 세로형 모바일 화면이며, 읽기만 허용하는 일반 커뮤니티 화면과 달리 이 흐름은 사용자가 게시글 또는 댓글을 작성하기 전에 반드시 운영정책을 확인하고 동의하도록 유도한다.
 
 | 공통 항목 | 적용 기준 |
 | --- | --- |
@@ -23,6 +23,7 @@
 | 日本語 | SokDakコミュニティへようこそ | ガイドラインを確認する | 同意して参加する | CJK 줄바꿈 공간, 약 1.35 이상의 줄간격, 과도한 영문 혼용 금지 |
 | Español | Bienvenido a la comunidad de SokDak | Revisar las normas | Aceptar y participar | 제목·CTA가 길어져도 줄바꿈 또는 버튼 높이 확장, 말줄임표 금지 |
 | Tiếng Việt | Chào mừng đến với cộng đồng SokDak | Xem hướng dẫn cộng đồng | Đồng ý và tham gia | 성조 부호가 잘리지 않도록 넉넉한 행간, 단어 중간 줄바꿈 금지 |
+| Deutsch | Willkommen in der SokDak-Community | Community-Regeln ansehen | Zustimmen und teilnehmen | 복합 명사가 길어질 수 있으므로 CTA의 2줄 줄바꿈과 버튼 높이 확장을 허용하고, 단어 중간에서 줄바꿈하지 않음 |
 
 ## 언어별 핵심 문안
 
@@ -32,5 +33,6 @@
 | 日本語 | 思いやりのある言葉を使う | 個人情報を守る | 文化的な背景を尊重する |
 | Español | Habla con respeto | Protege tus datos personales | Aprende con contexto cultural |
 | Tiếng Việt | Giao tiếp tử tế | Bảo vệ thông tin cá nhân | Học cùng bối cảnh văn hoá |
+| Deutsch | Begegne anderen respektvoll | Schütze persönliche Daten | Lerne im kulturellen Kontext |
 
 가이드라인의 정책 확인 문구는 각 언어로 "커뮤니티 가이드라인 v1.0을 읽고 동의합니다"라는 뜻을 명확히 표현한다. 목업의 문구는 UI 방향성을 위한 축약본이며, 법적·운영상 효력이 있는 전문은 출시 전에 버전별 공개 URL에 게시되어야 한다.

@@ -38,6 +38,11 @@ const ERROR_COPY: Record<Language, { title: string; body: string; retry: string 
     body: 'Vuelve a intentarlo en unos instantes.',
     retry: 'Reintentar',
   },
+  de: {
+    title: 'Dieser Bildschirm konnte nicht geladen werden',
+    body: 'Bitte versuche es gleich noch einmal.',
+    retry: 'Erneut versuchen',
+  },
 };
 
 describe('<AppErrorBoundary />', () => {

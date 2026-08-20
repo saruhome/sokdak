@@ -21,6 +21,7 @@ const INQUIRY_TYPE_LABELS: Record<Language, Record<InquiryTypeSlug, string>> = {
   ja: { account: 'ログイン/アカウント', bug: '不具合報告', billing: 'ベータ利用', suggestion: '提案/意見', other: 'その他' },
   vi: { account: 'Đăng nhập/Tài khoản', bug: 'Báo lỗi', billing: 'Sử dụng beta', suggestion: 'Đề xuất/Ý kiến', other: 'Khác' },
   es: { account: 'Inicio de sesión/Cuenta', bug: 'Reporte de error', billing: 'Acceso beta', suggestion: 'Sugerencia', other: 'Otro' },
+  de: { account: 'Anmeldung/Konto', bug: 'Fehler melden', billing: 'Beta-Zugang', suggestion: 'Vorschlag', other: 'Sonstiges' },
 };
 
 /* ponytail: support_tickets에 접수번호 컬럼이 없어 row id에서 짧은 코드를 파생시킴 —
@@ -38,6 +39,7 @@ const FAQ_CATEGORY_LABELS: Record<Language, Record<FaqCategorySlug, string>> = {
   ja: { all: 'すべて', howTo: '使い方', account: 'アカウント', suggest: '提案する', community: 'コミュニティ' },
   vi: { all: 'Tất cả', howTo: 'Cách dùng', account: 'Tài khoản', suggest: 'Đề xuất', community: 'Cộng đồng' },
   es: { all: 'Todos', howTo: 'Cómo usar', account: 'Cuenta', suggest: 'Sugerencias', community: 'Comunidad' },
+  de: { all: 'Alle', howTo: 'So funktioniert es', account: 'Konto', suggest: 'Vorschläge', community: 'Community' },
 };
 
 type FaqItem = { category: Exclude<FaqCategorySlug, 'all'>; q: string; a: string };
@@ -76,6 +78,13 @@ const FAQ_ITEMS: Record<Language, FaqItem[]> = {
     { category: 'suggest', q: 'Quiero sugerir una palabra de jerga nueva.', a: 'Ve a Mi página > Sugerir jerga nueva para enviar la palabra y su significado. Se añadirá al diccionario tras la revisión.' },
     { category: 'account', q: '¿Puedo usar la app sin iniciar sesión?', a: 'Puedes buscar en el diccionario y explorar categorías sin iniciar sesión. Guardar palabras y participar en la comunidad requiere una cuenta iniciada.' },
     { category: 'community', q: '¿Cuáles son las normas de la comunidad?', a: 'Buscamos una comunidad de aprendizaje respetuosa. El lenguaje ofensivo, la publicidad y el discurso de odio pueden ser moderados.' },
+  ],
+  de: [
+    { category: 'howTo', q: 'Was für eine App ist SokDak?', a: 'SokDak ist eine App zum Lernen koreanischen Slangs für fortgeschrittene ausländische Einwohnerinnen und Einwohner Koreas. Hier lernst du echtes Alltagskoreanisch, das nicht in Lehrbüchern steht.' },
+    { category: 'howTo', q: 'Wie speichere ich ein Wort?', a: "Tippe in der Wortdetailansicht auf „Speichern“. Deine Wörter findest du unter Mein Bereich > Gespeicherte Wörter." },
+    { category: 'suggest', q: 'Ich möchte einen neuen Slangbegriff vorschlagen.', a: 'Unter Mein Bereich > Neuen Slang vorschlagen kannst du ein Wort und seine Bedeutung einreichen. Nach der Prüfung kann es ins Wörterbuch aufgenommen werden.' },
+    { category: 'account', q: 'Kann ich die App ohne Anmeldung verwenden?', a: 'Du kannst im Wörterbuch suchen und Kategorien ohne Anmeldung durchsuchen. Zum Speichern von Wörtern und zur Teilnahme an der Community brauchst du ein angemeldetes Konto.' },
+    { category: 'community', q: 'Welche Regeln gelten in der Community?', a: 'Wir möchten eine respektvolle Lern-Community schaffen. Beleidigungen, Werbung und Hassrede können moderiert werden.' },
   ],
 };
 

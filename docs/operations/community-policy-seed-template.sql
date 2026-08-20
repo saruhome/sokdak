@@ -4,7 +4,7 @@
 -- reviewed, immutable policy documents. Compute SHA-256 from the exact UTF-8
 -- policy file that users see at the corresponding versioned content_url.
 --
--- First-release target locales: en, ja, es, vi.
+-- First-release target locales: en, ja, es, vi, de.
 -- Korean (ko) is included because it is the canonical source locale.
 
 begin;
@@ -54,7 +54,8 @@ cross join (
     ('en', 'https://<PUBLIC_DOMAIN>/policies/community-guidelines/1.0.0/en', '<SHA256_OF_EN_DOCUMENT>'),
     ('ja', 'https://<PUBLIC_DOMAIN>/policies/community-guidelines/1.0.0/ja', '<SHA256_OF_JA_DOCUMENT>'),
     ('es', 'https://<PUBLIC_DOMAIN>/policies/community-guidelines/1.0.0/es', '<SHA256_OF_ES_DOCUMENT>'),
-    ('vi', 'https://<PUBLIC_DOMAIN>/policies/community-guidelines/1.0.0/vi', '<SHA256_OF_VI_DOCUMENT>')
+    ('vi', 'https://<PUBLIC_DOMAIN>/policies/community-guidelines/1.0.0/vi', '<SHA256_OF_VI_DOCUMENT>'),
+    ('de', 'https://<PUBLIC_DOMAIN>/policies/community-guidelines/1.0.0/de', '<SHA256_OF_DE_DOCUMENT>')
 ) as localized(locale, content_url, content_sha256);
 
 commit;

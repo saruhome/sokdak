@@ -18,6 +18,7 @@ const sampleWord = {
     { lang: '🇯🇵 JA', text: 'リアル / マジで' },
     { lang: '🇻🇳 VI', text: 'Thật sự tuyệt vời' },
     { lang: '🇪🇸 ES', text: 'Qué increíble, de verdad' },
+    { lang: '🇩🇪 DE', text: 'Echt / im Ernst' },
   ],
 } as Word;
 
@@ -60,6 +61,7 @@ describe('wordMatchesSearch', () => {
     ['베트남어 번역의 무악센트 표기', 'tuyet voi'],
     ['스페인어 번역의 원문', 'qué increíble'],
     ['스페인어 번역의 무악센트 표기', 'que increible'],
+    ['독일어 번역의 원문', 'im Ernst'],
   ])('%s을 검색한다', (_label, query) => {
     expect(wordMatchesSearch(sampleWord, query)).toBe(true);
   });
@@ -99,6 +101,7 @@ describe('normalizeWordSearchText', () => {
     ['  For / Real  ', 'forreal'],
     ['Thật sự tuyệt vời', 'thatsutuyetvoi'],
     ['Đúng rồi', 'dungroi'],
+    ['Ähnliche Wörter', 'ahnlicheworter'],
     ['Ｒｉ－Ｅｏｌ', 'rieol'],
   ])('%p를 %p로 정규화한다', (input, expected) => {
     expect(normalizeWordSearchText(input)).toBe(expected);

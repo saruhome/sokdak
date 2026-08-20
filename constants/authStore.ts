@@ -10,6 +10,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
 import { supabase } from './supabase';
+import type { Language } from './languageStore';
 import {
   createProfileAvatarSignedUrl,
   isProfileAvatarPath,
@@ -428,7 +429,7 @@ export const authStore = {
     appVersion,
     platform,
   }: {
-    locale: 'ko' | 'en' | 'ja' | 'es' | 'vi';
+    locale: Language;
     source?: 'community_onboarding' | 'post_gate' | 'comment_gate' | 'policy_update' | 'account_settings';
     appVersion?: string;
     platform?: 'android' | 'ios' | 'web';

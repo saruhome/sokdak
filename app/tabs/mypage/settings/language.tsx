@@ -15,6 +15,7 @@ const LANGUAGE_OPTIONS: { label: string; value: Language }[] = [
   { label: '日本語', value: 'ja' },
   { label: 'Tiếng Việt', value: 'vi' },
   { label: 'Español', value: 'es' },
+  { label: 'Deutsch', value: 'de' },
 ];
 
 export default function LanguageSettingsScreen() {

@@ -7,7 +7,7 @@ import { AppText as Text } from '@/components/AppText';
 import { AppIcon } from '@/components/AppIcon';
 import { BackIcon } from '@/components/icons/SocialIcons';
 import { Colors } from '@/constants/Colors';
-import { COMMUNITY_GUIDELINES, COMMUNITY_GUIDELINES_VERSION } from '@/constants/communitySafety';
+import { COMMUNITY_GUIDELINES_VERSION, getCommunityGuidelineCopy } from '@/constants/communitySafety';
 import { authStore } from '@/constants/authStore';
 import { useLanguage } from '@/constants/languageStore';
 import { safeGoBack } from '@/constants/navigation';
@@ -15,6 +15,9 @@ import { Check, ShieldAlert } from 'lucide-react-native';
 
 export default function CommunityGuidelinesScreen() {
   const language = useLanguage();
+  const copy = getCommunityGuidelineCopy(language);
+  const checkboxA11yLabel = language === 'de' ? copy.checkboxLabel : '커뮤니티 운영정책 동의';
+  const acceptA11yLabel = language === 'de' ? copy.acceptLabel : '운영정책 동의하고 계속하기';
   const [submitting, setSubmitting] = useState(false);
   const [accepted, setAccepted] = useState(false);
 
@@ -24,7 +27,7 @@ export default function CommunityGuidelinesScreen() {
       return;
     }
     if (!accepted) {
-      Alert.alert('확인이 필요해요', '운영정책을 읽고 동의 여부를 선택해주세요.');
+      Alert.alert(copy.agreementRequiredTitle, copy.agreementRequiredBody);
       return;
     }
 
@@ -38,7 +41,7 @@ export default function CommunityGuidelinesScreen() {
       Alert.alert('동의 저장에 실패했어요', error);
       return;
     }
-    Alert.alert('운영정책에 동의했어요', '안전한 커뮤니티를 위해 함께 지켜주세요.');
+    Alert.alert(copy.acceptedTitle, copy.acceptedBody);
     safeGoBack();
   };
 
@@ -48,7 +51,7 @@ export default function CommunityGuidelinesScreen() {
         <Pressable style={styles.backBtn} onPress={() => safeGoBack()} accessibilityLabel="뒤로가기">
           <BackIcon size={24} color={Colors.textPrimary} />
         </Pressable>
-        <Text style={styles.topBarTitle}>커뮤니티 운영정책</Text>
+        <Text style={styles.topBarTitle}>{copy.title}</Text>
         <View style={styles.backBtn} />
       </View>
 
@@ -56,17 +59,17 @@ export default function CommunityGuidelinesScreen() {
         <View style={styles.notice}>
           <AppIcon icon={ShieldAlert} size={22} color={Colors.point1} />
           <View style={styles.noticeTextWrap}>
-            <Text style={styles.noticeTitle}>안전한 커뮤니티를 위한 약속</Text>
-            <Text style={styles.noticeBody}>게시글과 댓글을 작성하려면 아래 운영정책에 동의해야 합니다.</Text>
+            <Text style={styles.noticeTitle}>{copy.noticeTitle}</Text>
+            <Text style={styles.noticeBody}>{copy.noticeBody}</Text>
           </View>
         </View>
 
         <Text style={styles.intro}>
-          속닥은 신조어와 한국 문화에 관한 정보를 안전하게 나누는 공간입니다. 신고된 콘텐츠는 운영팀이 검토하며, 정책을 위반하면 게시물 숨김·삭제 또는 계정 제한 조치가 이뤄질 수 있습니다.
+          {copy.intro}
         </Text>
 
         <View style={styles.guidelineList}>
-          {COMMUNITY_GUIDELINES.map((guideline, index) => (
+          {copy.guidelines.map((guideline, index) => (
             <View key={guideline} style={styles.guidelineRow}>
               <Text style={styles.guidelineNumber}>{index + 1}</Text>
               <Text style={styles.guidelineText}>{guideline}</Text>
@@ -78,13 +81,13 @@ export default function CommunityGuidelinesScreen() {
           style={[styles.checkRow, accepted && styles.checkRowSelected]}
           onPress={() => setAccepted(previous => !previous)}
           accessibilityRole="checkbox"
-          accessibilityLabel="커뮤니티 운영정책 동의"
+          accessibilityLabel={checkboxA11yLabel}
           accessibilityState={{ checked: accepted }}
         >
           <View style={[styles.checkbox, accepted && styles.checkboxSelected]}>
             {accepted && <AppIcon icon={Check} size={14} color={Colors.navBarIconActive} />}
           </View>
-          <Text style={styles.checkText}>운영정책을 읽었으며 이에 동의합니다.</Text>
+          <Text style={styles.checkText}>{copy.checkboxLabel}</Text>
         </Pressable>
 
         <Pressable
@@ -92,10 +95,10 @@ export default function CommunityGuidelinesScreen() {
           onPress={handleAccept}
           disabled={!accepted || submitting}
           accessibilityRole="button"
-          accessibilityLabel={submitting ? '운영정책 동의 저장 중' : '운영정책 동의하고 계속하기'}
+          accessibilityLabel={submitting ? copy.savingLabel : acceptA11yLabel}
           accessibilityState={{ disabled: !accepted || submitting, busy: submitting }}
         >
-          <Text style={styles.acceptBtnText}>{submitting ? '저장 중...' : '동의하고 계속하기'}</Text>
+          <Text style={styles.acceptBtnText}>{submitting ? copy.savingLabel : copy.acceptLabel}</Text>
         </Pressable>
 
         <Text style={styles.version}>정책 버전 {COMMUNITY_GUIDELINES_VERSION}</Text>

@@ -28,6 +28,7 @@ const HORANG_HINTS: Record<Language, string[]> = {
   ja: ['まだ見たことのないカテゴリーです！', '今日はここから見てみましょうか？', 'このカテゴリーも気になりませんか？', 'ちょっと見て行ってくださいね！'],
   vi: ['Đây là danh mục bạn chưa khám phá!', 'Hôm nay bắt đầu từ đây nhé?', 'Bạn không tò mò về danh mục này sao?', 'Ghé xem một chút nhé!'],
   es: ['¡Una categoría que aún no has explorado!', '¿Empezamos por aquí hoy?', '¿No sientes curiosidad por esta categoría también?', '¡Échale un vistazo!'],
+  de: ['Eine Kategorie, die du noch nicht entdeckt hast!', 'Wie wäre es, heute hier zu beginnen?', 'Bist du auch auf diese Kategorie neugierig?', 'Schau dich doch einmal um!'],
 };
 
 type SortMode = '인기순' | '가나다순';

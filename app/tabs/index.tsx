@@ -13,7 +13,7 @@ import { getBoardLabel } from '../../constants/mockPosts';
 import { sortWords } from '@/components/WordFilterBar';
 import { SCREEN_WIDTH } from '../../constants/layout';
 import { languageStore, useLanguage } from '../../constants/languageStore';
-import { authStore } from '../../constants/authStore';
+import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStore';
 import { SokDakLogo } from '@/components/icons/SokDakLogo';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Search, Bell, Eye, Heart, MessageCircle, Crown, ChevronRight } from 'lucide-react-native';
@@ -212,7 +212,7 @@ export default function HomeScreen() {
                 <Text style={styles.exprEn}>{expr.en}</Text>
               </View>
             ))}
-            {!isPremium && (
+            {!BETA_UNLIMITED_ENTITLEMENTS && !isPremium && (
               <TouchableOpacity
                 style={styles.exprPremiumTeaser}
                 onPress={() => router.push('/tabs/mypage/premium')}

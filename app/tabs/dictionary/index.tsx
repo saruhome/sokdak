@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { fetchUnreadNotificationCount } from '../../../constants/notifications';
-import { authStore } from '../../../constants/authStore';
+import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
 import { WordListView } from '@/components/WordListView';
 import { Bell, Crown } from 'lucide-react-native';
@@ -42,7 +42,7 @@ export default function DictionaryScreen() {
         </View>
       </View>
 
-      {!isPremium && (
+      {!BETA_UNLIMITED_ENTITLEMENTS && !isPremium && (
         <TouchableOpacity
           style={styles.premiumBanner}
           onPress={() => router.push('/tabs/mypage/premium')}

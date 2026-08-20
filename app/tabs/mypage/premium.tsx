@@ -2,9 +2,10 @@ import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
+import { useEffect } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { authStore } from '../../../constants/authStore';
+import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { BackIcon } from '@/components/icons/SocialIcons';
@@ -32,6 +33,12 @@ export default function PremiumScreen() {
   useLanguage();
   const t = languageStore.t;
   const isPremium = authStore.isPremium();
+
+  useEffect(() => {
+    if (BETA_UNLIMITED_ENTITLEMENTS) router.replace('/tabs/mypage');
+  }, []);
+
+  if (BETA_UNLIMITED_ENTITLEMENTS) return null;
 
   if (!authStore.isLoggedIn()) {
     return (

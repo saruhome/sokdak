@@ -9,7 +9,7 @@ import { safeGoBack } from '../../../constants/navigation';
 import { fetchWordById, fetchWords, type Word } from '../../../constants/words';
 import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
-import { authStore } from '../../../constants/authStore';
+import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
 import { speakWord } from '../../../constants/speech';
 import { AppIcon } from '@/components/AppIcon';
 import { Star, Volume2, MessageCircle } from 'lucide-react-native';
@@ -55,7 +55,7 @@ export default function WordDetailScreen() {
    * 카테고리 그리드/상세 화면과 동일한 게이트(app/tabs/category/[slug].tsx 참고) */
   useFocusEffect(
     useCallback(() => {
-      if (word && getCategoryBySlug(word.category)?.premiumOnly && !authStore.isPremium()) {
+      if (word && getCategoryBySlug(word.category)?.premiumOnly && !BETA_UNLIMITED_ENTITLEMENTS && !authStore.isPremium()) {
         router.replace('/tabs/mypage/premium');
       }
     }, [word]),

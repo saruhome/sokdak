@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
-import { authStore } from '../../../constants/authStore';
+import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
 import { hasUnseenReply } from '../../../constants/support';
 import { languageStore } from '../../../constants/languageStore';
 import ProfileAvatar from '@/components/ProfileAvatar';
@@ -93,7 +93,7 @@ export default function MyPageScreen() {
           <AppIcon icon={ChevronRight} size={20} color={Colors.textTertiary} />
         </TouchableOpacity>
 
-        {loggedIn && (
+        {loggedIn && !BETA_UNLIMITED_ENTITLEMENTS && (
           <TouchableOpacity
             style={[styles.premiumRow, isPremium && styles.premiumRowActive]}
             onPress={() => router.push('/tabs/mypage/premium')}

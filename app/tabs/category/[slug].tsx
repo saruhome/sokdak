@@ -7,7 +7,7 @@ import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { getCategoryBySlug, getCategoryName } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
-import { authStore } from '../../../constants/authStore';
+import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
 import { AppIcon } from '@/components/AppIcon';
 import { WordListView } from '@/components/WordListView';
 import { Bell } from 'lucide-react-native';
@@ -25,7 +25,7 @@ export default function CategoryDetailScreen() {
   /* 그리드 카드 탭은 이미 프리미엄 화면으로 우회시키지만, 딥링크·뒤로가기로 직접 들어오는
    * 경로까지 막으려면 여기서도 한 번 더 확인해야 한다(커뮤니티 게이트와 동일한 이유) */
   useFocusEffect(useCallback(() => {
-    if (category?.premiumOnly && !authStore.isPremium()) router.replace('/tabs/mypage/premium');
+    if (category?.premiumOnly && !BETA_UNLIMITED_ENTITLEMENTS && !authStore.isPremium()) router.replace('/tabs/mypage/premium');
   }, [category?.premiumOnly]));
 
   /* WordListView가 배열 재생성으로 매번 리셋되지 않도록 slug 기준으로 메모 */

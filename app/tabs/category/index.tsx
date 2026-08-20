@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Colors, getCategoryLabelColor } from '../../../constants/Colors';
 import { CATEGORIES, getCategoryName, pickLeastPopular, type Category } from '../../../constants/categories';
 import { fetchWords, type Word } from '../../../constants/words';
-import { authStore } from '../../../constants/authStore';
+import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
 import { fetchUnreadNotificationCount } from '../../../constants/notifications';
 import { Alert } from '@/constants/alert';
@@ -194,7 +194,7 @@ export default function CategoryScreen() {
         renderItem={({ item }) => {
           const liked = authStore.isCategoryLiked(item.slug);
           const labelColor = getCategoryLabelColor(item.colorBg, item.colorFg);
-          const locked = item.premiumOnly && !isPremium;
+          const locked = item.premiumOnly && !BETA_UNLIMITED_ENTITLEMENTS && !isPremium;
           const CardBg: any = item.image ? ImageBackground : View;
           const cardBgProps = item.image
             ? { source: item.image, imageStyle: styles.cardBgImage, style: styles.cardBg }
@@ -208,7 +208,7 @@ export default function CategoryScreen() {
               <CardBg {...cardBgProps}>
                 <View style={styles.cardOverlay} />
                 <View style={styles.cardTopRow}>
-                  {item.premiumOnly ? (
+                  {item.premiumOnly && !BETA_UNLIMITED_ENTITLEMENTS ? (
                     <View style={styles.likeBtn}>
                       <AppIcon icon={Crown} size={20} color={Colors.premium} />
                     </View>

@@ -22,6 +22,17 @@ jest.mock('@/components/AppIcon', () => {
   };
 });
 jest.mock('@/components/icons/SocialIcons', () => ({ BackIcon: () => null }));
+jest.mock('@/components/CharacterEmptyState', () => {
+  const { Text, View } = require('react-native');
+  return {
+    CharacterEmptyState: ({ testID, title, description }: { testID?: string; title: string; description?: string }) => (
+      <View testID={testID}>
+        <Text>{title}</Text>
+        {description ? <Text>{description}</Text> : null}
+      </View>
+    ),
+  };
+});
 jest.mock('lucide-react-native', () => ({
   Search: () => null,
   BookOpen: () => null,
@@ -120,5 +131,16 @@ describe('<SearchScreen />', () => {
 
     await waitFor(() => expect(screen.getByText('핵인싸')).toBeTruthy());
     expect(screen.getByText('Words 1')).toBeTruthy();
+  });
+
+  it('shows the character-based empty state when a submitted word query has no matches', async () => {
+    const screen = await render(<SearchScreen />);
+    const input = screen.getByLabelText('Search words, meanings, or romanization');
+
+    fireEvent.changeText(input, 'no-match');
+    fireEvent.press(await screen.findByText('Search “no-match”'));
+
+    await waitFor(() => expect(screen.getByTestId('global-search-no-word-results')).toBeTruthy());
+    expect(screen.getByText('No words found for “no-match”')).toBeTruthy();
   });
 });

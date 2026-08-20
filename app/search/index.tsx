@@ -14,8 +14,11 @@ import { authStore } from '../../constants/authStore';
 import { tFor, useLanguage } from '../../constants/languageStore';
 import { wordMatchesSearch } from '../../constants/wordSearch';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Search, BookOpen, Heart, Star, Eye, MessageCircle, Inbox, X } from 'lucide-react-native';
+import { Search, BookOpen, Heart, Star, Eye, MessageCircle, X } from 'lucide-react-native';
 import { BackIcon } from '@/components/icons/SocialIcons';
+import { CharacterEmptyState } from '@/components/CharacterEmptyState';
+
+const JJAEKI_QUESTION = require('../../assets/characters/transparent/jjaeki-question.png');
 
 type ResultTab = 'word' | 'community';
 
@@ -289,9 +292,12 @@ export default function SearchScreen() {
                 /* ── 단어 없음 (Figma: 229:2794) ── */
                 ListEmptyComponent={
                   <View style={styles.resultEmptyWrap}>
-                    <AppIcon icon={Search} size={36} color={Colors.textTertiary} />
-                    <Text style={styles.resultEmptyTitle}>{trWith('globalSearchNoWordResults', { query: submittedQuery ?? '' })}</Text>
-                    <Text style={styles.resultEmptyHint}>{tr('trySearchingCategory')}</Text>
+                    <CharacterEmptyState
+                      image={JJAEKI_QUESTION}
+                      title={trWith('globalSearchNoWordResults', { query: submittedQuery ?? '' })}
+                      description={tr('trySearchingCategory')}
+                      testID="global-search-no-word-results"
+                    />
                   </View>
                 }
                 contentContainerStyle={wordResults.length === 0 ? { flex: 1 } : undefined}
@@ -329,9 +335,12 @@ export default function SearchScreen() {
               ItemSeparatorComponent={() => <View style={styles.separator} />}
               ListEmptyComponent={
                 <View style={styles.resultEmptyWrap}>
-                  <AppIcon icon={Inbox} size={36} color={Colors.textTertiary} />
-                  <Text style={styles.resultEmptyTitle}>{trWith('globalSearchNoPostResults', { query: submittedQuery ?? '' })}</Text>
-                  <Text style={styles.resultEmptyHint}>{tr('trySearchingCategory')}</Text>
+                  <CharacterEmptyState
+                    image={JJAEKI_QUESTION}
+                    title={trWith('globalSearchNoPostResults', { query: submittedQuery ?? '' })}
+                    description={tr('trySearchingCategory')}
+                    testID="global-search-no-post-results"
+                  />
                 </View>
               }
               contentContainerStyle={postResults.length === 0 ? { flex: 1 } : undefined}

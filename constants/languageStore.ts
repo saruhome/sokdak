@@ -297,6 +297,7 @@ type TranslationKey =
   | 'premiumDeactivateTestBtn'
   | 'premiumActivatedAlert'
   | 'premiumComingSoonNote'
+  | 'premiumPendingBody'
   | 'saveLimitReachedTitle'
   | 'saveLimitReachedMessage'
   | 'dictionaryPremiumBannerText'
@@ -605,6 +606,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     premiumDeactivateTestBtn: '프리미엄 체험 종료하기',
     premiumActivatedAlert: '프리미엄이 활성화됐어요!',
     premiumComingSoonNote: '실제 결제는 준비 중이에요. 지금은 체험판으로 먼저 만나보세요.',
+    premiumPendingBody: '결제 기능은 스토어 결제와 서버 검증이 완료된 뒤 제공됩니다. 현재 이 화면에서는 회원 등급이 변경되지 않습니다.',
     saveLimitReachedTitle: '저장 한도에 도달했어요',
     saveLimitReachedMessage: '무료 회원은 단어를 최대 3개까지 저장할 수 있어요. 프리미엄으로 업그레이드하면 무제한으로 저장할 수 있어요.',
     dictionaryPremiumBannerText: '무제한 저장 · 오프라인 사전은 프리미엄에서',
@@ -912,6 +914,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     premiumDeactivateTestBtn: 'End Premium Trial',
     premiumActivatedAlert: 'Premium is now active!',
     premiumComingSoonNote: 'Payments are not available yet. Enjoy the trial for now.',
+    premiumPendingBody: 'Payments will be available after store billing and server verification are complete. This screen does not change your membership status.',
     saveLimitReachedTitle: "You've reached your save limit",
     saveLimitReachedMessage: 'Free members can save up to 3 words. Upgrade to Premium for unlimited saves.',
     dictionaryPremiumBannerText: 'Unlimited saves & offline dictionary with Premium',
@@ -1219,6 +1222,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     premiumDeactivateTestBtn: 'プレミアム体験を終了する',
     premiumActivatedAlert: 'プレミアムが有効になりました！',
     premiumComingSoonNote: '実際の決済は準備中です。今はお試し版でご利用ください。',
+    premiumPendingBody: '決済機能はストア決済とサーバー検証の完了後に提供されます。現在この画面で会員ランクは変更されません。',
     saveLimitReachedTitle: '保存上限に達しました',
     saveLimitReachedMessage: '無料会員は単語を最大3個まで保存できます。プレミアムにアップグレードすると無制限に保存できます。',
     dictionaryPremiumBannerText: '無制限保存・オフライン辞書はプレミアムで',
@@ -1526,6 +1530,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     premiumDeactivateTestBtn: 'Kết thúc dùng thử Premium',
     premiumActivatedAlert: 'Premium đã được kích hoạt!',
     premiumComingSoonNote: 'Thanh toán thật đang được chuẩn bị. Hãy dùng thử miễn phí trước nhé.',
+    premiumPendingBody: 'Thanh toán sẽ khả dụng sau khi hoàn tất thanh toán trên cửa hàng và xác minh phía máy chủ. Màn hình này không thay đổi hạng thành viên của bạn.',
     saveLimitReachedTitle: 'Bạn đã đạt giới hạn lưu từ',
     saveLimitReachedMessage: 'Thành viên miễn phí chỉ lưu được tối đa 3 từ. Nâng cấp Premium để lưu không giới hạn.',
     dictionaryPremiumBannerText: 'Lưu không giới hạn & từ điển ngoại tuyến với Premium',
@@ -1833,6 +1838,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     premiumDeactivateTestBtn: 'Finalizar prueba Premium',
     premiumActivatedAlert: '¡Premium está activado!',
     premiumComingSoonNote: 'El pago real está en camino. Por ahora, pruébalo gratis.',
+    premiumPendingBody: 'Los pagos estarán disponibles tras completar la facturación de la tienda y la verificación del servidor. Esta pantalla no cambia tu membresía.',
     saveLimitReachedTitle: 'Has alcanzado tu límite de guardado',
     saveLimitReachedMessage: 'Los miembros gratuitos pueden guardar hasta 3 palabras. Mejora a Premium para guardado ilimitado.',
     dictionaryPremiumBannerText: 'Guardado ilimitado y diccionario sin conexión con Premium',

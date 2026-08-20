@@ -48,6 +48,8 @@ export type CommunityPostSummary = {
 };
 
 export type CommunityPostDetail = CommunityPostSummary & { comments: CommunityComment[] };
+export type CommunityPostPage = { posts: CommunityPostSummary[]; hasMore: boolean };
+export const COMMUNITY_POST_PAGE_SIZE = 20;
 
 type ProfileRow = { nickname: string; avatar_emoji: string; avatar_url?: string | null; level: string } | null;
 
@@ -98,6 +100,33 @@ export async function fetchPosts(board?: PostBoard): Promise<CommunityPostSummar
   const { data, error } = await query;
   if (error || !data) return [];
   return excludeBlocked(data.map(mapPostSummaryRow));
+}
+
+/** 커뮤니티 목록을 서버에서 페이지 단위로 조회한다. 추가 요청 여부를 판별하기 위해 한 행을 더 가져온다. */
+export async function fetchPostsPage({
+  board,
+  offset = 0,
+  limit = COMMUNITY_POST_PAGE_SIZE,
+}: {
+  board?: PostBoard;
+  offset?: number;
+  limit?: number;
+} = {}): Promise<CommunityPostPage> {
+  const safeOffset = Math.max(0, Math.floor(offset));
+  const safeLimit = Math.max(1, Math.min(50, Math.floor(limit)));
+  let query = supabase
+    .from('posts')
+    .select(POST_SUMMARY_SELECT)
+    .order('created_at', { ascending: false })
+    .range(safeOffset, safeOffset + safeLimit);
+  if (board) query = query.eq('board', board);
+
+  const { data, error } = await query;
+  if (error || !data) return { posts: [], hasMore: false };
+  return {
+    posts: excludeBlocked(data.slice(0, safeLimit).map(mapPostSummaryRow)),
+    hasMore: data.length > safeLimit,
+  };
 }
 
 /** 특정 id 목록의 게시글들 (예: 저장/좋아요 한 게시글) — 요청한 순서를 보존해 반환 */

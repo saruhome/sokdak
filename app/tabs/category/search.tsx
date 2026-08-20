@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { CATEGORIES, getCategoryName } from '../../../constants/categories';
+import { CATEGORIES, categoryMatchesSearch, getCategoryName } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { JjaekiQuestion } from '@/components/icons/JjaekiQuestion';
 import { AppIcon } from '@/components/AppIcon';
@@ -20,7 +20,7 @@ export default function CategorySearchScreen() {
   const t = languageStore.t;
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
-  const [recent, setRecent] = useState<string[]>(['K-POP', '드라마/영화', '자주 쓰는 신조어']);
+  const [recent, setRecent] = useState<string[]>([]);
 
   const recommended = useMemo(
     () => RECOMMENDED_SLUGS.map(slug => CATEGORIES.find(c => c.slug === slug)).filter(Boolean),
@@ -45,10 +45,10 @@ export default function CategorySearchScreen() {
   };
 
   const results = useMemo(() => {
-    const q = submittedQuery?.trim().toLowerCase() ?? '';
+    const q = submittedQuery?.trim() ?? '';
     if (!q) return [];
-    return CATEGORIES.filter(c => getCategoryName(c, language).toLowerCase().includes(q) || c.description.includes(q));
-  }, [submittedQuery, language]);
+    return CATEGORIES.filter(c => categoryMatchesSearch(c, q));
+  }, [submittedQuery]);
 
   const showResults = submittedQuery !== null;
   const showNoResults = showResults && results.length === 0;

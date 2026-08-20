@@ -16,11 +16,11 @@ import { Mail, ChevronDown, ChevronRight, Search, Mic, Check } from 'lucide-reac
 type InquiryTypeSlug = 'account' | 'bug' | 'billing' | 'suggestion' | 'other';
 const INQUIRY_TYPE_SLUGS: InquiryTypeSlug[] = ['account', 'bug', 'billing', 'suggestion', 'other'];
 const INQUIRY_TYPE_LABELS: Record<Language, Record<InquiryTypeSlug, string>> = {
-  ko: { account: '로그인/계정', bug: '오류 신고', billing: '결제/프리미엄', suggestion: '제안/의견', other: '기타' },
-  en: { account: 'Login/Account', bug: 'Bug report', billing: 'Billing/Premium', suggestion: 'Suggestion', other: 'Other' },
-  ja: { account: 'ログイン/アカウント', bug: '不具合報告', billing: '決済/プレミアム', suggestion: '提案/意見', other: 'その他' },
-  vi: { account: 'Đăng nhập/Tài khoản', bug: 'Báo lỗi', billing: 'Thanh toán/Premium', suggestion: 'Đề xuất/Ý kiến', other: 'Khác' },
-  es: { account: 'Inicio de sesión/Cuenta', bug: 'Reporte de error', billing: 'Pago/Premium', suggestion: 'Sugerencia', other: 'Otro' },
+  ko: { account: '로그인/계정', bug: '오류 신고', billing: '베타 이용', suggestion: '제안/의견', other: '기타' },
+  en: { account: 'Login/Account', bug: 'Bug report', billing: 'Beta access', suggestion: 'Suggestion', other: 'Other' },
+  ja: { account: 'ログイン/アカウント', bug: '不具合報告', billing: 'ベータ利用', suggestion: '提案/意見', other: 'その他' },
+  vi: { account: 'Đăng nhập/Tài khoản', bug: 'Báo lỗi', billing: 'Sử dụng beta', suggestion: 'Đề xuất/Ý kiến', other: 'Khác' },
+  es: { account: 'Inicio de sesión/Cuenta', bug: 'Reporte de error', billing: 'Acceso beta', suggestion: 'Sugerencia', other: 'Otro' },
 };
 
 /* ponytail: support_tickets에 접수번호 컬럼이 없어 row id에서 짧은 코드를 파생시킴 —
@@ -46,35 +46,35 @@ const FAQ_ITEMS: Record<Language, FaqItem[]> = {
     { category: 'howTo', q: '속닥은 어떤 앱인가요?', a: '한국 거주 외국인 중·고급 학습자를 위한 한국어 신조어 학습 앱이에요. 교과서에는 없는 진짜 생활 한국어를 배울 수 있어요.' },
     { category: 'howTo', q: '단어는 어떻게 저장하나요?', a: "단어 상세 화면에서 '저장' 버튼을 누르면 마이페이지 > 즐겨찾기에서 모아볼 수 있어요." },
     { category: 'suggest', q: '신조어를 제안하고 싶어요.', a: "마이페이지 > 신조어 제안하기 메뉴에서 원하는 단어와 뜻을 제안할 수 있어요. 검토 후 사전에 반영돼요." },
-    { category: 'account', q: '로그인 없이도 이용할 수 있나요?', a: '사전 검색과 단어 저장은 로그인 없이도 가능해요. 커뮤니티는 로그인한 회원만 이용할 수 있어요.' },
+    { category: 'account', q: '로그인 없이도 이용할 수 있나요?', a: '사전 검색과 카테고리 탐색은 로그인 없이 가능해요. 단어 저장과 커뮤니티 참여는 로그인한 회원만 이용할 수 있어요.' },
     { category: 'community', q: '커뮤니티 이용 규칙이 궁금해요.', a: '서로 존중하는 학습 커뮤니티를 지향해요. 욕설, 광고, 혐오 표현은 제재될 수 있어요.' },
   ],
   en: [
     { category: 'howTo', q: 'What kind of app is SokDak?', a: 'A Korean slang-learning app for intermediate-advanced foreign residents of Korea. Learn real, everyday Korean you won’t find in textbooks.' },
     { category: 'howTo', q: 'How do I save a word?', a: "Tap 'Save' on a word's detail screen — saved words show up under My Page > Saved Words." },
     { category: 'suggest', q: 'I want to suggest a new slang word.', a: "Use My Page > Suggest New Slang to submit a word and its meaning. It'll be added to the dictionary after review." },
-    { category: 'account', q: 'Can I use the app without logging in?', a: 'Dictionary search and saving words don’t require login. Community is only available to logged-in members.' },
+    { category: 'account', q: 'Can I use the app without logging in?', a: 'You can search the dictionary and browse categories without logging in. Saving words and participating in the community require a logged-in account.' },
     { category: 'community', q: 'What are the community rules?', a: 'We aim for a respectful learning community. Profanity, ads, and hate speech may be moderated.' },
   ],
   ja: [
     { category: 'howTo', q: 'ソクダクはどんなアプリですか？', a: '韓国在住の中〜上級外国人学習者向けの韓国語新造語学習アプリです。教科書にはないリアルな生活韓国語が学べます。' },
     { category: 'howTo', q: '単語はどうやって保存しますか？', a: '単語詳細画面で「保存」ボタンを押すと、マイページ＞お気に入りでまとめて見られます。' },
     { category: 'suggest', q: '新造語を提案したいです。', a: 'マイページ＞新造語を提案するメニューで、単語と意味を提案できます。検討のうえ辞書に反映されます。' },
-    { category: 'account', q: 'ログインなしでも利用できますか？', a: '辞書検索と単語の保存はログインなしでも利用できます。コミュニティはログインした会員のみ利用できます。' },
+    { category: 'account', q: 'ログインなしでも利用できますか？', a: '辞書検索とカテゴリーの閲覧はログインなしでも利用できます。単語の保存とコミュニティへの参加にはログインが必要です。' },
     { category: 'community', q: 'コミュニティの利用ルールを知りたいです。', a: 'お互いを尊重する学習コミュニティを目指しています。暴言、広告、ヘイト表現は制限の対象になることがあります。' },
   ],
   vi: [
     { category: 'howTo', q: 'SokDak là ứng dụng gì?', a: 'Ứng dụng học từ lóng tiếng Hàn dành cho người nước ngoài trình độ trung-cao cấp đang sống tại Hàn Quốc. Bạn có thể học tiếng Hàn đời thường thực sự không có trong sách giáo khoa.' },
     { category: 'howTo', q: 'Làm sao để lưu từ?', a: "Nhấn nút 'Lưu' ở màn hình chi tiết từ, bạn có thể xem lại ở Trang cá nhân > Yêu thích." },
     { category: 'suggest', q: 'Tôi muốn đề xuất một từ lóng mới.', a: 'Vào Trang cá nhân > Đề xuất từ mới để gửi từ và ý nghĩa bạn muốn. Từ sẽ được thêm vào từ điển sau khi xem xét.' },
-    { category: 'account', q: 'Tôi có thể dùng ứng dụng mà không cần đăng nhập không?', a: 'Bạn có thể tìm kiếm từ điển và lưu từ mà không cần đăng nhập. Cộng đồng chỉ dành cho thành viên đã đăng nhập.' },
+    { category: 'account', q: 'Tôi có thể dùng ứng dụng mà không cần đăng nhập không?', a: 'Bạn có thể tìm kiếm từ điển và xem danh mục mà không cần đăng nhập. Việc lưu từ và tham gia cộng đồng yêu cầu đăng nhập.' },
     { category: 'community', q: 'Quy tắc sử dụng cộng đồng là gì?', a: 'Chúng tôi hướng đến một cộng đồng học tập tôn trọng lẫn nhau. Ngôn từ thô tục, quảng cáo và phát ngôn thù ghét có thể bị xử lý.' },
   ],
   es: [
     { category: 'howTo', q: '¿Qué tipo de app es SokDak?', a: 'Una app para aprender jerga coreana pensada para residentes extranjeros de nivel intermedio-avanzado en Corea. Aprende coreano real y cotidiano que no encontrarás en los libros de texto.' },
     { category: 'howTo', q: '¿Cómo guardo una palabra?', a: "Toca 'Guardar' en la pantalla de detalle de la palabra; podrás verlas en Mi página > Favoritos." },
     { category: 'suggest', q: 'Quiero sugerir una palabra de jerga nueva.', a: 'Ve a Mi página > Sugerir jerga nueva para enviar la palabra y su significado. Se añadirá al diccionario tras la revisión.' },
-    { category: 'account', q: '¿Puedo usar la app sin iniciar sesión?', a: 'Puedes buscar en el diccionario y guardar palabras sin iniciar sesión. La comunidad solo está disponible para miembros que hayan iniciado sesión.' },
+    { category: 'account', q: '¿Puedo usar la app sin iniciar sesión?', a: 'Puedes buscar en el diccionario y explorar categorías sin iniciar sesión. Guardar palabras y participar en la comunidad requiere una cuenta iniciada.' },
     { category: 'community', q: '¿Cuáles son las normas de la comunidad?', a: 'Buscamos una comunidad de aprendizaje respetuosa. El lenguaje ofensivo, la publicidad y el discurso de odio pueden ser moderados.' },
   ],
 };

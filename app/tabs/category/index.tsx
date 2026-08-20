@@ -125,7 +125,7 @@ export default function CategoryScreen() {
             >
               <View style={styles.searchBar}>
                 <AppIcon icon={Search} size={15} />
-                <Text style={styles.searchPlaceholder}>카테고리 검색</Text>
+                <Text style={styles.searchPlaceholder}>{t('categorySearchPlaceholder')}</Text>
                 <AppIcon icon={Mic} size={15} />
               </View>
             </TouchableOpacity>

@@ -5,7 +5,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { fetchWords, type Word } from '../../../constants/words';
+import { fetchWordsByIds, type Word } from '../../../constants/words';
 import { authStore } from '../../../constants/authStore';
 import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
@@ -32,7 +32,7 @@ export default function SavedWordsScreen() {
   const [sortIndex, setSortIndex] = useState(0);
   const [consonant, setConsonant] = useState<string>('전체');
   const [filterSlugs, setFilterSlugs] = useState<string[]>([]);
-  const [allWords, setAllWords] = useState<Word[]>([]);
+  const [savedWords, setSavedWords] = useState<Word[]>([]);
   const [wordsLoaded, setWordsLoaded] = useState(false);
 
   const sync = useCallback(() => {
@@ -46,15 +46,15 @@ export default function SavedWordsScreen() {
     return () => { unsub(); };
   }, [sync]);
   useEffect(() => {
-    fetchWords().then(data => {
-      setAllWords(data);
+    let active = true;
+    setWordsLoaded(false);
+    fetchWordsByIds(savedIds).then(data => {
+      if (!active) return;
+      setSavedWords(data);
       setWordsLoaded(true);
     });
-  }, []);
-
-  const savedWords = savedIds
-    .map(id => allWords.find(w => w.id === id))
-    .filter((w): w is Word => !!w);
+    return () => { active = false; };
+  }, [savedIds.join(',')]);
 
   const filteredWords = sortWords(savedWords.filter(w => matchesCategories(w, filterSlugs)), sortIndex);
   const words = sortIndex === 2 && consonant !== '전체'

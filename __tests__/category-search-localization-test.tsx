@@ -46,6 +46,8 @@ jest.mock('@/constants/categories', () => ({
     { slug: 'kpop', description: 'K-pop and idol culture', colorBg: '#ffffff', emoji: '🎵' },
   ],
   getCategoryName: (category: { slug: string }) => category.slug === 'kpop' ? 'K-POP' : category.slug,
+  categoryMatchesSearch: (category: { slug: string; description: string }, query: string) =>
+    [category.slug, category.description].some(value => value.toLowerCase().includes(query.toLowerCase())),
 }));
 
 jest.mock('@/constants/languageStore', () => ({
@@ -96,5 +98,13 @@ describe('<CategorySearchScreen /> localization flow', () => {
       expect(input.props.value).toBe('');
       expect(screen.queryByText('No results found for “missing category”.')).toBeNull();
     });
+  });
+
+  it('starts without seeded Korean recent searches', async () => {
+    const screen = await render(<CategorySearchScreen />);
+
+    await waitFor(() => expect(screen.getByText('No recent searches.')).toBeTruthy());
+    expect(screen.queryByText('드라마/영화')).toBeNull();
+    expect(screen.queryByText('자주 쓰는 신조어')).toBeNull();
   });
 });

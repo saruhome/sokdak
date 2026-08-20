@@ -5,7 +5,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useState, useMemo, useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { BOARD_COLORS, getBoardLabel, type PostBoard } from '../../../constants/mockPosts';
-import { fetchPosts, type CommunityPostSummary } from '../../../constants/community';
+import { COMMUNITY_POST_PAGE_SIZE, fetchPostsPage, type CommunityPostSummary } from '../../../constants/community';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { fetchUnreadNotificationCount } from '../../../constants/notifications';
@@ -24,22 +24,42 @@ export default function CommunityScreen() {
   const [activeTab, setActiveTab] = useState<BoardTab>('전체');
   const [posts, setPosts] = useState<CommunityPostSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
   useFocusEffect(useCallback(() => {
     let cancelled = false;
     setLoading(true);
-    fetchPosts().then(data => {
-      if (!cancelled) { setPosts(data); setLoading(false); }
+    const board = activeTab === '전체' ? undefined : activeTab;
+    fetchPostsPage({ board, limit: COMMUNITY_POST_PAGE_SIZE }).then(page => {
+      if (!cancelled) {
+        setPosts(page.posts);
+        setHasMore(page.hasMore);
+        setLoading(false);
+      }
     });
     fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
     return () => { cancelled = true; };
-  }, []));
+  }, [activeTab]));
+
+  const loadMore = useCallback(() => {
+    if (loading || loadingMore || !hasMore) return;
+    const board = activeTab === '전체' ? undefined : activeTab;
+    setLoadingMore(true);
+    fetchPostsPage({ board, offset: posts.length, limit: COMMUNITY_POST_PAGE_SIZE }).then(page => {
+      setPosts(current => {
+        const knownIds = new Set(current.map(post => post.id));
+        return [...current, ...page.posts.filter(post => !knownIds.has(post.id))];
+      });
+      setHasMore(page.hasMore);
+      setLoadingMore(false);
+    });
+  }, [activeTab, hasMore, loading, loadingMore, posts.length]);
 
   /* 화제의 게시글: 조회수 상위 3개 (별도 "featured" 플래그 없이 파생) */
-  const featured = useMemo(() => [...posts].sort((a, b) => b.views - a.views).slice(0, 3), [posts]);
-  const filtered  = useMemo(
-    () => activeTab === '전체' ? posts : posts.filter(p => p.board === activeTab),
+  const featured = useMemo(
+    () => activeTab === '전체' ? [...posts].sort((a, b) => b.views - a.views).slice(0, 3) : [],
     [activeTab, posts],
   );
   const goToWrite = () => router.push(authStore.isLoggedIn() ? '/tabs/community/write' : '/auth/login');
@@ -56,7 +76,7 @@ export default function CommunityScreen() {
       </View>
 
       <FlatList
-        data={filtered}
+        data={posts}
         keyExtractor={item => item.id}
         ListHeaderComponent={
           <>
@@ -151,6 +171,9 @@ export default function CommunityScreen() {
           </TouchableOpacity>
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ListFooterComponent={loadingMore ? <View style={{ paddingVertical: 20, alignItems: 'center' }}><ActivityIndicator color={Colors.textTertiary} /></View> : null}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.6}
         ListEmptyComponent={
           loading ? (
             <View style={styles.emptyWrap}>

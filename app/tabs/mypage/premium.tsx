@@ -87,9 +87,7 @@ export default function PremiumScreen() {
 
         <View style={styles.pendingCard}>
           <Text style={styles.pendingTitle}>{t('premiumComingSoonNote')}</Text>
-          <Text style={styles.pendingBody}>
-            결제 기능은 스토어 결제와 서버 검증이 완료된 뒤 제공됩니다. 현재 이 화면에서는 회원 등급이 변경되지 않습니다.
-          </Text>
+          <Text style={styles.pendingBody}>{t('premiumPendingBody')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

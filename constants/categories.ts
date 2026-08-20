@@ -56,6 +56,31 @@ export function getCategoryName(category: Category, language: Language): string 
   }
 }
 
+/** 표시 언어와 무관하게 카테고리의 5개 언어 이름·slug·기존 설명에서 검색한다.
+ * 베트남어·스페인어는 악센트를 생략한 입력도 찾을 수 있게 결합 문자를 제거한다. */
+function normalizeCategorySearchText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+export function categoryMatchesSearch(category: Category, query: string): boolean {
+  const normalizedQuery = normalizeCategorySearchText(query);
+  if (!normalizedQuery) return false;
+  return [
+    category.slug,
+    category.name,
+    category.nameEn,
+    category.nameJa,
+    category.nameVi,
+    category.nameEs,
+    category.description,
+  ].some(value => normalizeCategorySearchText(value).includes(normalizedQuery));
+}
+
 /**
  * countOf가 작은(=인기가 낮은) 항목일수록 뽑힐 확률이 높은 랜덤 선택 — 배너 추천용.
  * 실제 유저별 검색 빈도 데이터가 없어(추적 기능 자체가 아직 없음) likes/카테고리별 단어 수를

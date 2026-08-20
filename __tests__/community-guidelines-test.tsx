@@ -28,6 +28,12 @@ const mockAlert = Alert.alert as jest.Mock;
 const checkboxName = '커뮤니티 운영정책 동의';
 const continueName = '운영정책 동의하고 계속하기';
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>(nextResolve => { resolve = nextResolve; });
+  return { promise, resolve };
+}
+
 async function explicitlyAgree(screen: Awaited<ReturnType<typeof render>>) {
   await act(async () => {
     fireEvent.press(screen.getByRole('checkbox', { name: checkboxName }));
@@ -55,10 +61,13 @@ describe('<CommunityGuidelinesScreen />', () => {
   });
 
   it('sends the current UI locale to the consent ledger after explicit agreement', async () => {
+    const consent = deferred<{ error: null; consent: { policy_locale: string } }>();
+    mockAuthStore.acceptCommunityGuidelines.mockReturnValue(consent.promise);
     const screen = await render(<CommunityGuidelinesScreen />);
     await explicitlyAgree(screen);
     fireEvent.press(screen.getByRole('button', { name: continueName }));
     await waitFor(() => expect(mockAuthStore.acceptCommunityGuidelines).toHaveBeenCalledWith({ locale: 'vi', source: 'community_onboarding' }));
+    await act(async () => { consent.resolve({ error: null, consent: { policy_locale: 'vi' } }); });
     expect(mockAlert).toHaveBeenCalledWith('운영정책에 동의했어요', '안전한 커뮤니티를 위해 함께 지켜주세요.');
     expect(mockSafeGoBack).toHaveBeenCalledTimes(1);
   });
@@ -73,10 +82,13 @@ describe('<CommunityGuidelinesScreen />', () => {
   });
 
   it('shows an error and remains on the policy screen when the server rejects consent', async () => {
-    mockAuthStore.acceptCommunityGuidelines.mockResolvedValue({ error: 'No published community policy translation exists for locale vi' });
+    const consent = deferred<{ error: string }>();
+    mockAuthStore.acceptCommunityGuidelines.mockReturnValue(consent.promise);
     const screen = await render(<CommunityGuidelinesScreen />);
     await explicitlyAgree(screen);
     fireEvent.press(screen.getByRole('button', { name: continueName }));
+    await waitFor(() => expect(mockAuthStore.acceptCommunityGuidelines).toHaveBeenCalled());
+    await act(async () => { consent.resolve({ error: 'No published community policy translation exists for locale vi' }); });
     await waitFor(() => expect(mockAlert).toHaveBeenCalledWith('동의 저장에 실패했어요', 'No published community policy translation exists for locale vi'));
     expect(mockSafeGoBack).not.toHaveBeenCalled();
   });

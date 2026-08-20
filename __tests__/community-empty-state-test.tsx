@@ -33,7 +33,8 @@ jest.mock('@/components/AppIcon', () => {
 });
 
 jest.mock('@/constants/community', () => ({
-  fetchPosts: jest.fn(),
+  COMMUNITY_POST_PAGE_SIZE: 20,
+  fetchPostsPage: jest.fn(),
 }));
 jest.mock('@/constants/notifications', () => ({ fetchUnreadNotificationCount: jest.fn() }));
 jest.mock('@/constants/authStore', () => ({ authStore: { isLoggedIn: jest.fn(() => false) } }));
@@ -55,17 +56,17 @@ jest.mock('@/constants/languageStore', () => ({
 }));
 
 import { router } from 'expo-router';
-import { fetchPosts } from '@/constants/community';
+import { fetchPostsPage } from '@/constants/community';
 import { fetchUnreadNotificationCount } from '@/constants/notifications';
 import CommunityScreen from '@/app/tabs/community/index';
 
-const mockFetchPosts = fetchPosts as jest.Mock;
+const mockFetchPostsPage = fetchPostsPage as jest.Mock;
 const mockFetchUnreadNotificationCount = fetchUnreadNotificationCount as jest.Mock;
 
 describe('<CommunityScreen /> empty state', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockFetchPosts.mockResolvedValue([]);
+    mockFetchPostsPage.mockResolvedValue({ posts: [], hasMore: false });
     mockFetchUnreadNotificationCount.mockResolvedValue(0);
   });
 

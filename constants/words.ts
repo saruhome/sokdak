@@ -74,6 +74,15 @@ export async function fetchWords(): Promise<Word[]> {
   return data.map(mapRow);
 }
 
+/** 지정한 ID의 단어만 조회한다. 저장 목록처럼 대상이 이미 확정된 화면에서 전체 사전 로드를 피한다. */
+export async function fetchWordsByIds(ids: string[]): Promise<Word[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await supabase.from('words').select(WORDS_SELECT).in('id', ids);
+  if (error || !data) return [];
+  const byId = new Map(data.map(row => [row.id, mapRow(row)]));
+  return ids.map(id => byId.get(id)).filter((word): word is Word => !!word);
+}
+
 /** 단어 상세 — id 하나만 조회 */
 export async function fetchWordById(id: string): Promise<Word | null> {
   const { data, error } = await supabase.from('words').select(WORDS_SELECT).eq('id', id).single();

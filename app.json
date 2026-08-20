@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "sokdak",
+    "name": "SokDak",
     "slug": "sokdak",
     "version": "1.0.0",
     "scheme": "sokdak",
@@ -8,7 +8,8 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.saruhome.sokdak"
     },
     "android": {
       "package": "com.saruhome.sokdak",

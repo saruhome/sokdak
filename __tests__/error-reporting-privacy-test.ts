@@ -6,6 +6,16 @@ jest.mock('@/constants/languageStore', () => ({
 import { reportAppError } from '@/constants/errorReporting';
 
 describe('reportAppError privacy minimization', () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
+  });
+
   it('redacts email addresses, tokens, passwords, bearer credentials, and phone-like values', () => {
     const payload = reportAppError(
       new Error('email=user@example.com token=secret-token password=hunter2 Bearer abc.def.ghi +82 10 1234 5678'),
@@ -20,5 +30,6 @@ describe('reportAppError privacy minimization', () => {
     expect(payload.errorMessage).not.toContain('user@example.com');
     expect(payload.errorMessage).not.toContain('secret-token');
     expect(payload.errorMessage).not.toContain('hunter2');
+    expect(consoleErrorSpy).toHaveBeenCalledWith('[SokDak app error]', expect.objectContaining(payload));
   });
 });

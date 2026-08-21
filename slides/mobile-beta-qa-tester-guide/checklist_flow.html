@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fff8ea; color: #293227; }
+    .frame { min-height: 720px; padding-top: 67px; padding-left: 86px; padding-right: 86px; }
+    .eyebrow { color: #d95e49; font: 800 13px Arial, sans-serif; letter-spacing: 1.7px; }
+    h1 { margin-top: 13px; font: 800 39px Arial, "Noto Sans KR", sans-serif; letter-spacing: -1.3px; }
+    .sub { margin-top: 12px; color: #566153; font: 400 17px/1.45 Arial, "Noto Sans KR", sans-serif; }
+    .flow { margin-top: 47px; display: flex; width: 1108px; border-top: 2px solid #293227; }
+    .step { width: 221px; min-height: 390px; border-right: 1px solid #aeb7a9; position: relative; padding-top: 28px; padding-left: 18px; padding-right: 18px; }
+    .step:first-child { border-left: 1px solid #aeb7a9; }
+    .step:before { content: ""; position: absolute; top: -8px; left: 18px; width: 14px; height: 14px; background: #ffd93d; }
+    .step:nth-child(3):before, .step:nth-child(4):before { background: #d95e49; }
+    .num { font: 800 12px Arial, sans-serif; color: #d95e49; letter-spacing: 1px; }
+    .icon { margin-top: 24px; color: #293227; font-size: 26px; }
+    h2 { margin-top: 15px; font: 800 21px/1.2 Arial, "Noto Sans KR", sans-serif; letter-spacing: -0.6px; }
+    .rule { width: 36px; height: 4px; background: #ffd93d; margin-top: 16px; }
+    .step:nth-child(3) .rule, .step:nth-child(4) .rule { background: #d95e49; }
+    ul { margin-top: 19px; padding-left: 17px; color: #566153; font: 400 14px/1.45 Arial, "Noto Sans KR", sans-serif; }
+    li { margin-top: 7px; }
+    .pass { position: absolute; left: 18px; right: 18px; top: 315px; border-top: 1px solid #aeb7a9; padding-top: 15px; color: #293227; font: 700 13px/1.35 Arial, "Noto Sans KR", sans-serif; }
+    .pass i { color: #d95e49; margin-right: 7px; }
+    .footer { margin-top: 37px; display: flex; align-items: center; justify-content: space-between; color: #566153; font: 700 13px Arial, "Noto Sans KR", sans-serif; }
+    .footer strong { color: #293227; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <main class="frame">
+      <div class="eyebrow">05 / CHECKLIST FLOW</div>
+      <h1>한 번의 테스트는 다섯 단계로 끝냅니다</h1>
+      <p class="sub">기록 없이 재현하지 않고, 재현 없이 결함을 닫지 않습니다.</p>
+      <section class="flow" aria-label="실기기 QA 실행 순서">
+        <article class="step">
+          <div class="num">STEP 01</div><div class="icon"><i class="fa-solid fa-clipboard-list"></i></div><h2>시작 기록</h2><div class="rule"></div>
+          <ul><li>앱 버전·빌드</li><li>기기·OS·제조사 UI</li><li>언어·네트워크·계정</li></ul>
+          <div class="pass"><i class="fa-solid fa-check"></i>환경 정보가 이슈에 남음</div>
+        </article>
+        <article class="step">
+          <div class="num">STEP 02</div><div class="icon"><i class="fa-solid fa-magnifying-glass"></i></div><h2>핵심 학습</h2><div class="rule"></div>
+          <ul><li>검색·카테고리·단어 상세</li><li>음성 검색·TTS</li><li>저장·해제·재시작</li></ul>
+          <div class="pass"><i class="fa-solid fa-check"></i>학습 흐름이 끊기지 않음</div>
+        </article>
+        <article class="step">
+          <div class="num">STEP 03</div><div class="icon"><i class="fa-solid fa-key"></i></div><h2>권한·계정</h2><div class="rule"></div>
+          <ul><li>로그인·로그아웃</li><li>마이크 거부·설정 이동</li><li>private 프로필 사진</li></ul>
+          <div class="pass"><i class="fa-solid fa-triangle-exclamation"></i>개인정보·세션 격리 확인</div>
+        </article>
+        <article class="step">
+          <div class="num">STEP 04</div><div class="icon"><i class="fa-solid fa-wifi"></i></div><h2>참여·복구</h2><div class="rule"></div>
+          <ul><li>커뮤니티 진입·신고</li><li>오프라인·망 전환</li><li>백그라운드 복귀</li></ul>
+          <div class="pass"><i class="fa-solid fa-triangle-exclamation"></i>무한 로딩·데이터 노출 없음</div>
+        </article>
+        <article class="step">
+          <div class="num">STEP 05</div><div class="icon"><i class="fa-solid fa-universal-access"></i></div><h2>접근성·보고</h2><div class="rule"></div>
+          <ul><li>큰 글자·작은 화면</li><li>TalkBack·VoiceOver</li><li>6개 언어·증빙 첨부</li></ul>
+          <div class="pass"><i class="fa-solid fa-check"></i>기대·실제·재현율 기록</div>
+        </article>
+      </section>
+      <div class="footer"><span><strong>Android 우선:</strong> Pixel + Samsung에서 먼저 재현</span><span><strong>iOS:</strong> 권한·SecureStore·VoiceOver를 별도 재검증</span></div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fff8ea; color: #293227; }
+    .frame { min-height: 720px; padding-top: 62px; padding-left: 88px; padding-right: 88px; }
+    .eyebrow { color: #d95e49; font: 800 13px Arial, sans-serif; letter-spacing: 1.7px; }
+    h1 { margin-top: 12px; font: 800 37px Arial, "Noto Sans KR", sans-serif; letter-spacing: -1.2px; }
+    .lead { margin-top: 12px; color: #566153; font: 400 16px/1.45 Arial, "Noto Sans KR", sans-serif; }
+    .grid { width: 1104px; min-height: 458px; margin-top: 31px; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #94a08e; border-left: 1px solid #94a08e; }
+    .journey { min-height: 229px; border-right: 1px solid #94a08e; border-bottom: 1px solid #94a08e; padding-top: 24px; padding-left: 28px; padding-right: 28px; }
+    .header { display: flex; align-items: center; gap: 12px; }
+    .icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: #293227; color: #ffd93d; font-size: 16px; }
+    .header h2 { font: 800 21px Arial, "Noto Sans KR", sans-serif; letter-spacing: -0.5px; }
+    .id { margin-left: auto; color: #d95e49; font: 800 12px Arial, sans-serif; letter-spacing: 1px; }
+    .rule { margin-top: 17px; width: 100%; height: 4px; background: #ffd93d; }
+    .line { margin-top: 13px; display: flex; gap: 10px; font: 400 14px/1.45 Arial, "Noto Sans KR", sans-serif; color: #566153; }
+    .line strong { min-width: 56px; color: #293227; font-weight: 800; }
+    .severity { margin-top: 13px; display: inline-block; color: #fff8ea; background: #293227; padding-top: 7px; padding-left: 10px; padding-right: 10px; font: 800 12px Arial, sans-serif; letter-spacing: .5px; }
+    .severity.p0 { background: #d95e49; }
+    .note { margin-top: 18px; color: #823a2e; font: 700 13px/1.4 Arial, "Noto Sans KR", sans-serif; }
+    .note i { margin-right: 8px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <main class="frame">
+      <div class="eyebrow">04 / CORE USER JOURNEYS</div>
+      <h1>안전성과 신뢰를 닫는 네 가지 여정</h1>
+      <p class="lead">기능이 보이는지보다, 계정 경계·복구·삭제가 실제 기기에서 일관되는지를 먼저 확인합니다.</p>
+      <section class="grid">
+        <article class="journey">
+          <div class="header"><div class="icon"><i class="fa-solid fa-bookmark"></i></div><h2>저장 단어</h2><span class="id">CJ-04</span></div>
+          <div class="rule"></div>
+          <div class="line"><strong>행동</strong><span>저장·해제를 반복하고 앱을 재시작한 뒤 저장 목록을 다시 엽니다.</span></div>
+          <div class="line"><strong>통과</strong><span>상태와 순서가 일관되고, 다른 테스트 계정의 목록이 보이지 않습니다.</span></div>
+          <span class="severity p0">계정 격리 실패 = P0</span>
+        </article>
+        <article class="journey">
+          <div class="header"><div class="icon"><i class="fa-solid fa-comments"></i></div><h2>커뮤니티 참여</h2><span class="id">CJ-05</span></div>
+          <div class="rule"></div>
+          <div class="line"><strong>행동</strong><span>정책 확인 뒤 게시글·댓글·좋아요·신고·차단을 전용 계정으로 수행합니다.</span></div>
+          <div class="line"><strong>통과</strong><span>데이터는 해당 계정에만 반영되고 신고·차단 정보는 제3자에게 보이지 않습니다.</span></div>
+          <span class="severity p0">신고·차단 노출 = P0</span>
+        </article>
+        <article class="journey">
+          <div class="header"><div class="icon"><i class="fa-solid fa-wifi"></i></div><h2>네트워크 복구</h2><span class="id">CJ-06</span></div>
+          <div class="rule"></div>
+          <div class="line"><strong>행동</strong><span>검색·저장·목록 로딩 중 오프라인 전환과 Wi-Fi/LTE 전환을 반복합니다.</span></div>
+          <div class="line"><strong>통과</strong><span>앱 종료, 무한 로딩, 중복 카드, 저장 상태 역전 없이 재시도할 수 있습니다.</span></div>
+          <span class="severity">우회 불가 복구 실패 = P1</span>
+        </article>
+        <article class="journey">
+          <div class="header"><div class="icon"><i class="fa-solid fa-user-xmark"></i></div><h2>회원탈퇴</h2><span class="id">CJ-07</span></div>
+          <div class="rule"></div>
+          <div class="line"><strong>행동</strong><span>전용 테스트 계정에서 탈퇴를 확정하고 재로그인·앱 재시작·사진 접근을 확인합니다.</span></div>
+          <div class="line"><strong>통과</strong><span>세션과 private 프로필 사진 접근이 정리되고, 삭제 계정의 정보가 남지 않습니다.</span></div>
+          <span class="severity p0">삭제 뒤 개인 정보 잔존 = P0</span>
+        </article>
+      </section>
+      <p class="note"><i class="fa-solid fa-triangle-exclamation"></i>커뮤니티 정책 동의는 검토된 버전별 정책 전문·언어별 공개 URL·해시가 배포된 뒤에만 통과 판정으로 처리합니다.</p>
+    </main>
+  </div>
+</body>
+</html>

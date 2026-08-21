@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fff8ea; color: #293227; }
+    .frame { min-height: 720px; display: flex; align-items: stretch; }
+    .copy { width: 62%; padding-top: 96px; padding-left: 92px; padding-right: 72px; display: flex; flex-direction: column; justify-content: center; }
+    .eyebrow { color: #d95e49; font: 700 15px Arial, sans-serif; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 22px; }
+    h1 { font: 800 57px/1.12 Arial, "Noto Sans KR", sans-serif; letter-spacing: -2px; max-width: 620px; }
+    .subtitle { margin-top: 27px; font: 400 22px/1.5 Arial, "Noto Sans KR", sans-serif; color: #566153; max-width: 580px; }
+    .audience { margin-top: 46px; font: 700 15px Arial, sans-serif; color: #293227; }
+    .art { width: 38%; position: relative; background: #293227; display: flex; align-items: center; justify-content: center; }
+    .art:before { content: ""; width: 430px; height: 430px; border: 1px solid rgba(255,248,234,.28); border-radius: 50%; position: absolute; }
+    .art:after { content: ""; width: 285px; height: 285px; border: 10px solid #ffd93d; border-radius: 50%; position: absolute; }
+    .check-stack { position: relative; z-index: 2; width: 250px; }
+    .check-line { height: 58px; display: flex; align-items: center; gap: 17px; color: #fff8ea; border-bottom: 1px solid rgba(255,248,234,.28); font: 700 17px Arial, sans-serif; }
+    .check-line i { color: #ffd93d; font-size: 20px; }
+    .tag { position: absolute; right: 38px; bottom: 38px; color: #293227; background: #ffd93d; padding-top: 12px; padding-left: 16px; padding-right: 16px; font: 800 13px Arial, sans-serif; letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <section class="copy">
+        <div class="eyebrow">SokDak / Private Beta</div>
+        <h1>실기기 QA 가이드</h1>
+        <p class="subtitle">테스터가 핵심 학습 흐름을 검증하고, 재현 가능한 결함 보고로 연결하는 방법</p>
+        <p class="audience">Android 우선 · iOS 공통 검증 · 비공개 베타 테스터용</p>
+      </section>
+      <aside class="art" aria-label="QA 체크 목록 장식">
+        <div class="check-stack">
+          <div class="check-line"><i class="fa-solid fa-check"></i> 핵심 여정</div>
+          <div class="check-line"><i class="fa-solid fa-check"></i> 권한과 개인정보</div>
+          <div class="check-line"><i class="fa-solid fa-check"></i> 재현 가능한 보고</div>
+        </div>
+        <div class="tag">BETA QA</div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fff8ea; color: #293227; }
+    .frame { min-height: 720px; padding-top: 64px; padding-left: 82px; padding-right: 82px; }
+    .eyebrow { color: #d95e49; font: 800 13px Arial, sans-serif; letter-spacing: 1.7px; }
+    h1 { margin-top: 13px; font: 800 38px Arial, "Noto Sans KR", sans-serif; letter-spacing: -1.2px; }
+    .sub { margin-top: 12px; font: 400 16px/1.5 Arial, "Noto Sans KR", sans-serif; color: #667160; }
+    .split { margin-top: 30px; display: flex; gap: 30px; }
+    .android { width: 66%; }
+    .ios { width: 34%; }
+    .section-head { min-height: 51px; display: flex; align-items: center; gap: 12px; border-top: 7px solid #ffd93d; font: 800 18px Arial, "Noto Sans KR", sans-serif; }
+    .ios .section-head { border-top-color: #d95e49; }
+    .section-head i { font-size: 20px; }
+    .matrix { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .matrix th { height: 38px; background: #293227; color: #fff8ea; text-align: left; padding-top: 10px; padding-left: 12px; padding-right: 12px; font: 800 12px Arial, "Noto Sans KR", sans-serif; letter-spacing: .4px; }
+    .matrix td { height: 75px; vertical-align: middle; border-bottom: 1px solid #b9c1b3; padding-top: 9px; padding-left: 12px; padding-right: 12px; font: 400 13px/1.38 Arial, "Noto Sans KR", sans-serif; }
+    .matrix td strong { display: block; font: 800 14px Arial, "Noto Sans KR", sans-serif; margin-bottom: 5px; }
+    .priority { width: 54px; font: 800 13px Arial, sans-serif; text-align: center; }
+    .p0 { color: #b64332; background: #f7ded8; }
+    .p1 { color: #805c08; background: #fff1b7; }
+    .p2 { color: #4f5b4c; background: #e4e9df; }
+    .rail { border-top: 1px solid #b9c1b3; }
+    .rail-item { min-height: 120px; border-bottom: 1px solid #b9c1b3; padding-top: 17px; display: flex; gap: 13px; }
+    .rail-icon { width: 35px; color: #d95e49; font-size: 21px; text-align: center; }
+    .rail-item h3 { font: 800 16px Arial, "Noto Sans KR", sans-serif; }
+    .rail-item p { margin-top: 8px; font: 400 13px/1.48 Arial, "Noto Sans KR", sans-serif; color: #566153; }
+    .note { margin-top: 18px; min-height: 60px; background: #293227; color: #fff8ea; padding-top: 16px; padding-left: 18px; padding-right: 18px; font: 700 13px/1.4 Arial, "Noto Sans KR", sans-serif; }
+    .note i { color: #ffd93d; margin-right: 9px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <main class="frame">
+      <div class="eyebrow">02 / DEVICE &amp; CONDITIONS</div>
+      <h1>Android부터, iOS까지</h1>
+      <p class="sub">동일한 기능도 제조사 UI, 권한 상태, 화면 크기, 네트워크에 따라 다르게 실패할 수 있습니다.</p>
+      <div class="split">
+        <section class="android">
+          <div class="section-head"><i class="fa-brands fa-android"></i> Android 우선 검증 매트릭스</div>
+          <table class="matrix" aria-label="Android 테스트 우선순위">
+            <thead><tr><th style="width:62px">우선</th><th style="width:35%">기기·조건</th><th>반드시 확인할 위험</th></tr></thead>
+            <tbody>
+              <tr><td class="priority p0">P0</td><td><strong>Pixel 또는 동급 최신 Android</strong>기본 Android 동작 기준</td><td>음성 인식 권한, 시스템 뒤로가기, 마이크 거부 후 복구</td></tr>
+              <tr><td class="priority p0">P0</td><td><strong>Samsung Galaxy / One UI</strong>제조사 UI 차이 확인</td><td>권한 대화상자, 큰 글자, 화면 비율, 하단 탐색</td></tr>
+              <tr><td class="priority p1">P1</td><td><strong>저장 공간·메모리 제한 기기</strong>실사용 저사양 조건</td><td>시작 속도, 이미지·목록 스크롤, 백그라운드 복귀</td></tr>
+              <tr><td class="priority p2">P2</td><td><strong>작은 화면 Android</strong>언어별 레이아웃 확인</td><td>6개 언어 줄바꿈, CTA 폭, 키보드·탭 가림</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <aside class="ios">
+          <div class="section-head"><i class="fa-brands fa-apple"></i> iOS·네트워크 공통 검증</div>
+          <div class="rail">
+            <div class="rail-item"><div class="rail-icon"><i class="fa-solid fa-mobile-screen-button"></i></div><div><h3>최신 iPhone</h3><p>마이크·음성 인식 권한, SecureStore 세션, VoiceOver와 같은 핵심 흐름을 iOS 공개 전에 반드시 재검증합니다.</p></div></div>
+            <div class="rail-item"><div class="rail-icon"><i class="fa-solid fa-wifi"></i></div><div><h3>Wi‑Fi ↔ LTE/5G ↔ 오프라인</h3><p>검색·저장·커뮤니티 로딩 중 연결을 바꾸고, 재시도·중복·무한 로딩·상태 역전을 확인합니다.</p></div></div>
+            <div class="rail-item"><div class="rail-icon"><i class="fa-solid fa-language"></i></div><div><h3>6개 표시 언어</h3><p>ko, en, ja, vi, es, de에서 검색·지원·커뮤니티·마이페이지의 문법과 화면 폭을 확인합니다.</p></div></div>
+          </div>
+        </aside>
+      </div>
+      <div class="note"><i class="fa-solid fa-clipboard-check"></i>결함 보고에는 기기명·OS·앱 빌드·언어·네트워크·계정 상태를 반드시 함께 기록합니다.</div>
+    </main>
+  </div>
+</body>
+</html>

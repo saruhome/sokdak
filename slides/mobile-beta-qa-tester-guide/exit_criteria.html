@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fff8ea; color: #293227; }
+    .frame { min-height: 720px; padding-top: 67px; padding-left: 88px; padding-right: 88px; }
+    .eyebrow { color: #d95e49; font: 800 13px Arial, sans-serif; letter-spacing: 1.7px; }
+    h1 { margin-top: 13px; font: 800 39px Arial, "Noto Sans KR", sans-serif; letter-spacing: -1.3px; }
+    .sub { margin-top: 12px; color: #566153; font: 400 17px/1.45 Arial, "Noto Sans KR", sans-serif; }
+
+    /* reduced space above the columns to save height */
+    .layout { margin-top: 30px; display: flex; gap: 55px; align-items: flex-start; }
+
+    /* shrink inner padding in the left panel */
+    .stop { width: 350px; background: #293227; color: #fff8ea; padding-top: 18px; padding-left: 20px; padding-right: 20px; }
+    .stop .label { color: #ffd93d; font: 800 13px Arial, sans-serif; letter-spacing: 1.3px; }
+    .zero { margin-top: 12px; font: 800 98px/0.94 Arial, sans-serif; letter-spacing: -5px; }
+    .zero span { display: block; margin-top: 14px; color: #fff8ea; font: 800 25px/1.2 Arial, "Noto Sans KR", sans-serif; letter-spacing: -1px; }
+    .stop p { margin-top: 18px; color: #e8ede3; font: 400 15px/1.55 Arial, "Noto Sans KR", sans-serif; }
+    .stop .bar { width: 100%; height: 7px; margin-top: 12px; background: #d95e49; }
+
+    /* reorganize gates into a two-column grid to reduce vertical stacking */
+    .gates { width: 610px; border-top: 2px solid #293227; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; padding-top: 16px; }
+    .gate { display: flex; align-items: flex-start; gap: 16px; border-bottom: 1px solid #aeb7a9; padding: 10px 0; }
+    .gate-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: #ffd93d; color: #293227; font-size: 18px; }
+    .gate:nth-child(3) .gate-icon { background: #d95e49; color: #fff8ea; }
+    .gate h2 { font: 800 18px Arial, "Noto Sans KR", sans-serif; }
+    .gate p { margin-top: 7px; color: #566153; font: 400 14px/1.4 Arial, "Noto Sans KR", sans-serif; }
+
+    /* reduce footer spacing */
+    .footer { margin-top: 18px; min-height: 67px; display: flex; align-items: center; border-top: 1px solid #aeb7a9; color: #293227; font: 700 14px/1.45 Arial, "Noto Sans KR", sans-serif; }
+    .footer i { color: #d95e49; margin-right: 12px; font-size: 19px; }
+    .footer strong { color: #d95e49; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <main class="frame">
+      <div class="eyebrow">08 / BETA EXIT CRITERIA</div>
+      <h1>베타는 “테스트 완료”가 아니라 “출시 가능”에서 끝납니다</h1>
+      <p class="sub">Android 비공개 베타 종료의 최소 조건을 수치·재검증·보고로 확인합니다.</p>
+      <div class="layout">
+        <section class="stop">
+          <div class="label">NON-NEGOTIABLE</div>
+          <div class="zero">P0 = 0<span>미해결 출시 차단 결함</span></div>
+          <p>개인정보 노출, 계정 격리 실패, 회원탈퇴 뒤 데이터 잔존, 앱 시작 불가, 핵심 학습 흐름 차단은 단 한 건도 남겨두지 않습니다.</p>
+          <div class="bar"></div>
+        </section>
+        <section class="gates" aria-label="베타 종료 게이트">
+          <div class="gate"><div class="gate-icon"><i class="fa-solid fa-route"></i></div><div><h2>핵심 여정 CJ-01~CJ-07 통과</h2><p>검색·음성·세션·저장·커뮤니티·네트워크·회원탈퇴를 Android 대표 기기에서 재현 가능하게 통과합니다.</p></div></div>
+          <div class="gate"><div class="gate-icon"><i class="fa-solid fa-mobile-screen-button"></i></div><div><h2>기기별 재검증 기록</h2><p>수정 빌드, 기기·OS·언어·네트워크, 검증자와 결과를 남기고 원 보고자 또는 다른 기기로 독립 재검증합니다.</p></div></div>
+          <div class="gate"><div class="gate-icon"><i class="fa-solid fa-list-check"></i></div><div><h2>결함 상태가 닫혀 있음</h2><p>P0/P1은 verified 또는 명시적 보류 사유를 갖고, 중복·재현 불가·운영 질문은 명확히 분류합니다.</p></div></div>
+          <div class="gate"><div class="gate-icon"><i class="fa-solid fa-file-lines"></i></div><div><h2>베타 종료 보고가 준비됨</h2><p>기기 커버리지, 여정 통과 수, 심각도별 결함, 남은 위험과 다음 출시 의사결정을 한 장으로 요약합니다.</p></div></div>
+        </section>
+      </div>
+      <div class="footer"><i class="fa-solid fa-triangle-exclamation"></i><span><strong>별도 출시 차단 요인:</strong> 검토된 정책 전문·티콘파이 사용 범위의 서면 확인·iOS 실기기 QA·운영 모니터링은 코드 테스트 통과와 별개로 확인합니다.</span></div>
+    </main>
+  </div>
+</body>
+</html>

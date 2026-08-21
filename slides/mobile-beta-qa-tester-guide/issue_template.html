@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fff8ea; color: #293227; }
+    .frame { min-height: 720px; padding-top: 68px; padding-left: 84px; padding-right: 84px; }
+    .eyebrow { font: 800 13px Arial, sans-serif; letter-spacing: 1.7px; color: #d95e49; }
+    h1 { margin-top: 13px; font: 800 38px Arial, "Noto Sans KR", sans-serif; letter-spacing: -1.2px; }
+    .intro { margin-top: 12px; font: 400 16px/1.45 Arial, "Noto Sans KR", sans-serif; color: #566153; }
+    .columns { margin-top: 16px; display: flex; gap: 42px; }
+    .left { width: 45%; min-height: 400px; border-top: 8px solid #ffd93d; padding-top: 12px; }
+    .right { width: 55%; min-height: 400px; background: #293227; color: #fff8ea; padding-top: 12px; padding-left: 28px; padding-right: 28px; }
+    h2 { font: 800 22px Arial, "Noto Sans KR", sans-serif; }
+    .format { margin-top: 18px; background: #fff1c9; color: #293227; padding-top: 10px; padding-left: 18px; padding-right: 18px; font: 800 16px/1.5 Consolas, monospace; }
+    .example { margin-top: 18px; border-top: 1px solid #aeb7a9; padding-top: 10px; }
+    .label { font: 800 12px Arial, sans-serif; letter-spacing: 1px; color: #d95e49; text-transform: uppercase; }
+    .good { margin-top: 8px; font: 700 16px/1.45 Arial, "Noto Sans KR", sans-serif; }
+    .bad { margin-top: 13px; font: 400 15px/1.45 Arial, "Noto Sans KR", sans-serif; color: #566153; }
+    .bad i { color: #d95e49; margin-right: 7px; }
+    .template-title { display: flex; align-items: center; gap: 10px; font: 800 21px Arial, "Noto Sans KR", sans-serif; }
+    .template-title i { color: #ffd93d; }
+    .rows { margin-top: 17px; border-top: 1px solid rgba(255,248,234,.32); }
+    .row { min-height: 50px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,248,234,.25); }
+    .field { width: 155px; color: #ffd93d; font: 800 14px Arial, "Noto Sans KR", sans-serif; }
+    .value { font: 400 14px/1.35 Arial, "Noto Sans KR", sans-serif; color: #f3eedf; }
+    .footer { margin-top: 12px; min-height: 54px; display: flex; align-items: center; border-top: 1px solid #aeb7a9; font: 700 14px/1.4 Arial, "Noto Sans KR", sans-serif; color: #823a2e; }
+    .footer i { margin-right: 11px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <main class="frame">
+      <div class="eyebrow">06 / REPORT A BUG</div>
+      <h1>좋은 결함 보고는 수정 시간을 줄인다</h1>
+      <p class="intro">한 번의 보고로 재현·분류·수정·재검증이 이어지도록, 사실과 환경을 분리해 남깁니다.</p>
+      <div class="columns">
+        <section class="left">
+          <h2>제목은 검색 가능한 한 줄</h2>
+          <div class="format">[심각도][플랫폼][영역] 실제 문제 — 발생 조건</div>
+          <div class="example">
+            <div class="label">GOOD EXAMPLE</div>
+            <p class="good">[P1][iOS][Voice] 권한 거부 뒤 설정 이동 버튼 무반응</p>
+            <p class="bad"><i class="fa-solid fa-xmark"></i>“마이크 버그”, “안 돼요”, “문제 있음”처럼 조건 없는 제목은 사용하지 않습니다.</p>
+          </div>
+          <div class="example">
+            <div class="label">LABELS</div>
+            <p class="good">심각도 · 플랫폼 · 영역 · 언어 · 재현율 · 상태</p>
+          </div>
+        </section>
+        <section class="right">
+          <div class="template-title"><i class="fa-solid fa-clipboard-list"></i> 복사해 사용할 이슈 템플릿</div>
+          <div class="rows">
+            <div class="row"><div class="field">환경</div><div class="value">앱 빌드 / 기기 / OS / 앱 언어 / 네트워크 / 계정 상태</div></div>
+            <div class="row"><div class="field">사전 조건</div><div class="value">예: 마이크 권한을 한 번 거부한 상태</div></div>
+            <div class="row"><div class="field">재현 단계</div><div class="value">1. …  2. …  3. …</div></div>
+            <div class="row"><div class="field">기대 / 실제</div><div class="value">무엇이 보여야 했고, 실제로 무엇이 달랐는지</div></div>
+            <div class="row"><div class="field">재현율 / 영향</div><div class="value">항상·간헐·1회 / 우회 방법과 막힌 기능</div></div>
+            <div class="row"><div class="field">증빙</div><div class="value">개인정보를 가린 화면·영상·발생 시각·추가 관찰</div></div>
+          </div>
+        </section>
+      </div>
+      <div class="footer"><i class="fa-solid fa-shield-halved"></i>이메일, 토큰, 전화번호, private URL 노출 의심은 일반 이슈가 아니라 즉시 P0로 비공개 전달합니다.</div>
+    </main>
+  </div>
+</body>
+</html>

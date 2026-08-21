@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fff8ea; color: #293227; }
+    .frame { min-height: 720px; padding-top: 67px; padding-left: 84px; padding-right: 84px; }
+    .eyebrow { color: #d95e49; font: 800 13px Arial, sans-serif; letter-spacing: 1.8px; }
+    h1 { margin-top: 12px; font: 800 39px Arial, "Noto Sans KR", sans-serif; letter-spacing: -1.3px; }
+    .subhead { margin-top: 12px; color: #5c6658; font: 400 17px/1.45 Arial, "Noto Sans KR", sans-serif; }
+    .legend { position: absolute; margin-left: 888px; margin-top: -48px; display: flex; gap: 11px; align-items: center; font: 800 12px Arial, sans-serif; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .dot { width: 10px; height: 10px; display: inline-block; }
+    .p0 { background: #d95e49; }
+    .p1 { background: #e9b64d; }
+    .header-row { margin-top: 20px; min-height: 37px; display: grid; grid-template-columns: 78px 252px 280px 322px 120px; column-gap: 16px; border-bottom: 2px solid #293227; color: #667062; font: 800 12px Arial, "Noto Sans KR", sans-serif; letter-spacing: .6px; }
+    .header-row div { padding-top: 8px; }
+    .journey { min-height: 139px; display: grid; grid-template-columns: 78px 252px 280px 322px 120px; column-gap: 16px; align-items: center; border-bottom: 1px solid #b7bfb2; }
+    .index { width: 50px; min-height: 50px; display: flex; align-items: center; justify-content: center; background: #293227; color: #fff8ea; font: 800 16px Arial, sans-serif; }
+    .journey-name { font: 800 20px/1.23 Arial, "Noto Sans KR", sans-serif; }
+    .journey-name i { display: block; margin-bottom: 9px; color: #d95e49; font-size: 18px; }
+    .step, .pass { font: 400 15px/1.48 Arial, "Noto Sans KR", sans-serif; color: #4f5a4d; }
+    .pass { color: #293227; font-weight: 700; }
+    .risk { justify-self: start; min-width: 68px; min-height: 32px; display: flex; align-items: center; justify-content: center; color: #fff8ea; font: 800 13px Arial, sans-serif; letter-spacing: .5px; }
+    .risk.p0 { background: #d95e49; }
+    .risk.p1 { background: #c59022; }
+    .footer-note { margin-top: 10px; min-height: 40px; display: flex; align-items: center; color: #6a4438; font: 700 13px/1.4 Arial, "Noto Sans KR", sans-serif; }
+    .footer-note i { color: #d95e49; margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <main class="frame">
+      <div class="eyebrow">03 / CORE USER JOURNEYS</div>
+      <h1>먼저 통과할 세 가지 여정</h1>
+      <p class="subhead">한 건이라도 막히면, 학습 시작·권한 복구·개인정보 보호의 신뢰가 무너집니다.</p>
+      <div class="legend"><span><i class="dot p0"></i>P0 즉시 중지</span><span><i class="dot p1"></i>P1 출시 전 수정</span></div>
+
+      <section class="header-row" aria-label="핵심 사용자 여정 표 머리글">
+        <div>ID</div><div>여정</div><div>테스터 동작</div><div>통과 기준</div><div>실패 시</div>
+      </section>
+
+      <section class="journey">
+        <div class="index">01</div>
+        <div class="journey-name"><i class="fa-solid fa-magnifying-glass"></i>비로그인<br>다국어 학습 발견</div>
+        <div class="step">새 설치 후 로그인하지 않고 영어·일본어·베트남어·스페인어·독일어 키워드와 로마자로 검색</div>
+        <div class="pass">관련 단어·의미·일치 근거가 표시되고, 없는 검색어에는 빈 상태와 재검색 경로가 보임</div>
+        <div class="risk p1">P1</div>
+      </section>
+
+      <section class="journey">
+        <div class="index">02</div>
+        <div class="journey-name"><i class="fa-solid fa-microphone-lines"></i>음성 검색 권한<br>전체 수명주기</div>
+        <div class="step">허용 → 거부 → 설정 이동 → 재시도 → 음성 인식 중 백그라운드 복귀를 Pixel·Samsung·iPhone에서 반복</div>
+        <div class="pass">인식 결과가 검색으로 이어지고, 거부 시 설정 이동과 텍스트 검색 대안이 제공되며 앱이 멈추지 않음</div>
+        <div class="risk p1">P1</div>
+      </section>
+
+      <section class="journey">
+        <div class="index">03</div>
+        <div class="journey-name"><i class="fa-solid fa-user-shield"></i>로그인·보안 세션·<br>private 프로필 사진</div>
+        <div class="step">전용 테스트 계정 로그인 → 사진 업로드 → 앱 종료·5분 백그라운드 → 로그아웃 후 다른 계정 로그인</div>
+        <div class="pass">세션·signed URL이 안전하게 복구되고, 이전 계정의 사진·저장 데이터·private 경로가 남지 않음</div>
+        <div class="risk p0">P0</div>
+      </section>
+
+      <div class="footer-note"><i class="fa-solid fa-circle-exclamation"></i>프로필 사진과 계정 전환 테스트는 실제 사용자 계정이 아닌 전용 테스트 계정으로만 수행합니다.</div>
+    </main>
+  </div>
+</body>
+</html>

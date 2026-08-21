@@ -1,0 +1,111 @@
+{
+  "project_info": {
+    "title": "SokDak 비공개 베타 실기기 QA 가이드",
+    "created": 1787224280.614,
+    "last_updated": 1787225689.561,
+    "total_slides": 9
+  },
+  "slides": [
+    {
+      "id": "cover",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "test_mission",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "device_matrix",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "core_journeys_1",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "core_journeys_2",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "checklist_flow",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "issue_template",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "triage",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "exit_criteria",
+      "state": "edited",
+      "pageNum": 9
+    }
+  ],
+  "outline": [
+    {
+      "id": "cover",
+      "title": "SokDak 비공개 베타 실기기 QA 가이드",
+      "summary": "테스터 대상 Android 우선 실기기 QA와 결함 보고 안내 표지.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "test_mission",
+      "title": "테스트의 목표는 재현 가능한 신뢰",
+      "summary": "테스터가 확인할 핵심 범위와 개인정보 보호 원칙을 설명한다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "device_matrix",
+      "title": "Android부터, iOS까지",
+      "summary": "우선 기기·OS·네트워크 조건과 검증 이유를 매트릭스로 제시한다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "core_journeys_1",
+      "title": "먼저 통과할 세 가지 여정",
+      "summary": "비로그인 다국어 학습, 음성 검색 권한, 로그인·private 사진 여정을 P0/P1 기준으로 설명한다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "core_journeys_2",
+      "title": "안전성과 신뢰를 닫는 네 가지 여정",
+      "summary": "저장 단어, 커뮤니티, 네트워크 복구, 회원탈퇴 여정을 설명한다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "checklist_flow",
+      "title": "체크리스트 실행 흐름",
+      "summary": "시작 기록부터 기능·권한·오류·접근성 확인까지의 테스트 순서를 제시한다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "issue_template",
+      "title": "좋은 결함 보고는 수정 시간을 줄인다",
+      "summary": "복사 가능한 이슈 필수 필드와 제목 규칙을 안내한다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "triage",
+      "title": "P0는 즉시 멈추고, 재검증한다",
+      "summary": "P0-P3 심각도 기준과 운영자 트리아지·검증 흐름을 제시한다.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "exit_criteria",
+      "title": "베타 종료 기준",
+      "summary": "미해결 P0 0건, 핵심 여정 통과, 기기별 재검증과 결과 보고 요건을 정리한다.",
+      "image_plan": "Use a suitable image if needed"
+    }
+  ]
+}

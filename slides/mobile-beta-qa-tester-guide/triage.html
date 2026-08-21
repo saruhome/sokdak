@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fff8ea; color: #293227; }
+    .frame { min-height: 720px; padding-top: 65px; padding-left: 84px; padding-right: 84px; }
+    .eyebrow { color: #d95e49; font: 800 13px Arial, sans-serif; letter-spacing: 1.7px; }
+    h1 { margin-top: 13px; font: 800 39px Arial, "Noto Sans KR", sans-serif; letter-spacing: -1.3px; }
+    .sub { margin-top: 12px; color: #566153; font: 400 16px/1.45 Arial, "Noto Sans KR", sans-serif; }
+    .layout { margin-top: 34px; display: flex; gap: 47px; }
+    .severity { width: 458px; }
+    .triage { width: 531px; }
+    .section-title { min-height: 36px; border-top: 7px solid #ffd93d; padding-top: 12px; font: 800 17px Arial, "Noto Sans KR", sans-serif; }
+    .triage .section-title { border-top-color: #293227; }
+    .severity-list { margin-top: 16px; border-top: 1px solid #b4beb0; }
+    .severity-row { min-height: 78px; display: grid; grid-template-columns: 70px 1fr 118px; align-items: center; column-gap: 13px; border-bottom: 1px solid #b4beb0; }
+    .badge { width: 58px; min-height: 34px; display: flex; align-items: center; justify-content: center; color: #fff8ea; background: #293227; font: 800 13px Arial, sans-serif; letter-spacing: .7px; }
+    .p0 { background: #d95e49; }
+    .p1 { background: #c59022; }
+    .p2 { background: #5d6b59; }
+    .p3 { background: #93a18d; }
+    .severity-row strong { display: block; font: 800 14px Arial, "Noto Sans KR", sans-serif; }
+    .severity-row p { margin-top: 5px; color: #5c6658; font: 400 12px/1.35 Arial, "Noto Sans KR", sans-serif; }
+    .action { color: #293227; font: 800 12px/1.35 Arial, "Noto Sans KR", sans-serif; }
+    .flow { margin-top: 16px; border-top: 1px solid #b4beb0; }
+    .flow-step { min-height: 71px; display: grid; grid-template-columns: 47px 1fr; column-gap: 13px; align-items: center; border-bottom: 1px solid #b4beb0; }
+    .step-num { width: 29px; height: 29px; display: flex; align-items: center; justify-content: center; background: #293227; color: #ffd93d; font: 800 12px Arial, sans-serif; }
+    .flow-step h3 { font: 800 14px Arial, "Noto Sans KR", sans-serif; }
+    .flow-step p { margin-top: 4px; color: #5c6658; font: 400 12px/1.35 Arial, "Noto Sans KR", sans-serif; }
+    .stop-rule { margin-top: 19px; min-height: 58px; display: flex; align-items: center; background: #f7ded8; color: #823a2e; padding-top: 14px; padding-left: 18px; padding-right: 18px; font: 800 13px/1.4 Arial, "Noto Sans KR", sans-serif; }
+    .stop-rule i { margin-right: 11px; font-size: 19px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <main class="frame">
+      <div class="eyebrow">07 / TRIAGE &amp; RETEST</div>
+      <h1>P0는 즉시 멈추고, 재검증한다</h1>
+      <p class="sub">심각도는 불만의 크기가 아니라 사용자 차단·개인정보 위험·우회 가능성·재현율로 결정합니다.</p>
+      <div class="layout">
+        <section class="severity">
+          <div class="section-title">심각도 기준과 초기 조치</div>
+          <div class="severity-list">
+            <div class="severity-row"><div class="badge p0">P0</div><div><strong>출시 차단·민감정보 위험</strong><p>실행·인증·계정 격리·회원탈퇴·private 미디어가 막히거나 노출 의심</p></div><div class="action">즉시 비공개 전달<br>추가 배포 보류</div></div>
+            <div class="severity-row"><div class="badge p1">P1</div><div><strong>주요 기능 실패</strong><p>우회 불가 흐름, 반복 크래시, 음성 권한 복구 실패, 심각한 UI 깨짐</p></div><div class="action">다음 수정 빌드의<br>최우선</div></div>
+            <div class="severity-row"><div class="badge p2">P2</div><div><strong>우회 가능한 흐름 오류</strong><p>특정 기기 UI, 번역 불일치, 제한된 조건에서의 기능 오류</p></div><div class="action">공개 출시 전<br>수정 원칙</div></div>
+            <div class="severity-row"><div class="badge p3">P3</div><div><strong>경미한 개선</strong><p>간격·아이콘·표현·애니메이션 등 기능을 막지 않는 품질 개선</p></div><div class="action">백로그 등록<br>영향 시 재분류</div></div>
+          </div>
+        </section>
+        <section class="triage">
+          <div class="section-title">운영자 트리아지 → 독립 재검증</div>
+          <div class="flow">
+            <div class="flow-step"><div class="step-num">1</div><div><h3>비공개성 확인</h3><p>첨부물의 이메일·토큰·전화번호·private URL을 삭제하거나 비공개 처리합니다.</p></div></div>
+            <div class="flow-step"><div class="step-num">2</div><div><h3>중복·재현 확인</h3><p>다른 테스트 계정과 동일·다른 기기에서 재현율과 조건을 확인합니다.</p></div></div>
+            <div class="flow-step"><div class="step-num">3</div><div><h3>심각도·담당·목표 빌드 확정</h3><p>사용자 영향과 우회 가능성을 기준으로 P0–P3와 수정 책임을 기록합니다.</p></div></div>
+            <div class="flow-step"><div class="step-num">4</div><div><h3>수정 빌드에서 같은 단계를 반복</h3><p>원인뿐 아니라 권한·데이터 격리·오류 복구의 부작용을 함께 확인합니다.</p></div></div>
+            <div class="flow-step"><div class="step-num">5</div><div><h3>독립 테스터가 종료를 검증</h3><p>원 보고자 또는 다른 기기가 `ready-for-retest`에서 통과해야 `verified`로 닫습니다.</p></div></div>
+          </div>
+        </section>
+      </div>
+      <div class="stop-rule"><i class="fa-solid fa-ban"></i>P0는 수정 전후의 동일 기기·다른 조건 재검증 없이 종료하지 않습니다.</div>
+    </main>
+  </div>
+</body>
+</html>

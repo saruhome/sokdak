@@ -16,6 +16,7 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "supabase/functions/**/*.ts"
+    "supabase/functions/**/*.ts",
+    "sokdak-landing-page/**"
   ]
 }

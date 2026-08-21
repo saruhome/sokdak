@@ -118,7 +118,7 @@ async function loadTtsPlaysToday(userId: string) {
   _ttsPlaysDate = today;
 }
 
-type BookmarkTable = 'saved_words' | 'saved_posts' | 'post_likes' | 'comment_likes';
+type BookmarkTable = 'saved_words' | 'saved_posts' | 'post_likes' | 'comment_likes' | 'liked_categories';
 
 /** id 하나를 (user_id, <idColumn>) 조인 테이블에 낙관적으로 insert/delete하는 공용 토글.
  * toggleWordSaved/togglePostSaved/togglePostLiked/toggleCommentLiked가 테이블·컬럼명만 바꿔 공유한다.
@@ -135,8 +135,8 @@ function toggleBookmark(set: Set<string>, id: string, table: BookmarkTable, idCo
 
   // ponytail: 테이블/컬럼이 런타임 문자열이라 Supabase의 리터럴 유니언 타입과 안 맞음 — any로 우회.
   const write = was
-    ? supabase.from(table).delete().eq('user_id', userId).eq(idColumn, id)
-    : (supabase.from(table) as any).insert({ user_id: userId, [idColumn]: id });
+    ? supabase.from(table as any).delete().eq('user_id', userId).eq(idColumn, id)
+    : supabase.from(table as any).insert({ user_id: userId, [idColumn]: id });
 
   write.then(({ error }: { error: unknown }) => {
     if (!error) return;
@@ -198,11 +198,15 @@ async function fetchProfile(userId: string, email: string): Promise<SokDakUser> 
 }
 
 async function fetchBookmarks(userId: string) {
-  const [savedRes, likedRes, savedPostsRes, likedCommentsRes] = await Promise.all([
+  const [savedRes, likedRes, savedPostsRes, likedCommentsRes, likedCategoriesRes] = await Promise.all([
     supabase.from('saved_words').select('word_id').eq('user_id', userId),
     supabase.from('post_likes').select('post_id').eq('user_id', userId),
     supabase.from('saved_posts').select('post_id').eq('user_id', userId),
     supabase.from('comment_likes').select('comment_id').eq('user_id', userId),
+    // ponytail: liked_categories는 아직 운영 DB에 없는 신규 마이그레이션이라 생성된 타입에
+    // 없음 — toggleBookmark의 insert와 동일하게 any로 우회. 마이그레이션 적용 + 타입 재생성 후
+    // 지워도 되는 캐스트.
+    (supabase.from('liked_categories' as any) as any).select('category_slug').eq('user_id', userId),
   ]);
 
   _savedWordIds.clear();
@@ -213,6 +217,8 @@ async function fetchBookmarks(userId: string) {
   savedPostsRes.data?.forEach(row => _savedPostIds.add(row.post_id));
   _likedCommentIds.clear();
   likedCommentsRes.data?.forEach(row => _likedCommentIds.add(row.comment_id));
+  _likedCategorySlugs.clear();
+  likedCategoriesRes.data?.forEach((row: { category_slug: string }) => _likedCategorySlugs.add(row.category_slug));
 
   await loadTtsPlaysToday(userId);
 }
@@ -538,12 +544,10 @@ export const authStore = {
   isCommentLiked: (id: string) => _likedCommentIds.has(id),
   toggleCommentLiked(id: string) { toggleBookmark(_likedCommentIds, id, 'comment_likes', 'comment_id', false); },
 
-  /* ── 좋아요 한 카테고리 (세션 전용, DB 미연동) ── */
+  /* ── 좋아요 한 카테고리 — liked_categories 테이블에 영속화(마이페이지가 즐겨찾기로 보여주므로) ── */
   isCategoryLiked: (slug: string) => _likedCategorySlugs.has(slug),
   toggleCategoryLiked(slug: string) {
-    if (!_user) return;
-    if (_likedCategorySlugs.has(slug)) _likedCategorySlugs.delete(slug); else _likedCategorySlugs.add(slug);
-    notifyBookmarks();
+    toggleBookmark(_likedCategorySlugs, slug, 'liked_categories', 'category_slug', true);
   },
   getLikedCategorySlugs: () => Array.from(_likedCategorySlugs),
 

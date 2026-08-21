@@ -1,20 +1,20 @@
 import { render, waitFor } from '@testing-library/react-native';
 import { AppState } from 'react-native';
+import { useRefreshPrivateSignedMediaUrls } from '@/hooks/useRefreshPrivateSignedMediaUrls';
 import {
-  AVATAR_SIGNED_URL_REFRESH_BUFFER_MS,
-  useRefreshProfileAvatarSignedUrl,
-} from '@/hooks/useRefreshProfileAvatarSignedUrl';
-import { registerPrivateSignedMediaResource } from '@/constants/privateSignedMediaRegistry';
+  PRIVATE_SIGNED_MEDIA_REFRESH_BUFFER_MS,
+  registerPrivateSignedMediaResource,
+} from '@/constants/privateSignedMediaRegistry';
 import { reportAppError } from '@/constants/errorReporting';
 
 jest.mock('@/constants/errorReporting', () => ({ reportAppError: jest.fn() }));
 
 function HookProbe() {
-  useRefreshProfileAvatarSignedUrl();
+  useRefreshPrivateSignedMediaUrls();
   return null;
 }
 
-describe('useRefreshProfileAvatarSignedUrl', () => {
+describe('useRefreshPrivateSignedMediaUrls', () => {
   let appStateListener: ((state: 'active' | 'background' | 'inactive') => void) | null = null;
   const refresh = jest.fn();
   const getExpiresAt = jest.fn();
@@ -66,7 +66,7 @@ describe('useRefreshProfileAvatarSignedUrl', () => {
   });
 
   it('schedules the next refresh five minutes before URL expiry while active', async () => {
-    const expiresAt = Date.now() + AVATAR_SIGNED_URL_REFRESH_BUFFER_MS + 45_000;
+    const expiresAt = Date.now() + PRIVATE_SIGNED_MEDIA_REFRESH_BUFFER_MS + 45_000;
     getExpiresAt.mockReturnValue(expiresAt);
 
     render(<HookProbe />);

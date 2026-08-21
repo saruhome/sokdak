@@ -11,7 +11,7 @@ import { authStore } from '../../../constants/authStore';
 import { fetchMyTickets, submitTicket, markRepliesSeen, type SupportTicket } from '../../../constants/support';
 import { AppIcon } from '@/components/AppIcon';
 import { BottomSheet } from '@/components/BottomSheet';
-import { Mail, ChevronDown, ChevronRight, Search, Mic, Check } from 'lucide-react-native';
+import { Mail, ChevronDown, ChevronRight, Search, Check } from 'lucide-react-native';
 
 type InquiryTypeSlug = 'account' | 'bug' | 'billing' | 'suggestion' | 'other';
 const INQUIRY_TYPE_SLUGS: InquiryTypeSlug[] = ['account', 'bug', 'billing', 'suggestion', 'other'];
@@ -184,7 +184,6 @@ export default function SupportScreen() {
               onChangeText={setQuery}
               returnKeyType="search"
             />
-            <AppIcon icon={Mic} size={15} />
           </View>
         </View>
         {/* ── 카테고리 필터 ── */}

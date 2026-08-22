@@ -12,6 +12,8 @@
 
 첫 CodeQL 분석은 두 언어 작업 모두 성공했고, Code scanning 화면에서 `0 Open`, `0 Closed` 경고 및 도구 정상 상태를 확인했다. Secret scanning은 `0 Open`, `0 Closed`였으며 미해결 비밀정보를 발견하지 못했다. Dependabot은 `image-size` High 2건과 `uuid` Moderate 1건, 총 3개를 `package-lock.json`에서 탐지했다. 이는 기존 npm audit 분석과 같은 근본 원인을 경고 단위로 표시한 것이며, `image-size`에 패치 버전이 없는 점과 Expo SDK 정합성 제약은 기존 전이 의존성 보안 평가 문서를 따른다.
 
+같은 날 `private_vulnerability_reporting`을 활성화했고, 저장소 루트의 `SECURITY.md`에 브랜드 기반의 비공개 제보 경로와 보고 원칙을 추가했다. 또한 `main`에 최소 보호 규칙을 적용해 강제 푸시와 기본 브랜치 삭제를 차단했다. 일반적인 직접 커밋, Quality Gate 실행, 관리자 권한은 유지하며 pull request 리뷰나 상태 검사 통과를 강제하지 않는다.
+
 ## 적용 원칙
 
 공개 저장소에서는 GitHub Actions가 활성화되어 있으면 CodeQL default setup을 무료로 활성화할 수 있다.[1] JavaScript/TypeScript와 GitHub Actions 워크플로를 검사 범위로 포함하고, 기본 쿼리 모음과 원격 위협 모델을 사용한다. CodeQL 기본 설정은 저장소 외부에서 관리되므로 별도의 워크플로 YAML을 추가하지 않는다.
@@ -30,6 +32,8 @@ Secret Protection과 저장소 수준 push protection은 공개 저장소에서 
 | Secret scanning | 활성화 | Security 탭에서 Secret Protection 활성화 확인 | 과거·신규 커밋의 제공자 패턴 탐지 |
 | Push protection | 활성화 | Security 탭과 푸시 보호 상태 확인 | 신규 비밀정보 푸시 차단 가능 |
 | CodeQL default setup | 활성화 | default setup API가 `configured`, 첫 분석 성공 | JS/TS 및 GitHub Actions 정적 분석 |
+| Private vulnerability reporting | 활성화 | 전용 API가 `enabled: true` 반환 | 공개 Issue 없이 취약점 제보 수신 |
+| main 최소 보호 | 활성화 | `allow_force_pushes=false`, `allow_deletions=false` 반환 | 이력 재작성·기본 브랜치 삭제 방지 |
 
 ## 제약과 후속 처리
 
@@ -44,3 +48,7 @@ GitHub 토큰 또는 앱 권한으로 보안 설정 변경이 거절되면, 로�
 [3]: https://docs.github.com/en/code-security/how-tos/secure-your-secrets/detect-secret-leaks/enable-secret-scanning "GitHub Docs: Enabling secret scanning for your repository"
 
 [4]: https://docs.github.com/en/code-security/concepts/secret-security/push-protection "GitHub Docs: Push protection"
+
+[5]: https://docs.github.com/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability "GitHub Docs: Privately reporting a security vulnerability"
+
+[6]: https://docs.github.com/rest/branches/branch-protection "GitHub Docs: REST API endpoints for protected branches"

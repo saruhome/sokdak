@@ -33,6 +33,29 @@ Metro의 `Assets.js`는 이미지 파일을 읽어 폭·높이를 구할 때 `im
 
 네이티브 Android/iOS 앱도 JavaScript 번들과 정적 자산을 포함해 배포하며, Metro의 Node.js 서버·빌드 도구 자체를 앱 프로세스에 포함하지 않는다. 다만 CI 또는 개발 머신에서 신뢰되지 않은 브랜치·압축 파일·자산을 빌드하는 경우에는 해당 빌드 프로세스가 DoS 영향을 받을 수 있으므로, 소스 자산 반입 통제를 유지해야 한다.
 
+## High 8건의 실제 구조와 패치 계획
+
+2026-08-21의 재감사에서 High 표시는 8개 패키지 레코드로 나타났지만, **독립 취약점 패키지는 `image-size` 하나**다. `image-size`의 두 CVE가 상위 Expo·Metro 패키지로 전파되어 감사 도구가 개별 레코드를 만든 것이다. 특히 `expo` 자체도 상위 의존성으로 High 레코드에 포함되므로, 기존의 여섯 Metro 계열 패키지와 구분해 추적한다.
+
+| 구분 | npm audit High 레코드 | 실제 보안 원인 | 조치 상태 |
+| --- | --- | --- | --- |
+| 독립 원인 | `image-size` | `CVE-2025-71330`(ICNS) 및 `CVE-2025-71329`(JXL·HEIF)의 무한 루프 DoS | 두 공식 권고 모두 영향 버전을 `<= 2.0.2`, 패치 버전을 **None**으로 명시한다.[1] [2] |
+| 전파 레코드 | `@expo/cli`, `@expo/metro`, `@expo/metro-config`, `metro`, `metro-config`, `metro-transform-worker` | `image-size` 하위 의존성의 영향 전파 | 개별 override·직접 업그레이드를 적용하지 않는다. |
+| 상위 전파 레코드 | `expo` | 위 Expo·Metro 의존성 체인의 영향 전파 | SDK가 지원하는 Metro 조합으로만 업데이트한다. |
+
+현재 가능한 패치 경로는 `image-size`만 개별 교체하는 방식이 아니라, Expo가 수정된 Metro 조합을 지원하는 **호환 SDK 또는 SDK 패치 릴리스**를 제공할 때 Expo 권장 설치 명령으로 함께 올리는 것이다. 두 GitHub Advisory는 현재 패치 버전이 없다고 명시하므로, 잠금 파일에서 임의의 미공개 버전으로 바꾸거나 `overrides`를 넣어 감사 결과만 숨기지 않는다.[1] [2]
+
+`npm audit fix --force`는 Expo를 `53.0.27`로 변경하려 하므로 SokDak의 Expo SDK 57.0.15 의존성 정합성을 깨뜨린다. 따라서 이 명령은 사용하지 않는다. 수정 가능한 Expo 릴리스가 확인되면 별도 브랜치에서 `npx expo install expo --fix` 또는 해당 릴리스의 공식 업그레이드 절차를 실행하고, 잠금 파일 변경을 검토한 뒤 `npm audit`, `npx expo-doctor`, TypeScript, Jest, 웹 번들 및 Android·iOS 실기기 QA를 모두 다시 통과시킨다.
+
+CI에서는 `npm audit --audit-level=critical`을 실행한다. 이 정책은 High·Moderate 항목을 로그로 계속 노출하여 추적하되, 새 **Critical** 취약점은 즉시 병합을 막는다. 현재처럼 패치가 제공되지 않은 개발·빌드 도구 전이 High 항목 때문에 품질 게이트 전체가 항상 실패하는 상태를 피하면서도, 심각도가 높아지는 공급망 변화를 놓치지 않기 위한 비례적 통제다.
+
+| 우선순위 | 완료·판단 기준 | 재평가 트리거 |
+| --- | --- | --- |
+| P0 | CI에서 Critical 0건을 요구하고, Critical 발생 시 수정 또는 위험 승인 전 병합하지 않는다. | 모든 pull request와 `main` 푸시 |
+| P1 | High 8건이 위 `image-size` 전파 구조와 일치하는지, `image-size` 패치 버전 또는 Expo 호환 SDK가 나왔는지 확인한다. | 월 1회 및 Expo 의존성 변경 전 |
+| P1 | 신뢰되지 않은 ICNS·JXL·HEIF 파일을 소스 자산·CI 작업공간에 반입하지 않는다. | 외부 기여·자산 반입 절차 변경 시 |
+| P2 | 지원 SDK에서 수정 가능해지면 격리 브랜치에서 Expo 정합성·전체 회귀·실기기 QA 후 병합한다. | Expo 릴리스 노트 또는 npm audit 패치 안내 변화 시 |
+
 ## 대응 우선순위
 
 | 우선순위 | 조치 | 이유 | 시점 |
@@ -58,7 +81,7 @@ Metro의 `Assets.js`는 이미지 파일을 읽어 폭·높이를 구할 때 `im
 | 3 | `npm run test:ci`, `npm run typecheck`, `npx expo-doctor`, `npm run build` | 앱 동작·Expo 정합성·웹 번들이 모두 통과해야 함 |
 | 4 | `npm audit`, `npm audit --omit=dev` | 전체·운영 설치 모두 15건(High 8, Moderate 7)인지 확인 |
 
-**제거 후 검증 결과:** 전체·`--omit=dev` 감사 모두 High 8, Moderate 7, 총 15건으로 일치했다. Jest 24개 스위트·99개 테스트, TypeScript 검사, Expo Doctor 21/21, 웹 프로덕션 번들도 통과했다.
+**제거 후 및 CI 변경 재검증 결과:** 전체·`--omit=dev` 감사 모두 High 8, Moderate 7, 총 15건으로 일치했다. Jest 25개 스위트·101개 테스트, TypeScript 검사, Expo Doctor 21/21, Critical 임계치 감사, 웹 프로덕션 번들도 통과했다.
 
 향후 원격 기기에서 로컬 개발 서버에 접속해야 해 터널이 필요해지면, 별도 브랜치에서 `npm install --save-dev @expo/ngrok`를 실행하고 `expo start --tunnel`을 명시적으로 사용한다. 재도입 후에는 동일한 회귀 검사와 `npm audit`을 수행하며, 무단 터널 노출을 기본 개발 흐름에 추가하지 않는다.
 

@@ -21,5 +21,6 @@
 - [x] Expo SDK 57 권장 패치 의존성을 정렬하고 Expo Doctor·원격 Quality Gate를 재검증한다.
 - [x] npm audit 전이 의존성 경고의 취약점 경로·배포 노출·완화책을 분석하고 SDK 업그레이드 시점을 결정한다.
 - [x] 사용하지 않는 @expo/ngrok 개발 의존성을 제거하고, npm audit·전체 품질 게이트 결과를 갱신한다.
+- [x] CI Quality Gate에 npm audit 보안 검사를 추가하고, High 취약점의 지원 SDK 기반 패치 계획을 유지한다.
 - [x] 독일어 UI 번역·언어 선택·검색·콘텐츠·화면 테스트를 추가하고 전체 다국어 회귀를 검증한다.
 - [x] Android·iOS 실기기 QA 체크리스트 문서를 GitHub main에 커밋·푸시하고 원격 품질 게이트를 확인한다.

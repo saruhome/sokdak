@@ -1,173 +1,72 @@
 name: Quality Gate
 
-
-
 on:
-
   push:
-  
     branches: [main]
-    
   pull_request:
-  
     branches: [main]
-    
-
 
 permissions:
-
   contents: read
-  
-
 
 # 같은 브랜치에 새 커밋이 올라오면 이전 품질 검사는 취소해 러너 사용량을 줄인다.
-
 concurrency:
-
-  group: quality-gate-${{ github.workflow }}-${{ github.ref }}
-  
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-  
-
 
 jobs:
-
   verify:
-  
     runs-on: ubuntu-latest
-    
     timeout-minutes: 20
-    
     env:
-    
       EXPO_PUBLIC_SUPABASE_URL: https://sokdak-ci.supabase.co
-      
       EXPO_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_ci_placeholder
-      
       EXPO_PUBLIC_PRIVACY_POLICY_URL: https://legal.sokdak.test/privacy
-      
       EXPO_PUBLIC_TERMS_OF_SERVICE_URL: https://legal.sokdak.test/terms
-      
       EXPO_PUBLIC_ACCOUNT_DELETION_URL: https://legal.sokdak.test/delete-account
-      
       EXPO_PUBLIC_SUPPORT_EMAIL: support@sokdak.test
-      
     steps:
-    
       - name: Check out source
-      
         uses: actions/checkout@v5
-        
-
 
       - name: Set up Node.js
-      
         uses: actions/setup-node@v5
-        
         with:
-        
           node-version: 22
-          
           cache: npm
-          
-
 
       - name: Install locked dependencies
-      
         run: npm ci
-        
-
 
       - name: Validate TypeScript
-      
         run: npm run typecheck
-        
-
 
       - name: Run unit and component tests
-      
         run: npm run test:ci
-        
-
 
       - name: Validate Expo project configuration
-      
         run: npx expo config --type public --json > /dev/null
-        
-
 
       - name: Validate Expo project health
-      
         run: npx expo-doctor
-        
 
+      - name: Validate private beta release configuration contract
+        env:
+          EXPO_PUBLIC_RELEASE_STAGE: private-beta
+        run: npm run check:release-config
 
       - name: Validate release configuration contract
-      
         run: npm run check:release-config
-        
-
 
       - name: Validate migration files
-      
         run: |
-        
           test -d supabase/migrations
-          
           test -z "$(find supabase/migrations -type f -name '*.sql' -size 0)"
-          
-
 
       # 현재 High 항목은 Expo SDK 57의 Metro 전이 의존성으로, 강제 수정은 SDK 다운그레이드를 유발한다.
       # 새 Critical 취약점은 즉시 차단하고, High/Moderate는 감사 출력으로 계속 추적한다.
       - name: Audit npm dependencies (fail on critical)
-
         run: npm audit --audit-level=critical
 
       - name: Build production web bundle
-      
         run: npm run build
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

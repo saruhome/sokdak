@@ -51,6 +51,7 @@
     "test": "jest --watchAll",
     "test:ci": "jest --ci --runInBand",
     "check:release-config": "node scripts/check-release-config.mjs",
+    "check:release-config:private-beta": "EXPO_PUBLIC_RELEASE_STAGE=private-beta node scripts/check-release-config.mjs",
     "build": "expo export -p web"
   },
   "private": true

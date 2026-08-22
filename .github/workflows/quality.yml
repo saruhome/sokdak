@@ -118,6 +118,12 @@ jobs:
           
 
 
+      # 현재 High 항목은 Expo SDK 57의 Metro 전이 의존성으로, 강제 수정은 SDK 다운그레이드를 유발한다.
+      # 새 Critical 취약점은 즉시 차단하고, High/Moderate는 감사 출력으로 계속 추적한다.
+      - name: Audit npm dependencies (fail on critical)
+
+        run: npm audit --audit-level=critical
+
       - name: Build production web bundle
       
         run: npm run build

@@ -23,8 +23,6 @@ const ACTIVITY_MENU = [
 
 export default function MyPageScreen() {
   const [loggedIn, setLoggedIn] = useState(authStore.isLoggedIn());
-  const [savedCount, setSavedCount] = useState(authStore.getSavedWordIds().length);
-  const [likedCount, setLikedCount] = useState(authStore.getLikedPostIds().length);
   const [isPremium, setIsPremium] = useState(authStore.isPremium());
   const [streakCount, setStreakCount] = useState(authStore.getStreakCount());
   const [hasUnseenTicketReply, setHasUnseenTicketReply] = useState(false);
@@ -37,8 +35,6 @@ export default function MyPageScreen() {
   useFocusEffect(
     useCallback(() => {
       setLoggedIn(authStore.isLoggedIn());
-      setSavedCount(authStore.getSavedWordIds().length);
-      setLikedCount(authStore.getLikedPostIds().length);
       setIsPremium(authStore.isPremium());
       setStreakCount(authStore.getStreakCount());
       if (authStore.isLoggedIn()) hasUnseenReply().then(setHasUnseenTicketReply);
@@ -53,13 +49,9 @@ export default function MyPageScreen() {
       setStreakCount(authStore.getStreakCount());
       setProfileVersion(version => version + 1);
     });
-    const unsubBookmarks = authStore.subscribeBookmarks(() => {
-      setSavedCount(authStore.getSavedWordIds().length);
-      setLikedCount(authStore.getLikedPostIds().length);
-    });
     const unsubLanguage = languageStore.subscribe(setLanguage);
     languageStore.initialize().then(() => setLanguage(languageStore.getLanguage()));
-    return () => { unsub(); unsubBookmarks(); unsubLanguage(); };
+    return () => { unsub(); unsubLanguage(); };
   }, []);
 
   const handleLogout = () => {

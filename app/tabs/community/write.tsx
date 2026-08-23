@@ -6,7 +6,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { Colors } from '../../../constants/Colors';
-import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS, getBoardLabel, type PostBoard } from '../../../constants/mockPosts';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';

@@ -234,7 +234,7 @@ export default function CategoryScreen() {
                 </View>
                 <View style={styles.cardTextWrap}>
                   <Text
-                    style={styles.categoryName}
+                    style={[styles.categoryName, { color: labelColor }]}
                     numberOfLines={2}
                     adjustsFontSizeToFit
                     minimumFontScale={0.6}

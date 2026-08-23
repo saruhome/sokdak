@@ -5,7 +5,6 @@ import { AppText as Text } from '@/components/AppText';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
-import { safeGoBack } from '../../../constants/navigation';
 import { BOARD_COLORS, getBoardLabel } from '../../../constants/mockPosts';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';

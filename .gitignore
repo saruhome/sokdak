@@ -19,6 +19,14 @@ expo-env.d.ts
 .claude/proven-config.json
 .claude/.proven-config-version
 .claude-flow/
+.claude/agents/
+.claude/commands/
+.claude/helpers/
+.claude/skills/
+.agents/
+.serena/
+.swarm/
+ruvector.db
 .venv/
 graphify-out/
 
@@ -31,3 +39,5 @@ sokdak-landing-page/
 SokDak 화면/
 assets/Filter/
 assets/Selection/
+assets/Form/
+assets/Logo.png

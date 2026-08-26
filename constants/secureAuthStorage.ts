@@ -97,6 +97,14 @@ function decryptV2(value: string, rootKey: Uint8Array): string | null {
   }
 }
 
+/** 우리 암호문 형태인지 판별 — v2(4파트, 마지막이 HMAC-SHA256 hex 64자) 또는 v1(hex.hex).
+ * 레거시 평문 세션은 Supabase JSON이라 어느 쪽 형태와도 겹치지 않는다. get/remove가 경합해
+ * SecureStore 키만 먼저 지워진 경우, 남은 암호문을 "평문 세션"으로 오인해 그대로 반환/재암호화
+ * 하는 사고를 막는 데 쓰인다. */
+function looksLikeOwnCiphertext(value: string) {
+  return /^v2\.[0-9a-f]+\.[0-9a-f]*\.[0-9a-f]{64}$/.test(value) || /^[0-9a-f]+\.[0-9a-f]+$/.test(value);
+}
+
 /** v1(레거시) 포맷 복호화 — MAC이 없어 변조를 검출할 수 없다. v2로 재저장되면 더 이상 쓰이지 않는다. */
 function decryptV1(value: string, rootKey: Uint8Array): string | null {
   const [nonceHex, cipherHex] = value.split('.');
@@ -124,6 +132,14 @@ export const secureAuthStorage = {
     const keyName = secureKeyName(key);
     const existingRootKey = await SecureStore.getItemAsync(keyName, SECURE_STORE_OPTIONS);
     if (!existingRootKey) {
+      if (looksLikeOwnCiphertext(stored)) {
+        // 암호문인데 키가 없다 — get/remove 경합 등으로 키만 먼저 지워진 상태. 복호화가 불가능한
+        // 값을 평문으로 오인해 반환하면 안 되므로 정리하고 로그아웃 상태로 처리한다.
+        // ponytail: per-key mutex 없이 형태 검사로만 방어 — Supabase auth는 storage를 직렬로
+        // 호출하므로 실전 경합은 signOut 경계뿐이고, 그 경우 "세션 없음"이 올바른 결과다.
+        await secureAuthStorage.removeItem(key);
+        return null;
+      }
       // One-time migration from the original plaintext AsyncStorage adapter.
       await secureAuthStorage.setItem(key, stored);
       return stored;

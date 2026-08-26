@@ -3,14 +3,15 @@
  * index.ts(Deno 런타임)와 Jest 테스트 양쪽에서 그대로 import할 수 있게 분리했다.
  */
 
-/** Supabase Storage list()/remove()만 필요한 최소 인터페이스 — 실제 SupabaseClient가 구조적으로 만족한다. */
+/** Supabase Storage list()/remove()만 필요한 최소 인터페이스 — 실제 SupabaseClient가 구조적으로 만족한다.
+ * storage-js FileObject 계약: `id`는 파일이면 non-null, **폴더면 null** (v2.112 d.ts 주석 기준). */
 export type StorageAdmin = {
   storage: {
     from: (bucket: string) => {
       list: (
         path: string,
         options: { limit: number; sortBy: { column: string; order: 'asc' | 'desc' } },
-      ) => Promise<{ data: { name: string }[] | null; error: { message: string } | null }>;
+      ) => Promise<{ data: { name: string; id: string | null }[] | null; error: { message: string } | null }>;
       remove: (paths: string[]) => Promise<{ error: { message: string } | null }>;
     };
   };
@@ -35,22 +36,47 @@ export async function removeAllUserStorageObjects(
   bucket: string,
   userId: string,
 ): Promise<{ removed: number; remaining: boolean }> {
+  return removeAllUnderPrefix(admin, bucket, userId, { pagesUsed: 0 });
+}
+
+/** budget.pagesUsed는 재귀 전체가 공유하는 페이지 예산 — 폴더가 아무리 깊어도 총 list 횟수가
+ * MAX_PAGES를 넘지 않게 해, 병리적 트리에서도 함수 실행 시간이 유계로 남는다. */
+async function removeAllUnderPrefix(
+  admin: StorageAdmin,
+  bucket: string,
+  prefix: string,
+  budget: { pagesUsed: number },
+): Promise<{ removed: number; remaining: boolean }> {
   let removed = 0;
 
-  for (let page = 0; page < MAX_PAGES; page++) {
-    const { data: files, error } = await admin.storage
+  while (budget.pagesUsed < MAX_PAGES) {
+    budget.pagesUsed++;
+    const { data: entries, error } = await admin.storage
       .from(bucket)
-      .list(userId, { limit: STORAGE_LIST_PAGE_LIMIT, sortBy: { column: 'name', order: 'asc' } });
+      .list(prefix, { limit: STORAGE_LIST_PAGE_LIMIT, sortBy: { column: 'name', order: 'asc' } });
     if (error) throw new Error(`Could not list ${bucket}: ${error.message}`);
 
-    const paths = (files ?? []).filter(file => file.name).map(file => `${userId}/${file.name}`);
+    const named = (entries ?? []).filter(entry => entry.name);
+    // storage-js 계약: id가 null이면 폴더. 폴더 경로를 remove()에 넘기면 조용히 no-op이라
+    // (객체가 아니므로) 이전 구현은 하위 파일을 전부 놓치고 같은 폴더를 무한 재조회했다.
+    const files = named.filter(entry => entry.id !== null);
+    const folders = named.filter(entry => entry.id === null);
+
+    for (const folder of folders) {
+      const sub = await removeAllUnderPrefix(admin, bucket, `${prefix}/${folder.name}`, budget);
+      removed += sub.removed;
+      if (sub.remaining) return { removed, remaining: true };
+    }
+
+    const paths = files.map(file => `${prefix}/${file.name}`);
     if (paths.length === 0) return { removed, remaining: false };
 
     const { error: removeError } = await admin.storage.from(bucket).remove(paths);
     if (removeError) throw new Error(`Could not remove ${bucket}: ${removeError.message}`);
     removed += paths.length;
 
-    if (paths.length < STORAGE_LIST_PAGE_LIMIT) return { removed, remaining: false };
+    // 파일+폴더 합쳐 페이지가 꽉 찼을 때만 더 남았을 수 있다 — 다시 처음부터 재조회.
+    if (named.length < STORAGE_LIST_PAGE_LIMIT) return { removed, remaining: false };
   }
   return { removed, remaining: true };
 }

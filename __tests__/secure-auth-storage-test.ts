@@ -113,6 +113,47 @@ describe('secureAuthStorage', () => {
     await expect(secureAuthStorage.getItem('supabase.auth.token')).resolves.toBeNull();
   });
 
+  it('survives a simulated app restart (fresh module instance, same persisted stores)', async () => {
+    const sessionJson = JSON.stringify({ access_token: 'redacted', user: { id: 'user-1' } });
+    await secureAuthStorage.setItem('supabase.auth.token', sessionJson);
+    const persistedCiphertext = (await AsyncStorage.getItem('supabase.auth.token'))!;
+
+    // 재시작 시뮬레이션: 모듈 레지스트리를 초기화해 in-memory 상태를 전부 버린다.
+    // SecureStore mock(mockSecureValues)은 테스트 파일 스코프라 디스크처럼 유지되지만,
+    // AsyncStorage mock의 저장소는 모듈 스코프라 리셋과 함께 사라진다 — 실제 기기의
+    // 디스크 지속성을 흉내내기 위해 저장돼 있던 암호문을 새 인스턴스에 그대로 되살린다.
+    jest.resetModules();
+    const freshAsyncStorageModule = require('@react-native-async-storage/async-storage');
+    const freshAsyncStorage = freshAsyncStorageModule.default ?? freshAsyncStorageModule;
+    await freshAsyncStorage.setItem('supabase.auth.token', persistedCiphertext);
+    const fresh = require('../constants/secureAuthStorage').secureAuthStorage as typeof secureAuthStorage;
+
+    await expect(fresh.getItem('supabase.auth.token')).resolves.toBe(sessionJson);
+  });
+
+  it('concurrent get/set/remove on the same key never leaves a corrupted value behind', async () => {
+    await secureAuthStorage.setItem('supabase.auth.token', 'initial');
+
+    await Promise.all([
+      secureAuthStorage.getItem('supabase.auth.token'),
+      secureAuthStorage.setItem('supabase.auth.token', 'second'),
+      secureAuthStorage.getItem('supabase.auth.token'),
+      secureAuthStorage.setItem('supabase.auth.token', 'third'),
+      secureAuthStorage.removeItem('supabase.auth.token'),
+      secureAuthStorage.setItem('supabase.auth.token', 'final'),
+    ]);
+
+    // 어느 순서로 끝났든, 최종 상태는 "정상 복호화되는 값" 또는 "완전히 삭제됨" 중 하나여야
+    // 하며 절대 손상된(복호화 실패) 값이 남으면 안 된다. getItem이 null을 반환하는 경우는
+    // remove가 마지막이었던 경우뿐이고, 그때 저장소도 함께 비어 있어야 한다.
+    const value = await secureAuthStorage.getItem('supabase.auth.token');
+    if (value === null) {
+      await expect(AsyncStorage.getItem('supabase.auth.token')).resolves.toBeNull();
+    } else {
+      expect(['initial', 'second', 'third', 'final']).toContain(value);
+    }
+  });
+
   it('clears the corrupted item after a failed tamper-detected read', async () => {
     await secureAuthStorage.setItem('supabase.auth.token', 'sensitive-session-token');
     const stored = (await AsyncStorage.getItem('supabase.auth.token'))!;

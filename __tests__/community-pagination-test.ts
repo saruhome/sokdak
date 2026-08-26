@@ -102,6 +102,30 @@ describe('fetchPostsPage', () => {
     expect(page.hasMore).toBe(true);
   });
 
+  it('a post whose author profile row is gone (deleted user) still renders with fallback author', async () => {
+    mockRange.mockResolvedValue({
+      data: [{ ...POST_ROW, id: 'orphan', profiles: null }],
+      error: null,
+    });
+
+    const page = await fetchPostsPage({ limit: 20 });
+
+    expect(page.posts).toHaveLength(1);
+    expect(page.posts[0].author.name).toBe('탈퇴한 사용자');
+    expect(page.hasMore).toBe(false);
+  });
+
+  it('a failed query returns an empty page without advancing nextOffset (caller can retry same offset)', async () => {
+    mockRange.mockResolvedValue({ data: null, error: { message: 'network error' } });
+
+    const page = await fetchPostsPage({ offset: 40, limit: 20 });
+
+    expect(page.posts).toEqual([]);
+    expect(page.hasMore).toBe(false);
+    // 실패 시 offset이 전진하지 않아야 재시도가 같은 지점부터 다시 요청한다.
+    expect(page.nextOffset).toBe(40);
+  });
+
   it('consecutive pages using nextOffset never re-request already-seen rows or duplicate posts', async () => {
     mockGetBlockedUserIds.mockReturnValue(['blocked-author']);
     mockRange

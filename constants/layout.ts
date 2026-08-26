@@ -4,9 +4,22 @@ import { Dimensions, Platform } from 'react-native';
 export const DEVICE_WIDTH = 360;
 export const DEVICE_HEIGHT = 800;
 
-/** 화면 폭/높이: 웹 프리뷰는 360×800 고정 프레임(app/_layout.tsx DeviceFrame) 기준,
- *  네이티브는 실제 기기 크기. Dimensions를 직접 쓰지 말고 이 값을 사용할 것. */
-export const SCREEN_WIDTH =
-  Platform.OS === 'web' ? DEVICE_WIDTH : Dimensions.get('window').width;
-export const SCREEN_HEIGHT =
-  Platform.OS === 'web' ? DEVICE_HEIGHT : Dimensions.get('window').height;
+/** 아이폰 출시 대비 QA용 — 최근 5세대(12~16 일반 모델) 동일 논리 해상도, 아이폰 중 최다 사용.
+ * 웹 프리뷰 URL에 ?device=iphone 붙이면 이 크기로 확인 가능 (실기기/네이티브 빌드는 항상
+ * 실제 화면 크기를 쓰므로 이 상수와 무관 — SCREEN_WIDTH 주석 참고). */
+export const DEVICE_WIDTH_IPHONE = 390;
+export const DEVICE_HEIGHT_IPHONE = 844;
+
+const useIphoneFrame =
+  Platform.OS === 'web' && typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).get('device') === 'iphone';
+
+/** 화면 폭/높이: 웹 프리뷰는 360×800(또는 ?device=iphone 시 390×844) 고정 프레임
+ *  (app/_layout.tsx DeviceFrame) 기준, 네이티브는 실제 기기 크기.
+ *  Dimensions를 직접 쓰지 말고 이 값을 사용할 것. */
+export const SCREEN_WIDTH = Platform.OS !== 'web'
+  ? Dimensions.get('window').width
+  : useIphoneFrame ? DEVICE_WIDTH_IPHONE : DEVICE_WIDTH;
+export const SCREEN_HEIGHT = Platform.OS !== 'web'
+  ? Dimensions.get('window').height
+  : useIphoneFrame ? DEVICE_HEIGHT_IPHONE : DEVICE_HEIGHT;

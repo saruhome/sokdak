@@ -9,7 +9,7 @@ import { NotoSerifKR_400Regular } from '@expo-google-fonts/noto-serif-kr/400Regu
 import { NotoSerifKR_600SemiBold } from '@expo-google-fonts/noto-serif-kr/600SemiBold';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
-import { DEVICE_WIDTH, DEVICE_HEIGHT } from '../constants/layout';
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants/layout';
 import { authStore } from '../constants/authStore';
 import { languageStore } from '../constants/languageStore';
 import { reportAppError } from '../constants/errorReporting';
@@ -18,7 +18,8 @@ import { useRefreshPrivateSignedMediaUrls } from '@/hooks/useRefreshPrivateSigne
 
 const SPLASH = require('../assets/splash-screen.png');
 
-/** 웹 프리뷰 전용: 브라우저 창 크기와 무관하게 앱을 360×800 프레임에 고정.
+/** 웹 프리뷰 전용: 브라우저 창 크기와 무관하게 앱을 360×800 프레임에 고정
+ *  (?device=iphone 쿼리로 390×844 아이폰 프레임으로 전환 가능 — constants/layout.ts 참고).
  *  네이티브(안드로이드/iOS)에서는 그대로 전체 화면을 사용한다. */
 function DeviceFrame({ children }: { children: React.ReactNode }) {
   if (Platform.OS !== 'web') return <>{children}</>;
@@ -40,8 +41,8 @@ const frameStyles = StyleSheet.create({
     alignItems: 'center',
   },
   device: {
-    width: DEVICE_WIDTH,
-    height: DEVICE_HEIGHT,
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
     overflow: 'hidden',
     backgroundColor: Colors.background,
   },

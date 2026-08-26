@@ -16,17 +16,9 @@ import { supabase } from './supabase';
 import type { Language } from './languageStore';
 import { authApi } from '../src/features/auth/api/authApi';
 import { sessionStore, type AuthListener, type SokDakUser } from '../src/features/auth/model/sessionStore';
-import {
-  createProfileAvatarSignedUrl,
-  isProfileAvatarPath,
-  PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS,
-} from './profileAvatarStorage';
-import {
-  notifyPrivateSignedMediaChanged,
-  registerPrivateSignedMediaResource,
-} from './privateSignedMediaRegistry';
+import { profileStore, type NotificationPrefs } from '../src/features/auth/model/profileStore';
 
-export type { SokDakUser };
+export type { SokDakUser, NotificationPrefs };
 
 type BookmarkListener = () => void;
 
@@ -37,20 +29,6 @@ export const FREE_CATEGORY_LIKE_LIMIT = 2;
 export const FREE_TTS_DAILY_LIMIT = 3;
 /** 결제가 비활성인 비공개 베타에서는 유료 제한·자동 삭제를 적용하지 않는다. */
 export const BETA_UNLIMITED_ENTITLEMENTS = true;
-
-export type NotificationPrefs = {
-  newSlang: boolean;
-  popularSlang: boolean;
-  popularPost: boolean;
-  like: boolean;
-  comment: boolean;
-};
-
-const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = {
-  newSlang: true, popularSlang: true, popularPost: true, like: true, comment: true,
-};
-
-let _profileAvatarSignedUrlExpiresAt: number | null = null;
 
 const _savedWordIds = new Set<string>();
 const _savedPostIds = new Set<string>();
@@ -74,11 +52,6 @@ let _initPromise: Promise<void> | null = null;
 
 function notifyBookmarks() {
   _bookmarkListeners.forEach(fn => fn());
-}
-
-function setProfileAvatarSignedUrlExpiresAt(value: number | null) {
-  _profileAvatarSignedUrlExpiresAt = value;
-  notifyPrivateSignedMediaChanged();
 }
 
 function todayString() {
@@ -124,58 +97,6 @@ function toggleBookmark(set: Set<string>, id: string, table: BookmarkTable, idCo
   });
 }
 
-/** 오늘 처음 로그인/세션 복원 시 연속 학습일(streak)을 갱신한다.
- * 어제까지 활동 → +1, 그보다 오래됐으면 1로 리셋, 오늘 이미 반영했으면 그대로 둔다. */
-async function bumpStreak(userId: string, lastActiveDate: string | null, currentStreak: number) {
-  const today = todayString();
-  if (lastActiveDate === today) return currentStreak;
-
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-  const nextStreak = lastActiveDate === yesterday ? currentStreak + 1 : 1;
-
-  const { error } = await supabase
-    .from('account_settings')
-    .update({ streak_count: nextStreak, last_active_date: today })
-    .eq('user_id', userId);
-  return error ? currentStreak : nextStreak;
-}
-
-async function fetchProfile(userId: string, email: string): Promise<SokDakUser> {
-  const [{ data: profile }, { data: settings }] = await Promise.all([
-    supabase
-      .from('profiles')
-      .select('nickname, avatar_emoji, avatar_url, level')
-      .eq('id', userId)
-      .single(),
-    supabase
-      .from('account_settings')
-      .select('phone, timezone, is_premium, streak_count, last_active_date')
-      .eq('user_id', userId)
-      .single(),
-  ]);
-
-  const streakCount = await bumpStreak(userId, settings?.last_active_date ?? null, settings?.streak_count ?? 0);
-  const avatarPath = profile?.avatar_url ?? null;
-  const signedAvatarUrl = await createProfileAvatarSignedUrl(avatarPath);
-  setProfileAvatarSignedUrlExpiresAt(signedAvatarUrl
-    ? Date.now() + PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS * 1000
-    : null);
-
-  return {
-    id: userId,
-    email,
-    name: profile?.nickname ?? email.split('@')[0],
-    emoji: profile?.avatar_emoji ?? '🐦',
-    avatarPath,
-    avatarUrl: signedAvatarUrl ?? (isProfileAvatarPath(avatarPath) ? null : avatarPath),
-    phone: settings?.phone ?? null,
-    timezone: settings?.timezone ?? 'UTC',
-    level: profile?.level ?? '초급',
-    isPremium: settings?.is_premium ?? false,
-    streakCount,
-  };
-}
-
 async function fetchBookmarks(userId: string) {
   const [savedRes, likedRes, savedPostsRes, likedCommentsRes, likedCategoriesRes] = await Promise.all([
     supabase.from('saved_words').select('word_id').eq('user_id', userId),
@@ -209,7 +130,7 @@ async function fetchBlockedUsers(userId: string) {
 }
 
 function clearLocalCaches() {
-  setProfileAvatarSignedUrlExpiresAt(null);
+  profileStore.clearAvatarSignedUrlExpiry();
   _savedWordIds.clear();
   _savedPostIds.clear();
   _likedPostIds.clear();
@@ -228,7 +149,7 @@ async function applySession(userId: string | undefined, email: string | undefine
     notifyBookmarks();
     return;
   }
-  sessionStore.setUser(await fetchProfile(userId, email));
+  sessionStore.setUser(await profileStore.fetchProfile(userId, email));
   await Promise.all([fetchBookmarks(userId), fetchBlockedUsers(userId)]);
   sessionStore.notify();
   notifyBookmarks();
@@ -305,73 +226,9 @@ export const authStore = {
 
   requestPasswordReset: authApi.requestPasswordReset,
 
-  async updateUser(patch: Partial<{
-    name: string; emoji: string; avatarPath: string | null; phone: string | null; timezone: string;
-  }>) {
-    const user = sessionStore.getUser();
-    if (!user) return { error: '로그인이 필요해요.' };
-
-    if (patch.name !== undefined || patch.emoji !== undefined || patch.avatarPath !== undefined) {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          ...(patch.name !== undefined ? { nickname: patch.name } : {}),
-          ...(patch.emoji !== undefined ? { avatar_emoji: patch.emoji } : {}),
-          ...(patch.avatarPath !== undefined ? { avatar_url: patch.avatarPath } : {}),
-        })
-        .eq('id', user.id);
-      if (error) return { error: error.message };
-    }
-
-    if (patch.phone !== undefined || patch.timezone !== undefined) {
-      const { error } = await supabase
-        .from('account_settings')
-        .update({
-          ...(patch.phone !== undefined ? { phone: patch.phone } : {}),
-          ...(patch.timezone !== undefined ? { timezone: patch.timezone } : {}),
-        })
-        .eq('user_id', user.id);
-      if (error) return { error: error.message };
-    }
-
-    const signedAvatarUrl = patch.avatarPath !== undefined
-      ? await createProfileAvatarSignedUrl(patch.avatarPath)
-      : undefined;
-    if (patch.avatarPath !== undefined) {
-      setProfileAvatarSignedUrlExpiresAt(signedAvatarUrl
-        ? Date.now() + PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS * 1000
-        : null);
-    }
-
-    sessionStore.patchUser({
-      ...(patch.name !== undefined ? { name: patch.name } : {}),
-      ...(patch.emoji !== undefined ? { emoji: patch.emoji } : {}),
-      ...(patch.avatarPath !== undefined ? {
-        avatarPath: patch.avatarPath,
-        avatarUrl: signedAvatarUrl ?? (isProfileAvatarPath(patch.avatarPath) ? null : patch.avatarPath),
-      } : {}),
-      ...(patch.phone !== undefined ? { phone: patch.phone } : {}),
-      ...(patch.timezone !== undefined ? { timezone: patch.timezone } : {}),
-    });
-    sessionStore.notify();
-    return { error: null };
-  },
-
-  /** 앱이 foreground로 복귀할 때 private 아바타의 짧은 수명 signed URL만 재발급한다. */
-  async refreshProfileAvatarSignedUrl() {
-    const user = sessionStore.getUser();
-    if (!user || !isProfileAvatarPath(user.avatarPath)) return { error: null };
-
-    const signedAvatarUrl = await createProfileAvatarSignedUrl(user.avatarPath);
-    if (!signedAvatarUrl) return { error: '프로필 사진 링크를 새로 만들 수 없어요.' };
-
-    setProfileAvatarSignedUrlExpiresAt(Date.now() + PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS * 1000);
-    sessionStore.patchUser({ avatarUrl: signedAvatarUrl });
-    sessionStore.notify();
-    return { error: null };
-  },
-
-  getProfileAvatarSignedUrlExpiresAt: () => _profileAvatarSignedUrlExpiresAt,
+  updateUser: profileStore.updateUser,
+  refreshProfileAvatarSignedUrl: profileStore.refreshProfileAvatarSignedUrl,
+  getProfileAvatarSignedUrlExpiresAt: profileStore.getProfileAvatarSignedUrlExpiresAt,
 
   /**
    * 커뮤니티 게시 전, 서버가 판정한 최신 활성 정책 버전에 동의했는지 확인한다.
@@ -412,28 +269,8 @@ export const authStore = {
   updateEmail: authApi.updateEmail,
   updatePassword: authApi.updatePassword,
 
-  /** 알림 설정 — `like`/`comment`는 실제 알림 트리거(notify_on_like/notify_on_comment)가 참고한다.
-   *  newSlang/popularSlang/popularPost는 아직 그 알림 자체를 만드는 백엔드가 없어 값만 저장된다. */
-  async fetchNotificationPrefs(): Promise<NotificationPrefs> {
-    const user = sessionStore.getUser();
-    if (!user) return DEFAULT_NOTIFICATION_PREFS;
-    const { data } = await supabase
-      .from('account_settings')
-      .select('notification_prefs')
-      .eq('user_id', user.id)
-      .single();
-    return { ...DEFAULT_NOTIFICATION_PREFS, ...(data?.notification_prefs as Partial<NotificationPrefs> ?? {}) };
-  },
-
-  async updateNotificationPrefs(prefs: NotificationPrefs) {
-    const user = sessionStore.getUser();
-    if (!user) return { error: '로그인이 필요해요.' };
-    const { error } = await supabase
-      .from('account_settings')
-      .update({ notification_prefs: prefs })
-      .eq('user_id', user.id);
-    return { error: error?.message ?? null };
-  },
+  fetchNotificationPrefs: profileStore.fetchNotificationPrefs,
+  updateNotificationPrefs: profileStore.updateNotificationPrefs,
 
   /* ── 프리미엄 ──
    * entitlement는 결제 서버의 영수증 검증·웹훅만 갱신해야 한다. 앱은 현재 서버가 전달한
@@ -521,9 +358,3 @@ export const authStore = {
     return () => { _bookmarkListeners.delete(fn); };
   },
 };
-
-registerPrivateSignedMediaResource({
-  id: 'profile-avatar',
-  getExpiresAt: () => _profileAvatarSignedUrlExpiresAt,
-  refresh: () => authStore.refreshProfileAvatarSignedUrl(),
-});

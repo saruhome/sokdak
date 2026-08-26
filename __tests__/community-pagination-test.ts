@@ -7,8 +7,9 @@ const mockFrom: jest.Mock = jest.fn(() => ({ select: mockSelect }));
 jest.mock('@/constants/supabase', () => ({
   supabase: { from: (table: string) => mockFrom(table) },
 }));
+const mockGetBlockedUserIds: jest.Mock = jest.fn(() => []);
 jest.mock('@/constants/authStore', () => ({
-  authStore: { getBlockedUserIds: jest.fn(() => []) },
+  authStore: { getBlockedUserIds: () => mockGetBlockedUserIds() },
 }));
 jest.mock('@/constants/profileAvatarStorage', () => ({
   isProfileAvatarPath: jest.fn(() => false),
@@ -59,5 +60,74 @@ describe('fetchPostsPage', () => {
     expect(mockEq).toHaveBeenCalledWith('board', '궁금해요');
     expect(page.posts.map(post => post.id)).toEqual(['question']);
     expect(page.hasMore).toBe(false);
+  });
+
+  it('nextOffset tracks raw rows fetched, not the block-filtered post count', async () => {
+    mockGetBlockedUserIds.mockReturnValue(['blocked-author']);
+    // limit=3 -> range(0,3) requests 4 rows; 2 of the first 3 belong to a blocked author.
+    mockRange.mockResolvedValue({
+      data: [
+        { ...POST_ROW, id: 'a', author_id: 'blocked-author' },
+        { ...POST_ROW, id: 'b' },
+        { ...POST_ROW, id: 'c', author_id: 'blocked-author' },
+        { ...POST_ROW, id: 'lookahead' },
+      ],
+      error: null,
+    });
+
+    const page = await fetchPostsPage({ limit: 3 });
+
+    expect(page.posts.map(post => post.id)).toEqual(['b']);
+    // Raw rows consumed = 3 (the page, not counting the lookahead row) regardless of
+    // how many got filtered out — NOT posts.length (which would wrongly be 1).
+    expect(page.nextOffset).toBe(3);
+    expect(page.hasMore).toBe(true);
+  });
+
+  it('a page where every post is from a blocked author still advances nextOffset correctly', async () => {
+    mockGetBlockedUserIds.mockReturnValue(['blocked-author']);
+    mockRange.mockResolvedValue({
+      data: [
+        { ...POST_ROW, id: 'a', author_id: 'blocked-author' },
+        { ...POST_ROW, id: 'b', author_id: 'blocked-author' },
+        { ...POST_ROW, id: 'lookahead', author_id: 'blocked-author' },
+      ],
+      error: null,
+    });
+
+    const page = await fetchPostsPage({ limit: 2 });
+
+    expect(page.posts).toEqual([]);
+    expect(page.nextOffset).toBe(2);
+    expect(page.hasMore).toBe(true);
+  });
+
+  it('consecutive pages using nextOffset never re-request already-seen rows or duplicate posts', async () => {
+    mockGetBlockedUserIds.mockReturnValue(['blocked-author']);
+    mockRange
+      .mockResolvedValueOnce({
+        data: [
+          { ...POST_ROW, id: 'a', author_id: 'blocked-author' },
+          { ...POST_ROW, id: 'b' },
+          { ...POST_ROW, id: 'lookahead-1' },
+        ],
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: [{ ...POST_ROW, id: 'c' }],
+        error: null,
+      });
+
+    const first = await fetchPostsPage({ limit: 2 });
+    expect(first.nextOffset).toBe(2);
+
+    const second = await fetchPostsPage({ offset: first.nextOffset, limit: 2 });
+
+    expect(mockRange).toHaveBeenNthCalledWith(1, 0, 2);
+    expect(mockRange).toHaveBeenNthCalledWith(2, 2, 4);
+    const allIds = [...first.posts, ...second.posts].map(post => post.id);
+    expect(allIds).toEqual(['b', 'c']);
+    expect(new Set(allIds).size).toBe(allIds.length);
+    expect(second.hasMore).toBe(false);
   });
 });

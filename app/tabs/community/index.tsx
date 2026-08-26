@@ -26,6 +26,7 @@ export default function CommunityScreen() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
+  const [nextOffset, setNextOffset] = useState(0);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
   useFocusEffect(useCallback(() => {
@@ -36,6 +37,7 @@ export default function CommunityScreen() {
       if (!cancelled) {
         setPosts(page.posts);
         setHasMore(page.hasMore);
+        setNextOffset(page.nextOffset);
         setLoading(false);
       }
     });
@@ -47,15 +49,18 @@ export default function CommunityScreen() {
     if (loading || loadingMore || !hasMore) return;
     const board = activeTab === '전체' ? undefined : activeTab;
     setLoadingMore(true);
-    fetchPostsPage({ board, offset: posts.length, limit: COMMUNITY_POST_PAGE_SIZE }).then(page => {
+    // 서버가 실제로 조회를 마친 행 기준 offset을 그대로 넘긴다 — 차단 필터로 줄어든
+    // posts.length를 쓰면 이미 조회한 행을 다시 요청해 다음 페이지 일부를 건너뛰게 된다.
+    fetchPostsPage({ board, offset: nextOffset, limit: COMMUNITY_POST_PAGE_SIZE }).then(page => {
       setPosts(current => {
         const knownIds = new Set(current.map(post => post.id));
         return [...current, ...page.posts.filter(post => !knownIds.has(post.id))];
       });
       setHasMore(page.hasMore);
+      setNextOffset(page.nextOffset);
       setLoadingMore(false);
     });
-  }, [activeTab, hasMore, loading, loadingMore, posts.length]);
+  }, [activeTab, hasMore, loading, loadingMore, nextOffset]);
 
   /* 화제의 게시글: 조회수 상위 3개 (별도 "featured" 플래그 없이 파생) */
   const featured = useMemo(

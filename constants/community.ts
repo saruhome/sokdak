@@ -48,7 +48,10 @@ export type CommunityPostSummary = {
 };
 
 export type CommunityPostDetail = CommunityPostSummary & { comments: CommunityComment[] };
-export type CommunityPostPage = { posts: CommunityPostSummary[]; hasMore: boolean };
+/** hasMore/nextOffset은 항상 서버가 실제로 반환한 원본 행 기준이다 — 차단된 작성자의 글을
+ * 걸러낸 posts.length는 이 값들과 다를 수 있으므로, 다음 페이지 요청은 반드시 nextOffset을
+ * 그대로 offset에 넘겨야 한다(posts.length를 쓰면 이미 조회한 행을 다시 요청하게 된다). */
+export type CommunityPostPage = { posts: CommunityPostSummary[]; hasMore: boolean; nextOffset: number };
 export const COMMUNITY_POST_PAGE_SIZE = 20;
 
 type ProfileRow = { nickname: string; avatar_emoji: string; avatar_url?: string | null; level: string } | null;
@@ -122,10 +125,15 @@ export async function fetchPostsPage({
   if (board) query = query.eq('board', board);
 
   const { data, error } = await query;
-  if (error || !data) return { posts: [], hasMore: false };
+  if (error || !data) return { posts: [], hasMore: false, nextOffset: safeOffset };
+
+  const rawConsumed = Math.min(data.length, safeLimit);
   return {
     posts: excludeBlocked(data.slice(0, safeLimit).map(mapPostSummaryRow)),
     hasMore: data.length > safeLimit,
+    // 원본 행 기준 offset — 차단 필터로 줄어든 posts.length가 아니라 실제로 조회를 마친
+    // 행 수만큼 전진시켜야 다음 페이지가 이미 본 행을 다시 요청하지 않는다.
+    nextOffset: safeOffset + rawConsumed,
   };
 }
 

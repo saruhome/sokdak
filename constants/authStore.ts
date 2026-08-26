@@ -12,8 +12,8 @@
  */
 import * as Linking from 'expo-linking';
 import { supabase } from './supabase';
-import type { Language } from './languageStore';
 import { authApi } from '../src/features/auth/api/authApi';
+import { consentStore } from '../src/features/auth/model/consentStore';
 import { sessionStore, type AuthListener, type SokDakUser } from '../src/features/auth/model/sessionStore';
 import { profileStore, type NotificationPrefs } from '../src/features/auth/model/profileStore';
 import {
@@ -207,41 +207,8 @@ export const authStore = {
   refreshProfileAvatarSignedUrl: profileStore.refreshProfileAvatarSignedUrl,
   getProfileAvatarSignedUrlExpiresAt: profileStore.getProfileAvatarSignedUrlExpiresAt,
 
-  /**
-   * 커뮤니티 게시 전, 서버가 판정한 최신 활성 정책 버전에 동의했는지 확인한다.
-   * 단순 timestamp 캐시는 정책 개정 후에도 남을 수 있으므로 권한 판단에 사용하지 않는다.
-   */
-  async hasAcceptedCommunityGuidelines() {
-    if (!sessionStore.getUser()) return false;
-    const { data, error } = await supabase.rpc('has_accepted_current_community_policy');
-    return !error && data === true;
-  },
-
-  /**
-   * 정책 화면에서 사용자가 명시적으로 동의하면 서버 RPC가 정책 버전·언어·원문
-   * 해시·서버 시각을 append-only 동의 이력에 기록한다. 현재 UI 언어는 정책
-   * 전문을 표시한 언어와 같아야 하므로 호출 화면이 locale을 명시적으로 넘긴다.
-   */
-  async acceptCommunityGuidelines({
-    locale,
-    source = 'community_onboarding',
-    appVersion,
-    platform,
-  }: {
-    locale: Language;
-    source?: 'community_onboarding' | 'post_gate' | 'comment_gate' | 'policy_update' | 'account_settings';
-    appVersion?: string;
-    platform?: 'android' | 'ios' | 'web';
-  }) {
-    if (!sessionStore.getUser()) return { error: '로그인이 필요해요.', consent: null };
-    const { data, error } = await supabase.rpc('accept_current_community_policy', {
-      p_locale: locale,
-      p_source: source,
-      p_app_version: appVersion ?? null,
-      p_platform: platform ?? null,
-    });
-    return { error: error?.message ?? null, consent: data?.[0] ?? null };
-  },
+  hasAcceptedCommunityGuidelines: consentStore.hasAcceptedCommunityGuidelines,
+  acceptCommunityGuidelines: consentStore.acceptCommunityGuidelines,
 
   updateEmail: authApi.updateEmail,
   updatePassword: authApi.updatePassword,

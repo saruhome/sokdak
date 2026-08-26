@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { isUserAlreadyDeletedError, removeAllUserStorageObjects } from "./logic.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,23 +12,6 @@ function json(body: Record<string, unknown>, status = 200) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
-}
-
-async function removeUserStorageObjects(
-  admin: ReturnType<typeof createClient>,
-  bucket: "post-images" | "profile-avatars",
-  userId: string,
-) {
-  const { data: files, error: listError } = await admin.storage
-    .from(bucket)
-    .list(userId, { limit: 1000, sortBy: { column: "name", order: "asc" } });
-  if (listError) throw new Error(`Could not list ${bucket}: ${listError.message}`);
-
-  const paths = files?.filter(file => file.name).map(file => `${userId}/${file.name}`) ?? [];
-  if (paths.length === 0) return;
-
-  const { error: removeError } = await admin.storage.from(bucket).remove(paths);
-  if (removeError) throw new Error(`Could not remove ${bucket}: ${removeError.message}`);
 }
 
 Deno.serve(async (request) => {
@@ -59,9 +43,22 @@ Deno.serve(async (request) => {
 
   // Auth 삭제는 관계형 레코드만 cascade한다. UUID 폴더 기반의 public 게시 이미지와
   // private 프로필 사진은 서비스 역할로 먼저 정리해 고아 Storage 객체를 남기지 않는다.
+  // 1000개를 넘는 폴더는 removeAllUserStorageObjects가 내부적으로 여러 페이지에 걸쳐 처리한다.
   try {
-    await removeUserStorageObjects(admin, "post-images", user.id);
-    await removeUserStorageObjects(admin, "profile-avatars", user.id);
+    const [post, avatar] = await Promise.all([
+      removeAllUserStorageObjects(admin, "post-images", user.id),
+      removeAllUserStorageObjects(admin, "profile-avatars", user.id),
+    ]);
+    if (post.remaining || avatar.remaining) {
+      // 안전장치(50페이지=5만 개)에 걸린 극단적인 경우 — auth는 아직 지우지 않는다.
+      // 같은 요청을 다시 호출하면 이미 지운 객체는 건너뛰고 남은 것부터 이어서 처리한다.
+      console.error("Storage cleanup hit the safety page limit; retry to continue", {
+        userId: user.id,
+        postRemaining: post.remaining,
+        avatarRemaining: avatar.remaining,
+      });
+      return json({ error: "Account deletion is temporarily unavailable" }, 500);
+    }
   } catch (error) {
     console.error("Could not remove account Storage objects", {
       userId: user.id,
@@ -71,8 +68,11 @@ Deno.serve(async (request) => {
   }
 
   // Deleting auth.users cascades to profiles and relational records via existing FKs.
+  // A duplicate/retried call whose token was still valid when it reached this point can race
+  // with an already-completed deletion — GoTrue's "not found" in that case means the caller's
+  // desired end-state (deleted) is already true, so it is success, not failure.
   const { error: deleteError } = await admin.auth.admin.deleteUser(user.id);
-  if (deleteError) {
+  if (deleteError && !isUserAlreadyDeletedError(deleteError)) {
     console.error("Could not delete account", { userId: user.id, error: deleteError.message });
     return json({ error: "Account deletion is temporarily unavailable" }, 500);
   }

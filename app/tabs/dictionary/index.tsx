@@ -53,7 +53,7 @@ export default function DictionaryScreen() {
         </TouchableOpacity>
       )}
 
-      <WordListView initialSortIndex={sort === 'recent' ? 1 : 0} />
+      <WordListView initialSortIndex={sort === 'recent' ? 1 : 0} showScrollToTopButton />
     </SafeAreaView>
   );
 }

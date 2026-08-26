@@ -3,7 +3,7 @@ import {
   TextInput, FlatList, TouchableOpacity, ActivityIndicator,
 } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors, getReadableTextColor } from '@/constants/Colors';
 import { fetchWords, type Word } from '@/constants/words';
@@ -20,7 +20,7 @@ import { Alert } from '@/constants/alert';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
 } from '@/components/WordFilterBar';
-import { Search, Star, Volume2, Heart, X } from 'lucide-react-native';
+import { Search, Star, Volume2, Heart, X, ArrowUp } from 'lucide-react-native';
 import { SCREEN_WIDTH } from '@/constants/layout';
 
 const JJAEKI_ICON = require('../assets/characters/transparent/jjaeki-full.png');
@@ -54,11 +54,14 @@ export function WordListView({
   initialCategorySlugs = [],
   showTipCard = true,
   initialSortIndex = 0,
+  showScrollToTopButton = false,
 }: {
   initialCategorySlugs?: string[];
   showTipCard?: boolean;
   initialSortIndex?: number;
+  showScrollToTopButton?: boolean;
 }) {
+  const listRef = useRef<FlatList<Word>>(null);
   const language = useLanguage();
   const t = languageStore.t;
   const [words, setWords] = useState<Word[]>([]);
@@ -142,6 +145,7 @@ export function WordListView({
   return (
     <View style={styles.root}>
       <FlatList
+        ref={listRef}
         data={visible}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
@@ -333,6 +337,16 @@ export function WordListView({
           />
         </View>
       ) : null}
+      {showScrollToTopButton && (
+        <TouchableOpacity
+          style={styles.scrollTopBtn}
+          onPress={() => listRef.current?.scrollToOffset({ offset: 0, animated: true })}
+          activeOpacity={0.85}
+          accessibilityLabel={t('a11yScrollToTop')}
+        >
+          <AppIcon icon={ArrowUp} size={20} color={Colors.navBarIconActive} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -345,6 +359,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 16,
+  },
+  scrollTopBtn: {
+    position: 'absolute', right: 16, bottom: 16,
+    width: 44, height: 44, borderRadius: 22,
+    backgroundColor: Colors.navBar,
+    alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 4,
   },
 
   searchWrap: {

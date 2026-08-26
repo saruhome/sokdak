@@ -151,6 +151,7 @@ type TranslationKey =
   | 'a11ySaveWord'
   | 'a11yPlayPronunciation'
   | 'a11yLikeCategory'
+  | 'a11yScrollToTop'
   | 'cancelLabel'
   | 'goToLogin'
   | 'commentFailedTitle'
@@ -460,6 +461,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     a11ySaveWord: '단어 저장',
     a11yPlayPronunciation: '발음 듣기',
     a11yLikeCategory: '카테고리 즐겨찾기',
+    a11yScrollToTop: '맨 위로 이동',
     cancelLabel: '취소',
     goToLogin: '로그인하러 가기',
     commentFailedTitle: '댓글 등록 실패',
@@ -768,6 +770,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     a11ySaveWord: 'Save word',
     a11yPlayPronunciation: 'Play pronunciation',
     a11yLikeCategory: 'Favorite category',
+    a11yScrollToTop: 'Scroll to top',
     cancelLabel: 'Cancel',
     goToLogin: 'Go to login',
     commentFailedTitle: 'Failed to post comment',
@@ -1076,6 +1079,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     a11ySaveWord: '単語を保存',
     a11yPlayPronunciation: '発音を再生',
     a11yLikeCategory: 'カテゴリーをお気に入りに追加',
+    a11yScrollToTop: 'トップへ戻る',
     cancelLabel: 'キャンセル',
     goToLogin: 'ログインする',
     commentFailedTitle: 'コメントの投稿に失敗しました',
@@ -1384,6 +1388,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     a11ySaveWord: 'Lưu từ',
     a11yPlayPronunciation: 'Nghe phát âm',
     a11yLikeCategory: 'Yêu thích danh mục',
+    a11yScrollToTop: 'Cuộn lên đầu trang',
     cancelLabel: 'Hủy',
     goToLogin: 'Đến trang đăng nhập',
     commentFailedTitle: 'Đăng bình luận thất bại',
@@ -1692,6 +1697,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     a11ySaveWord: 'Guardar palabra',
     a11yPlayPronunciation: 'Reproducir pronunciación',
     a11yLikeCategory: 'Marcar categoría como favorita',
+    a11yScrollToTop: 'Ir arriba',
     cancelLabel: 'Cancelar',
     goToLogin: 'Ir a iniciar sesión',
     commentFailedTitle: 'Error al publicar el comentario',
@@ -2000,6 +2006,7 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
     a11ySaveWord: 'Wort speichern',
     a11yPlayPronunciation: 'Aussprache wiedergeben',
     a11yLikeCategory: 'Kategorie favorisieren',
+    a11yScrollToTop: 'Nach oben scrollen',
     cancelLabel: 'Abbrechen',
     goToLogin: 'Zur Anmeldung',
     commentFailedTitle: 'Kommentar konnte nicht veröffentlicht werden',

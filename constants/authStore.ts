@@ -10,25 +10,24 @@
  *   먼저 로컬 캐시를 낙관적으로 갱신해 구독자에게 즉시 알리고, DB 반영은 백그라운드에서 처리한다.
  *   실패 시 롤백하고 다시 알린다.
  */
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
 import { supabase } from './supabase';
 import type { Language } from './languageStore';
 import { authApi } from '../src/features/auth/api/authApi';
 import { sessionStore, type AuthListener, type SokDakUser } from '../src/features/auth/model/sessionStore';
 import { profileStore, type NotificationPrefs } from '../src/features/auth/model/profileStore';
+import {
+  BETA_UNLIMITED_ENTITLEMENTS,
+  entitlementStore,
+  FREE_CATEGORY_LIKE_LIMIT,
+  FREE_TTS_DAILY_LIMIT,
+  FREE_WORD_SAVE_LIMIT,
+} from '../src/features/auth/model/entitlementStore';
 
 export type { SokDakUser, NotificationPrefs };
+export { BETA_UNLIMITED_ENTITLEMENTS, FREE_CATEGORY_LIKE_LIMIT, FREE_TTS_DAILY_LIMIT, FREE_WORD_SAVE_LIMIT };
 
 type BookmarkListener = () => void;
-
-/** ponytail: 무료 회원 저장 단어/좋아요 카테고리/TTS 일일 상한. 프리미엄은 무제한.
- *  실제 결제 연동 전까지는 클라이언트 상수 — 서버에서 강제하는 값이 아니라 UX 가드일 뿐이다. */
-export const FREE_WORD_SAVE_LIMIT = 3;
-export const FREE_CATEGORY_LIKE_LIMIT = 2;
-export const FREE_TTS_DAILY_LIMIT = 3;
-/** 결제가 비활성인 비공개 베타에서는 유료 제한·자동 삭제를 적용하지 않는다. */
-export const BETA_UNLIMITED_ENTITLEMENTS = true;
 
 const _savedWordIds = new Set<string>();
 const _savedPostIds = new Set<string>();
@@ -41,32 +40,11 @@ const _likedCategorySlugs = new Set<string>();
 const _blockedUserIds = new Set<string>();
 const _bookmarkListeners = new Set<BookmarkListener>();
 
-/** 무료 회원 TTS 일일 재생 횟수 — 계정+날짜별로 기기에 저장(서버 강제 아님, UX 가드).
- *  ponytail: 세션이 자정을 넘겨 계속 켜져 있으면 갱신은 다음 recordTtsPlay/canPlayTtsToday
- *  호출 시점에 반영된다 — 실시간 자정 리셋 타이머는 만들지 않았다. */
-let _ttsPlaysToday = 0;
-let _ttsPlaysDate = '';
-
 let _initialized = false;
 let _initPromise: Promise<void> | null = null;
 
 function notifyBookmarks() {
   _bookmarkListeners.forEach(fn => fn());
-}
-
-function todayString() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function ttsStorageKey(userId: string) {
-  return `sokdak.tts.${userId}.${todayString()}`;
-}
-
-async function loadTtsPlaysToday(userId: string) {
-  const today = todayString();
-  const raw = await AsyncStorage.getItem(ttsStorageKey(userId));
-  _ttsPlaysToday = raw ? parseInt(raw, 10) || 0 : 0;
-  _ttsPlaysDate = today;
 }
 
 type BookmarkTable = 'saved_words' | 'saved_posts' | 'post_likes' | 'comment_likes' | 'liked_categories';
@@ -120,7 +98,7 @@ async function fetchBookmarks(userId: string) {
   _likedCategorySlugs.clear();
   likedCategoriesRes.data?.forEach((row: { category_slug: string }) => _likedCategorySlugs.add(row.category_slug));
 
-  await loadTtsPlaysToday(userId);
+  await entitlementStore.loadTtsPlaysToday(userId);
 }
 
 async function fetchBlockedUsers(userId: string) {
@@ -137,8 +115,7 @@ function clearLocalCaches() {
   _likedCommentIds.clear();
   _likedCategorySlugs.clear();
   _blockedUserIds.clear();
-  _ttsPlaysToday = 0;
-  _ttsPlaysDate = '';
+  entitlementStore.resetTts();
 }
 
 async function applySession(userId: string | undefined, email: string | undefined) {
@@ -275,31 +252,17 @@ export const authStore = {
   /* ── 프리미엄 ──
    * entitlement는 결제 서버의 영수증 검증·웹훅만 갱신해야 한다. 앱은 현재 서버가 전달한
    * 상태를 읽기만 하며, 클라이언트에서 is_premium을 직접 쓰는 경로는 제공하지 않는다. */
-  isPremium: () => sessionStore.getUser()?.isPremium ?? false,
+  isPremium: entitlementStore.isPremium,
   getStreakCount: () => sessionStore.getUser()?.streakCount ?? 0,
   /** 무료 회원 단어 저장 상한 체크 — 이미 저장된 단어를 해제하는 건 항상 허용,
-   *  새로 추가할 때만 막는다. 화면에서 toggleWordSaved 호출 전에 확인한다. */
-  canSaveMoreWords: () => BETA_UNLIMITED_ENTITLEMENTS || sessionStore.getUser()?.isPremium === true || _savedWordIds.size < FREE_WORD_SAVE_LIMIT,
+   *  새로 추가할 때만 막는다. 화면에서 toggleWordSaved 호출 전에 확인한다.
+   *  현재 저장 개수는 북마크 캐시(이 파일 소유)에 있어 여기서 판정을 조립한다. */
+  canSaveMoreWords: () => entitlementStore.hasUnlimited() || _savedWordIds.size < FREE_WORD_SAVE_LIMIT,
   /** 무료 회원 카테고리 좋아요 상한 — 단어 저장과 동일한 패턴, 해제는 항상 허용 */
-  canLikeMoreCategories: () => BETA_UNLIMITED_ENTITLEMENTS || sessionStore.getUser()?.isPremium === true || _likedCategorySlugs.size < FREE_CATEGORY_LIKE_LIMIT,
+  canLikeMoreCategories: () => entitlementStore.hasUnlimited() || _likedCategorySlugs.size < FREE_CATEGORY_LIKE_LIMIT,
 
-  /** 무료 회원 TTS 일일 재생 상한. 비로그인은 애초에 speakWord에서 로그인 요구로 막는다. */
-  canPlayTtsToday: () => {
-    const user = sessionStore.getUser();
-    if (BETA_UNLIMITED_ENTITLEMENTS) return Boolean(user);
-    if (user?.isPremium) return true;
-    if (!user) return false;
-    if (_ttsPlaysDate !== todayString()) return true; // 날짜가 바뀌었으면 아직 오늘 재생 없음
-    return _ttsPlaysToday < FREE_TTS_DAILY_LIMIT;
-  },
-  recordTtsPlay() {
-    const user = sessionStore.getUser();
-    if (!user || user.isPremium || BETA_UNLIMITED_ENTITLEMENTS) return;
-    const today = todayString();
-    if (_ttsPlaysDate !== today) { _ttsPlaysDate = today; _ttsPlaysToday = 0; }
-    _ttsPlaysToday += 1;
-    AsyncStorage.setItem(ttsStorageKey(user.id), String(_ttsPlaysToday)).catch(() => {});
-  },
+  canPlayTtsToday: entitlementStore.canPlayTtsToday,
+  recordTtsPlay: entitlementStore.recordTtsPlay,
 
   /** 회원탈퇴 — 인증된 호출자를 Edge Function에서 검증한 뒤, 서비스 역할로 Auth·연관 DB 데이터와
    *  본인 게시 이미지 Storage 객체를 정리한다. 클라이언트는 privileged RPC를 직접 실행하지 않는다. */

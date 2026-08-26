@@ -9,7 +9,11 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.saruhome.sokdak"
+      "bundleIdentifier": "com.saruhome.sokdak",
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "SokDak에서 말한 한국어 단어를 검색어로 바꾸기 위해 음성 인식이 필요합니다.",
+        "NSMicrophoneUsageDescription": "SokDak에서 한국어 단어를 음성으로 검색하려면 마이크 접근이 필요합니다."
+      }
     },
     "android": {
       "package": "com.saruhome.sokdak",
@@ -19,7 +23,10 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro"
@@ -35,9 +42,18 @@
         {
           "microphonePermission": "SokDak에서 한국어 단어를 음성으로 검색하려면 마이크 접근이 필요합니다.",
           "speechRecognitionPermission": "SokDak에서 말한 한국어 단어를 검색어로 바꾸기 위해 음성 인식이 필요합니다.",
-          "androidSpeechServicePackages": ["com.google.android.googlequicksearchbox"]
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox"
+          ]
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e6c42fd7-2538-423c-90f9-a0d5664cff1c"
+      }
+    },
+    "owner": "saruhome"
   }
 }

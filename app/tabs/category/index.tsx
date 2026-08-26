@@ -145,8 +145,8 @@ export default function CategoryScreen() {
                   style={[
                     styles.recommendTextWrap,
                     hintWidth != null && {
-                      width: hintWidth + RECOMMEND_BUBBLE_PAD * 2 + RECOMMEND_BUBBLE_BORDER * 2,
-                      maxWidth: hintWidth + RECOMMEND_BUBBLE_PAD * 2 + RECOMMEND_BUBBLE_BORDER * 2,
+                      width: hintWidth + RECOMMEND_BUBBLE_PAD * 2 + RECOMMEND_BUBBLE_BORDER * 2 + 5,
+                      maxWidth: hintWidth + RECOMMEND_BUBBLE_PAD * 2 + RECOMMEND_BUBBLE_BORDER * 2 + 5,
                       flexShrink: 0,
                     },
                   ]}

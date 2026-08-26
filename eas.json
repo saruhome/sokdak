@@ -6,6 +6,9 @@
     "private-beta": {
       "distribution": "internal",
       "channel": "private-beta",
+      "ios": {
+        "distribution": "store"
+      },
       "env": {
         "EXPO_PUBLIC_RELEASE_STAGE": "private-beta"
       }

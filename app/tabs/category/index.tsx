@@ -15,7 +15,8 @@ import { Search, Mic, Star, ChevronDown, Crown } from 'lucide-react-native';
 import { SCREEN_WIDTH } from '../../../constants/layout';
 
 const HORANG_ICON = require('../../../assets/Callout Card/image 146.png');
-const ACTIVE_STAR_COLOR = '#FACC15';
+/* 활성 별 채움 — Figma 팔레트의 point5(골드)를 재사용, 임의 hex 금지 규칙 준수 */
+const ACTIVE_STAR_COLOR = Colors.premium;
 const RECOMMEND_CARD_LEFT = 24; // FlatList contentContainerStyle paddingHorizontal과 동일
 const RECOMMEND_BUBBLE_MAX_WIDTH = SCREEN_WIDTH / 2 - RECOMMEND_CARD_LEFT + 40;
 const RECOMMEND_BUBBLE_PAD = 12;
@@ -114,6 +115,8 @@ export default function CategoryScreen() {
               style={styles.searchBarWrap}
               onPress={() => router.push('/tabs/category/search')}
               activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel={t('categorySearchPlaceholder')}
             >
               <View style={styles.searchBar}>
                 <AppIcon icon={Search} size={15} />
@@ -177,6 +180,7 @@ export default function CategoryScreen() {
                 style={styles.sortBtn}
                 onPress={() => setSortMode(m => (m === '인기순' ? '가나다순' : '인기순'))}
                 activeOpacity={0.7}
+                accessibilityRole="button"
               >
                 <Text style={styles.sortLabel}>{sortMode === '인기순' ? t('sortPopular') : t('sortAlphabetical')}</Text>
                 <AppIcon icon={ChevronDown} size={14} color={Colors.textSecondary} />
@@ -190,13 +194,15 @@ export default function CategoryScreen() {
           const locked = item.premiumOnly && !BETA_UNLIMITED_ENTITLEMENTS && !isPremium;
           const CardBg: any = item.image ? ImageBackground : View;
           const cardBgProps = item.image
-            ? { source: item.image, imageStyle: styles.cardBgImage, style: styles.cardBg }
+            /* 이미지 로드 실패 시에도 카테고리 색이 placeholder로 남는다 */
+            ? { source: item.image, imageStyle: styles.cardBgImage, style: [styles.cardBg, { backgroundColor: item.colorBg }] }
             : { style: [styles.cardBg, { backgroundColor: item.colorBg }] };
           return (
             <TouchableOpacity
               style={styles.categoryCard}
               onPress={() => router.push(locked ? '/tabs/mypage/premium' : `/tabs/category/${item.slug}`)}
               activeOpacity={0.85}
+              accessibilityRole="button"
             >
               <CardBg {...cardBgProps}>
                 <View style={styles.cardOverlay} />
@@ -213,7 +219,9 @@ export default function CategoryScreen() {
                         handleToggleLike(item);
                       }}
                       hitSlop={8}
+                      accessibilityRole="button"
                       accessibilityLabel={t('a11yLikeCategory')}
+                      accessibilityState={{ selected: liked }}
                     >
                       <AppIcon
                         icon={Star}

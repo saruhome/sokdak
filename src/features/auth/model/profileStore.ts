@@ -1,8 +1,9 @@
 /**
  * 프로필 도메인 — auth migration 3단계.
  * profiles/account_settings 테이블의 읽기·쓰기, private 아바타 signed URL 수명 상태,
- * 알림 설정, 연속 학습일(streak) 갱신을 담당한다. 세션 상태는 sessionStore가 소유하고,
- * 이 스토어는 프로필 변경 시 sessionStore.patchUser/notify로 반영한다.
+ * 연속 학습일(streak) 갱신을 담당한다. 알림 설정은 notificationPrefsStore로 분리됐다.
+ * 세션 상태는 sessionStore가 소유하고, 이 스토어는 프로필 변경 시
+ * sessionStore.patchUser/notify로 반영한다.
  */
 import { supabase } from '../../../shared/api/supabaseClient';
 import { sessionStore, type SokDakUser } from './sessionStore';
@@ -15,18 +16,6 @@ import {
   notifyPrivateSignedMediaChanged,
   registerPrivateSignedMediaResource,
 } from '../../../../constants/privateSignedMediaRegistry';
-
-export type NotificationPrefs = {
-  newSlang: boolean;
-  popularSlang: boolean;
-  popularPost: boolean;
-  like: boolean;
-  comment: boolean;
-};
-
-const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = {
-  newSlang: true, popularSlang: true, popularPost: true, like: true, comment: true,
-};
 
 let _profileAvatarSignedUrlExpiresAt: number | null = null;
 
@@ -165,28 +154,6 @@ export const profileStore = {
     setProfileAvatarSignedUrlExpiresAt(null);
   },
 
-  /** 알림 설정 — `like`/`comment`는 실제 알림 트리거(notify_on_like/notify_on_comment)가 참고한다.
-   *  newSlang/popularSlang/popularPost는 아직 그 알림 자체를 만드는 백엔드가 없어 값만 저장된다. */
-  async fetchNotificationPrefs(): Promise<NotificationPrefs> {
-    const user = sessionStore.getUser();
-    if (!user) return DEFAULT_NOTIFICATION_PREFS;
-    const { data } = await supabase
-      .from('account_settings')
-      .select('notification_prefs')
-      .eq('user_id', user.id)
-      .single();
-    return { ...DEFAULT_NOTIFICATION_PREFS, ...(data?.notification_prefs as Partial<NotificationPrefs> ?? {}) };
-  },
-
-  async updateNotificationPrefs(prefs: NotificationPrefs) {
-    const user = sessionStore.getUser();
-    if (!user) return { error: '로그인이 필요해요.' };
-    const { error } = await supabase
-      .from('account_settings')
-      .update({ notification_prefs: prefs })
-      .eq('user_id', user.id);
-    return { error: error?.message ?? null };
-  },
 };
 
 registerPrivateSignedMediaResource({

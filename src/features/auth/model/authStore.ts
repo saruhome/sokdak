@@ -13,7 +13,8 @@ import { supabase } from '../../../shared/api/supabaseClient';
 import { authApi } from '../api/authApi';
 import { consentStore } from './consentStore';
 import { sessionStore, type AuthListener, type SokDakUser } from './sessionStore';
-import { profileStore, type NotificationPrefs } from './profileStore';
+import { profileStore } from './profileStore';
+import { notificationPrefsStore, type NotificationPrefs } from './notificationPrefsStore';
 import {
   BETA_UNLIMITED_ENTITLEMENTS,
   entitlementStore,
@@ -128,8 +129,8 @@ export const authStore = {
   updateEmail: authApi.updateEmail,
   updatePassword: authApi.updatePassword,
 
-  fetchNotificationPrefs: profileStore.fetchNotificationPrefs,
-  updateNotificationPrefs: profileStore.updateNotificationPrefs,
+  fetchNotificationPrefs: notificationPrefsStore.fetchNotificationPrefs,
+  updateNotificationPrefs: notificationPrefsStore.updateNotificationPrefs,
 
   /* ── 프리미엄 ──
    * entitlement는 결제 서버의 영수증 검증·웹훅만 갱신해야 한다. 앱은 현재 서버가 전달한

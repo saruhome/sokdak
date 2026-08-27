@@ -62,6 +62,7 @@ export default function HomeScreen() {
   const t = languageStore.t;
   const [heroIndex, setHeroIndex] = useState(0);
   const [communityPosts, setCommunityPosts] = useState<CommunityPostSummary[]>([]);
+  const [communityLoaded, setCommunityLoaded] = useState(false);
   /** Figma: Card/Recommend2 — 오늘의 단어 캐러셀 (날짜 기반 랜덤 3개, 매일 자정 기준으로 바뀜) */
   const [heroWords, setHeroWords] = useState<Word[]>([]);
   /** Figma: 새로운 신조어 섹션 — new-slang 카테고리 단어 미리보기 */
@@ -81,7 +82,7 @@ export default function HomeScreen() {
   }, []);
 
   useFocusEffect(useCallback(() => {
-    fetchPosts().then(data => setCommunityPosts(data.slice(0, 3)));
+    fetchPosts().then(data => { setCommunityPosts(data.slice(0, 3)); setCommunityLoaded(true); });
     setIsPremium(authStore.isPremium());
   }, []));
 
@@ -142,7 +143,7 @@ export default function HomeScreen() {
                   activeOpacity={0.9}
                 >
                   {word.thumbnailUrl && (
-                    <Image source={{ uri: word.thumbnailUrl }} style={styles.heroThumbnail} resizeMode="cover" />
+                    <Image source={{ uri: word.thumbnailUrl }} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
                   )}
                   <View style={styles.heroScrim} />
                   <View style={styles.heroContent}>
@@ -151,7 +152,7 @@ export default function HomeScreen() {
                         <Text style={[styles.heroBadgeText, { color: category.colorFg }]} numberOfLines={1}>{getCategoryName(category, language)}</Text>
                       </View>
                     )}
-                    <Text style={styles.heroWord}>{word.word}</Text>
+                    <Text style={styles.heroWord} numberOfLines={1}>{word.word}</Text>
                     <Text style={styles.heroDesc} numberOfLines={2}>{word.shortDesc}</Text>
                   </View>
                 </TouchableOpacity>
@@ -226,11 +227,11 @@ export default function HomeScreen() {
               >
                 {word.thumbnailUrl && (
                   <>
-                    <Image source={{ uri: word.thumbnailUrl }} style={styles.wordCardThumbnail} resizeMode="cover" />
+                    <Image source={{ uri: word.thumbnailUrl }} style={styles.wordCardThumbnail} resizeMode="cover" accessible={false} />
                     <View style={styles.wordCardScrim} />
                   </>
                 )}
-                <Text style={[styles.wordCardTitle, word.thumbnailUrl && styles.wordCardTitleOnImage]}>{word.word}</Text>
+                <Text style={[styles.wordCardTitle, word.thumbnailUrl && styles.wordCardTitleOnImage]} numberOfLines={1}>{word.word}</Text>
                 <Text style={[styles.wordCardDesc, word.thumbnailUrl && styles.wordCardDescOnImage]} numberOfLines={2}>{word.shortDesc}</Text>
               </TouchableOpacity>
             ))}
@@ -252,7 +253,7 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {communityPosts.length === 0 && (
+          {communityLoaded && communityPosts.length === 0 && (
             <Text style={styles.communityEmpty}>{t('noPostsYet')}</Text>
           )}
           {communityPosts.map((post, i) => (
@@ -317,7 +318,7 @@ const styles = StyleSheet.create({
   },
   heroBadgeText: { fontSize: 10, fontWeight: '600', fontFamily: 'NotoSerifKR_600SemiBold' },
   heroWord: {
-    fontSize: 24, lineHeight: 36, color: '#000',
+    fontSize: 24, lineHeight: 36, color: Colors.textEmphasis,
     fontFamily: 'NotoSerifKR_600SemiBold', marginTop: 2,
   },
   heroDesc: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined, opacity: 0.9 },
@@ -346,7 +347,7 @@ const styles = StyleSheet.create({
 
   /* 오늘의 실전 표현 카드 */
   exprCard: {
-    backgroundColor: Colors.surface, borderRadius: 12,
+    backgroundColor: Colors.surface, borderRadius: 10,
     borderWidth: 1, borderColor: Colors.border, overflow: 'hidden',
   },
   exprRow: { padding: 16, gap: 6 },
@@ -383,7 +384,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.35)',
   },
   wordCardTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
-  wordCardTitleOnImage: { color: '#fff' },
+  wordCardTitleOnImage: { color: Colors.white },
   wordCardDesc: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16, fontFamily: undefined },
   wordCardDescOnImage: { color: 'rgba(255,255,255,0.85)' },
 

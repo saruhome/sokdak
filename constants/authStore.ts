@@ -1,14 +1,13 @@
 /**
- * Supabase 기반 인증/세션 상태 스토어 — auth migration 진행 중.
- * - 세션 상태(현재 유저·로그인 여부·인증 리스너)의 소유자는 src/features/auth/model/sessionStore.ts,
- *   stateless Supabase 인증 호출은 src/features/auth/api/authApi.ts로 이동했다.
- * - 이 파일은 잔여 orchestration(프로필 fetch, 북마크/차단 캐시, 정책 동의, entitlement)과
- *   기존 화면들이 쓰는 public API의 호환 facade를 담당한다. 로직은 이동 전과 동일하다.
- * - 저장한 단어/게시글 저장/좋아요 한 게시글은 메모리 캐시(Set)로 유지하되, 실제 소스는
- *   `saved_words`/`saved_posts`/`post_likes` 테이블.
- * - toggleWordSaved/togglePostLiked/togglePostSaved는 화면 코드에서 await 없이 호출되므로(기존 컨벤션 유지),
- *   먼저 로컬 캐시를 낙관적으로 갱신해 구독자에게 즉시 알리고, DB 반영은 백그라운드에서 처리한다.
- *   실패 시 롤백하고 다시 알린다.
+ * Supabase 기반 인증/세션 상태 스토어 — 도메인 분리 완료 상태의 호환 facade.
+ * - 세션 상태: src/features/auth/model/sessionStore.ts
+ * - stateless 인증 호출: src/features/auth/api/authApi.ts
+ * - 프로필/아바타/알림 설정: src/features/auth/model/profileStore.ts
+ * - 유료 권한/무료 한도/TTS 카운터: src/features/auth/model/entitlementStore.ts
+ * - 커뮤니티 정책 동의: src/features/auth/model/consentStore.ts
+ * - 북마크·차단 캐시: src/features/bookmarks/model/bookmarkStore.ts
+ * 이 파일에는 앱 시작/세션 전환 orchestration(initialize/applySession)과 기존 화면들이
+ * 쓰는 public API의 위임만 남아 있다.
  */
 import * as Linking from 'expo-linking';
 import { supabase } from './supabase';
@@ -23,98 +22,17 @@ import {
   FREE_TTS_DAILY_LIMIT,
   FREE_WORD_SAVE_LIMIT,
 } from '../src/features/auth/model/entitlementStore';
+import { bookmarkStore } from '../src/features/bookmarks/model/bookmarkStore';
 
 export type { SokDakUser, NotificationPrefs };
 export { BETA_UNLIMITED_ENTITLEMENTS, FREE_CATEGORY_LIKE_LIMIT, FREE_TTS_DAILY_LIMIT, FREE_WORD_SAVE_LIMIT };
 
-type BookmarkListener = () => void;
-
-const _savedWordIds = new Set<string>();
-const _savedPostIds = new Set<string>();
-const _likedPostIds = new Set<string>();
-/** 좋아요 한 댓글 — 로그인 계정에만 의미가 있어 로그인 시에만 채운다 */
-const _likedCommentIds = new Set<string>();
-/** 좋아요 한 카테고리 — liked_categories 테이블에 영속화 */
-const _likedCategorySlugs = new Set<string>();
-/** 차단한 유저 — 로그인 계정에만 의미가 있어 로그인 시에만 채운다 */
-const _blockedUserIds = new Set<string>();
-const _bookmarkListeners = new Set<BookmarkListener>();
-
 let _initialized = false;
 let _initPromise: Promise<void> | null = null;
 
-function notifyBookmarks() {
-  _bookmarkListeners.forEach(fn => fn());
-}
-
-type BookmarkTable = 'saved_words' | 'saved_posts' | 'post_likes' | 'comment_likes' | 'liked_categories';
-
-/** id 하나를 (user_id, <idColumn>) 조인 테이블에 낙관적으로 insert/delete하는 공용 토글.
- * toggleWordSaved/togglePostSaved/togglePostLiked/toggleCommentLiked가 테이블·컬럼명만 바꿔 공유한다.
- * requireLogin이 true면 비로그인일 때 로컬 Set도 건드리지 않고 그냥 no-op(단어 저장 전용). */
-function toggleBookmark(set: Set<string>, id: string, table: BookmarkTable, idColumn: string, requireLogin: boolean) {
-  const user = sessionStore.getUser();
-  if (requireLogin && !user) return;
-
-  const was = set.has(id);
-  if (was) set.delete(id); else set.add(id);
-  notifyBookmarks();
-
-  if (!user) return;
-  const userId = user.id;
-
-  // ponytail: 테이블/컬럼이 런타임 문자열이라 Supabase의 리터럴 유니언 타입과 안 맞음 — any로 우회.
-  const write = was
-    ? supabase.from(table as any).delete().eq('user_id', userId).eq(idColumn, id)
-    : supabase.from(table as any).insert({ user_id: userId, [idColumn]: id });
-
-  write.then(({ error }: { error: unknown }) => {
-    if (!error) return;
-    if (was) set.add(id); else set.delete(id);
-    notifyBookmarks();
-  });
-}
-
-async function fetchBookmarks(userId: string) {
-  const [savedRes, likedRes, savedPostsRes, likedCommentsRes, likedCategoriesRes] = await Promise.all([
-    supabase.from('saved_words').select('word_id').eq('user_id', userId),
-    supabase.from('post_likes').select('post_id').eq('user_id', userId),
-    supabase.from('saved_posts').select('post_id').eq('user_id', userId),
-    supabase.from('comment_likes').select('comment_id').eq('user_id', userId),
-    // ponytail: liked_categories는 아직 운영 DB에 없는 신규 마이그레이션이라 생성된 타입에
-    // 없음 — toggleBookmark의 insert와 동일하게 any로 우회. 마이그레이션 적용 + 타입 재생성 후
-    // 지워도 되는 캐스트.
-    (supabase.from('liked_categories' as any) as any).select('category_slug').eq('user_id', userId),
-  ]);
-
-  _savedWordIds.clear();
-  savedRes.data?.forEach(row => _savedWordIds.add(row.word_id));
-  _likedPostIds.clear();
-  likedRes.data?.forEach(row => _likedPostIds.add(row.post_id));
-  _savedPostIds.clear();
-  savedPostsRes.data?.forEach(row => _savedPostIds.add(row.post_id));
-  _likedCommentIds.clear();
-  likedCommentsRes.data?.forEach(row => _likedCommentIds.add(row.comment_id));
-  _likedCategorySlugs.clear();
-  likedCategoriesRes.data?.forEach((row: { category_slug: string }) => _likedCategorySlugs.add(row.category_slug));
-
-  await entitlementStore.loadTtsPlaysToday(userId);
-}
-
-async function fetchBlockedUsers(userId: string) {
-  const { data } = await supabase.from('blocked_users').select('blocked_id').eq('blocker_id', userId);
-  _blockedUserIds.clear();
-  data?.forEach(row => _blockedUserIds.add(row.blocked_id));
-}
-
 function clearLocalCaches() {
   profileStore.clearAvatarSignedUrlExpiry();
-  _savedWordIds.clear();
-  _savedPostIds.clear();
-  _likedPostIds.clear();
-  _likedCommentIds.clear();
-  _likedCategorySlugs.clear();
-  _blockedUserIds.clear();
+  bookmarkStore.clearAll();
   entitlementStore.resetTts();
 }
 
@@ -123,13 +41,13 @@ async function applySession(userId: string | undefined, email: string | undefine
     sessionStore.clearUser();
     clearLocalCaches();
     sessionStore.notify();
-    notifyBookmarks();
+    bookmarkStore.notify();
     return;
   }
   sessionStore.setUser(await profileStore.fetchProfile(userId, email));
-  await Promise.all([fetchBookmarks(userId), fetchBlockedUsers(userId)]);
+  await Promise.all([bookmarkStore.loadForUser(userId), entitlementStore.loadTtsPlaysToday(userId)]);
   sessionStore.notify();
-  notifyBookmarks();
+  bookmarkStore.notify();
 }
 
 export const authStore = {
@@ -194,11 +112,9 @@ export const authStore = {
   async logout() {
     await authApi.signOut();
     sessionStore.clearUser();
-    /* 이동 전 코드와 동일하게 likedComment/blocked는 세션 종료 알림 전에 명시적으로 비우지
-     * 않았어도 applySession(undefined)가 곧 이어 정리한다 — 여기서는 전체를 한 번에 비운다. */
     clearLocalCaches();
     sessionStore.notify();
-    notifyBookmarks();
+    bookmarkStore.notify();
   },
 
   requestPasswordReset: authApi.requestPasswordReset,
@@ -222,11 +138,10 @@ export const authStore = {
   isPremium: entitlementStore.isPremium,
   getStreakCount: () => sessionStore.getUser()?.streakCount ?? 0,
   /** 무료 회원 단어 저장 상한 체크 — 이미 저장된 단어를 해제하는 건 항상 허용,
-   *  새로 추가할 때만 막는다. 화면에서 toggleWordSaved 호출 전에 확인한다.
-   *  현재 저장 개수는 북마크 캐시(이 파일 소유)에 있어 여기서 판정을 조립한다. */
-  canSaveMoreWords: () => entitlementStore.hasUnlimited() || _savedWordIds.size < FREE_WORD_SAVE_LIMIT,
+   *  새로 추가할 때만 막는다. 화면에서 toggleWordSaved 호출 전에 확인한다. */
+  canSaveMoreWords: () => entitlementStore.hasUnlimited() || bookmarkStore.getSavedWordCount() < FREE_WORD_SAVE_LIMIT,
   /** 무료 회원 카테고리 좋아요 상한 — 단어 저장과 동일한 패턴, 해제는 항상 허용 */
-  canLikeMoreCategories: () => entitlementStore.hasUnlimited() || _likedCategorySlugs.size < FREE_CATEGORY_LIKE_LIMIT,
+  canLikeMoreCategories: () => entitlementStore.hasUnlimited() || bookmarkStore.getLikedCategoryCount() < FREE_CATEGORY_LIKE_LIMIT,
 
   canPlayTtsToday: entitlementStore.canPlayTtsToday,
   recordTtsPlay: entitlementStore.recordTtsPlay,
@@ -244,47 +159,29 @@ export const authStore = {
     return sessionStore.subscribe(fn);
   },
 
-  /* ── 저장한 단어 (로그인 전용 — 화면에서 isLoggedIn() 확인 후 호출할 것) ── */
-  isWordSaved: (id: string) => _savedWordIds.has(id),
-  toggleWordSaved(id: string) { toggleBookmark(_savedWordIds, id, 'saved_words', 'word_id', true); },
-  getSavedWordIds: () => Array.from(_savedWordIds),
+  /* ── 북마크/차단 — src/features/bookmarks/model/bookmarkStore.ts 위임 ── */
+  isWordSaved: bookmarkStore.isWordSaved,
+  toggleWordSaved: bookmarkStore.toggleWordSaved,
+  getSavedWordIds: bookmarkStore.getSavedWordIds,
 
-  /* ── 저장한 게시글 ── */
-  isPostSaved: (id: string) => _savedPostIds.has(id),
-  togglePostSaved(id: string) { toggleBookmark(_savedPostIds, id, 'saved_posts', 'post_id', false); },
-  getSavedPostIds: () => Array.from(_savedPostIds),
+  isPostSaved: bookmarkStore.isPostSaved,
+  togglePostSaved: bookmarkStore.togglePostSaved,
+  getSavedPostIds: bookmarkStore.getSavedPostIds,
 
-  /* ── 좋아요 한 게시글 ── */
-  isPostLiked: (id: string) => _likedPostIds.has(id),
-  togglePostLiked(id: string) { toggleBookmark(_likedPostIds, id, 'post_likes', 'post_id', false); },
-  getLikedPostIds: () => Array.from(_likedPostIds),
+  isPostLiked: bookmarkStore.isPostLiked,
+  togglePostLiked: bookmarkStore.togglePostLiked,
+  getLikedPostIds: bookmarkStore.getLikedPostIds,
 
-  /* ── 좋아요 한 댓글 ── */
-  isCommentLiked: (id: string) => _likedCommentIds.has(id),
-  toggleCommentLiked(id: string) { toggleBookmark(_likedCommentIds, id, 'comment_likes', 'comment_id', false); },
+  isCommentLiked: bookmarkStore.isCommentLiked,
+  toggleCommentLiked: bookmarkStore.toggleCommentLiked,
 
-  /* ── 좋아요 한 카테고리 — liked_categories 테이블에 영속화(마이페이지가 즐겨찾기로 보여주므로) ── */
-  isCategoryLiked: (slug: string) => _likedCategorySlugs.has(slug),
-  toggleCategoryLiked(slug: string) {
-    toggleBookmark(_likedCategorySlugs, slug, 'liked_categories', 'category_slug', true);
-  },
-  getLikedCategorySlugs: () => Array.from(_likedCategorySlugs),
+  isCategoryLiked: bookmarkStore.isCategoryLiked,
+  toggleCategoryLiked: bookmarkStore.toggleCategoryLiked,
+  getLikedCategorySlugs: bookmarkStore.getLikedCategorySlugs,
 
-  /* ── 차단한 유저 — 차단하면 그 유저 글이 목록에서 안 보인다(constants/community.ts에서 필터링) ── */
-  isUserBlocked: (userId: string) => _blockedUserIds.has(userId),
-  async blockUser(userId: string) {
-    const user = sessionStore.getUser();
-    if (!user) return { error: '로그인이 필요해요.' };
-    _blockedUserIds.add(userId);
-    notifyBookmarks();
-    const { error } = await supabase.from('blocked_users').insert({ blocker_id: user.id, blocked_id: userId });
-    if (error) { _blockedUserIds.delete(userId); notifyBookmarks(); return { error: error.message }; }
-    return { error: null };
-  },
-  getBlockedUserIds: () => Array.from(_blockedUserIds),
+  isUserBlocked: bookmarkStore.isUserBlocked,
+  blockUser: bookmarkStore.blockUser,
+  getBlockedUserIds: bookmarkStore.getBlockedUserIds,
 
-  subscribeBookmarks(fn: BookmarkListener) {
-    _bookmarkListeners.add(fn);
-    return () => { _bookmarkListeners.delete(fn); };
-  },
+  subscribeBookmarks: bookmarkStore.subscribe,
 };

@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { Bell, Search } from 'lucide-react-native';
+import { Bell, ChevronLeft, MoreVertical, Search, Share2 } from 'lucide-react-native';
 import { AppText as Text } from '@/components/AppText';
 import { AppIcon } from '@/components/AppIcon';
 import { Colors } from '@/constants/Colors';
@@ -13,16 +13,55 @@ import { SokDakLogo } from '@/components/icons/SokDakLogo';
  * 탭 최상위 화면 공통 다크 헤더 — Figma Navigation/TopAppBar (375×44, bg Secondary).
  * - variant "home": 워드마크 로고 + 검색 + 알림 (Navigation/TopAppBar/Home 626:3288)
  * - variant "title": 가운데 타이틀 + 알림 (Navigation/TopAppBar/Default 645:3307)
+ * - variant "post": 게시글 상세용 밝은 헤더 — back + share + more, 동작은 전부 콜백으로 받는다
+ *   (Figma Navigation/TopAppBar/Post 710:4873 · 736:6169)
  * 읽지 않은 알림 뱃지 상태(포커스 시 재조회)는 네 개 탭 화면이 전부 복붙하던 로직이라
- * 여기서 소유한다. 서브 화면의 back/post/write 헤더는 이 컴포넌트 범위 밖(별도 패턴 유지).
+ * 여기서 소유한다. 서브 화면의 write 헤더는 이 컴포넌트 범위 밖(별도 패턴 유지).
  */
-export function TopAppBar({ variant, title }: { variant: 'home' | 'title'; title?: string }) {
+export function TopAppBar({
+  variant,
+  title,
+  onBack,
+  onShare,
+  onMenu,
+}: {
+  variant: 'home' | 'title' | 'post';
+  title?: string;
+  onBack?: () => void;
+  onShare?: () => void;
+  onMenu?: () => void;
+}) {
   const t = languageStore.t;
   const [hasUnread, setHasUnread] = useState(false);
 
   useFocusEffect(useCallback(() => {
+    if (variant === 'post') return; // post 헤더에는 알림 벨이 없다
     fetchUnreadNotificationCount().then(count => setHasUnread(count > 0));
-  }, []));
+  }, [variant]));
+
+  if (variant === 'post') {
+    return (
+      <View style={styles.postBar}>
+        <AppIcon
+          icon={ChevronLeft} size={20} style={styles.iconBtn}
+          onPress={onBack}
+          accessibilityLabel={t('goBack')}
+        />
+        <View style={styles.postBarRight}>
+          <AppIcon
+            icon={Share2} size={20} style={styles.iconBtn}
+            onPress={onShare}
+            accessibilityLabel={t('shareLabel')}
+          />
+          <AppIcon
+            icon={MoreVertical} size={20} style={styles.iconBtn}
+            onPress={onMenu}
+            accessibilityLabel={t('moreLink')}
+          />
+        </View>
+      </View>
+    );
+  }
 
   const bell = (
     <View style={styles.iconBtn}>
@@ -90,6 +129,17 @@ const styles = StyleSheet.create({
   topBarIcons: { flexDirection: 'row' },
   iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   bellAbsolute: { position: 'absolute', right: 6 },
+  /* 게시글 상세 밝은 헤더 — 기존 인라인 topBar와 동일한 스펙 */
+  postBar: {
+    height: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.divider,
+    backgroundColor: Colors.background,
+  },
+  postBarRight: { marginLeft: 'auto', flexDirection: 'row', alignItems: 'center' },
   /* Figma: data-badge="on" — 벨 아이콘 우측 상단 알림 점 */
   notifDot: {
     position: 'absolute', top: 10, right: 12,

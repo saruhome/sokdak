@@ -52,7 +52,7 @@ describe('CommunityPostCard', () => {
     expect(card.props.accessibilityLabel).toContain(POST.title);
     expect(card.props.accessibilityLabel).toContain(POST.author.name);
     expect(card.props.accessibilityLabel).toContain('10');
-    fireEvent.press(card);
+    await fireEvent.press(card);
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
@@ -87,7 +87,7 @@ describe('CommunityFilterBar', () => {
     const horizontalScrolls = screen.container.queryAll(node => node.props.horizontal === true);
     expect(horizontalScrolls.length).toBeGreaterThanOrEqual(1);
 
-    fireEvent.press(screen.getByText('질문하기'));
+    await fireEvent.press(screen.getByText('질문하기'));
     expect(onSelect).toHaveBeenCalledWith('질문하기');
   });
 });

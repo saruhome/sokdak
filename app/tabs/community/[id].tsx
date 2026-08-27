@@ -1,4 +1,4 @@
-import { StyleSheet, View, ScrollView, Modal, Share, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator, type GestureResponderEvent } from 'react-native';
+import { StyleSheet, View, ScrollView, Modal, Share, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
@@ -16,12 +16,16 @@ import {
 import { validateCommunityText } from '../../../constants/communitySafety';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { PostRichText } from '@/components/PostRichText';
+import { TopAppBar } from '@/components/navigation/TopAppBar';
+import { CommunityCommentItem } from '@/src/features/community/components/CommunityCommentItem';
+import { CommunityCommentComposer } from '@/src/features/community/components/CommunityCommentComposer';
 import {
-  Star, MessageCircle, Bookmark, Share2, MoreVertical, Eye,
-  Pencil, Trash2, Flag, Ban, ChevronLeft, X,
+  Star, MessageCircle, Bookmark, Eye,
+  Pencil, Trash2, Flag, Ban,
 } from 'lucide-react-native';
 
-const ACTIVE_STAR_COLOR = '#FACC15';
+/* 즐겨찾기 별과 동일한 활성색 — Figma Point/5 골드 (하드코딩 hex 제거) */
+const ACTIVE_STAR_COLOR = Colors.premium;
 
 export default function PostDetailScreen() {
   const language = useLanguage();
@@ -32,8 +36,11 @@ export default function PostDetailScreen() {
   const [saved, setSaved] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [commentText, setCommentText] = useState('');
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  /* 답글 대상 — 배너에 닉네임을 보여주기 위해 id와 함께 이름을 들고 있는다 */
+  const [replyingTo, setReplyingTo] = useState<{ id: string; name: string } | null>(null);
   const [sendingComment, setSendingComment] = useState(false);
+  /* 댓글 좋아요 낙관적 상태 — 아이템 컴포넌트가 스토어를 모르도록 부모가 소유 */
+  const [commentLikes, setCommentLikes] = useState<Record<string, { liked: boolean; count: number }>>({});
   /* 댓글은 서버에서 등록순(오래된 순)으로 오므로, 최신순은 그냥 뒤집어서 보여준다 */
   const [commentSort, setCommentSort] = useState<'oldest' | 'newest'>('oldest');
   type MenuTarget = { kind: 'post' } | { kind: 'comment'; comment: CommunityComment };
@@ -52,6 +59,9 @@ export default function PostDetailScreen() {
   const [editingText, setEditingText] = useState('');
   const [savingEdit, setSavingEdit] = useState(false);
   const inputRef = useRef<TextInput>(null);
+  const scrollRef = useRef<ScrollView>(null);
+  /* 댓글 헤더의 세로 위치 — "댓글" 액션이 여기로 스크롤한다 */
+  const commentsYRef = useRef(0);
 
   const load = useCallback(() => {
     if (!id) return;
@@ -61,6 +71,8 @@ export default function PostDetailScreen() {
         setLiked(authStore.isPostLiked(data.id));
         setSaved(authStore.isPostSaved(data.id));
         setLikeCount(data.likes);
+        /* 서버 집계가 새로 왔으니 낙관적 오버라이드는 버린다 */
+        setCommentLikes({});
       }
     });
   }, [id]);
@@ -143,7 +155,7 @@ export default function PostDetailScreen() {
     const { error } = await createComment({
       postId: post.id,
       content: commentText.trim(),
-      parentCommentId: replyingTo,
+      parentCommentId: replyingTo?.id ?? null,
     });
     setSendingComment(false);
     if (error) {
@@ -156,9 +168,35 @@ export default function PostDetailScreen() {
   };
 
   const handleReply = (comment: CommunityComment) => {
-    setReplyingTo(comment.id);
+    setReplyingTo({ id: comment.id, name: comment.author.name });
     setCommentText(`@${comment.author.name} `);
-    inputRef.current?.focus();
+    inputRef.current?.focus?.();
+  };
+
+  /* "댓글" 액션 — 장식이 아니라 실제로 댓글 목록으로 스크롤하고 입력창에 포커스한다 */
+  const handleGoToComments = () => {
+    scrollRef.current?.scrollTo?.({ y: commentsYRef.current, animated: true });
+    inputRef.current?.focus?.();
+  };
+
+  /* 댓글 좋아요 — 로그인 게이트 + 낙관적 토글. 아이템은 결과만 받아 그린다 */
+  const likeStateOf = (comment: CommunityComment) =>
+    commentLikes[comment.id] ?? { liked: authStore.isCommentLiked(comment.id), count: comment.likes };
+
+  const handleToggleCommentLike = (comment: CommunityComment) => {
+    if (!authStore.isLoggedIn()) {
+      Alert.alert(t('loginRequiredTitle'), t('loginRequiredLike'), [
+        { text: t('cancelLabel'), style: 'cancel' },
+        { text: t('goToLogin'), onPress: () => router.push('/auth/login') },
+      ]);
+      return;
+    }
+    const current = likeStateOf(comment);
+    authStore.toggleCommentLiked(comment.id);
+    setCommentLikes(prev => ({
+      ...prev,
+      [comment.id]: { liked: !current.liked, count: current.count + (current.liked ? -1 : 1) },
+    }));
   };
 
   /* 단어 즐겨찾기와 동일하게 비로그인도 허용 — 세션 동안 유지되고 로그인 시 계정으로 이관된다(authStore) */
@@ -307,20 +345,14 @@ export default function PostDetailScreen() {
       keyboardVerticalOffset={0}
     >
       <SafeAreaView style={styles.safeArea}>
-        {/* ── TopAppBar – Figma: Navigation/TopAppBar/Post : 다른 사람 게시물(710:4873)/내 게시물(736:6169) — back + share + more, 뱃지 없음 */}
-        <View style={styles.topBar}>
-          <AppIcon
-            icon={ChevronLeft} size={20} style={styles.backButton}
-            onPress={() => router.replace('/tabs/community')}
-          />
-          <View style={styles.topBarRight}>
-            <AppIcon icon={Share2} size={20} style={styles.iconButton} onPress={handleShare} />
-            <AppIcon
-              icon={MoreVertical} size={20} style={styles.iconButton}
-              onPress={() => { setMenuAnchorTop(44); setMenuTarget({ kind: 'post' }); }}
-            />
-          </View>
-        </View>
+        {/* ── TopAppBar – Figma: Navigation/TopAppBar/Post (710:4873 · 736:6169)
+         * back은 직접 진입(딥링크) 시에도 항상 커뮤니티 목록으로 돌아가는 기존 동작 유지 */}
+        <TopAppBar
+          variant="post"
+          onBack={() => router.replace('/tabs/community')}
+          onShare={handleShare}
+          onMenu={() => { setMenuAnchorTop(44); setMenuTarget({ kind: 'post' }); }}
+        />
 
         {/* ── 케밥 메뉴 – 내 글/댓글: 수정/삭제, 다른 사람 글/댓글: 신고/차단 ── */}
         <Modal visible={!!menuTarget} transparent animationType="fade" onRequestClose={() => setMenuTarget(null)}>
@@ -420,7 +452,7 @@ export default function PostDetailScreen() {
           </TouchableOpacity>
         </Modal>
 
-        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+        <ScrollView ref={scrollRef} style={styles.scroll} showsVerticalScrollIndicator={false}>
           {/* ── 게시글 본문 영역 ── */}
           <View style={styles.postSection}>
             <View style={[styles.boardBadge, styles.boardBadgeStandalone, { backgroundColor: boardColor.bg }]}>
@@ -446,17 +478,33 @@ export default function PostDetailScreen() {
 
             {/* 액션 버튼들 */}
             <View style={styles.actionRow}>
-              <TouchableOpacity style={[styles.actionBtn, liked && styles.actionBtnActive]} onPress={handleLike}>
+              <TouchableOpacity
+                style={[styles.actionBtn, liked && styles.actionBtnActive]}
+                onPress={handleLike}
+                accessibilityRole="button"
+                accessibilityLabel={`${t('likesCount')} ${likeCount}`}
+                accessibilityState={{ selected: liked }}
+              >
                 <AppIcon icon={Star} size={16} fill={liked ? ACTIVE_STAR_COLOR : undefined} color={liked ? ACTIVE_STAR_COLOR : undefined} />
                 <Text style={[styles.actionLabel, liked && { color: Colors.error }]}>{likeCount}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.actionBtn}>
+              {/* 아이콘만 있던 죽은 버튼 → 댓글 목록으로 스크롤 + 입력창 포커스 */}
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={handleGoToComments}
+                testID="post-comments-action"
+                accessibilityRole="button"
+                accessibilityLabel={`${t('commentsLabel')} ${totalComments}`}
+              >
                 <AppIcon icon={MessageCircle} size={16} />
                 <Text style={styles.actionLabel}>{totalComments}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.actionBtn, saved && styles.actionBtnActive]}
                 onPress={handleToggleSave}
+                accessibilityRole="button"
+                accessibilityLabel={saved ? t('savedLabel') : t('saveLabel')}
+                accessibilityState={{ selected: saved }}
               >
                 <AppIcon icon={Bookmark} size={16} fill={saved ? Colors.accent : undefined} color={saved ? Colors.accent : undefined} />
                 <Text style={[styles.actionLabel, saved && { color: Colors.accent }]}>
@@ -476,7 +524,10 @@ export default function PostDetailScreen() {
           </View>
 
           {/* ── Display/List Header – 댓글 헤더 + 정렬(등록순/최신순) ── */}
-          <View style={styles.commentHeader}>
+          <View
+            style={styles.commentHeader}
+            onLayout={e => { commentsYRef.current = e.nativeEvent.layout.y; }}
+          >
             <Text style={styles.commentHeaderTitle}>
               {language === 'ko' ? `댓글 ${totalComments}개` : `${totalComments} ${t('commentsLabel')}`}
             </Text>
@@ -498,8 +549,12 @@ export default function PostDetailScreen() {
           <View style={styles.commentList}>
             {(commentSort === 'newest' ? [...post.comments].reverse() : post.comments).map(comment => (
               <View key={comment.id}>
-                <CommentItem
+                <CommunityCommentItem
                   comment={comment}
+                  language={language}
+                  liked={likeStateOf(comment).liked}
+                  likeCount={likeStateOf(comment).count}
+                  onToggleLike={() => handleToggleCommentLike(comment)}
                   onReply={() => handleReply(comment)}
                   onMenuPress={pageY => { setMenuAnchorTop(pageY + 16); setMenuTarget({ kind: 'comment', comment }); }}
                   isEditing={editingCommentId === comment.id}
@@ -513,9 +568,13 @@ export default function PostDetailScreen() {
                 {comment.replies?.map(reply => (
                   <View key={reply.id} style={styles.replyWrap}>
                     <View style={styles.replyIndent} />
-                    <CommentItem
+                    <CommunityCommentItem
                       comment={reply}
+                      language={language}
                       isReply
+                      liked={likeStateOf(reply).liked}
+                      likeCount={likeStateOf(reply).count}
+                      onToggleLike={() => handleToggleCommentLike(reply)}
                       onReply={() => handleReply(comment)}
                       onMenuPress={pageY => { setMenuAnchorTop(pageY + 16); setMenuTarget({ kind: 'comment', comment: reply }); }}
                       isEditing={editingCommentId === reply.id}
@@ -533,145 +592,24 @@ export default function PostDetailScreen() {
           <View style={{ height: 80 }} />
         </ScrollView>
 
-        {/* ── Controls/Text Field/Comment (375×57) – 댓글 입력창 */}
-        <View style={styles.commentInputWrap}>
-          {replyingTo && (
-            <View style={styles.replyingBanner}>
-              <Text style={styles.replyingText}>{t('replyingLabel')}</Text>
-              <TouchableOpacity onPress={() => { setReplyingTo(null); setCommentText(''); }}>
-                <AppIcon icon={X} size={14} color={Colors.textTertiary} />
-              </TouchableOpacity>
-            </View>
-          )}
-          <View style={styles.commentInputRow}>
-            <TextInput
-              ref={inputRef}
-              style={styles.commentInput}
-              placeholder={t('commentPlaceholder')}
-              placeholderTextColor={Colors.textTertiary}
-              value={commentText}
-              onChangeText={setCommentText}
-            />
-            <TouchableOpacity
-              style={[styles.sendBtn, (!commentText.trim() || sendingComment) && styles.sendBtnDisabled]}
-              onPress={handleSend}
-              disabled={!commentText.trim() || sendingComment}
-            >
-              <Text style={styles.sendBtnText}>{sendingComment ? t('sendingLabel') : t('sendLabel')}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        {/* ── Controls/Text Field/Comment – 댓글 입력창 (1줄 → 최대 3줄) */}
+        <CommunityCommentComposer
+          language={language}
+          value={commentText}
+          onChangeText={setCommentText}
+          onSend={handleSend}
+          sending={sendingComment}
+          replyingToName={replyingTo?.name ?? null}
+          onCancelReply={() => { setReplyingTo(null); setCommentText(''); }}
+          inputRef={inputRef}
+        />
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
 }
 
-/* ── 댓글 단일 아이템 컴포넌트 ── */
-function CommentItem({
-  comment, isReply = false, onReply, onMenuPress,
-  isEditing, editText, onChangeEditText, onSaveEdit, onCancelEdit, savingEdit,
-}: {
-  comment: CommunityComment;
-  isReply?: boolean;
-  onReply: () => void;
-  onMenuPress: (pageY: number) => void;
-  isEditing: boolean;
-  editText: string;
-  onChangeEditText: (text: string) => void;
-  onSaveEdit: () => void;
-  onCancelEdit: () => void;
-  savingEdit: boolean;
-}) {
-  const [liked, setLiked] = useState(() => authStore.isCommentLiked(comment.id));
-  const [likeCount, setLikeCount] = useState(comment.likes);
-
-  const handleToggleLike = () => {
-    if (!authStore.isLoggedIn()) {
-      Alert.alert(languageStore.t('loginRequiredTitle'), languageStore.t('loginRequiredLike'), [
-        { text: languageStore.t('cancelLabel'), style: 'cancel' },
-        { text: languageStore.t('goToLogin'), onPress: () => router.push('/auth/login') },
-      ]);
-      return;
-    }
-    authStore.toggleCommentLiked(comment.id);
-    setLiked(p => !p);
-    setLikeCount(p => liked ? p - 1 : p + 1);
-  };
-
-  return (
-    <View style={[styles.commentItem, isReply && styles.commentItemReply]}>
-      <View style={styles.commentAvatar}>
-        <Text style={{ fontSize: isReply ? 14 : 16 }}>{comment.author.emoji}</Text>
-      </View>
-      <View style={styles.commentBody}>
-        <View style={styles.commentAuthorRow}>
-          <Text style={styles.commentAuthor}>{comment.author.name}</Text>
-          <Text style={styles.commentDate}>{comment.createdAt}</Text>
-        </View>
-        {isEditing ? (
-          <View style={styles.commentEditWrap}>
-            <TextInput
-              style={styles.commentEditInput}
-              value={editText}
-              onChangeText={onChangeEditText}
-              autoFocus
-            />
-            <View style={styles.commentEditActions}>
-              <TouchableOpacity style={styles.commentEditCancelBtn} onPress={onCancelEdit}>
-                <Text style={styles.commentEditCancelText}>{languageStore.t('cancelLabel')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.commentEditSaveBtn, (!editText.trim() || savingEdit) && styles.sendBtnDisabled]}
-                onPress={onSaveEdit}
-                disabled={!editText.trim() || savingEdit}
-              >
-                <Text style={styles.commentEditSaveText}>{savingEdit ? languageStore.t('savingLabel') : languageStore.t('saveBtnLabel')}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          <Text style={styles.commentContent}>{comment.content}</Text>
-        )}
-        <View style={styles.commentActions}>
-          <TouchableOpacity
-            style={styles.commentAction}
-            onPress={handleToggleLike}
-          >
-            <AppIcon icon={Star} size={13} fill={liked ? ACTIVE_STAR_COLOR : undefined} color={liked ? ACTIVE_STAR_COLOR : undefined} />
-            <Text style={styles.commentActionText}>{likeCount}</Text>
-          </TouchableOpacity>
-          {!isReply && (
-            <TouchableOpacity style={styles.commentAction} onPress={onReply}>
-              <Text style={styles.commentActionText}>{languageStore.t('replyLabel')}</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-      <AppIcon
-        icon={MoreVertical} size={14} color={Colors.textTertiary}
-        style={styles.commentMenuBtn}
-        onPress={(e: GestureResponderEvent) => onMenuPress(e.nativeEvent.pageY)}
-      />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
-
-  /* TopAppBar */
-  topBar: {
-    height: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-    backgroundColor: Colors.background,
-  },
-  backButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarRight: { marginLeft: 'auto', flexDirection: 'row', alignItems: 'center' },
-  iconButton: { width: 40, height: 44, alignItems: 'center', justifyContent: 'center' },
 
   /* 케밥 메뉴 — Figma: 80×72, 라운드 카드 두 줄 (2글자 라벨이 안 줄바꿈되게 92px로 살짝 넓힘)
    * top은 눌린 케밥 버튼 위치에 따라 인라인으로 넘어온다 — right는 모든 케밥 버튼(게시글/댓글)이
@@ -782,94 +720,12 @@ const styles = StyleSheet.create({
 
   /* 댓글 목록 */
   commentList: {},
-  /* flex:1 — replyWrap(row) 안에서도 항상 남은 너비를 다 채우게 해서, position:relative 기준
-   * 박스가 화면 우측 끝까지 이어지고 commentMenuBtn의 절대 위치(X)가 항상 동일하게 나온다 */
-  commentItem: {
-    flex: 1, position: 'relative',
-    flexDirection: 'row', paddingHorizontal: 20,
-    paddingVertical: 14, gap: 10,
-    borderBottomWidth: 1, borderBottomColor: Colors.divider,
-  },
-  commentItemReply: { backgroundColor: Colors.background + 'cc' },
-  commentAvatar: {
-    width: 30, height: 30, borderRadius: 15,
-    backgroundColor: Colors.border,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  commentBody: { flex: 1, gap: 5 },
-  /* paddingRight — commentMenuBtn(절대 위치, right:17~39)이 이 줄과 같은 높이라
-   * marginLeft:'auto'로 오른쪽 끝까지 붙는 날짜가 케밥 버튼과 겹치지 않게 그만큼 비워둔다 */
-  commentAuthorRow: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingRight: 24 },
-  commentAuthor: { fontSize: 12, fontWeight: '700', color: Colors.textPrimary },
-  commentDate: { fontSize: 11, color: Colors.textTertiary, marginLeft: 'auto' },
-  /* right:17 — topBar 케밥(paddingHorizontal:8 + iconButton 40 폭의 중심)과 아이콘 중심 X가
-   * 일치하도록 계산한 값. 댓글마다 화면 위치가 달라도 X는 무조건 이 값 하나로 고정된다 */
-  commentMenuBtn: {
-    position: 'absolute', top: 14, right: 17,
-    width: 22, height: 22, alignItems: 'center', justifyContent: 'center',
-  },
-  commentContent: { fontSize: 14, color: Colors.textPrimary, lineHeight: 21 },
-  commentActions: { flexDirection: 'row', gap: 14 },
-  commentAction: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  commentActionText: { fontSize: 12, color: Colors.textTertiary },
-
-  /* 댓글 인라인 수정 */
-  commentEditWrap: { gap: 8 },
-  commentEditInput: {
-    borderRadius: 8, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.surface, paddingHorizontal: 10, paddingVertical: 8,
-    fontSize: 14, color: Colors.textPrimary,
-  },
-  commentEditActions: { flexDirection: 'row', gap: 8 },
-  commentEditCancelBtn: {
-    flex: 1, height: 32, borderRadius: 8,
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
-  },
-  commentEditCancelText: { fontSize: 12, color: Colors.textSecondary },
-  commentEditSaveBtn: {
-    flex: 1, height: 32, borderRadius: 8,
-    alignItems: 'center', justifyContent: 'center',
-    backgroundColor: Colors.navBar,
-  },
-  commentEditSaveText: { fontSize: 12, fontWeight: '700', color: Colors.navBarIconActive },
 
   /* 대댓글 들여쓰기 */
   replyWrap: { flexDirection: 'row' },
   replyIndent: { width: 40, borderLeftWidth: 2, borderLeftColor: Colors.border, marginLeft: 20 },
 
-  /* 댓글 입력창 – Controls/Text Field/Comment (375×57) */
-  commentInputWrap: {
-    borderTopWidth: 1, borderTopColor: Colors.divider,
-    backgroundColor: Colors.background,
-  },
-  replyingBanner: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 16, paddingVertical: 6,
-    backgroundColor: Colors.navBar + '15',
-    borderBottomWidth: 1, borderBottomColor: Colors.divider,
-  },
-  replyingText: { flex: 1, fontSize: 12, color: Colors.navBar, fontWeight: '600' },
-  commentInputRow: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 12, paddingVertical: 8, gap: 8,
-  },
-  /* 입력창 높이를 전송 버튼과 똑같이 고정 — multiline을 빼서 줄바꿈으로 커지는 대신
-   * 한 줄 안에서 가로로 계속 이어 쓸 수 있게 했다(웹/네이티브 모두 높이가 안 바뀐다) */
-  commentInput: {
-    flex: 1, height: 36,
-    backgroundColor: Colors.surface,
-    borderRadius: 18, borderWidth: 1, borderColor: Colors.border,
-    paddingHorizontal: 14, paddingVertical: 8,
-    fontSize: 14, color: Colors.textPrimary,
-  },
-  sendBtn: {
-    height: 36, paddingHorizontal: 14,
-    alignItems: 'center', justifyContent: 'center',
-    backgroundColor: Colors.navBar, borderRadius: 18,
-  },
   sendBtnDisabled: { backgroundColor: Colors.border },
-  sendBtnText: { fontSize: 13, fontWeight: '700', color: Colors.navBarIconActive },
 
   /* Not found */
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },

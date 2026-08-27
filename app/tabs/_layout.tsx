@@ -21,12 +21,14 @@ function DoubleTapTabButton({
   onPress,
   onLongPress,
   accessibilityState,
+  accessibilityLabel,
   rootRoute,
 }: {
   children: ReactNode;
   onPress?: () => void;
   onLongPress?: () => void;
   accessibilityState?: { selected?: boolean };
+  accessibilityLabel?: string;
   rootRoute: string;
 }) {
   const router = useRouter();
@@ -47,6 +49,9 @@ function DoubleTapTabButton({
       activeOpacity={0.7}
       onPress={handlePress}
       onLongPress={onLongPress}
+      accessibilityRole="tab"
+      accessibilityState={accessibilityState}
+      accessibilityLabel={accessibilityLabel}
     >
       {children}
     </TouchableOpacity>
@@ -62,7 +67,8 @@ const ROOT_TAB_ROUTE: Record<string, string> = {
 };
 
 export default function TabLayout() {
-  const [language, setLanguage] = useState(languageStore.getLanguage());
+  /* 언어 변경 시 탭 title 재렌더용 — 값 자체는 languageStore.t가 직접 읽는다 */
+  const [, setLanguage] = useState(languageStore.getLanguage());
 
   useEffect(() => {
     languageStore.initialize().then(() => setLanguage(languageStore.getLanguage()));
@@ -158,7 +164,7 @@ const styles = {
     alignItems: 'center', justifyContent: 'center',
   } as const,
   iconWrapActive: {
-    backgroundColor: '#333333',
+    backgroundColor: Colors.textPrimary,   // #333333 — Figma BottomBar active pill과 동일 토큰
   } as const,
   tabButton: {
     flex: 1,

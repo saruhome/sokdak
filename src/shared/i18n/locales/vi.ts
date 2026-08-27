@@ -128,7 +128,7 @@ export const vi = {
     askInCommunity: 'Hỏi về từ này trong cộng đồng',
     askInCommunityQuestion: ' — bạn có thắc mắc gì về từ này không?',
 
-    hotPosts: 'Bài viết nổi bật',
+    hotPosts: 'Câu hỏi nổi bật',
     noPostsYet: 'Chưa có bài viết nào',
     boardCurious: 'Thắc mắc',
     boardAskQuestion: 'Đặt câu hỏi',

@@ -4,24 +4,36 @@ import { AppText as Text } from '@/components/AppText';
 import { router, useFocusEffect } from 'expo-router';
 import { useState, useMemo, useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
-import { BOARD_COLORS, getBoardLabel, type PostBoard } from '../../../constants/mockPosts';
+import { BOARD_COLORS, getBoardLabel } from '../../../constants/mockPosts';
 import { COMMUNITY_POST_PAGE_SIZE, fetchPostsPage, type CommunityPostSummary } from '../../../constants/community';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { TopAppBar } from '@/components/navigation/TopAppBar';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { CharacterEmptyState } from '@/components/CharacterEmptyState';
+import { CommunityPostCard } from '@/src/features/community/components/CommunityPostCard';
+import { CommunityFilterBar, type CommunityBoardTab } from '@/src/features/community/components/CommunityFilterBar';
 import { Eye, Heart, MessageCircle, Pencil } from 'lucide-react-native';
 
 const JJAEKI_READING = require('../../../assets/characters/transparent/jjaeki-reading.png');
 
-type BoardTab = '전체' | PostBoard;
-const BOARD_TABS: BoardTab[] = ['전체', '궁금해요', 'Q&A', '질문하기'];
+const BOARD_TABS: CommunityBoardTab[] = ['전체', '궁금해요', 'Q&A', '질문하기'];
+
+/**
+ * 화제의 질문 노출 정책 — 백엔드 featured 기준이 없으므로 첫 페이지 안에서
+ * 조회수 상위 2개만 뽑고, 아래 목록에서는 같은 글을 빼서 중복 노출하지 않는다.
+ * - 첫 페이지로 한정: 페이지가 추가 로드될 때마다 화제 글이 바뀌면 스크롤 중 목록이 튄다.
+ * - 게시글이 5개 미만이면 숨김: 전부 화제 글로 올라가 아래 목록이 비어 보이는 것을 막는다.
+ */
+export function selectFeaturedPosts(posts: CommunityPostSummary[]): CommunityPostSummary[] {
+  if (posts.length < 5) return [];
+  return [...posts.slice(0, COMMUNITY_POST_PAGE_SIZE)].sort((a, b) => b.views - a.views).slice(0, 2);
+}
 
 export default function CommunityScreen() {
   const language = useLanguage();
   const t = languageStore.t;
-  const [activeTab, setActiveTab] = useState<BoardTab>('전체');
+  const [activeTab, setActiveTab] = useState<CommunityBoardTab>('전체');
   const [posts, setPosts] = useState<CommunityPostSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -63,11 +75,15 @@ export default function CommunityScreen() {
     });
   }, [activeTab, hasMore, loading, loadingMore, nextOffset]);
 
-  /* 화제의 게시글: 조회수 상위 3개 (별도 "featured" 플래그 없이 파생) */
   const featured = useMemo(
-    () => activeTab === '전체' ? [...posts].sort((a, b) => b.views - a.views).slice(0, 3) : [],
-    [activeTab, posts],
+    () => activeTab === '전체' && !loading ? selectFeaturedPosts(posts) : [],
+    [activeTab, loading, posts],
   );
+  /* 화제의 질문으로 올라간 글은 아래 목록에서 제외 — 같은 화면에 같은 글이 두 번 보이지 않게 */
+  const listPosts = useMemo(() => {
+    const featuredIds = new Set(featured.map(post => post.id));
+    return featuredIds.size === 0 ? posts : posts.filter(post => !featuredIds.has(post.id));
+  }, [featured, posts]);
   const goToWrite = () => router.push(authStore.isLoggedIn() ? '/tabs/community/write' : '/auth/login');
 
   return (
@@ -75,7 +91,8 @@ export default function CommunityScreen() {
       <TopAppBar variant="title" title={t('community')} />
 
       <FlatList
-        data={posts}
+        testID="community-post-list"
+        data={listPosts}
         keyExtractor={item => item.id}
         ListHeaderComponent={
           <>
@@ -114,62 +131,21 @@ export default function CommunityScreen() {
             ) : null}
 
             {/* ── 상단메뉴 – Figma: state=Default/궁금해요/Q&A/질문하기 */}
-            <View style={styles.boardTabs}>
-              {BOARD_TABS.map(tab => (
-                <TouchableOpacity
-                  key={tab}
-                  onPress={() => setActiveTab(tab)}
-                  accessibilityRole="tab"
-                  accessibilityState={{ selected: activeTab === tab }}
-                  style={[
-                    styles.boardTab,
-                    activeTab === tab && {
-                      borderBottomColor: tab === '전체' ? Colors.navBar : BOARD_COLORS[tab as PostBoard].bg,
-                      borderBottomWidth: 2,
-                    },
-                  ]}
-                >
-                  <Text style={[
-                    styles.boardTabText,
-                    activeTab === tab && {
-                      color: tab === '전체' ? Colors.navBar : BOARD_COLORS[tab as PostBoard].bg,
-                      fontWeight: '700',
-                    },
-                  ]}>
-                    {tab === '전체' ? t('allLabel') : getBoardLabel(tab as PostBoard, language)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <CommunityFilterBar
+              tabs={BOARD_TABS}
+              active={activeTab}
+              onSelect={setActiveTab}
+              language={language}
+            />
           </>
         }
         renderItem={({ item }) => (
           /* ── List/Item/Post (Figma node 730:4885) ── */
-          <TouchableOpacity
-            style={styles.postItem}
+          <CommunityPostCard
+            post={item}
+            language={language}
             onPress={() => router.push(`/tabs/community/${item.id}`)}
-            activeOpacity={0.75}
-          >
-            <View style={styles.postItemInner}>
-              <View style={styles.postTopRow}>
-                <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[item.board].bg }]}>
-                  <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[item.board].fg }]}>
-                    {getBoardLabel(item.board, language)}
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.postTitle} numberOfLines={2}>{item.title}</Text>
-              <View style={styles.postMetaRow}>
-                <Text style={styles.postAuthor} numberOfLines={1}>{item.author.emoji} {item.author.name}</Text>
-                <Text style={styles.postDate}>{item.createdAt}</Text>
-                <View style={styles.postStats}>
-                  <IconStat icon={Eye} value={item.views} textStyle={styles.metaText} />
-                  <IconStat icon={Heart} value={item.likes} textStyle={styles.metaText} />
-                  <IconStat icon={MessageCircle} value={item.commentCount} textStyle={styles.metaText} />
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
+          />
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListFooterComponent={loadingMore ? <View style={{ paddingVertical: 20, alignItems: 'center' }}><ActivityIndicator color={Colors.textTertiary} /></View> : null}
@@ -240,38 +216,13 @@ const styles = StyleSheet.create({
   featuredCardSub: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
   featuredCardMeta: { flexDirection: 'row', gap: 10 },
 
-  /* 상단메뉴 탭 */
-  boardTabs: {
-    flexDirection: 'row',
-    gap: 24,
-    paddingHorizontal: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-    marginTop: 12,
-  },
-  boardTab: {
-    alignItems: 'center', paddingVertical: 10,
-    borderBottomWidth: 2, borderBottomColor: 'transparent',
-  },
-  boardTabText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textTertiary },
-
-  /* 게시판 뱃지 — 사전 화면 단어 태그(wordBadge)와 동일 크기 */
+  /* 게시판 뱃지 — 사전 화면 단어 태그(wordBadge)와 동일 크기 (화제의 질문 카드용) */
   boardBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 8, paddingVertical: 2,
     borderRadius: 12,
   },
   boardBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
-
-  /* List/Item/Post (Figma node 730:4885) */
-  postItem: { paddingHorizontal: 24, minHeight: 92, justifyContent: 'center' },
-  postItemInner: { paddingVertical: 12, gap: 8 },
-  postTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  postDate: { fontSize: 11, color: Colors.textTertiary },
-  postTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, lineHeight: 20 },
-  postMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
-  postAuthor: { fontSize: 11, color: Colors.textSecondary },
-  postStats: { flexDirection: 'row', gap: 10 },
   metaText: { fontSize: 11, color: Colors.textTertiary },
 
   separator: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 24 },

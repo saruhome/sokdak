@@ -128,7 +128,7 @@ export const de = {
     askInCommunity: 'In der Community nach diesem Wort fragen',
     askInCommunityQuestion: '– hast du eine Frage dazu?',
 
-    hotPosts: 'Beliebte Beiträge',
+    hotPosts: 'Beliebte Fragen',
     noPostsYet: 'Noch keine Beiträge',
     boardCurious: 'Neugierig',
     boardAskQuestion: 'Frage stellen',

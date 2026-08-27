@@ -128,7 +128,7 @@ export const en = {
     askInCommunity: 'Ask about this word in the community',
     askInCommunityQuestion: '— got a question about it?',
 
-    hotPosts: 'Hot Posts',
+    hotPosts: 'Trending questions',
     noPostsYet: 'No posts yet',
     boardCurious: 'Curious',
     boardAskQuestion: 'Ask a Question',

@@ -128,7 +128,7 @@ export const ko = {
     askInCommunity: '이 단어로 커뮤니티에 물어보기',
     askInCommunityQuestion: '에 대해 더 궁금한 점이 있으신가요?',
 
-    hotPosts: '화제의 게시글',
+    hotPosts: '화제의 질문',
     noPostsYet: '아직 게시글이 없어요',
     boardCurious: '궁금해요',
     boardAskQuestion: '질문하기',

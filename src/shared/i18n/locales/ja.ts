@@ -128,7 +128,7 @@ export const ja = {
     askInCommunity: 'この単語についてコミュニティで聞いてみる',
     askInCommunityQuestion: 'について気になることはありますか？',
 
-    hotPosts: '話題の投稿',
+    hotPosts: '話題の質問',
     noPostsYet: 'まだ投稿がありません',
     boardCurious: '気になる',
     boardAskQuestion: '質問する',

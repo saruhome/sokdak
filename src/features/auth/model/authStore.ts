@@ -15,6 +15,7 @@ import { consentStore } from './consentStore';
 import { sessionStore, type AuthListener, type SokDakUser } from './sessionStore';
 import { profileStore } from './profileStore';
 import { notificationPrefsStore, type NotificationPrefs } from './notificationPrefsStore';
+import { avatarUrlCache } from './avatarUrlCache';
 import {
   BETA_UNLIMITED_ENTITLEMENTS,
   entitlementStore,
@@ -31,7 +32,7 @@ let _initialized = false;
 let _initPromise: Promise<void> | null = null;
 
 function clearLocalCaches() {
-  profileStore.clearAvatarSignedUrlExpiry();
+  avatarUrlCache.clear();
   bookmarkStore.clearAll();
   entitlementStore.resetTts();
 }
@@ -120,8 +121,8 @@ export const authStore = {
   requestPasswordReset: authApi.requestPasswordReset,
 
   updateUser: profileStore.updateUser,
-  refreshProfileAvatarSignedUrl: profileStore.refreshProfileAvatarSignedUrl,
-  getProfileAvatarSignedUrlExpiresAt: profileStore.getProfileAvatarSignedUrlExpiresAt,
+  refreshProfileAvatarSignedUrl: avatarUrlCache.refresh,
+  getProfileAvatarSignedUrlExpiresAt: avatarUrlCache.getExpiresAt,
 
   hasAcceptedCommunityGuidelines: consentStore.hasAcceptedCommunityGuidelines,
   acceptCommunityGuidelines: consentStore.acceptCommunityGuidelines,

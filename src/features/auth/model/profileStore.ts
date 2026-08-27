@@ -1,28 +1,14 @@
 /**
  * 프로필 도메인 — auth migration 3단계.
- * profiles/account_settings 테이블의 읽기·쓰기, private 아바타 signed URL 수명 상태,
- * 연속 학습일(streak) 갱신을 담당한다. 알림 설정은 notificationPrefsStore로 분리됐다.
+ * profiles/account_settings 테이블의 읽기·쓰기와 연속 학습일(streak) 갱신을 담당한다.
+ * 알림 설정은 notificationPrefsStore, 아바타 signed URL 수명은 avatarUrlCache로 분리됐다.
  * 세션 상태는 sessionStore가 소유하고, 이 스토어는 프로필 변경 시
  * sessionStore.patchUser/notify로 반영한다.
  */
 import { supabase } from '../../../shared/api/supabaseClient';
 import { sessionStore, type SokDakUser } from './sessionStore';
-import {
-  createProfileAvatarSignedUrl,
-  isProfileAvatarPath,
-  PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS,
-} from '../../../../constants/profileAvatarStorage';
-import {
-  notifyPrivateSignedMediaChanged,
-  registerPrivateSignedMediaResource,
-} from '../../../../constants/privateSignedMediaRegistry';
-
-let _profileAvatarSignedUrlExpiresAt: number | null = null;
-
-function setProfileAvatarSignedUrlExpiresAt(value: number | null) {
-  _profileAvatarSignedUrlExpiresAt = value;
-  notifyPrivateSignedMediaChanged();
-}
+import { avatarUrlCache } from './avatarUrlCache';
+import { isProfileAvatarPath } from '../../../../constants/profileAvatarStorage';
 
 function todayString() {
   return new Date().toISOString().slice(0, 10);
@@ -61,10 +47,7 @@ export const profileStore = {
 
     const streakCount = await bumpStreak(userId, settings?.last_active_date ?? null, settings?.streak_count ?? 0);
     const avatarPath = profile?.avatar_url ?? null;
-    const signedAvatarUrl = await createProfileAvatarSignedUrl(avatarPath);
-    setProfileAvatarSignedUrlExpiresAt(signedAvatarUrl
-      ? Date.now() + PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS * 1000
-      : null);
+    const signedAvatarUrl = await avatarUrlCache.issue(avatarPath);
 
     return {
       id: userId,
@@ -111,13 +94,8 @@ export const profileStore = {
     }
 
     const signedAvatarUrl = patch.avatarPath !== undefined
-      ? await createProfileAvatarSignedUrl(patch.avatarPath)
+      ? await avatarUrlCache.issue(patch.avatarPath)
       : undefined;
-    if (patch.avatarPath !== undefined) {
-      setProfileAvatarSignedUrlExpiresAt(signedAvatarUrl
-        ? Date.now() + PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS * 1000
-        : null);
-    }
 
     sessionStore.patchUser({
       ...(patch.name !== undefined ? { name: patch.name } : {}),
@@ -132,32 +110,4 @@ export const profileStore = {
     sessionStore.notify();
     return { error: null };
   },
-
-  /** 앱이 foreground로 복귀할 때 private 아바타의 짧은 수명 signed URL만 재발급한다. */
-  async refreshProfileAvatarSignedUrl() {
-    const user = sessionStore.getUser();
-    if (!user || !isProfileAvatarPath(user.avatarPath)) return { error: null };
-
-    const signedAvatarUrl = await createProfileAvatarSignedUrl(user.avatarPath);
-    if (!signedAvatarUrl) return { error: '프로필 사진 링크를 새로 만들 수 없어요.' };
-
-    setProfileAvatarSignedUrlExpiresAt(Date.now() + PROFILE_AVATAR_SIGNED_URL_TTL_SECONDS * 1000);
-    sessionStore.patchUser({ avatarUrl: signedAvatarUrl });
-    sessionStore.notify();
-    return { error: null };
-  },
-
-  getProfileAvatarSignedUrlExpiresAt: () => _profileAvatarSignedUrlExpiresAt,
-
-  /** 로그아웃/세션 종료 시 아바타 signed URL 수명 상태를 비운다. */
-  clearAvatarSignedUrlExpiry() {
-    setProfileAvatarSignedUrlExpiresAt(null);
-  },
-
 };
-
-registerPrivateSignedMediaResource({
-  id: 'profile-avatar',
-  getExpiresAt: () => _profileAvatarSignedUrlExpiresAt,
-  refresh: () => profileStore.refreshProfileAvatarSignedUrl(),
-});

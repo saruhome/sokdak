@@ -202,7 +202,8 @@ export default function CategoryScreen() {
               style={styles.categoryCard}
               onPress={() => router.push(locked ? '/tabs/mypage/premium' : `/tabs/category/${item.slug}`)}
               activeOpacity={0.85}
-              accessibilityRole="button"
+              /* role="button"을 주면 웹에서 <button> 안에 별(즐겨찾기) <button>이 중첩돼
+               * invalid HTML + hydration 오류 — 내부에 개별 컨트롤이 있는 카드에는 붙이지 않는다 */
             >
               <CardBg {...cardBgProps}>
                 <View style={styles.cardOverlay} />

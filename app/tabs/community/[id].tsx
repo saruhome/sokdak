@@ -19,10 +19,8 @@ import { PostRichText } from '@/components/PostRichText';
 import { TopAppBar } from '@/components/navigation/TopAppBar';
 import { CommunityCommentItem } from '@/src/features/community/components/CommunityCommentItem';
 import { CommunityCommentComposer } from '@/src/features/community/components/CommunityCommentComposer';
-import {
-  Star, MessageCircle, Bookmark, Eye,
-  Pencil, Trash2, Flag, Ban,
-} from 'lucide-react-native';
+import { CommunitySafetyActionSheet } from '@/src/features/community/components/CommunitySafetyActionSheet';
+import { Star, MessageCircle, Bookmark, Eye } from 'lucide-react-native';
 
 /* 즐겨찾기 별과 동일한 활성색 — Figma Point/5 골드 (하드코딩 hex 제거) */
 const ACTIVE_STAR_COLOR = Colors.premium;
@@ -48,9 +46,6 @@ export default function PostDetailScreen() {
   /* 케밥 메뉴는 항상 눌린 케밥 버튼 바로 아래에 뜬다 — 버튼 X는 모두 고정(menuSheet의 right)이라
    * 눌렀을 때의 세로 위치(pageY)만 잡아서 top으로 넘긴다 */
   const [menuAnchorTop, setMenuAnchorTop] = useState(44);
-  const [reportTarget, setReportTarget] = useState<MenuTarget | null>(null);
-  const [reportReason, setReportReason] = useState('');
-  const [reporting, setReporting] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     title: string; message: string; confirmLabel: string; onConfirm: () => Promise<void>;
   } | null>(null);
@@ -235,12 +230,6 @@ export default function PostDetailScreen() {
     Share.share({ title: post.title, message: `${post.title}\n\n${post.content}` }).catch(() => {});
   };
 
-  const handleReport = () => {
-    setMenuTarget(null);
-    setReportReason('');
-    setReportTarget({ kind: 'post' });
-  };
-
   const handleBlock = () => {
     setMenuTarget(null);
     setConfirmDialog({
@@ -288,12 +277,6 @@ export default function PostDetailScreen() {
     });
   };
 
-  const handleReportComment = (comment: CommunityComment) => {
-    setMenuTarget(null);
-    setReportReason('');
-    setReportTarget({ kind: 'comment', comment });
-  };
-
   const handleBlockComment = (comment: CommunityComment) => {
     setMenuTarget(null);
     setConfirmDialog({
@@ -309,24 +292,17 @@ export default function PostDetailScreen() {
     });
   };
 
-  const handleSubmitReport = async () => {
-    if (!reportTarget || !reportReason.trim()) {
-      Alert.alert(t('reportReasonRequiredTitle'), t('reportReasonRequiredMessage'));
-      return;
-    }
-    setReporting(true);
-    const { error } = reportTarget.kind === 'post'
-      ? await reportPost({ postId: post.id, reportedUserId: post.authorId, reason: reportReason.trim() })
-      : await reportComment({
-          commentId: reportTarget.comment.id,
+  /* 시트가 조합해준 reason(slug + 자유 입력)을 기존 서버 contract 그대로 한 문자열로 보낸다 */
+  const handleSubmitReport = async (reason: string) => {
+    if (!menuTarget) return { error: null };
+    return menuTarget.kind === 'post'
+      ? reportPost({ postId: post.id, reportedUserId: post.authorId, reason })
+      : reportComment({
+          commentId: menuTarget.comment.id,
           postId: post.id,
-          reportedUserId: reportTarget.comment.authorId,
-          reason: reportReason.trim(),
+          reportedUserId: menuTarget.comment.authorId,
+          reason,
         });
-    setReporting(false);
-    if (error) { Alert.alert(t('reportFailedTitle'), error); return; }
-    setReportTarget(null);
-    Alert.alert(t('reportReceivedTitle'), t('reportReceivedMessage'));
   };
 
   const handleConfirm = async () => {
@@ -354,81 +330,18 @@ export default function PostDetailScreen() {
           onMenu={() => { setMenuAnchorTop(44); setMenuTarget({ kind: 'post' }); }}
         />
 
-        {/* ── 케밥 메뉴 – 내 글/댓글: 수정/삭제, 다른 사람 글/댓글: 신고/차단 ── */}
-        <Modal visible={!!menuTarget} transparent animationType="fade" onRequestClose={() => setMenuTarget(null)}>
-          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setMenuTarget(null)}>
-            <View style={[styles.menuSheet, { top: menuAnchorTop }]}>
-              {menuIsOwner ? (
-                <>
-                  <TouchableOpacity
-                    style={styles.menuItem}
-                    onPress={() => menuTarget?.kind === 'comment' ? handleEditComment(menuTarget.comment) : handleEdit()}
-                  >
-                    <AppIcon icon={Pencil} size={14} color={Colors.textPrimary} />
-                    <Text style={styles.menuItemText}>{t('editLabel')}</Text>
-                  </TouchableOpacity>
-                  <View style={styles.menuDivider} />
-                  <TouchableOpacity
-                    style={styles.menuItem}
-                    onPress={() => menuTarget?.kind === 'comment' ? handleDeleteComment(menuTarget.comment) : handleDelete()}
-                  >
-                    <AppIcon icon={Trash2} size={14} color={Colors.textPrimary} />
-                    <Text style={styles.menuItemText}>{t('deleteLabel')}</Text>
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <TouchableOpacity
-                    style={styles.menuItem}
-                    onPress={() => menuTarget?.kind === 'comment' ? handleReportComment(menuTarget.comment) : handleReport()}
-                  >
-                    <AppIcon icon={Flag} size={14} color={Colors.textPrimary} />
-                    <Text style={styles.menuItemText}>{t('reportLabel')}</Text>
-                  </TouchableOpacity>
-                  <View style={styles.menuDivider} />
-                  <TouchableOpacity
-                    style={styles.menuItem}
-                    onPress={() => menuTarget?.kind === 'comment' ? handleBlockComment(menuTarget.comment) : handleBlock()}
-                  >
-                    <AppIcon icon={Ban} size={14} color={Colors.textPrimary} />
-                    <Text style={styles.menuItemText}>{t('blockLabel')}</Text>
-                  </TouchableOpacity>
-                </>
-              )}
-            </View>
-          </TouchableOpacity>
-        </Modal>
-
-        {/* ── 신고 사유 입력 (게시글/댓글 공용) ── */}
-        <Modal visible={!!reportTarget} transparent animationType="fade" onRequestClose={() => setReportTarget(null)}>
-          <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setReportTarget(null)}>
-            <TouchableOpacity style={styles.reportSheet} activeOpacity={1}>
-              <Text style={styles.reportTitle}>{reportTarget?.kind === 'comment' ? t('reportCommentTitle') : t('reportPostTitle')}</Text>
-              <Text style={styles.reportSub}>{t('reportSheetSub')}</Text>
-              <TextInput
-                style={styles.reportInput}
-                value={reportReason}
-                onChangeText={setReportReason}
-                placeholder={t('reportReasonPlaceholder')}
-                placeholderTextColor={Colors.textTertiary}
-                multiline
-                maxLength={300}
-              />
-              <View style={styles.reportActions}>
-                <TouchableOpacity style={styles.reportCancelBtn} onPress={() => setReportTarget(null)}>
-                  <Text style={styles.reportCancelText}>{t('cancelLabel')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.reportSubmitBtn, (!reportReason.trim() || reporting) && styles.sendBtnDisabled]}
-                  onPress={handleSubmitReport}
-                  disabled={!reportReason.trim() || reporting}
-                >
-                  <Text style={styles.reportSubmitText}>{reporting ? t('reportSubmittingLabel') : t('reportSubmitBtn')}</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </Modal>
+        {/* ── 안전 액션 시트 — 내 글/댓글: 수정/삭제, 남의 글/댓글: 신고(사유 chip)/차단.
+         * 신고 form/sending/success는 시트 내부 상태, 삭제/차단 확인은 아래 confirm 다이얼로그 담당 */}
+        <CommunitySafetyActionSheet
+          language={language}
+          target={menuTarget ? { kind: menuTarget.kind, isOwner: menuIsOwner } : null}
+          anchorTop={menuAnchorTop}
+          onClose={() => setMenuTarget(null)}
+          onEdit={() => menuTarget?.kind === 'comment' ? handleEditComment(menuTarget.comment) : handleEdit()}
+          onDelete={() => menuTarget?.kind === 'comment' ? handleDeleteComment(menuTarget.comment) : handleDelete()}
+          onBlock={() => menuTarget?.kind === 'comment' ? handleBlockComment(menuTarget.comment) : handleBlock()}
+          onSubmitReport={handleSubmitReport}
+        />
 
         {/* ── 삭제/차단 확인 (게시글/댓글 공용) ── */}
         <Modal visible={!!confirmDialog} transparent animationType="fade" onRequestClose={() => setConfirmDialog(null)}>
@@ -615,19 +528,6 @@ const styles = StyleSheet.create({
    * top은 눌린 케밥 버튼 위치에 따라 인라인으로 넘어온다 — right는 모든 케밥 버튼(게시글/댓글)이
    * commentMenuBtn과 동일한 X에 고정돼 있어 여기서는 항상 같은 값 하나만 쓴다 */
   menuBackdrop: { flex: 1, justifyContent: 'center' },
-  menuSheet: {
-    position: 'absolute', right: 6, width: 92,
-    borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.surface, overflow: 'hidden',
-    shadowColor: '#909090', shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.25, shadowRadius: 4, elevation: 4,
-  },
-  menuItem: {
-    height: 36, flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 12,
-  },
-  menuItemText: { fontSize: 13, color: Colors.textPrimary, fontFamily: undefined, flexShrink: 0 },
-  menuDivider: { height: 1, backgroundColor: Colors.border },
 
   /* 신고 사유 입력 시트 */
   reportSheet: {
@@ -638,11 +538,6 @@ const styles = StyleSheet.create({
   },
   reportTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
   reportSub: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17 },
-  reportInput: {
-    minHeight: 80, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.background, padding: 12,
-    fontSize: 14, color: Colors.textPrimary, textAlignVertical: 'top',
-  },
   reportActions: { flexDirection: 'row', gap: 8, marginTop: 4 },
   reportCancelBtn: {
     flex: 1, height: 40, borderRadius: 10,

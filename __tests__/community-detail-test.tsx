@@ -43,7 +43,7 @@ jest.mock('@/constants/authStore', () => ({
     toggleCommentLiked: jest.fn(),
     subscribeBookmarks: () => () => {},
     hasAcceptedCommunityGuidelines: async () => true,
-    blockUser: jest.fn(),
+    blockUser: jest.fn(async () => ({ error: null })),
   },
 }));
 
@@ -133,5 +133,25 @@ describe('post detail screen', () => {
 
     /* 전송 완료 후 답글 모드 해제 */
     await waitFor(() => expect(screen.queryByText(new RegExp(tFor('ko', 'replyingLabel')))).toBeNull());
+  });
+
+  it('blocking asks for confirmation before calling blockUser', async () => {
+    const { authStore } = require('@/constants/authStore');
+    const screen = await render(<PostDetailScreen />);
+    await waitFor(() => expect(screen.getByText(POST.title)).toBeTruthy());
+
+    /* 케밥 메뉴 열기(작성자 아님 → 신고/차단) → 차단 → 확인 다이얼로그 */
+    /* '더보기'는 TopAppBar 케밥(첫 번째)과 댓글 케밥 둘 다에 있다 — 게시글 메뉴는 첫 번째 */
+    await fireEvent.press(screen.getAllByLabelText(tFor('ko', 'moreLink'))[0]);
+    await fireEvent.press(screen.getByText(tFor('ko', 'blockLabel')));
+
+    expect(screen.getByText(tFor('ko', 'blockUserTitle'))).toBeTruthy();
+    expect(authStore.blockUser).not.toHaveBeenCalled();
+
+    /* 확인을 눌러야만 실제 차단이 실행되고 목록으로 돌아간다 */
+    const confirmBtns = screen.getAllByText(tFor('ko', 'blockLabel'));
+    await fireEvent.press(confirmBtns[confirmBtns.length - 1]);
+    await waitFor(() => expect(authStore.blockUser).toHaveBeenCalledWith('other'));
+    expect(mockReplace).toHaveBeenCalledWith('/tabs/community');
   });
 });

@@ -12,7 +12,7 @@ import { fetchPosts, type CommunityPostSummary } from '../../constants/community
 import { CATEGORIES, getCategoryBySlug, getCategoryName } from '../../constants/categories';
 import { authStore } from '../../constants/authStore';
 import { tFor, useLanguage } from '../../constants/languageStore';
-import { wordMatchesSearch } from '../../constants/wordSearch';
+import { filterPostResults, filterWordResults, suggestWords } from '@/src/features/search/model/searchResults';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Search, BookOpen, Heart, Star, Eye, MessageCircle, X } from 'lucide-react-native';
 import { BackIcon } from '@/components/icons/SocialIcons';
@@ -81,29 +81,16 @@ export default function SearchScreen() {
     setRecent(prev => prev.filter(t => t !== term));
   };
 
-  /* ── 입력 중 자동완성 (Figma: 229:2723) ── */
-  const suggestions = useMemo<Word[]>(() => {
-    const q = query.trim();
-    if (!q) return [];
-    return allWords
-      .filter(w => wordMatchesSearch(w, q))
-      .slice(0, 6);
-  }, [allWords, query]);
-
-  /* ── 검색 결과 (Figma: 229:2750 단어 / 229:2772 필터 / 229:2794 없음) ── */
-  const wordResults = useMemo<Word[]>(() => {
-    const q = submittedQuery?.trim() ?? '';
-    let base = allWords.filter(w => wordMatchesSearch(w, q));
-    if (categoryFilter) base = base.filter(w => w.category === categoryFilter);
-    return base;
-  }, [allWords, submittedQuery, categoryFilter]);
-
-  /* ── 커뮤니티 검색 결과 (Figma: 229:2808) ── */
-  const postResults = useMemo<CommunityPostSummary[]>(() => {
-    const q = submittedQuery?.trim().toLowerCase() ?? '';
-    return communityPosts.filter(p =>
-      p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q));
-  }, [submittedQuery, communityPosts]);
+  /* ── 결과 필터링은 search feature의 순수 함수가 담당 — 화면은 조합만 ── */
+  const suggestions = useMemo<Word[]>(() => suggestWords(allWords, query), [allWords, query]);
+  const wordResults = useMemo<Word[]>(
+    () => filterWordResults(allWords, submittedQuery ?? '', categoryFilter),
+    [allWords, submittedQuery, categoryFilter],
+  );
+  const postResults = useMemo<CommunityPostSummary[]>(
+    () => filterPostResults(communityPosts, submittedQuery ?? ''),
+    [submittedQuery, communityPosts],
+  );
 
   const showEmptyState = submittedQuery === null && query.trim() === '';
   const showSuggestState = submittedQuery === null && query.trim() !== '';

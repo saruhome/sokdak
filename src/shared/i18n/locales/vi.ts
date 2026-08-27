@@ -129,6 +129,8 @@ export const vi = {
     askInCommunityQuestion: ' — bạn có thắc mắc gì về từ này không?',
 
     hotPosts: 'Câu hỏi nổi bật',
+    guestCalloutTitle: 'Đăng nhập để đặt câu hỏi',
+    guestCalloutBenefit: 'Hỏi về các cách diễn đạt và cùng học qua bình luận và lượt thích.',
     noPostsYet: 'Chưa có bài viết nào',
     boardCurious: 'Thắc mắc',
     boardAskQuestion: 'Đặt câu hỏi',

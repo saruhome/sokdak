@@ -129,6 +129,8 @@ export const es = {
     askInCommunityQuestion: ' — ¿tienes alguna pregunta sobre esta palabra?',
 
     hotPosts: 'Preguntas destacadas',
+    guestCalloutTitle: 'Inicia sesión para preguntar',
+    guestCalloutBenefit: 'Pregunta sobre expresiones y aprende con comentarios y me gusta.',
     noPostsYet: 'Aún no hay publicaciones',
     boardCurious: 'Curiosidad',
     boardAskQuestion: 'Hacer una pregunta',

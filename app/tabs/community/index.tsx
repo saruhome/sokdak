@@ -2,7 +2,7 @@ import { StyleSheet, View, ScrollView, TouchableOpacity, FlatList, ActivityIndic
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { router, useFocusEffect } from 'expo-router';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { BOARD_COLORS, getBoardLabel } from '../../../constants/mockPosts';
 import { COMMUNITY_POST_PAGE_SIZE, fetchPostsPage, type CommunityPostSummary } from '../../../constants/community';
@@ -13,6 +13,7 @@ import { AppIcon, IconStat } from '@/components/AppIcon';
 import { CharacterEmptyState } from '@/components/CharacterEmptyState';
 import { CommunityPostCard } from '@/src/features/community/components/CommunityPostCard';
 import { CommunityFilterBar, type CommunityBoardTab } from '@/src/features/community/components/CommunityFilterBar';
+import { CommunityGuestCallout } from '@/src/features/community/components/CommunityGuestCallout';
 import { Eye, Heart, MessageCircle, Pencil } from 'lucide-react-native';
 
 const JJAEKI_READING = require('../../../assets/characters/transparent/jjaeki-reading.png');
@@ -41,6 +42,14 @@ export default function CommunityScreen() {
   const [nextOffset, setNextOffset] = useState(0);
   const [loadFailed, setLoadFailed] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
+  const [loggedIn, setLoggedIn] = useState(authStore.isLoggedIn());
+
+  /* 마이페이지 패턴 — 재진입 시점 갱신 + 세션 변화 구독 이중 동기화 */
+  useFocusEffect(useCallback(() => { setLoggedIn(authStore.isLoggedIn()); }, []));
+  useEffect(() => {
+    const unsub = authStore.subscribe(() => setLoggedIn(authStore.isLoggedIn()));
+    return () => unsub();
+  }, []);
 
   useFocusEffect(useCallback(() => {
     let cancelled = false;
@@ -96,6 +105,15 @@ export default function CommunityScreen() {
         keyExtractor={item => item.id}
         ListHeaderComponent={
           <>
+            {/* ── 게스트 로그인 유도 — 화면당 1회, 목록 최상단에만 (카드마다 반복 금지) */}
+            {!loggedIn && (
+              <CommunityGuestCallout
+                language={language}
+                onPressLogin={() => router.push('/auth/login')}
+                testID="community-guest-callout"
+              />
+            )}
+
             {/* ── 화제의 게시글 – Figma: Card/Post/Preview 220×144 가로 스크롤 */}
             {featured.length > 0 ? (
               <View style={styles.featuredSection}>

@@ -129,6 +129,8 @@ export const ja = {
     askInCommunityQuestion: 'について気になることはありますか？',
 
     hotPosts: '話題の質問',
+    guestCalloutTitle: 'ログインして質問してみましょう',
+    guestCalloutBenefit: '気になる表現を質問し、コメントやいいねで一緒に学べます。',
     noPostsYet: 'まだ投稿がありません',
     boardCurious: '気になる',
     boardAskQuestion: '質問する',

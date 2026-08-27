@@ -129,6 +129,8 @@ export const en = {
     askInCommunityQuestion: '— got a question about it?',
 
     hotPosts: 'Trending questions',
+    guestCalloutTitle: 'Log in to ask your question',
+    guestCalloutBenefit: 'Ask about expressions and learn together with comments and likes.',
     noPostsYet: 'No posts yet',
     boardCurious: 'Curious',
     boardAskQuestion: 'Ask a Question',

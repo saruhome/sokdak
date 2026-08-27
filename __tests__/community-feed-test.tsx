@@ -18,7 +18,7 @@ jest.mock('@/constants/community', () => ({
   fetchPostsPage: jest.fn(),
 }));
 jest.mock('@/constants/notifications', () => ({ fetchUnreadNotificationCount: jest.fn(async () => 0) }));
-jest.mock('@/constants/authStore', () => ({ authStore: { isLoggedIn: jest.fn(() => true) } }));
+jest.mock('@/constants/authStore', () => ({ authStore: { isLoggedIn: jest.fn(() => true), subscribe: jest.fn(() => () => {}) } }));
 
 import { fetchPostsPage } from '@/constants/community';
 import CommunityScreen, { selectFeaturedPosts } from '@/app/tabs/community/index';

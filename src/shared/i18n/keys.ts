@@ -130,6 +130,8 @@ export type TranslationKey =
   | 'askInCommunityQuestion'
   // 커뮤니티
   | 'hotPosts'
+  | 'guestCalloutTitle'
+  | 'guestCalloutBenefit'
   | 'noPostsYet'
   | 'boardCurious'
   | 'boardAskQuestion'

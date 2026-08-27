@@ -129,6 +129,8 @@ export const de = {
     askInCommunityQuestion: '– hast du eine Frage dazu?',
 
     hotPosts: 'Beliebte Fragen',
+    guestCalloutTitle: 'Melde dich an und stelle deine Frage',
+    guestCalloutBenefit: 'Frage nach Ausdrücken und lerne gemeinsam über Kommentare und Likes.',
     noPostsYet: 'Noch keine Beiträge',
     boardCurious: 'Neugierig',
     boardAskQuestion: 'Frage stellen',

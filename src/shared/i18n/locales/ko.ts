@@ -181,6 +181,7 @@ export const ko = {
     boardDescCurious: '한국어 신조어가 궁금할 때',
     boardDescQA: '질문과 답변을 주고받을 때',
     boardDescAsk: '자유롭게 의견을 나눌 때',
+    askTemplatePlaceholder: '어떤 표현이 궁금한가요? 어디서 봤고 어떤 점이 헷갈리는지 함께 적으면 더 좋은 답을 받을 수 있어요.',
     titlePlaceholder: '제목을 입력하세요 (2자 이상)',
     contentPlaceholder: '내용을 입력해주세요 (10자 이상)\n\n예) "안녕하세요, 속닥속닥 배우는 교과서에는 없던 진짜 국어!"',
     toolbarPhoto: '사진',

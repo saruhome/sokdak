@@ -181,6 +181,7 @@ export const vi = {
     boardDescCurious: 'Khi bạn thắc mắc về từ lóng tiếng Hàn',
     boardDescQA: 'Để hỏi và trả lời câu hỏi',
     boardDescAsk: 'Để chia sẻ suy nghĩ tự do',
+    askTemplatePlaceholder: 'Bạn thắc mắc về cách diễn đạt nào? Ghi thêm bạn thấy nó ở đâu và điều gì gây khó hiểu sẽ giúp nhận câu trả lời tốt hơn.',
     titlePlaceholder: 'Nhập tiêu đề (từ 2 ký tự)',
     contentPlaceholder: 'Nhập nội dung (từ 10 ký tự)\n\nVD: "Xin chào, học tiếng Hàn thật sự không có trong sách giáo khoa cùng Sokdak!"',
     toolbarPhoto: 'Ảnh',

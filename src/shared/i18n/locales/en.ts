@@ -181,6 +181,7 @@ export const en = {
     boardDescCurious: "When you're curious about Korean slang",
     boardDescQA: 'For asking and answering questions',
     boardDescAsk: 'To share your thoughts freely',
+    askTemplatePlaceholder: 'What expression are you curious about? Adding where you saw it and what confused you helps you get better answers.',
     titlePlaceholder: 'Enter a title (2+ characters)',
     contentPlaceholder: 'Enter your content (10+ characters)\n\ne.g. "Hi, learning real Korean you won\'t find in textbooks with Sokdak!"',
     toolbarPhoto: 'Photo',

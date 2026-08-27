@@ -182,6 +182,7 @@ export type TranslationKey =
   | 'boardDescCurious'
   | 'boardDescQA'
   | 'boardDescAsk'
+  | 'askTemplatePlaceholder'
   | 'titlePlaceholder'
   | 'contentPlaceholder'
   | 'toolbarPhoto'

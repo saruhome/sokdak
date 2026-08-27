@@ -33,6 +33,9 @@ export default function WritePostScreen() {
   const [title, setTitle]       = useState('');
   const [content, setContent]   = useState('');
   const [submitting, setSubmitting] = useState(false);
+  /* field별 validation helper — 건드린 필드에만, alert가 아니라 필드 바로 아래에 보여준다 */
+  const [titleTouched, setTitleTouched] = useState(false);
+  const [contentTouched, setContentTouched] = useState(false);
 
   /* 사진/링크/서식 툴바 — 마지막으로 알려진 커서/선택 위치에 마크업을 끼워 넣는다 */
   const [selection, setSelection] = useState({ start: 0, end: 0 });
@@ -66,6 +69,11 @@ export default function WritePostScreen() {
   }
 
   const isValid = title.trim().length >= 2 && content.trim().length >= 10;
+  const titleInvalid = title.trim().length < 2;
+  const contentInvalid = content.trim().length < 10;
+
+  const boardDesc = (value: PostBoard) =>
+    value === '궁금해요' ? t('boardDescCurious') : value === 'Q&A' ? t('boardDescQA') : t('boardDescAsk');
 
   /* 선택된 구간(없으면 커서 위치)을 before/after 마크업으로 감싼다 — 서식(굵게/기울임)용 */
   const wrapSelection = (before: string, after: string, placeholder: string) => {
@@ -198,6 +206,9 @@ export default function WritePostScreen() {
             style={styles.submitBtn}
             onPress={handleSubmit}
             disabled={!isValid || submitting}
+            accessibilityRole="button"
+            accessibilityLabel={t('submitComplete')}
+            accessibilityState={{ disabled: !isValid || submitting, busy: submitting }}
           >
             <Text style={[styles.submitText, isValid && !submitting && styles.submitTextActive]}>
               {submitting ? t('submitting') : t('submitComplete')}
@@ -215,7 +226,8 @@ export default function WritePostScreen() {
             <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[board].bg }]}>
               <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[board].fg }]}>{getBoardLabel(board, language)}</Text>
             </View>
-            <Text style={styles.accordionLabel}>{t('boardSelectLabel')}</Text>
+            {/* 현재 선택된 게시판이 무엇을 위한 곳인지 1줄 설명을 항상 보여준다 */}
+            <Text style={styles.accordionLabel} numberOfLines={1}>{boardDesc(board)}</Text>
             <Text style={styles.accordionArrow}>{accordionOpen ? '▲' : '▼'}</Text>
           </TouchableOpacity>
 
@@ -251,24 +263,33 @@ export default function WritePostScreen() {
             placeholderTextColor={Colors.textTertiary}
             value={title}
             onChangeText={setTitle}
+            onBlur={() => setTitleTouched(true)}
             maxLength={100}
             returnKeyType="next"
           />
+          {titleTouched && titleInvalid && (
+            <Text style={styles.fieldHelper}>{t('titleNeeded')}</Text>
+          )}
           <View style={styles.divider} />
 
           {/* ── 내용 입력 (Frame 28) */}
           <TextInput
             ref={contentInputRef}
             style={styles.contentInput}
-            placeholder={t('contentPlaceholder')}
+            /* 질문하기 첫 작성에는 질문 템플릿을 placeholder로만 제안 — 제출 내용에 자동 포함되지 않는다 */
+            placeholder={board === '질문하기' && !editId ? t('askTemplatePlaceholder') : t('contentPlaceholder')}
             placeholderTextColor={Colors.textTertiary}
             value={content}
             onChangeText={setContent}
+            onBlur={() => setContentTouched(true)}
             onSelectionChange={e => setSelection(e.nativeEvent.selection)}
             multiline
             textAlignVertical="top"
             maxLength={2000}
           />
+          {contentTouched && contentInvalid && (
+            <Text style={styles.fieldHelper}>{t('contentNeeded')}</Text>
+          )}
 
           {/* 글자수 카운터 */}
           <View style={styles.charCountRow}>
@@ -284,12 +305,16 @@ export default function WritePostScreen() {
               : key === '링크' ? openLinkModal
               : () => setFormatMenuOpen(p => !p);
             const busy = key === '사진' && uploadingPhoto;
+            const blocked = busy || submitting;
             return (
               <TouchableOpacity
                 key={key}
-                style={styles.toolbarBtn}
+                style={[styles.toolbarBtn, blocked && styles.toolbarBtnDisabled]}
                 onPress={onPress}
-                disabled={busy}
+                disabled={blocked}
+                accessibilityRole="button"
+                accessibilityLabel={label}
+                accessibilityState={{ disabled: blocked, busy }}
               >
                 <AppIcon icon={icon} size={16} />
                 <Text style={styles.toolbarLabel}>{busy ? t('uploadingPhoto') : label}</Text>
@@ -297,11 +322,12 @@ export default function WritePostScreen() {
             );
           })}
           <View style={styles.toolbarDivider} />
-          <View style={styles.charCountCompact}>
-            <Text style={[styles.charCount, !isValid && { color: Colors.error }]}>
-              {title.trim().length < 2 ? t('titleNeeded') : content.trim().length < 10 ? t('contentNeeded') : t('readyToPost')}
-            </Text>
-          </View>
+          {/* 무엇이 부족한지는 각 field 아래 helper가 알려준다 — 여기선 준비 완료만 표시 */}
+          {isValid && (
+            <View style={styles.charCountCompact}>
+              <Text style={styles.charCount}>{t('readyToPost')}</Text>
+            </View>
+          )}
         </View>
 
         {/* ── 서식(굵게/기울임) 팝업 — 툴바 바로 위에 뜬다 ── */}
@@ -450,7 +476,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     gap: 4,
   },
-  toolbarBtn: { paddingHorizontal: 10, alignItems: 'center', flexDirection: 'row', gap: 5 },
+  toolbarBtn: { paddingHorizontal: 10, minHeight: 44, alignItems: 'center', flexDirection: 'row', gap: 5 },
+  toolbarBtnDisabled: { opacity: 0.4 },
+  /* field 바로 아래 붙는 validation helper — alert 전용 검증 금지 */
+  fieldHelper: { paddingHorizontal: 16, paddingBottom: 8, fontSize: 11, color: Colors.error },
   toolbarLabel: { fontSize: 12, color: Colors.textSecondary },
   toolbarDivider: { flex: 1 },
   charCountCompact: { paddingRight: 8 },

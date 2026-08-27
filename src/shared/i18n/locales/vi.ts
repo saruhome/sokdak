@@ -148,6 +148,8 @@ export const vi = {
     a11yLikeCategory: 'Yêu thích danh mục',
     a11yScrollToTop: 'Cuộn lên đầu trang',
     a11yOpenSearch: 'Mở tìm kiếm',
+    postsLoadFailed: 'Không thể tải bài viết',
+    retryLabel: 'Thử lại',
     a11yOpenNotifications: 'Mở thông báo',
     cancelLabel: 'Hủy',
     goToLogin: 'Đến trang đăng nhập',

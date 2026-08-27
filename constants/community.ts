@@ -51,7 +51,7 @@ export type CommunityPostDetail = CommunityPostSummary & { comments: CommunityCo
 /** hasMore/nextOffset은 항상 서버가 실제로 반환한 원본 행 기준이다 — 차단된 작성자의 글을
  * 걸러낸 posts.length는 이 값들과 다를 수 있으므로, 다음 페이지 요청은 반드시 nextOffset을
  * 그대로 offset에 넘겨야 한다(posts.length를 쓰면 이미 조회한 행을 다시 요청하게 된다). */
-export type CommunityPostPage = { posts: CommunityPostSummary[]; hasMore: boolean; nextOffset: number };
+export type CommunityPostPage = { posts: CommunityPostSummary[]; hasMore: boolean; nextOffset: number; failed?: boolean };
 export const COMMUNITY_POST_PAGE_SIZE = 20;
 
 type ProfileRow = { nickname: string; avatar_emoji: string; avatar_url?: string | null; level: string } | null;
@@ -125,7 +125,8 @@ export async function fetchPostsPage({
   if (board) query = query.eq('board', board);
 
   const { data, error } = await query;
-  if (error || !data) return { posts: [], hasMore: false, nextOffset: safeOffset };
+  /* 화면이 '빈 목록'과 '불러오기 실패'를 구분해 재시도 CTA를 띄울 수 있게 실패를 표시한다 */
+  if (error || !data) return { posts: [], hasMore: false, nextOffset: safeOffset, failed: true };
 
   const rawConsumed = Math.min(data.length, safeLimit);
   return {

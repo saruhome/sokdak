@@ -77,7 +77,8 @@ describe('<CommunityScreen /> empty state', () => {
     expect(screen.getByText('No posts yet')).toBeTruthy();
     expect(screen.queryByText('Hot posts')).toBeNull();
 
-    fireEvent.press(screen.getByLabelText('Write a post'));
+    /* FAB에도 접근성 라벨 'Write a post'가 추가돼 라벨 중복 — 빈 상태 CTA를 testID로 특정 */
+    fireEvent.press(screen.getByTestId('community-posts-empty-state-cta'));
     expect(router.push).toHaveBeenCalledWith('/auth/login');
   });
 });

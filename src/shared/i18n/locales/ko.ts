@@ -148,6 +148,8 @@ export const ko = {
     a11yLikeCategory: '카테고리 즐겨찾기',
     a11yScrollToTop: '맨 위로 이동',
     a11yOpenSearch: '검색 열기',
+    postsLoadFailed: '게시글을 불러오지 못했어요',
+    retryLabel: '다시 시도',
     a11yOpenNotifications: '알림 열기',
     cancelLabel: '취소',
     goToLogin: '로그인하러 가기',

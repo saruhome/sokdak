@@ -35,6 +35,7 @@ export function CharacterEmptyState({
         <TouchableOpacity
           style={styles.cta}
           onPress={onPressCta}
+          testID={testID ? `${testID}-cta` : undefined}
           activeOpacity={0.85}
           accessibilityRole="button"
           accessibilityLabel={ctaLabel}

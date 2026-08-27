@@ -148,6 +148,8 @@ export const de = {
     a11yLikeCategory: 'Kategorie favorisieren',
     a11yScrollToTop: 'Nach oben scrollen',
     a11yOpenSearch: 'Suche öffnen',
+    postsLoadFailed: 'Beiträge konnten nicht geladen werden',
+    retryLabel: 'Erneut versuchen',
     a11yOpenNotifications: 'Benachrichtigungen öffnen',
     cancelLabel: 'Abbrechen',
     goToLogin: 'Zur Anmeldung',

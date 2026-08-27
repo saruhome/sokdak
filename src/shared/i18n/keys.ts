@@ -149,6 +149,8 @@ export type TranslationKey =
   | 'a11yLikeCategory'
   | 'a11yScrollToTop'
   | 'a11yOpenSearch'
+  | 'postsLoadFailed'
+  | 'retryLabel'
   | 'a11yOpenNotifications'
   | 'cancelLabel'
   | 'goToLogin'

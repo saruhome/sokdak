@@ -27,6 +27,8 @@ export default function CommunityScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [nextOffset, setNextOffset] = useState(0);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   useFocusEffect(useCallback(() => {
     let cancelled = false;
@@ -37,11 +39,12 @@ export default function CommunityScreen() {
         setPosts(page.posts);
         setHasMore(page.hasMore);
         setNextOffset(page.nextOffset);
+        setLoadFailed(page.failed === true);
         setLoading(false);
       }
     });
     return () => { cancelled = true; };
-  }, [activeTab]));
+  }, [activeTab, retryKey]));
 
   const loadMore = useCallback(() => {
     if (loading || loadingMore || !hasMore) return;
@@ -116,6 +119,8 @@ export default function CommunityScreen() {
                 <TouchableOpacity
                   key={tab}
                   onPress={() => setActiveTab(tab)}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: activeTab === tab }}
                   style={[
                     styles.boardTab,
                     activeTab === tab && {
@@ -155,7 +160,7 @@ export default function CommunityScreen() {
               </View>
               <Text style={styles.postTitle} numberOfLines={2}>{item.title}</Text>
               <View style={styles.postMetaRow}>
-                <Text style={styles.postAuthor}>{item.author.emoji} {item.author.name}</Text>
+                <Text style={styles.postAuthor} numberOfLines={1}>{item.author.emoji} {item.author.name}</Text>
                 <Text style={styles.postDate}>{item.createdAt}</Text>
                 <View style={styles.postStats}>
                   <IconStat icon={Eye} value={item.views} textStyle={styles.metaText} />
@@ -174,6 +179,18 @@ export default function CommunityScreen() {
           loading ? (
             <View style={styles.emptyWrap}>
               <ActivityIndicator color={Colors.textTertiary} />
+            </View>
+          ) : loadFailed ? (
+            <View style={styles.emptyWrap}>
+              <Text style={styles.loadFailedText}>{t('postsLoadFailed')}</Text>
+              <TouchableOpacity
+                style={styles.retryBtn}
+                onPress={() => { setLoading(true); setRetryKey(k => k + 1); }}
+                activeOpacity={0.8}
+                accessibilityRole="button"
+              >
+                <Text style={styles.retryBtnText}>{t('retryLabel')}</Text>
+              </TouchableOpacity>
             </View>
           ) : (
             <View style={styles.emptyWrap}>
@@ -195,6 +212,8 @@ export default function CommunityScreen() {
         style={styles.fab}
         onPress={goToWrite}
         activeOpacity={0.85}
+        accessibilityRole="button"
+        accessibilityLabel={t('writeTitle')}
       >
         {/* 다크 FAB 위라 밝은색으로 대비 확보 */}
         <AppIcon icon={Pencil} size={22} color={Colors.navBarIconActive} />
@@ -256,6 +275,13 @@ const styles = StyleSheet.create({
   metaText: { fontSize: 11, color: Colors.textTertiary },
 
   separator: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 24 },
+  loadFailedText: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center' },
+  retryBtn: {
+    marginTop: 12, alignSelf: 'center',
+    paddingHorizontal: 24, paddingVertical: 10,
+    borderRadius: 10, backgroundColor: Colors.navBar,
+  },
+  retryBtnText: { fontSize: 14, fontWeight: '600', color: Colors.navBarIconActive },
   emptyWrap: { paddingVertical: 40, alignItems: 'center' },
 
   /* FAB */

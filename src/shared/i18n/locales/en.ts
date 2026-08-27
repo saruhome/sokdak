@@ -148,6 +148,8 @@ export const en = {
     a11yLikeCategory: 'Favorite category',
     a11yScrollToTop: 'Scroll to top',
     a11yOpenSearch: 'Open search',
+    postsLoadFailed: "Couldn't load posts",
+    retryLabel: 'Try again',
     a11yOpenNotifications: 'Open notifications',
     cancelLabel: 'Cancel',
     goToLogin: 'Go to login',

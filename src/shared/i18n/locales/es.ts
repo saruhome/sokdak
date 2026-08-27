@@ -148,6 +148,8 @@ export const es = {
     a11yLikeCategory: 'Marcar categoría como favorita',
     a11yScrollToTop: 'Ir arriba',
     a11yOpenSearch: 'Abrir búsqueda',
+    postsLoadFailed: 'No se pudieron cargar las publicaciones',
+    retryLabel: 'Reintentar',
     a11yOpenNotifications: 'Abrir notificaciones',
     cancelLabel: 'Cancelar',
     goToLogin: 'Ir a iniciar sesión',

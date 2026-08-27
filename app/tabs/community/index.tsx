@@ -8,10 +8,10 @@ import { BOARD_COLORS, getBoardLabel, type PostBoard } from '../../../constants/
 import { COMMUNITY_POST_PAGE_SIZE, fetchPostsPage, type CommunityPostSummary } from '../../../constants/community';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
-import { fetchUnreadNotificationCount } from '../../../constants/notifications';
+import { TopAppBar } from '@/components/navigation/TopAppBar';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { CharacterEmptyState } from '@/components/CharacterEmptyState';
-import { Eye, Heart, MessageCircle, Pencil, Bell } from 'lucide-react-native';
+import { Eye, Heart, MessageCircle, Pencil } from 'lucide-react-native';
 
 const JJAEKI_READING = require('../../../assets/characters/transparent/jjaeki-reading.png');
 
@@ -27,7 +27,6 @@ export default function CommunityScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [nextOffset, setNextOffset] = useState(0);
-  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
   useFocusEffect(useCallback(() => {
     let cancelled = false;
@@ -41,7 +40,6 @@ export default function CommunityScreen() {
         setLoading(false);
       }
     });
-    fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
     return () => { cancelled = true; };
   }, [activeTab]));
 
@@ -71,14 +69,7 @@ export default function CommunityScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* ── TopAppBar – Figma: Navigation/TopAppBar/Default/Default (375×44, bg #52514e) */}
-      <View style={styles.topBar}>
-        <Text style={styles.topBarTitle}>{t('community')}</Text>
-        <View style={styles.topBarBell}>
-          <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
-          {hasUnreadNotifications && <View style={styles.notifDot} />}
-        </View>
-      </View>
+      <TopAppBar variant="title" title={t('community')} />
 
       <FlatList
         data={posts}
@@ -215,25 +206,7 @@ export default function CommunityScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
 
-  /* Figma: Navigation/TopAppBar/Community (375×44, bg #52514e) */
-  topBar: {
-    height: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.navBar,
-  },
-  topBarTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
-  topBarBell: {
-    position: 'absolute', right: 0, top: 0,
-    width: 44, height: 44, alignItems: 'center', justifyContent: 'center',
-  },
   /* Figma: data-badge="on" — 벨 아이콘 우측 상단 알림 점 */
-  notifDot: {
-    position: 'absolute', top: 10, right: 12,
-    width: 6, height: 6, borderRadius: 3,
-    backgroundColor: Colors.error,
-  },
 
   /* Featured */
   featuredSection: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 4, gap: 16 },

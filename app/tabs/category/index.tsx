@@ -8,10 +8,10 @@ import { CATEGORIES, getCategoryName, pickLeastPopular, type Category } from '..
 import { fetchWords, type Word } from '../../../constants/words';
 import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
-import { fetchUnreadNotificationCount } from '../../../constants/notifications';
 import { Alert } from '@/constants/alert';
 import { AppIcon } from '@/components/AppIcon';
-import { Search, Mic, Bell, Star, ChevronDown, Crown } from 'lucide-react-native';
+import { TopAppBar } from '@/components/navigation/TopAppBar';
+import { Search, Mic, Star, ChevronDown, Crown } from 'lucide-react-native';
 import { SCREEN_WIDTH } from '../../../constants/layout';
 
 const HORANG_ICON = require('../../../assets/Callout Card/image 146.png');
@@ -39,7 +39,6 @@ export default function CategoryScreen() {
   const t = languageStore.t;
   const [sortMode, setSortMode] = useState<SortMode>('인기순');
   const [, forceUpdate] = useState(0);
-  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const [isPremium, setIsPremium] = useState(authStore.isPremium());
   const [words, setWords] = useState<Word[]>([]);
   /* 항상 같은(가장 인기 있는) 카테고리 대신, 잘 안 찾아보는 카테고리부터 랜덤하게 추천 —
@@ -47,7 +46,6 @@ export default function CategoryScreen() {
   const [topCategory, setTopCategory] = useState<Category | null>(null);
 
   useFocusEffect(useCallback(() => {
-    fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
     setIsPremium(authStore.isPremium());
   }, []));
 
@@ -99,14 +97,7 @@ export default function CategoryScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* ── TopAppBar – Figma: Navigation/TopAppBar/Category (375×44, bg #52514e) */}
-      <View style={styles.topBar}>
-        <Text style={styles.topBarTitle}>{t('category')}</Text>
-        <View style={styles.topBarBell}>
-          <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
-          {hasUnreadNotifications && <View style={styles.notifDot} />}
-        </View>
-      </View>
+      <TopAppBar variant="title" title={t('category')} />
 
       <FlatList
         data={sortedCategories}
@@ -255,21 +246,7 @@ export default function CategoryScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
 
-  topBar: {
-    height: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.navBar,
-  },
-  topBarTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
-  topBarBell: { position: 'absolute', right: 6, width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   /* Figma: data-badge="on" — 벨 아이콘 우측 상단 알림 점 */
-  notifDot: {
-    position: 'absolute', top: 10, right: 12,
-    width: 6, height: 6, borderRadius: 3,
-    backgroundColor: Colors.error,
-  },
 
   /* 가로 여백은 FlatList contentContainerStyle(grid)의 paddingHorizontal: 24가 이미 담당한다.
    * 여기서 또 주면 사전 화면(24)보다 두 배로 좁아지므로 세로 여백만 지정할 것. */

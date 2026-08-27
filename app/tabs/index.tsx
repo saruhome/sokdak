@@ -7,18 +7,15 @@ import { Colors } from '../../constants/Colors';
 import { fetchWords, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
-import { fetchUnreadNotificationCount } from '../../constants/notifications';
 import { getCategoryBySlug, getCategoryName } from '../../constants/categories';
 import { getBoardLabel } from '../../constants/mockPosts';
 import { sortWords } from '@/components/WordFilterBar';
 import { SCREEN_WIDTH } from '../../constants/layout';
 import { languageStore, useLanguage } from '../../constants/languageStore';
 import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStore';
-import { SokDakLogo } from '@/components/icons/SokDakLogo';
+import { TopAppBar } from '@/components/navigation/TopAppBar';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Search, Bell, Eye, Heart, MessageCircle, Crown, ChevronRight } from 'lucide-react-native';
-
-const JJAEKI_WAVE = require('../../assets/characters/transparent/jjaeki-wave.png');
+import { Eye, Heart, MessageCircle, Crown, ChevronRight } from 'lucide-react-native';
 
 /** 날짜(YYYY-MM-DD)를 시드로 결정적 난수를 뽑아 오늘 하루 동안은 항상 같은 결과가 나오게 한다 */
 function pickDaily<T>(items: T[], count: number, seed: string): T[] {
@@ -65,7 +62,6 @@ export default function HomeScreen() {
   const t = languageStore.t;
   const [heroIndex, setHeroIndex] = useState(0);
   const [communityPosts, setCommunityPosts] = useState<CommunityPostSummary[]>([]);
-  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   /** Figma: Card/Recommend2 — 오늘의 단어 캐러셀 (날짜 기반 랜덤 3개, 매일 자정 기준으로 바뀜) */
   const [heroWords, setHeroWords] = useState<Word[]>([]);
   /** Figma: 새로운 신조어 섹션 — new-slang 카테고리 단어 미리보기 */
@@ -86,7 +82,6 @@ export default function HomeScreen() {
 
   useFocusEffect(useCallback(() => {
     fetchPosts().then(data => setCommunityPosts(data.slice(0, 3)));
-    fetchUnreadNotificationCount().then(count => setHasUnreadNotifications(count > 0));
     setIsPremium(authStore.isPremium());
   }, []));
 
@@ -124,20 +119,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* ── TopAppBar ── Figma: Navigation/TopAppBar/Home (375×44, bg #52514e) — 실제 SokDak 워드마크 SVG */}
-      <View style={styles.topBar}>
-        <TouchableOpacity style={styles.logoBtn} onPress={() => router.push('/tabs')} activeOpacity={0.8}>
-          <SokDakLogo width={83} />
-        </TouchableOpacity>
-        <View style={styles.topBarIcons}>
-          {/* 다크 헤더 위라 기본 gray-600 대신 밝은색으로 대비 확보 */}
-          <AppIcon icon={Search} size={22} color={Colors.navBarIconActive} style={styles.iconBtn} onPress={() => router.push('/search')} />
-          <View style={styles.iconBtn}>
-            <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
-            {hasUnreadNotifications && <View style={styles.notifDot} />}
-          </View>
-        </View>
-      </View>
+      <TopAppBar variant="home" />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         {/* ── 히어로 캐러셀 ── Figma: Card/Recommend2 (375×250) */}
@@ -308,25 +290,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
 
-  /* TopAppBar */
-  topBar: {
-    height: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingLeft: 24,
-    paddingRight: 6,
-    backgroundColor: Colors.navBar,
-  },
-  logoBtn: { height: 44, justifyContent: 'center' },
-  topBarIcons: { flexDirection: 'row' },
-  iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  /* Figma: data-badge="on" — 벨 아이콘 우측 상단 알림 점 */
-  notifDot: {
-    position: 'absolute', top: 10, right: 12,
-    width: 6, height: 6, borderRadius: 3,
-    backgroundColor: Colors.error,
-  },
 
   content: { paddingBottom: 24 },
 

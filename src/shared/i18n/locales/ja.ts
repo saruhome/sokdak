@@ -147,6 +147,8 @@ export const ja = {
     a11yPlayPronunciation: '発音を再生',
     a11yLikeCategory: 'カテゴリーをお気に入りに追加',
     a11yScrollToTop: 'トップへ戻る',
+    a11yOpenSearch: '検索を開く',
+    a11yOpenNotifications: '通知を開く',
     cancelLabel: 'キャンセル',
     goToLogin: 'ログインする',
     commentFailedTitle: 'コメントの投稿に失敗しました',

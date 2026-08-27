@@ -147,6 +147,8 @@ export const vi = {
     a11yPlayPronunciation: 'Nghe phát âm',
     a11yLikeCategory: 'Yêu thích danh mục',
     a11yScrollToTop: 'Cuộn lên đầu trang',
+    a11yOpenSearch: 'Mở tìm kiếm',
+    a11yOpenNotifications: 'Mở thông báo',
     cancelLabel: 'Hủy',
     goToLogin: 'Đến trang đăng nhập',
     commentFailedTitle: 'Đăng bình luận thất bại',

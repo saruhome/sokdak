@@ -147,6 +147,8 @@ export const ko = {
     a11yPlayPronunciation: '발음 듣기',
     a11yLikeCategory: '카테고리 즐겨찾기',
     a11yScrollToTop: '맨 위로 이동',
+    a11yOpenSearch: '검색 열기',
+    a11yOpenNotifications: '알림 열기',
     cancelLabel: '취소',
     goToLogin: '로그인하러 가기',
     commentFailedTitle: '댓글 등록 실패',

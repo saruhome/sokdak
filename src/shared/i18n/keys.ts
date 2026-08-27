@@ -148,6 +148,8 @@ export type TranslationKey =
   | 'a11yPlayPronunciation'
   | 'a11yLikeCategory'
   | 'a11yScrollToTop'
+  | 'a11yOpenSearch'
+  | 'a11yOpenNotifications'
   | 'cancelLabel'
   | 'goToLogin'
   | 'commentFailedTitle'

@@ -147,6 +147,8 @@ export const de = {
     a11yPlayPronunciation: 'Aussprache wiedergeben',
     a11yLikeCategory: 'Kategorie favorisieren',
     a11yScrollToTop: 'Nach oben scrollen',
+    a11yOpenSearch: 'Suche öffnen',
+    a11yOpenNotifications: 'Benachrichtigungen öffnen',
     cancelLabel: 'Abbrechen',
     goToLogin: 'Zur Anmeldung',
     commentFailedTitle: 'Kommentar konnte nicht veröffentlicht werden',

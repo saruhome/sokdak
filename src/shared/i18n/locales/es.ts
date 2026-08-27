@@ -147,6 +147,8 @@ export const es = {
     a11yPlayPronunciation: 'Reproducir pronunciación',
     a11yLikeCategory: 'Marcar categoría como favorita',
     a11yScrollToTop: 'Ir arriba',
+    a11yOpenSearch: 'Abrir búsqueda',
+    a11yOpenNotifications: 'Abrir notificaciones',
     cancelLabel: 'Cancelar',
     goToLogin: 'Ir a iniciar sesión',
     commentFailedTitle: 'Error al publicar el comentario',

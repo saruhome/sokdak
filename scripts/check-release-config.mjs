@@ -105,6 +105,20 @@ if (easConfig.build?.production?.autoIncrement !== true) {
   configErrors.push('eas.json production.autoIncrement must be true.');
 }
 
+// 베타 무제한 플래그는 반드시 EXPO_PUBLIC_RELEASE_STAGE에서 파생되어야 한다 —
+// 하드코딩(`= true`)이 다시 들어오면 production 빌드의 무료 한도·프리미엄 게이트가 전부 꺼진다.
+const entitlementSource = readFileSync(
+  resolve(process.cwd(), 'src/features/auth/model/entitlementStore.ts'), 'utf8',
+);
+if (!entitlementSource.includes(
+  "BETA_UNLIMITED_ENTITLEMENTS = process.env.EXPO_PUBLIC_RELEASE_STAGE !== 'production'",
+)) {
+  configErrors.push(
+    "entitlementStore.ts must derive BETA_UNLIMITED_ENTITLEMENTS from EXPO_PUBLIC_RELEASE_STAGE "
+    + "(no hardcoded value) so production builds enforce free-tier limits.",
+  );
+}
+
 if (missing.length > 0 || invalidUrls.length > 0 || invalidEmail || configErrors.length > 0) {
   console.error(`Release configuration check failed for ${stage}.`);
   if (missing.length > 0) console.error(`Missing: ${missing.join(', ')}`);

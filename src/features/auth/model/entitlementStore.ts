@@ -13,8 +13,10 @@ import { sessionStore } from './sessionStore';
 export const FREE_WORD_SAVE_LIMIT = 3;
 export const FREE_CATEGORY_LIKE_LIMIT = 2;
 export const FREE_TTS_DAILY_LIMIT = 3;
-/** 결제가 비활성인 비공개 베타에서는 유료 제한·자동 삭제를 적용하지 않는다. */
-export const BETA_UNLIMITED_ENTITLEMENTS = true;
+/** 결제가 비활성인 비공개 베타에서는 유료 제한·자동 삭제를 적용하지 않는다.
+ *  production 빌드(eas.json이 EXPO_PUBLIC_RELEASE_STAGE=production 주입)에서는 자동으로
+ *  꺼진다 — 하드코딩 재도입은 check-release-config가 CI에서 차단한다. */
+export const BETA_UNLIMITED_ENTITLEMENTS = process.env.EXPO_PUBLIC_RELEASE_STAGE !== 'production';
 
 /** 무료 회원 TTS 일일 재생 횟수 — 계정+날짜별로 기기에 저장(서버 강제 아님, UX 가드).
  *  ponytail: 세션이 자정을 넘겨 계속 켜져 있으면 갱신은 다음 recordTtsPlay/canPlayTtsToday

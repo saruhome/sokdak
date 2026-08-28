@@ -257,27 +257,13 @@ mypage.tsx를 mypage/index.tsx + Stack(_layout.tsx)으로 전환하고 6개 서�
   리마인더, 퀴즈/챌린지 엔진, 개인화 추천 엔진, 오프라인 사전 다운로드, "광고 없음"(광고 시스템
   자체가 없음), `community/[id].tsx` 변경(요청 기능 중 해당 화면에 구체적으로 매핑되는 게 없음).
 
-**정식 출시 시 실행할 잠금 SQL** (사용자 테스트 기간엔 적용하지 말 것 — `premium.tsx`의 체험
-토글이 이 이후로 막힘). 실결제 연동 붙이는 시점에 Supabase SQL Editor 또는
-`apply_migration`으로 실행:
-```sql
-create or replace function block_client_premium_write()
-returns trigger as $$
-begin
-  if new.is_premium is distinct from old.is_premium and auth.role() <> 'service_role' then
-    raise exception 'is_premium은 서버(결제 웹훅)에서만 변경할 수 있어요';
-  end if;
-  return new;
-end;
-$$ language plpgsql security definer;
-
-create trigger profiles_block_client_premium_write
-  before update on profiles
-  for each row execute function block_client_premium_write();
-```
-결제 웹훅은 `service_role` 키로 업데이트하므로 영향 없음. 적용 후 `premium.tsx`의 체험
-토글 버튼은 그대로 두면 에러만 뜨고 조용히 실패하니, 이 SQL을 실행하는 김에 해당 화면도
-"프리미엄은 결제로만 이용 가능해요" 안내로 같이 바꿀 것.
+**✅ 잠금 SQL 적용 완료** (2026-08-28, migration `block_client_premium_write`).
+`is_premium`은 그 사이 `profiles`에서 `account_settings`로 이동했으므로 위에 적어뒀던
+profiles 기준 SQL 대신 `account_settings`에 트리거를 걸었다:
+`account_settings_block_client_premium_write` — `is_premium` 변경을 `service_role`
+(결제 웹훅)에게만 허용하고, 같은 테이블의 notification_prefs/last_seen_reply_at/streak
+본인 행 UPDATE는 그대로 통과시킨다. `premium.tsx`는 이미 체험 토글 없이 안내 전용
+화면이고, 클라이언트 코드에 is_premium 쓰기 경로는 없다(읽기 전용).
 - ✅ 고객센터 인앱 문의함 — 유저가 운영진에게 문의를 보내고 답변을 받는 흐름을 별도 헬프데스크
   SaaS 없이 구현(비용 $0, 기존 Supabase 프로젝트 안에서 해결). `support_tickets` 테이블
   (message/status/reply/replied_at) + RLS는 로그인 유저의 INSERT/SELECT만 허용하고 UPDATE

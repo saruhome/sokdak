@@ -1,4 +1,8 @@
--- [미적용 초안 — 승인 후 apply_migration으로 실행할 것]
+-- [적용 완료 — 2026-08-28, production migration version 20260828201350]
+-- 파일명 timestamp(20260829000000)와 production version이 다른 것은 이 repo의 기존 관행:
+-- 모든 migration이 MCP apply_migration으로 적용되어 적용 시각이 version으로 기록된다
+-- (예: 20260814140000_split... 파일 ↔ production 20260814140047). supabase CLI sync는
+-- 사용하지 않으므로 문제 없음 — CLI를 도입하면 그때 migration repair로 전체 정합화할 것.
 --
 -- is_premium 잠금 중복 정리.
 -- 배경: 2026-08-28에 MCP로 직접 적용된 migration `block_client_premium_write`(GitHub에

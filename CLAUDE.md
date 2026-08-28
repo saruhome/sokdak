@@ -267,10 +267,14 @@ last_seen_reply_at/streak/phone/timezone 본인 행 UPDATE는 그대로 통과�
 경로는 없다(읽기 전용).
 2026-08-28에 이 canonical 잠금을 놓치고 중복 트리거(`block_client_premium_write`,
 SECURITY DEFINER + mutable search_path)를 MCP로 production에 직접 적용했다 — repo에
-migration 파일이 없는 provenance drift이며 보안 린트 WARN 3건의 원인. **기존 canonical
-잠금 확인 완료, 중복 객체 정리 대기**: 미적용 초안
-`supabase/migrations/20260829000000_dedupe_premium_write_lock.sql`(중복 제거 + 클라이언트
-role의 함수 EXECUTE revoke, staging 검증 절차 포함)이 승인 후 적용을 기다린다.
+migration 파일이 없는 provenance drift이며 보안 린트 WARN 3건의 원인이었다.
+**중복 정리 완료** (2026-08-28, production version `20260828201350`):
+`supabase/migrations/20260829000000_dedupe_premium_write_lock.sql`을 staging 검증
+(롤백 트랜잭션 5개 체크 전부 PASS) 후 승인 받아 적용 — 중복 트리거/함수 제거, canonical
+함수의 anon/authenticated EXECUTE revoke(REST `/rpc` 노출 차단, service_role은 유지).
+premium 관련 보안 린트 WARN 3건 해소, 남은 WARN은 Leaked Password Protection(출시 전
+별도 항목)뿐. 파일명 timestamp와 production version이 다른 것은 repo 전체의 기존 관행
+(MCP 적용 시각이 version이 됨) — 파일 헤더 주석 참고.
 - ✅ 고객센터 인앱 문의함 — 유저가 운영진에게 문의를 보내고 답변을 받는 흐름을 별도 헬프데스크
   SaaS 없이 구현(비용 $0, 기존 Supabase 프로젝트 안에서 해결). `support_tickets` 테이블
   (message/status/reply/replied_at) + RLS는 로그인 유저의 INSERT/SELECT만 허용하고 UPDATE

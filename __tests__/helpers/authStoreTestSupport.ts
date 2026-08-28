@@ -10,6 +10,7 @@ export function mockSupabaseModuleFactory() {
         getSession: jest.fn(),
         onAuthStateChange: jest.fn(),
         signOut: jest.fn(),
+        setSession: jest.fn(async () => ({ data: {}, error: null })),
       },
     },
   };

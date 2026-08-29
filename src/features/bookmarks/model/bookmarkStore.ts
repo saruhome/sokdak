@@ -62,10 +62,7 @@ export const bookmarkStore = {
       supabase.from('post_likes').select('post_id').eq('user_id', userId),
       supabase.from('saved_posts').select('post_id').eq('user_id', userId),
       supabase.from('comment_likes').select('comment_id').eq('user_id', userId),
-      // ponytail: liked_categories는 아직 운영 DB에 없는 신규 마이그레이션이라 생성된 타입에
-      // 없음 — toggle의 insert와 동일하게 any로 우회. 마이그레이션 적용 + 타입 재생성 후
-      // 지워도 되는 캐스트.
-      (supabase.from('liked_categories' as any) as any).select('category_slug').eq('user_id', userId),
+      supabase.from('liked_categories').select('category_slug').eq('user_id', userId),
       supabase.from('blocked_users').select('blocked_id').eq('blocker_id', userId),
     ]);
 

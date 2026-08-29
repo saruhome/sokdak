@@ -86,6 +86,9 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          moderated_at: string | null
+          moderation_reason: string | null
+          moderation_status: string
           parent_comment_id: string | null
           post_id: string
         }
@@ -94,6 +97,9 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          moderated_at?: string | null
+          moderation_reason?: string | null
+          moderation_status?: string
           parent_comment_id?: string | null
           post_id: string
         }
@@ -102,6 +108,9 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          moderated_at?: string | null
+          moderation_reason?: string | null
+          moderation_status?: string
           parent_comment_id?: string | null
           post_id?: string
         }
@@ -249,6 +258,9 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          moderated_at: string | null
+          moderation_reason: string | null
+          moderation_status: string
           title: string
           view_count: number
         }
@@ -258,6 +270,9 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          moderated_at?: string | null
+          moderation_reason?: string | null
+          moderation_status?: string
           title: string
           view_count?: number
         }
@@ -267,6 +282,9 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          moderated_at?: string | null
+          moderation_reason?: string | null
+          moderation_status?: string
           title?: string
           view_count?: number
         }
@@ -512,6 +530,30 @@ export type Database = {
           },
         ]
       }
+      waitlist_subscribers: {
+        Row: {
+          consented_at: string
+          created_at: string
+          email: string
+          id: number
+          source: string
+        }
+        Insert: {
+          consented_at?: string
+          created_at?: string
+          email: string
+          id?: number
+          source?: string
+        }
+        Update: {
+          consented_at?: string
+          created_at?: string
+          email?: string
+          id?: number
+          source?: string
+        }
+        Relationships: []
+      }
       word_suggestions: {
         Row: {
           category_slug: string
@@ -630,6 +672,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      // 주의: 아래 consent RPC 2개는 미적용 migration
+      // 20260816130000_community_policy_consent_ledger.sql의 계약이다 — production에는 아직
+      // 없어서 재생성 타입에는 안 나오지만, consentStore가 호출하므로 적용 전까지 수동 유지.
       accept_current_community_policy: {
         Args: {
           p_app_version?: string | null
@@ -644,7 +689,6 @@ export type Database = {
           policy_version: string
         }[]
       }
-      delete_own_account: { Args: never; Returns: undefined }
       has_accepted_current_community_policy: { Args: never; Returns: boolean }
     }
     Enums: {

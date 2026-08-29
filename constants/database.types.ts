@@ -129,6 +129,24 @@ export type Database = {
           },
         ]
       }
+      liked_categories: {
+        Row: {
+          category_slug: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          category_slug: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          category_slug?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           actor_id: string

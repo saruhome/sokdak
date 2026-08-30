@@ -130,7 +130,7 @@ export const en = {
     askInCommunity: 'Ask about this word in the community',
     askInCommunityQuestion: '— got a question about it?',
 
-    hotPosts: 'Trending questions',
+    hotPosts: 'Trending posts',
     guestCalloutTitle: 'Log in to ask your question',
     guestCalloutBenefit: 'Ask about expressions and learn together with comments and likes.',
     noPostsYet: 'No posts yet',

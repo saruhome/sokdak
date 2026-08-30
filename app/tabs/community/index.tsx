@@ -21,7 +21,7 @@ const JJAEKI_READING = require('../../../assets/characters/transparent/jjaeki-re
 const BOARD_TABS: CommunityBoardTab[] = ['전체', '질문', '자유'];
 
 /**
- * 화제의 질문 노출 정책 — 백엔드 featured 기준이 없으므로 첫 페이지 안에서
+ * 화제의 글 노출 정책 — 백엔드 featured 기준이 없으므로 첫 페이지 안에서
  * 조회수 상위 2개만 뽑고, 아래 목록에서는 같은 글을 빼서 중복 노출하지 않는다.
  * - 첫 페이지로 한정: 페이지가 추가 로드될 때마다 화제 글이 바뀌면 스크롤 중 목록이 튄다.
  * - 게시글이 5개 미만이면 숨김: 전부 화제 글로 올라가 아래 목록이 비어 보이는 것을 막는다.
@@ -88,7 +88,7 @@ export default function CommunityScreen() {
     () => activeTab === '전체' && !loading ? selectFeaturedPosts(posts) : [],
     [activeTab, loading, posts],
   );
-  /* 화제의 질문으로 올라간 글은 아래 목록에서 제외 — 같은 화면에 같은 글이 두 번 보이지 않게 */
+  /* 화제의 글으로 올라간 글은 아래 목록에서 제외 — 같은 화면에 같은 글이 두 번 보이지 않게 */
   const listPosts = useMemo(() => {
     const featuredIds = new Set(featured.map(post => post.id));
     return featuredIds.size === 0 ? posts : posts.filter(post => !featuredIds.has(post.id));
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   featuredCardSub: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
   featuredCardMeta: { flexDirection: 'row', gap: 10 },
 
-  /* 게시판 뱃지 — 사전 화면 단어 태그(wordBadge)와 동일 크기 (화제의 질문 카드용) */
+  /* 게시판 뱃지 — 사전 화면 단어 태그(wordBadge)와 동일 크기 (화제의 글 카드용) */
   boardBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 8, paddingVertical: 2,

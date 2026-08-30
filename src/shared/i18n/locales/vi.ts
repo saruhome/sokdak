@@ -130,7 +130,7 @@ export const vi = {
     askInCommunity: 'Hỏi về từ này trong cộng đồng',
     askInCommunityQuestion: ' — bạn có thắc mắc gì về từ này không?',
 
-    hotPosts: 'Câu hỏi nổi bật',
+    hotPosts: 'Bài viết nổi bật',
     guestCalloutTitle: 'Đăng nhập để đặt câu hỏi',
     guestCalloutBenefit: 'Hỏi về các cách diễn đạt và cùng học qua bình luận và lượt thích.',
     noPostsYet: 'Chưa có bài viết nào',

@@ -130,7 +130,7 @@ export const ja = {
     askInCommunity: 'この単語についてコミュニティで聞いてみる',
     askInCommunityQuestion: 'について気になることはありますか？',
 
-    hotPosts: '話題の質問',
+    hotPosts: '話題の投稿',
     guestCalloutTitle: 'ログインして質問してみましょう',
     guestCalloutBenefit: '気になる表現を質問し、コメントやいいねで一緒に学べます。',
     noPostsYet: 'まだ投稿がありません',

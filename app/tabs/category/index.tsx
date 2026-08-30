@@ -24,12 +24,12 @@ const RECOMMEND_BUBBLE_BORDER = 1; // border-box라 padding처럼 content 폭에
 
 /** 호랭이 성격 — 책 읽는 걸 좋아하는 붙임성 있는 서생 톤. 매 방문마다 하나를 랜덤으로 골라 보여준다. */
 const HORANG_HINTS: Record<Language, string[]> = {
-  ko: ['아직 안 가본 카테고리예요!', '오늘은 여기부터 볼까요?', '이 카테고리도 궁금하지 않아요?', '한번 둘러보고 가요!'],
-  en: ["A category you haven't explored yet!", 'How about starting here today?', 'Curious about this one too?', 'Take a look around!'],
-  ja: ['まだ見たことのないカテゴリーです！', '今日はここから見てみましょうか？', 'このカテゴリーも気になりませんか？', 'ちょっと見て行ってくださいね！'],
-  vi: ['Đây là danh mục bạn chưa khám phá!', 'Hôm nay bắt đầu từ đây nhé?', 'Bạn không tò mò về danh mục này sao?', 'Ghé xem một chút nhé!'],
-  es: ['¡Una categoría que aún no has explorado!', '¿Empezamos por aquí hoy?', '¿No sientes curiosidad por esta categoría también?', '¡Échale un vistazo!'],
-  de: ['Eine Kategorie, die du noch nicht entdeckt hast!', 'Wie wäre es, heute hier zu beginnen?', 'Bist du auch auf diese Kategorie neugierig?', 'Schau dich doch einmal um!'],
+  ko: ['아직 안 가봤죠?', '오늘은 여기부터!', '여기도 궁금하죠?', '한번 둘러봐요!'],
+  en: ['New ground for you!', 'Start here today?', 'Curious about this?', 'Take a look!'],
+  ja: ['まだ見てないよね?', '今日はここから!', 'ここも気になる?', 'のぞいてみてね!'],
+  vi: ['Chưa ghé nhỉ?', 'Hôm nay bắt đầu đây!', 'Tò mò chứ?', 'Ghé xem thử nhé!'],
+  es: ['¿Aún sin explorar?', '¿Empezamos aquí?', '¿Te pica la curiosidad?', '¡Échale un ojo!'],
+  de: ['Noch unentdeckt!', 'Heute hier starten?', 'Auch neugierig?', 'Schau mal rein!'],
 };
 
 type SortMode = '인기순' | '가나다순';

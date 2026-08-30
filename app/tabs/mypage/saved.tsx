@@ -5,7 +5,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { fetchWordsByIds, localizedText, type Word } from '../../../constants/words';
+import { cardGloss, fetchWordsByIds, type Word } from '../../../constants/words';
 import { authStore } from '../../../constants/authStore';
 import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
@@ -182,7 +182,7 @@ export default function SavedWordsScreen() {
                         </View>
                       )}
                     </View>
-                    <Text style={styles.wordDesc} numberOfLines={1}>{localizedText(word.shortDesc, word.shortDescI18n, language)}</Text>
+                    <Text style={styles.wordDesc} numberOfLines={1}>{cardGloss(word, language)}</Text>
                   </View>
                   <View style={styles.wordItemRight}>
                     <AppIcon

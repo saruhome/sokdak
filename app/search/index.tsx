@@ -6,7 +6,7 @@ import { useMemo, useState, useCallback, useEffect } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
-import { fetchWords, localizedText, type Word } from '../../constants/words';
+import { cardGloss, fetchWords, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
 import { CATEGORIES, getCategoryBySlug, getCategoryName } from '../../constants/categories';
@@ -190,7 +190,7 @@ export default function SearchScreen() {
             >
               <AppIcon icon={BookOpen} size={15} style={styles.suggestIconWrap} />
               <Text style={styles.suggestWord}>{item.word}</Text>
-              <Text style={styles.suggestDesc} numberOfLines={1}>{localizedText(item.shortDesc, item.shortDescI18n, language)}</Text>
+              <Text style={styles.suggestDesc} numberOfLines={1}>{cardGloss(item, language)}</Text>
             </TouchableOpacity>
           )}
         />
@@ -261,7 +261,7 @@ export default function SearchScreen() {
                     >
                       <View style={styles.wordItemLeft}>
                         <Text style={styles.wordText}>{item.word}</Text>
-                        <Text style={styles.wordDesc} numberOfLines={1}>{localizedText(item.shortDesc, item.shortDescI18n, language)}</Text>
+                        <Text style={styles.wordDesc} numberOfLines={1}>{cardGloss(item, language)}</Text>
                       </View>
                       <View style={styles.wordRight}>
                         <Text style={styles.wordCategory}>{(() => {

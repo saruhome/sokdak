@@ -117,7 +117,7 @@ export default function HomeScreen() {
                       </View>
                     )}
                     <Text style={styles.heroWord} numberOfLines={1}>{word.word}</Text>
-                    <Text style={styles.heroDesc} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{localizedText(word.shortDesc, word.shortDescI18n, language)}</Text>
+                    <Text style={styles.heroDesc} numberOfLines={1}>{cardGloss(word, language)}</Text>
                   </View>
                 </TouchableOpacity>
               );

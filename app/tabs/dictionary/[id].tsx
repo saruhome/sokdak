@@ -222,7 +222,7 @@ export default function WordDetailScreen() {
                   {localizedText(m.definition, m.definition_i18n, language)}
                 </Text>
               ))}
-              {englishGloss && <Text style={styles.definitionEng}>{englishGloss}</Text>}
+              {(language === 'ko' || language === 'en') && englishGloss && <Text style={styles.definitionEng}>{englishGloss}</Text>}
             </View>
 
             {/* 문화적 배경 Cultural Context */}

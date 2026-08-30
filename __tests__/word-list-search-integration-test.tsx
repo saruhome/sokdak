@@ -62,6 +62,7 @@ jest.mock('@/components/WordFilterBar', () => {
 jest.mock('@/constants/words', () => ({
   fetchWords: jest.fn(),
   localizedText: jest.requireActual('@/src/features/dictionary/model/localizedText').localizedText,
+  cardGloss: jest.requireActual('@/src/features/dictionary/model/localizedText').cardGloss,
 }));
 
 jest.mock('@/constants/categories', () => ({

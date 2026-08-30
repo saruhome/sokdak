@@ -6,7 +6,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors, getReadableTextColor } from '@/constants/Colors';
-import { fetchWords, localizedText, type Word } from '@/constants/words';
+import { cardGloss, fetchWords, type Word } from '@/constants/words';
 import { getCategoryBySlug, getCategoryName, pickLeastPopular } from '@/constants/categories';
 import { languageStore, useLanguage, type Language } from '@/constants/languageStore';
 import { authStore } from '@/constants/authStore';
@@ -33,12 +33,12 @@ const TIP_BUBBLE_BORDER = 1; // border-box라 padding처럼 content 폭에서 �
 
 /** 짹이 성격 — 안 친절하고 까칠한 톤. 매 방문마다 하나를 랜덤으로 골라 보여준다. */
 const JJAEKI_HINTS: Record<Language, string[]> = {
-  ko: ['이것도 몰라? 뭐, 보든가', '이거 모르면 안 되는데', '설마 이것도 모르는 거 아니지?', '알아두면 좋을걸. 몰라도 말고'],
-  en: ["Don't know this either? Fine, take a look.", 'You really should know this one.', "Don't tell me you don't know this too.", 'Might wanna know this. Or not, whatever.'],
-  ja: ['これも知らないの？まあ、見てみれば？', 'これは知っておかないとね', 'まさかこれも知らないなんてことないよね？', '知っておくと得するかもよ。知らなくても別にいいけど'],
-  vi: ['Cái này cũng không biết à? Thôi thì xem đi.', 'Cái này thì phải biết chứ.', 'Đừng nói là cái này cũng không biết đấy nhé?', 'Biết thì tốt. Không biết cũng chẳng sao.'],
-  es: ['¿Tampoco sabes esto? Bueno, échale un vistazo.', 'Esto sí que deberías saberlo.', 'No me digas que esto tampoco lo sabías.', 'Podría venirte bien saberlo. O no, tú verás.'],
-  de: ['Das weißt du auch nicht? Na gut, schau es dir an.', 'Das solltest du wirklich kennen.', 'Sag nicht, dass du das auch nicht weißt.', 'Kann nützlich sein. Oder auch nicht, wie du willst.'],
+  ko: ['이것도 몰라?', '이건 알아야지', '설마 모르는 거야?', '알아두면 좋을걸'],
+  en: ['You know this one?', 'You should know this.', 'Not this one too?', 'Worth knowing.'],
+  ja: ['これも知らないの?', 'これは知っとかないと', 'まさか知らない?', '知っておくと得だよ'],
+  vi: ['Cái này biết chưa?', 'Phải biết cái này chứ', 'Không biết thật à?', 'Biết thì tốt đó'],
+  es: ['¿Tampoco esta?', 'Esta hay que saberla.', '¿En serio no la sabes?', 'Te conviene saberla.'],
+  de: ['Auch das neu?', 'Das musst du kennen.', 'Echt jetzt nicht?', 'Gut zu wissen.'],
 };
 
 /**
@@ -278,7 +278,7 @@ export function WordListView({
                       {t('translationSearchMatch')} {translationSearchMatch.lang}
                     </Text>
                   ) : (
-                    <Text style={styles.wordDesc} numberOfLines={1}>{localizedText(item.shortDesc, item.shortDescI18n, language)}</Text>
+                    <Text style={styles.wordDesc} numberOfLines={1}>{cardGloss(item, language)}</Text>
                   )}
                   <View style={styles.likeRow}>
                     <AppIcon icon={Heart} size={11} color={Colors.textTertiary} />

@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, Modal, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
@@ -42,10 +42,15 @@ export default function PremiumScreen() {
     if (BETA_UNLIMITED_ENTITLEMENTS) router.replace('/tabs/mypage');
   }, []);
 
-  const startBetaPremium = async () => {
+  /* 가상 결제: 실결제 페이지 대신 테스트용 체크아웃 모달만 띄운다.
+   * 카드 입력란은 두지 않는다 — 실제 결제 정보가 수집되는 것처럼 보이면 안 된다. */
+  const [checkoutVisible, setCheckoutVisible] = useState(false);
+
+  const completeMockPayment = async () => {
     setActivating(true);
     const { error } = await authStore.activateBetaPremium();
     setActivating(false);
+    setCheckoutVisible(false);
     if (error) Alert.alert(t('saveFailedTitle'), error);
     else Alert.alert(t('premiumBetaActivated'));
   };
@@ -98,11 +103,7 @@ export default function PremiumScreen() {
         </View>
 
         {!isPremium && (
-          <TouchableOpacity
-            style={[styles.betaCta, activating && styles.betaCtaDisabled]}
-            onPress={startBetaPremium}
-            disabled={activating}
-          >
+          <TouchableOpacity style={styles.betaCta} onPress={() => setCheckoutVisible(true)}>
             <Text style={styles.betaCtaText}>{t('premiumBetaCta')}</Text>
           </TouchableOpacity>
         )}
@@ -112,6 +113,33 @@ export default function PremiumScreen() {
           <Text style={styles.pendingBody}>{t('premiumPendingBody')}</Text>
         </View>
       </ScrollView>
+
+      {/* 가상 체크아웃 — "테스트 모드, 실제 청구 없음"을 명시하고 결제 정보는 받지 않는다 */}
+      <Modal visible={checkoutVisible} transparent animationType="fade"
+        onRequestClose={() => setCheckoutVisible(false)}>
+        <View style={styles.checkoutBackdrop}>
+          <View style={styles.checkoutCard}>
+            <View style={styles.checkoutTestBadge}>
+              <Text style={styles.checkoutTestBadgeText}>{t('mockCheckoutNotice')}</Text>
+            </View>
+            <Text style={styles.checkoutTitle}>{t('mockCheckoutTitle')}</Text>
+            <View style={styles.checkoutRow}>
+              <Text style={styles.checkoutProduct}>{t('mockCheckoutProduct')}</Text>
+              <Text style={styles.checkoutPrice}>₩4,900 / {t('mockCheckoutPerMonth')}</Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.checkoutPayBtn, activating && styles.betaCtaDisabled]}
+              onPress={completeMockPayment}
+              disabled={activating}
+            >
+              <Text style={styles.checkoutPayText}>{t('mockCheckoutPay')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.checkoutCancelBtn} onPress={() => setCheckoutVisible(false)}>
+              <Text style={styles.checkoutCancelText}>{t('adultGateCancel')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -151,6 +179,32 @@ const styles = StyleSheet.create({
   },
   betaCtaDisabled: { opacity: 0.6 },
   betaCtaText: { fontSize: 15, fontWeight: '700', color: Colors.navBarIconActive },
+  checkoutBackdrop: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center', justifyContent: 'center', padding: 24,
+  },
+  checkoutCard: {
+    width: '100%', maxWidth: 320, gap: 12, padding: 20,
+    borderRadius: 16, backgroundColor: Colors.surface,
+  },
+  checkoutTestBadge: {
+    alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4,
+    borderRadius: 8, backgroundColor: Colors.error + '18', borderWidth: 1, borderColor: Colors.error,
+  },
+  checkoutTestBadgeText: { fontSize: 11, fontWeight: '700', color: Colors.error },
+  checkoutTitle: { fontSize: 17, fontWeight: '800', color: Colors.textPrimary },
+  checkoutRow: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    padding: 12, borderRadius: 10, backgroundColor: Colors.background,
+  },
+  checkoutProduct: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
+  checkoutPrice: { fontSize: 14, fontWeight: '700', color: Colors.accent },
+  checkoutPayBtn: {
+    alignItems: 'center', paddingVertical: 13, borderRadius: 10, backgroundColor: Colors.navBar,
+  },
+  checkoutPayText: { fontSize: 15, fontWeight: '700', color: Colors.navBarIconActive },
+  checkoutCancelBtn: { alignItems: 'center', paddingVertical: 8 },
+  checkoutCancelText: { fontSize: 13, color: Colors.textSecondary },
   pendingCard: {
     gap: 8, padding: 16, borderRadius: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,

@@ -108,6 +108,7 @@ error:            '#C04A3A'
 | consonant | #52514E |
 | outdated-slang | #8B7355 |
 | work | #AFC4B0 |
+| variety | #F2C4C4 |
 
 ---
 

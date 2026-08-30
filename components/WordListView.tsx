@@ -358,9 +358,9 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontFamily: 'NotoSerifKR_400Regular' },
 
   /* 가로는 marginHorizontal:24가 검색창과 동일해 이미 고정 폭 — 세로는 카테고리 말풍선 실측값(105)으로 고정 */
-  /* 말풍선은 캐릭터 바로 옆에 — 멀면 말하는 것처럼 안 보인다(운영자 규칙). 꼬리(8px)+여백 */
+  /* 말풍선+캐릭터를 한 그룹으로 중앙 배치 — 말풍선 크기에 따라 그룹이 함께 움직인다(운영자 규칙) */
   tipCard: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12,
     marginHorizontal: 24, marginTop: 16, minHeight: 105,
   },
   /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 캐릭터와 겹친다.

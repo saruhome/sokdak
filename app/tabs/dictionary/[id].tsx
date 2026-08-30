@@ -381,7 +381,9 @@ const styles = StyleSheet.create({
   wordTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   wordTitle: { fontSize: 26, fontWeight: '700', color: Colors.textPrimary },
   reading: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
-  soundBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 5 },
+  /* 발음 텍스트와 스피커 아이콘은 같은 줄에서 세로 중앙 정렬(운영자 규칙) — 이전의
+   * flex-end+paddingBottom 수동 보정이 아이콘을 위로 띄워 보이게 했다 */
+  soundBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   badgeRow: { flexDirection: 'row', gap: 8 },
   badge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
   badgeText: { fontSize: 10, fontWeight: '600' },

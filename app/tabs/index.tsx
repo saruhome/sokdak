@@ -204,7 +204,7 @@ export default function HomeScreen() {
                   </>
                 )}
                 <Text style={[styles.wordCardTitle, word.thumbnailUrl && styles.wordCardTitleOnImage]} numberOfLines={1}>{word.word}</Text>
-                <Text style={[styles.wordCardDesc, word.thumbnailUrl && styles.wordCardDescOnImage]} numberOfLines={2}>{localizedText(word.shortDesc, word.shortDescI18n, language)}</Text>
+                <Text style={[styles.wordCardDesc, word.thumbnailUrl && styles.wordCardDescOnImage]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{localizedText(word.shortDesc, word.shortDescI18n, language)}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>

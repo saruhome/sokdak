@@ -163,7 +163,7 @@ export default function SignupScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* ── TopAppBar ── Figma node 1293:20263 — 다크 헤더 */}
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/auth/login')}>
             <BackIcon size={24} color={Colors.navBarIconActive} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>회원가입</Text>
@@ -261,7 +261,7 @@ export default function SignupScreen() {
           {/* ── 로그인 링크 ── Figma: "이미 계정이 있나요? 로그인" */}
           <View style={styles.loginRow}>
             <Text style={styles.loginPrompt}>이미 계정이 있나요?</Text>
-            <TouchableOpacity onPress={() => safeGoBack()}>
+            <TouchableOpacity onPress={() => safeGoBack('/auth/login')}>
               <Text style={styles.loginLink}>로그인</Text>
             </TouchableOpacity>
           </View>

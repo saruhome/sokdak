@@ -42,13 +42,13 @@ export default function CommunityGuidelinesScreen() {
       return;
     }
     Alert.alert(copy.acceptedTitle, copy.acceptedBody);
-    safeGoBack();
+    safeGoBack('/tabs/mypage');
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
-        <Pressable style={styles.backBtn} onPress={() => safeGoBack()} accessibilityLabel="뒤로가기">
+        <Pressable style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')} accessibilityLabel="뒤로가기">
           <BackIcon size={24} color={Colors.textPrimary} />
         </Pressable>
         <Text style={styles.topBarTitle}>{copy.title}</Text>

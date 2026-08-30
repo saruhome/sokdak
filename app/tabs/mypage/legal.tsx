@@ -65,7 +65,7 @@ export default function LegalScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()} accessibilityLabel="뒤로가기">
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')} accessibilityLabel="뒤로가기">
           <BackIcon size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{languageStore.t('mypageLegal')}</Text>

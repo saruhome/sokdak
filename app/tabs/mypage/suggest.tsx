@@ -63,7 +63,7 @@ export default function SuggestScreen() {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
             <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>{t('suggestTitle')}</Text>
@@ -100,7 +100,7 @@ export default function SuggestScreen() {
           <TouchableOpacity style={styles.doneCtaPrimary} onPress={handleReset} activeOpacity={0.85}>
             <Text style={styles.doneCtaPrimaryText}>{t('suggestAnother')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.doneCtaSecondary} onPress={() => safeGoBack()}>
+          <TouchableOpacity style={styles.doneCtaSecondary} onPress={() => safeGoBack('/tabs/mypage')}>
             <Text style={styles.doneCtaSecondaryText}>{t('suggestBackToMypage')}</Text>
           </TouchableOpacity>
         </View>
@@ -113,7 +113,7 @@ export default function SuggestScreen() {
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
             <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>{t('suggestTitle')}</Text>

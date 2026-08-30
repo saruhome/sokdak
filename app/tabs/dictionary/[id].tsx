@@ -67,7 +67,7 @@ export default function WordDetailScreen() {
       if (!authStore.isAdultVerified()) {
         authStore.promptAdultVerification(
           () => setWord(w => (w ? { ...w } : w)), // 확인됨 — 재렌더만 유도
-          () => safeGoBack(),
+          () => safeGoBack('/tabs/dictionary'),
         );
       }
     }, [word]),
@@ -85,7 +85,7 @@ export default function WordDetailScreen() {
     return (
       <SafeAreaView style={styles.notFound}>
         <Text style={styles.notFoundText}>{t('wordNotFound')}</Text>
-        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/dictionary')}>
           <Text style={styles.backBtnText}>{t('goBack')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -133,7 +133,7 @@ export default function WordDetailScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar ── */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.iconBtn} onPress={() => safeGoBack()}>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => safeGoBack('/tabs/dictionary')}>
           <BackIcon size={24} color={Colors.navBarIconActive} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle} numberOfLines={1}>{word.word}</Text>

@@ -194,7 +194,7 @@ export default function ProfileScreen() {
     if (avatarChange !== 'unchanged' && user.avatarPath !== nextAvatarPath) {
       await removeProfileAvatar(user.avatarPath);
     }
-    Alert.alert(t('saveCompleteTitle'), t('saveCompleteMessage'), [{ text: t('confirmLabel'), onPress: () => safeGoBack() }]);
+    Alert.alert(t('saveCompleteTitle'), t('saveCompleteMessage'), [{ text: t('confirmLabel'), onPress: () => safeGoBack('/tabs/mypage') }]);
   };
 
   const handleDeleteAccount = () => {
@@ -220,7 +220,7 @@ export default function ProfileScreen() {
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
             <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>{t('myInfoTitle')}</Text>

@@ -139,7 +139,7 @@ export default function EmailLoginScreen() {
         <View style={styles.topBar}>
           <TouchableOpacity
             style={styles.backBtn}
-            onPress={() => (mode === 'forgot' ? goBackToLogin() : safeGoBack())}
+            onPress={() => (mode === 'forgot' ? goBackToLogin() : safeGoBack('/auth/login'))}
           >
             <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>

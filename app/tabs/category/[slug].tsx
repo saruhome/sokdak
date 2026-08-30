@@ -32,7 +32,7 @@ export default function CategoryDetailScreen() {
       return;
     }
     if (!authStore.isAdultVerified()) {
-      authStore.promptAdultVerification(() => {}, () => safeGoBack());
+      authStore.promptAdultVerification(() => {}, () => safeGoBack('/tabs/category'));
     }
   }, [category?.premiumOnly]));
 
@@ -43,7 +43,7 @@ export default function CategoryDetailScreen() {
     return (
       <SafeAreaView style={styles.notFound}>
         <Text style={styles.notFoundText}>{t('categoryNotFound')}</Text>
-        <TouchableOpacity style={styles.notFoundBtn} onPress={() => safeGoBack()}>
+        <TouchableOpacity style={styles.notFoundBtn} onPress={() => safeGoBack('/tabs/category')}>
           <Text style={styles.notFoundBtnText}>{t('goBack')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -54,7 +54,7 @@ export default function CategoryDetailScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopAppBar ── Figma: Navigation/TopAppBar (375×44, bg #52514e) */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/category')}>
           <BackIcon size={24} color={Colors.navBarIconActive} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>{getCategoryName(category, language)}</Text>

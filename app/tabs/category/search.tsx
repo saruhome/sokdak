@@ -57,7 +57,7 @@ export default function CategorySearchScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* ── TopBar: 다크 헤더 + 검색 인풋 ── */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/category')}>
           <BackIcon size={24} color={Colors.navBarIconActive} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{t('categorySearchTitle')}</Text>

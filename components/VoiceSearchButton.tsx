@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Linking, Platform, StyleSheet, View } from 'react-native';
 import {
   ExpoSpeechRecognitionModule,
@@ -40,6 +40,8 @@ export function VoiceSearchButton({
   const t = languageStore.t;
   const [recognizing, setRecognizing] = useState(false);
   const [permissionDialogMode, setPermissionDialogMode] = useState<'retry' | 'settings' | null>(null);
+  /* 웹: 브라우저 내장 Web Speech API 세션 — stop을 위해 보관 */
+  const webRecognitionRef = useRef<{ stop: () => void } | null>(null);
 
   const showPermissionDialog = useCallback((canAskAgain?: boolean) => {
     setPermissionDialogMode(canAskAgain === false ? 'settings' : 'retry');
@@ -73,9 +75,41 @@ export function VoiceSearchButton({
     Alert.alert(t('voiceSearchLabel'), getErrorMessage(event.error));
   });
 
+  /* 웹은 브라우저 내장 Web Speech API 사용(의존성 0) — Chrome/Edge/Safari 지원, ko-KR 인식.
+   * 오디오는 우리 서버로 오지 않고 브라우저의 음성 서비스가 처리한다. Firefox 등 미지원
+   * 브라우저는 정직하게 '사용 불가' 안내. */
+  const startWebRecognition = useCallback(() => {
+    const SR = (window as unknown as Record<string, any>).SpeechRecognition
+      ?? (window as unknown as Record<string, any>).webkitSpeechRecognition;
+    if (!SR) {
+      Alert.alert(t('voiceSearchLabel'), t('voiceSearchUnavailableMessage'));
+      return;
+    }
+    const recognition = new SR();
+    recognition.lang = KOREAN_SPEECH_LOCALE;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 3;
+    recognition.onstart = () => setRecognizing(true);
+    recognition.onend = () => { setRecognizing(false); webRecognitionRef.current = null; };
+    recognition.onresult = (event: any) => {
+      const transcript = event.results?.[0]?.[0]?.transcript?.trim();
+      if (transcript) onTranscript(transcript);
+      else showNoMatch();
+    };
+    recognition.onerror = (event: any) => {
+      setRecognizing(false);
+      if (event.error === 'aborted') return;
+      if (event.error === 'not-allowed') { showPermissionDialog(true); return; }
+      Alert.alert(t('voiceSearchLabel'),
+        event.error === 'no-speech' ? t('voiceSearchNoMatchMessage') : t('voiceSearchUnavailableMessage'));
+    };
+    webRecognitionRef.current = recognition;
+    recognition.start();
+  }, [onTranscript, showNoMatch, showPermissionDialog, t]);
+
   const startRecognition = useCallback(async () => {
     if (Platform.OS === 'web') {
-      Alert.alert(t('voiceSearchLabel'), t('voiceSearchUnavailableMessage'));
+      startWebRecognition();
       return;
     }
 
@@ -104,7 +138,7 @@ export function VoiceSearchButton({
       setRecognizing(false);
       Alert.alert(t('voiceSearchLabel'), t('voiceSearchUnavailableMessage'));
     }
-  }, [contextualStrings, showPermissionDialog, t]);
+  }, [contextualStrings, showPermissionDialog, startWebRecognition, t]);
 
   const handleRetryPermission = () => {
     setPermissionDialogMode(null);
@@ -122,7 +156,8 @@ export function VoiceSearchButton({
 
   const handlePress = () => {
     if (recognizing) {
-      ExpoSpeechRecognitionModule.stop();
+      if (Platform.OS === 'web') webRecognitionRef.current?.stop();
+      else ExpoSpeechRecognitionModule.stop();
       return;
     }
     void startRecognition();

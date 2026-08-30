@@ -47,6 +47,8 @@ export const en = {
     loginPrompt: 'Login to save words and use the community',
     termsOfService: 'Terms of Service',
     privacyPolicy: 'Privacy Policy',
+    mypageCommunityPolicy: 'Community Guidelines',
+    mypageLegal: 'Legal & Privacy',
     logout: 'Logout',
     login: 'Login',
     customerService: 'Support',

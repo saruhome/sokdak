@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
 import { hasUnseenReply } from '../../../constants/support';
-import { languageStore } from '../../../constants/languageStore';
+import { languageStore, LANGUAGE_NATIVE_NAME } from '../../../constants/languageStore';
 import ProfileAvatar from '@/components/ProfileAvatar';
 import { AppIcon } from '@/components/AppIcon';
 import { ChevronRight, Crown, Flame } from 'lucide-react-native';
@@ -145,7 +145,7 @@ export default function MyPageScreen() {
             activeOpacity={0.85}
           >
             <Text style={styles.groupRowLabel} numberOfLines={1} ellipsizeMode="tail">
-              {language === 'en' ? 'English' : '한국어'}
+              {LANGUAGE_NATIVE_NAME[language]}
             </Text>
             <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
           </TouchableOpacity>
@@ -154,7 +154,7 @@ export default function MyPageScreen() {
             onPress={() => router.push('/tabs/mypage/community-guidelines')}
             activeOpacity={0.85}
           >
-            <Text style={styles.groupRowLabel}>커뮤니티 운영정책</Text>
+            <Text style={styles.groupRowLabel}>{t('mypageCommunityPolicy')}</Text>
             <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
           </TouchableOpacity>
           <TouchableOpacity
@@ -162,7 +162,7 @@ export default function MyPageScreen() {
             onPress={() => router.push('/tabs/mypage/legal')}
             activeOpacity={0.85}
           >
-            <Text style={styles.groupRowLabel}>법률 및 개인정보</Text>
+            <Text style={styles.groupRowLabel}>{t('mypageLegal')}</Text>
             <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
           </TouchableOpacity>
         </View>

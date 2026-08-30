@@ -47,6 +47,8 @@ export const ko = {
     loginPrompt: '로그인하면 단어 저장·커뮤니티 이용 가능',
     termsOfService: '이용약관',
     privacyPolicy: '개인정보처리방침',
+    mypageCommunityPolicy: '커뮤니티 운영정책',
+    mypageLegal: '법률 및 개인정보',
     logout: '로그아웃',
     login: '로그인하기',
     customerService: '고객센터',

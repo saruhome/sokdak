@@ -183,16 +183,14 @@ export function WordListView({
                 onPress={() => router.push(`/tabs/dictionary/${tipWord.id}`)}
                 activeOpacity={0.85}
               >
-                {/* 첫 줄(힌트)은 무조건 전체가 보여야 하므로 폭 상한(maxWidth)보다 우선하고,
-                 * flexShrink:0으로 좁은 화면에서도 압축되지 않는다 — 대신 옆의 마스코트가 줄어든다.
-                 * maxWidth는 CSS에서 width보다 항상 이기므로 같이 올려줘야 실제로 넓어진다 */}
+                {/* 캐릭터는 항상 고정 위치(운영자 규칙) — 말풍선이 캐릭터를 밀어내면 안 된다.
+                 * 실측 폭은 maxWidth로만 반영: 짧은 힌트면 내용에 딱 맞고, 긴 힌트(ja/de 번역)면
+                 * flexShrink로 가용 폭까지만 늘어난 뒤 텍스트가 2줄로 감싼다. */}
                 <View
                   style={[
                     styles.tipTextWrap,
                     hintWidth != null && {
-                      width: hintWidth + TIP_BUBBLE_PAD * 2 + TIP_BUBBLE_BORDER * 2,
                       maxWidth: hintWidth + TIP_BUBBLE_PAD * 2 + TIP_BUBBLE_BORDER * 2,
-                      flexShrink: 0,
                     },
                   ]}
                 >
@@ -209,7 +207,8 @@ export function WordListView({
                   </Text>
                   {/* 박스가 이미 이 텍스트의 실측 너비에 맞춰져 있어 adjustsFontSizeToFit이 불필요 —
                    * 오히려 폭이 넓어지기 전 첫 렌더의 축소값이 그대로 굳어버리는 문제가 있었다 */}
-                  <Text style={styles.tipHint} numberOfLines={1}>
+                  {/* 줄 수 제한 없음 — 말풍선 문구는 절대 …으로 잘리면 안 된다(운영자 규칙) */}
+                  <Text style={styles.tipHint}>
                     {JJAEKI_HINTS[language][hintIndex]}
                   </Text>
                   <Text style={styles.tipWord} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
@@ -382,7 +381,7 @@ const styles = StyleSheet.create({
   /* 가로는 marginHorizontal:24가 검색창과 동일해 이미 고정 폭 — 세로는 카테고리 말풍선 실측값(105)으로 고정 */
   tipCard: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    marginHorizontal: 24, marginTop: 16, height: 105,
+    marginHorizontal: 24, marginTop: 16, minHeight: 105,
   },
   /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 캐릭터와 겹친다.
    * 말풍선 배경 자체를 이 View가 담당 — 3줄 텍스트 크기에 맞춰 폭/높이가 정해지고 사방 8px 여백만 준다. */

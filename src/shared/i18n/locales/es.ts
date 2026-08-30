@@ -47,6 +47,8 @@ export const es = {
     loginPrompt: 'Inicia sesión para guardar palabras y usar la comunidad',
     termsOfService: 'Términos de servicio',
     privacyPolicy: 'Política de privacidad',
+    mypageCommunityPolicy: 'Normas de la comunidad',
+    mypageLegal: 'Legal y privacidad',
     logout: 'Cerrar sesión',
     login: 'Iniciar sesión',
     customerService: 'Soporte',

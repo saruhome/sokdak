@@ -47,6 +47,8 @@ export const de = {
     loginPrompt: 'Melde dich an, um Wörter zu speichern und die Community zu nutzen',
     termsOfService: 'Nutzungsbedingungen',
     privacyPolicy: 'Datenschutzerklärung',
+    mypageCommunityPolicy: 'Community-Richtlinien',
+    mypageLegal: 'Rechtliches & Datenschutz',
     logout: 'Abmelden',
     login: 'Anmelden',
     customerService: 'Support',

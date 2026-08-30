@@ -14,7 +14,7 @@ import { SCREEN_WIDTH } from '../../constants/layout';
 import { languageStore, useLanguage } from '../../constants/languageStore';
 import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStore';
 import { TopAppBar } from '@/components/navigation/TopAppBar';
-import { EXPRESSIONS, SITUATION_LABEL_KEY, pickDaily } from '@/src/features/home/model/dailyPicks';
+import { EXPRESSIONS, SITUATION_LABEL_KEY, expressionGloss, pickDaily } from '@/src/features/home/model/dailyPicks';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle, Crown, ChevronRight } from 'lucide-react-native';
 
@@ -143,7 +143,7 @@ export default function HomeScreen() {
                   <Text style={styles.exprSituationText}>{t(SITUATION_LABEL_KEY[expr.situation])}</Text>
                 </View>
                 <Text style={styles.exprKo}>{expr.ko}</Text>
-                <Text style={styles.exprEn}>{expr.en}</Text>
+                <Text style={styles.exprEn}>{expressionGloss(expr, language)}</Text>
               </View>
             ))}
             {!BETA_UNLIMITED_ENTITLEMENTS && !isPremium && (

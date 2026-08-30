@@ -5,6 +5,7 @@ import { AppText as Text } from '@/components/AppText';
 import { AppIcon } from '@/components/AppIcon';
 import { BackIcon } from '@/components/icons/SocialIcons';
 import { Colors } from '@/constants/Colors';
+import { languageStore } from '@/constants/languageStore';
 import { LEGAL_LINKS, SUPPORT_EMAIL, isValidPublicUrl } from '@/constants/legal';
 import { safeGoBack } from '@/constants/navigation';
 import { Alert } from '@/constants/alert';
@@ -67,7 +68,7 @@ export default function LegalScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()} accessibilityLabel="뒤로가기">
           <BackIcon size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>법률 및 개인정보</Text>
+        <Text style={styles.topBarTitle}>{languageStore.t('mypageLegal')}</Text>
         <View style={styles.backBtn} />
       </View>
 

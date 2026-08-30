@@ -47,6 +47,8 @@ export const vi = {
     loginPrompt: 'Đăng nhập để lưu từ và dùng cộng đồng',
     termsOfService: 'Điều khoản dịch vụ',
     privacyPolicy: 'Chính sách bảo mật',
+    mypageCommunityPolicy: 'Chính sách cộng đồng',
+    mypageLegal: 'Pháp lý & quyền riêng tư',
     logout: 'Đăng xuất',
     login: 'Đăng nhập',
     customerService: 'Hỗ trợ',

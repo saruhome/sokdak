@@ -132,17 +132,15 @@ export default function CategoryScreen() {
                 onPress={() => router.push(`/tabs/category/${topCategory.slug}`)}
                 activeOpacity={0.85}
               >
-                {/* 첫 줄(힌트)은 무조건 전체가 보여야 하므로 폭 상한(maxWidth)보다 우선하고,
-                 * flexShrink:0으로 좁은 화면에서도 압축되지 않는다 — 대신 옆의 마스코트가 줄어든다.
-                 * maxWidth는 CSS에서 width보다 항상 이기므로 같이 올려줘야 실제로 넓어진다 */}
+                {/* 캐릭터는 항상 고정 위치(운영자 규칙) — 말풍선이 캐릭터를 밀어내면 안 된다.
+                 * 실측 폭은 maxWidth로만 반영: 짧은 힌트면 내용에 딱 맞고, 긴 힌트면 flexShrink로
+                 * 가용 폭까지만 늘어난 뒤 텍스트가 줄바꿈된다. */}
                 <View
                   style={[
                     styles.recommendTextWrap,
                     hintWidth != null && {
-                      width: hintWidth + RECOMMEND_BUBBLE_PAD * 2 + RECOMMEND_BUBBLE_BORDER * 2 + 4,
                       maxWidth: hintWidth + RECOMMEND_BUBBLE_PAD * 2 + RECOMMEND_BUBBLE_BORDER * 2 + 4,
                       marginLeft: 1,
-                      flexShrink: 0,
                     },
                   ]}
                 >
@@ -159,7 +157,8 @@ export default function CategoryScreen() {
                   </Text>
                   {/* 박스가 이미 이 텍스트의 실측 너비에 맞춰져 있어 adjustsFontSizeToFit이 불필요 —
                    * 오히려 폭이 넓어지기 전 첫 렌더의 축소값이 그대로 굳어버리는 문제가 있었다 */}
-                  <Text style={styles.recommendLabel} numberOfLines={1}>
+                  {/* 줄 수 제한 없음 — 말풍선 문구는 절대 …으로 잘리면 안 된다(운영자 규칙) */}
+                  <Text style={styles.recommendLabel}>
                     {HORANG_HINTS[language][hintIndex]}
                   </Text>
                   <Text style={styles.recommendName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
@@ -273,7 +272,7 @@ const styles = StyleSheet.create({
   recommendCard: {
     marginTop: 8, marginBottom: 16,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    height: 105,
+    minHeight: 105,
   },
   /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 호랭이와 겹친다.
    * 말풍선 배경 자체를 이 View가 담당 — 첫째 줄(힌트) 실측 너비에 맞춰 폭이 늘었다 줄었다 한다. */

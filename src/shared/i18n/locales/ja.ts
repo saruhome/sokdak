@@ -47,6 +47,8 @@ export const ja = {
     loginPrompt: 'ログインすると単語の保存・コミュニティが利用できます',
     termsOfService: '利用規約',
     privacyPolicy: 'プライバシーポリシー',
+    mypageCommunityPolicy: 'コミュニティ運営ポリシー',
+    mypageLegal: '法的情報とプライバシー',
     logout: 'ログアウト',
     login: 'ログイン',
     customerService: 'カスタマーサポート',

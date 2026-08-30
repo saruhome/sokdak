@@ -5,4 +5,5 @@
  * 새 코드는 src/shared/i18n/languageStore에서 직접 import할 것.
  */
 export { languageStore, tFor, useLanguage } from '../src/shared/i18n/languageStore';
+export { LANGUAGE_NATIVE_NAME } from '../src/shared/i18n/keys';
 export type { Language, TranslationKey } from '../src/shared/i18n/keys';

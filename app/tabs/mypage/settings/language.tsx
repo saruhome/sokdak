@@ -4,19 +4,13 @@ import { AppText as Text } from '@/components/AppText';
 import { useEffect, useState } from 'react';
 import { Colors } from '../../../../constants/Colors';
 import { safeGoBack } from '../../../../constants/navigation';
-import { languageStore, type Language } from '../../../../constants/languageStore';
+import { languageStore, LANGUAGE_NATIVE_NAME, type Language } from '../../../../constants/languageStore';
 import { BackIcon } from '@/components/icons/SocialIcons';
 import { AppIcon } from '@/components/AppIcon';
 import { Check } from 'lucide-react-native';
 
-const LANGUAGE_OPTIONS: { label: string; value: Language }[] = [
-  { label: '한국어', value: 'ko' },
-  { label: 'English', value: 'en' },
-  { label: '日本語', value: 'ja' },
-  { label: 'Tiếng Việt', value: 'vi' },
-  { label: 'Español', value: 'es' },
-  { label: 'Deutsch', value: 'de' },
-];
+const LANGUAGE_OPTIONS = (Object.entries(LANGUAGE_NATIVE_NAME) as [Language, string][])
+  .map(([value, label]) => ({ label, value }));
 
 export default function LanguageSettingsScreen() {
   const [language, setLanguage] = useState<Language>(languageStore.getLanguage());

@@ -21,6 +21,7 @@ jest.mock('@/components/AppIcon', () => {
 jest.mock('lucide-react-native', () => ({ ChevronRight: () => null, Crown: () => null, Flame: () => null }));
 jest.mock('@/constants/support', () => ({ hasUnseenReply: jest.fn().mockResolvedValue(false) }));
 jest.mock('@/constants/languageStore', () => ({
+  LANGUAGE_NATIVE_NAME: { ko: '한국어', en: 'English', ja: '日本語', vi: 'Tiếng Việt', es: 'Español', de: 'Deutsch' },
   languageStore: {
     getLanguage: () => 'en',
     initialize: () => Promise.resolve(),

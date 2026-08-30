@@ -134,7 +134,7 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t('todayExpressionTitle')}</Text>
-            <Text style={styles.sectionSub}>{t('todayExpressionSub')}</Text>
+            <Text style={styles.sectionSub} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{t('todayExpressionSub')}</Text>
           </View>
           <View style={styles.exprCard}>
             {todayExpressions.map((expr, i) => (
@@ -174,7 +174,7 @@ export default function HomeScreen() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t('newSlangSection')}</Text>
             <View style={styles.sectionSubRow}>
-              <Text style={styles.sectionSub}>{t('newSlangSub')}</Text>
+              <Text style={styles.sectionSub} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{t('newSlangSub')}</Text>
               <TouchableOpacity
                 style={styles.moreLink}
                 onPress={() => router.push({ pathname: '/tabs/dictionary', params: { sort: 'recent' } })}
@@ -217,7 +217,7 @@ export default function HomeScreen() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t('community')}</Text>
             <View style={styles.sectionSubRow}>
-              <Text style={styles.sectionSub}>{t('communitySub')}</Text>
+              <Text style={styles.sectionSub} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{t('communitySub')}</Text>
               <TouchableOpacity style={styles.moreLink} onPress={() => openCommunity('/tabs/community')}>
                 <Text style={styles.moreLinkText}>{t('moreLink')}</Text>
                 <AppIcon icon={ChevronRight} size={14} color={Colors.textSecondary} />

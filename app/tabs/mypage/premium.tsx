@@ -87,9 +87,10 @@ export default function PremiumScreen() {
           <Text style={styles.heroTitle}>{t('premiumBannerTitle')}</Text>
           <Text style={styles.heroSub}>{t('premiumBannerSub')}</Text>
           {/* 앱 마스코트 — 호랭(응원)과 짹이가 프리미엄을 홍보하는 자리(운영자 요청) */}
+          {/* 호랭이는 짹이보다 항상 크게(세계관 크기 위계 — 운영자 규칙), 바닥선 정렬 */}
           <View style={styles.heroMascots}>
-            <Image source={HORANG_CHEER} style={styles.heroMascot} resizeMode="contain" />
-            <Image source={JJAEKI_FULL} style={styles.heroMascot} resizeMode="contain" />
+            <Image source={HORANG_CHEER} style={styles.heroMascotHorang} resizeMode="contain" />
+            <Image source={JJAEKI_FULL} style={styles.heroMascotJjaeki} resizeMode="contain" />
           </View>
           {isPremium && (
             <View style={styles.activeBadge}>
@@ -167,8 +168,9 @@ const styles = StyleSheet.create({
   },
   heroTitle: { fontSize: 19, fontWeight: '800', color: Colors.navBarIconActive, textAlign: 'center', marginTop: 4 },
   heroSub: { fontSize: 13, color: Colors.navBarIconMuted, textAlign: 'center', lineHeight: 19 },
-  heroMascots: { flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 8 },
-  heroMascot: { width: 72, height: 84 },
+  heroMascots: { flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 12, marginTop: 8 },
+  heroMascotHorang: { width: 96, height: 110 },
+  heroMascotJjaeki: { width: 52, height: 62 },
   activeBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     marginTop: 8, paddingHorizontal: 12, paddingVertical: 6,

@@ -93,6 +93,11 @@ export default function ProfileScreen() {
   const [timezone, setTimezone] = useState(user?.timezone ?? 'UTC');
   const [emoji, setEmoji] = useState(user?.emoji ?? '🇰🇷');
   const [countryQuery, setCountryQuery] = useState('');
+  /* 국기 그리드는 한 줄 6개 고정(운영자 규칙) — 컨테이너 실측폭으로 셀 크기를 계산해
+   * 좌우 여백이 항상 대칭이 되게 한다. */
+  const [flagGridW, setFlagGridW] = useState(0);
+  const FLAG_GAP = 8;
+  const flagCell = flagGridW > 0 ? Math.floor((flagGridW - FLAG_GAP * 5) / 6) : 44;
   const filteredCountries = countryQuery.trim()
     ? COUNTRY_OPTIONS.filter(c =>
         c.en.toLowerCase().includes(countryQuery.trim().toLowerCase()) ||
@@ -309,11 +314,15 @@ export default function ProfileScreen() {
             placeholder={t('countrySearchPlaceholder')}
             placeholderTextColor={Colors.textTertiary}
           />
-          <View style={styles.emojiGrid}>
+          <View style={styles.emojiGrid} onLayout={e => setFlagGridW(e.nativeEvent.layout.width)}>
             {filteredCountries.map(c => (
               <TouchableOpacity
                 key={c.flag}
-                style={[styles.emojiOption, c.flag === emoji && styles.emojiOptionActive]}
+                style={[
+                  styles.emojiOption,
+                  { width: flagCell, height: flagCell, borderRadius: flagCell / 2 },
+                  c.flag === emoji && styles.emojiOptionActive,
+                ]}
                 onPress={() => setEmoji(c.flag)}
               >
                 <Text style={styles.emojiOptionText}>{c.flag}</Text>
@@ -395,7 +404,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, paddingHorizontal: 12,
     fontSize: 14, color: Colors.textPrimary, marginBottom: 10,
   },
-  emojiGrid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 10 },
+  emojiGrid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8 },
   emojiOption: {
     width: 44, height: 44, borderRadius: 22,
     alignItems: 'center', justifyContent: 'center',

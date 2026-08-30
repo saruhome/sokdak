@@ -39,7 +39,7 @@ describe('CommunityPostCard', () => {
     expect(screen.getByText(`${POST.author.emoji} ${POST.author.name}`)).toBeTruthy();
     expect(screen.getByText('2026-08-20')).toBeTruthy();
     /* localized metadata — en에서는 board 라벨이 영어로 나온다 */
-    expect(screen.getByText('Questions')).toBeTruthy();
+    expect(screen.getByText('Curious?')).toBeTruthy();
   });
 
   it('fires onPress for a tap anywhere on the card and exposes a semantic label', async () => {

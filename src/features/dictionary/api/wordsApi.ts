@@ -19,7 +19,8 @@ export type Word = {
   meanings: Array<{
     type: string;
     definition: string;
-    examples: Array<{ kor: string; eng: string }>;
+    /** kor 원문 + 언어별 번역. eng는 항상 존재(폴백), ja/es/vi/de는 다국어화 이후 추가 */
+    examples: Array<{ kor: string; eng: string; ja?: string; es?: string; vi?: string; de?: string }>;
   }>;
   origin?: string;
   originEn?: string;

@@ -99,6 +99,10 @@ export default function WordDetailScreen() {
 
   const englishGloss = word.translations.find(t => t.lang.includes('EN'))?.text;
   const examples = word.meanings.flatMap(m => m.examples);
+  /* 예문 번역은 UI 언어를 따른다 — ko UI는 학습 목적상 영어 대역, 그 외 언어는 해당 번역,
+   * 번역이 없는 데이터는 eng로 폴백 */
+  const exampleGloss = (ex: (typeof examples)[number]) =>
+    (language === 'ko' || language === 'en' ? ex.eng : ex[language] ?? ex.eng);
   /* 초성체(ㅋㅋ)·알파벳 신조어(TMI)는 글자만 봐선 읽는 법을 알 수 없어
    * 영문 로마자와 한글 발음을 함께 보여준다. 완성형 한글이 있는 단어는 로마자만. */
   const koreanReading = word.pronunciation ? word.pronunciation.replace(/^\[|\]$/g, '') : null;
@@ -246,7 +250,7 @@ export default function WordDetailScreen() {
                               <Image source={AVATAR_HORANG} style={styles.chatAvatar} />
                               <View style={[styles.chatBubble, styles.chatBubbleLeft]}>
                                 <Text style={styles.chatKor}>{ex.kor}</Text>
-                                <Text style={styles.chatEng}>{ex.eng}</Text>
+                                <Text style={styles.chatEng}>{exampleGloss(ex)}</Text>
                               </View>
                             </View>
                           </View>
@@ -257,7 +261,7 @@ export default function WordDetailScreen() {
                             <View style={styles.chatRowInner}>
                               <View style={[styles.chatBubble, styles.chatBubbleRight]}>
                                 <Text style={styles.chatKorRight}>{ex.kor}</Text>
-                                <Text style={styles.chatEngRight}>{ex.eng}</Text>
+                                <Text style={styles.chatEngRight}>{exampleGloss(ex)}</Text>
                               </View>
                               <Image source={AVATAR_JJAEKI} style={styles.chatAvatar} />
                             </View>

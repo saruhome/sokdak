@@ -300,6 +300,7 @@ export type Database = {
       }
       account_settings: {
         Row: {
+          adult_verified_at: string | null
           community_guidelines_accepted_at: string | null
           created_at: string
           is_premium: boolean
@@ -313,6 +314,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          adult_verified_at?: string | null
           community_guidelines_accepted_at?: string | null
           created_at?: string
           is_premium?: boolean
@@ -326,6 +328,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          adult_verified_at?: string | null
           community_guidelines_accepted_at?: string | null
           created_at?: string
           is_premium?: boolean

@@ -19,6 +19,8 @@ export type SokDakUser = {
   level: string;
   isPremium: boolean;
   streakCount: number;
+  /** 성인 확인(만 19세 이상 자기확인) 시각 — slang 카테고리 열람 게이트에 사용 */
+  adultVerifiedAt?: string | null;
 };
 
 export type AuthListener = (loggedIn: boolean) => void;

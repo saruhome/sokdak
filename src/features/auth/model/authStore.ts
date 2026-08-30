@@ -147,6 +147,11 @@ export const authStore = {
   canPlayTtsToday: entitlementStore.canPlayTtsToday,
   recordTtsPlay: entitlementStore.recordTtsPlay,
 
+  /* ── 성인 확인 — slang(속어) 열람 게이트: 프리미엄과 별개 축(베타 무제한이 우회 못 함) ── */
+  isAdultVerified: entitlementStore.isAdultVerified,
+  canViewAdultContent: entitlementStore.canViewAdultContent,
+  promptAdultVerification: entitlementStore.promptAdultVerification,
+
   /** 회원탈퇴 — 인증된 호출자를 Edge Function에서 검증한 뒤, 서비스 역할로 Auth·연관 DB 데이터와
    *  본인 게시 이미지 Storage 객체를 정리한다. 클라이언트는 privileged RPC를 직접 실행하지 않는다. */
   async deleteAccount() {

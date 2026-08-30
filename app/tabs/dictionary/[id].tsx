@@ -51,12 +51,24 @@ export default function WordDetailScreen() {
     }, [word]),
   );
 
-  /* 속어 등 프리미엄 전용 카테고리 단어는 상세 진입 자체를 막는다 —
-   * 카테고리 그리드/상세 화면과 동일한 게이트(app/tabs/category/[slug].tsx 참고) */
+  /* 속어 등 프리미엄 전용 카테고리 단어(주/보조 어느 쪽이든)는 상세 진입 자체를 막는다 —
+   * 카테고리 그리드/상세 화면과 동일한 게이트(app/tabs/category/[slug].tsx 참고).
+   * 프리미엄을 통과해도(베타 무제한 포함) 성인 확인이 안 됐으면 확인 대화상자를 거친다. */
   useFocusEffect(
     useCallback(() => {
-      if (word && getCategoryBySlug(word.category)?.premiumOnly && !BETA_UNLIMITED_ENTITLEMENTS && !authStore.isPremium()) {
+      if (!word) return;
+      const premiumGated = [word.category, word.secondaryCategory]
+        .some(slug => slug && getCategoryBySlug(slug)?.premiumOnly);
+      if (!premiumGated) return;
+      if (!BETA_UNLIMITED_ENTITLEMENTS && !authStore.isPremium()) {
         router.replace('/tabs/mypage/premium');
+        return;
+      }
+      if (!authStore.isAdultVerified()) {
+        authStore.promptAdultVerification(
+          () => setWord(w => (w ? { ...w } : w)), // 확인됨 — 재렌더만 유도
+          () => safeGoBack(),
+        );
       }
     }, [word]),
   );

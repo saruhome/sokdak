@@ -40,7 +40,7 @@ export const profileStore = {
         .single(),
       supabase
         .from('account_settings')
-        .select('phone, timezone, is_premium, streak_count, last_active_date')
+        .select('phone, timezone, is_premium, streak_count, last_active_date, adult_verified_at')
         .eq('user_id', userId)
         .single(),
     ]);
@@ -61,6 +61,7 @@ export const profileStore = {
       level: profile?.level ?? '초급',
       isPremium: settings?.is_premium ?? false,
       streakCount,
+      adultVerifiedAt: settings?.adult_verified_at ?? null,
     };
   },
 

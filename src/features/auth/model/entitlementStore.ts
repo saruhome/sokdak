@@ -6,6 +6,9 @@
  * 호출부가 개수를 넘긴다 — 북마크 상태를 이 스토어로 끌고 오지 않기 위한 의도적 경계.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+import { supabase } from '../../../shared/api/supabaseClient';
+import { languageStore } from '../../../shared/i18n/languageStore';
 import { sessionStore } from './sessionStore';
 
 /** ponytail: 무료 회원 저장 단어/좋아요 카테고리/TTS 일일 상한. 프리미엄은 무제한.
@@ -37,6 +40,45 @@ export const entitlementStore = {
   hasUnlimited: () => BETA_UNLIMITED_ENTITLEMENTS || sessionStore.getUser()?.isPremium === true,
 
   isPremium: () => sessionStore.getUser()?.isPremium ?? false,
+
+  /* ── 성인 확인 — slang(속어) 카테고리 게이트 ──
+   * 프리미엄(베타 무제한 포함)과 별개 축: 베타 플래그가 성인 확인을 우회하지 않는다. */
+  isAdultVerified: () => !!sessionStore.getUser()?.adultVerifiedAt,
+
+  /** slang 단어/카테고리 열람 가능 여부 = 프리미엄(또는 베타 무제한) AND 성인 확인 */
+  canViewAdultContent: () => entitlementStore.hasUnlimited() && entitlementStore.isAdultVerified(),
+
+  /** 만 19세 이상 자기확인을 서버(account_settings)에 기록하고 세션에 반영한다.
+   *  ponytail: 자기확인 방식 — 실결제·법적 요건 시 통신사 본인인증(KYC)으로 승격. */
+  async markAdultVerified() {
+    const user = sessionStore.getUser();
+    if (!user) return { error: '로그인이 필요해요.' };
+    const verifiedAt = new Date().toISOString();
+    const { error } = await supabase
+      .from('account_settings')
+      .update({ adult_verified_at: verifiedAt })
+      .eq('user_id', user.id);
+    if (error) return { error: error.message };
+    sessionStore.patchUser({ adultVerifiedAt: verifiedAt });
+    sessionStore.notify();
+    return { error: null };
+  },
+
+  /** 성인 확인 대화상자 — 확인 시 기록 후 onVerified 호출, 취소 시 onCancel 호출. */
+  promptAdultVerification(onVerified: () => void, onCancel: () => void) {
+    const t = languageStore.t;
+    Alert.alert(t('adultGateTitle'), t('adultGateBody'), [
+      { text: t('adultGateCancel'), style: 'cancel', onPress: onCancel },
+      {
+        text: t('adultGateConfirm'),
+        onPress: () => {
+          entitlementStore.markAdultVerified().then(({ error }) => {
+            if (error) onCancel(); else onVerified();
+          });
+        },
+      },
+    ]);
+  },
 
   /** 로그인/세션 복원 시 오늘의 TTS 재생 횟수를 기기에서 불러온다. */
   async loadTtsPlaysToday(userId: string) {

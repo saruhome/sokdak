@@ -23,9 +23,17 @@ export default function CategoryDetailScreen() {
   const category = getCategoryBySlug(slug);
 
   /* 그리드 카드 탭은 이미 프리미엄 화면으로 우회시키지만, 딥링크·뒤로가기로 직접 들어오는
-   * 경로까지 막으려면 여기서도 한 번 더 확인해야 한다(커뮤니티 게이트와 동일한 이유) */
+   * 경로까지 막으려면 여기서도 한 번 더 확인해야 한다(커뮤니티 게이트와 동일한 이유).
+   * slang은 프리미엄 통과 후에도 성인 확인(만 19세 자기확인)을 거쳐야 한다. */
   useFocusEffect(useCallback(() => {
-    if (category?.premiumOnly && !BETA_UNLIMITED_ENTITLEMENTS && !authStore.isPremium()) router.replace('/tabs/mypage/premium');
+    if (!category?.premiumOnly) return;
+    if (!BETA_UNLIMITED_ENTITLEMENTS && !authStore.isPremium()) {
+      router.replace('/tabs/mypage/premium');
+      return;
+    }
+    if (!authStore.isAdultVerified()) {
+      authStore.promptAdultVerification(() => {}, () => safeGoBack());
+    }
   }, [category?.premiumOnly]));
 
   /* WordListView가 배열 재생성으로 매번 리셋되지 않도록 slug 기준으로 메모 */

@@ -3,6 +3,7 @@
  * 예전 mockWords.ts와 동일한 Word 타입을 그대로 유지해 화면 쪽 변경을 최소화한다.
  */
 import { supabase } from '../../../shared/api/supabaseClient';
+import { entitlementStore } from '../../auth/model/entitlementStore';
 import { youtubeThumbnailUrl } from '../model/youtube';
 
 export type Word = {
@@ -67,11 +68,22 @@ function mapRow(row: any): Word {
   };
 }
 
+/** 주/보조 카테고리에 slang(속어)이 걸린 성인 전용 단어 — 프리미엄 + 성인 확인 필요 */
+export const isAdultOnlyWord = (w: Word) =>
+  w.category === 'slang' || w.secondaryCategory === 'slang';
+
+/* 목록 계열에서 성인 전용 단어를 걸러낸다 — 사전/검색/홈/저장 전 화면의 단일 관문.
+ * 상세(fetchWordById)는 거르지 않고 화면에서 게이트 UI를 보여준다.
+ * ponytail: 클라이언트 필터 — REST로는 여전히 조회 가능. 사전 콘텐츠 노출 제어(UX)이며
+ * 보안 경계가 아님. 법적 요건·실결제 도입 시 RLS + KYC로 승격. */
+const withoutBlockedAdultWords = (words: Word[]) =>
+  entitlementStore.canViewAdultContent() ? words : words.filter(w => !isAdultOnlyWord(w));
+
 /** 전체 단어 목록 (사전/카테고리/저장/검색/홈 공통 데이터 소스) */
 export async function fetchWords(): Promise<Word[]> {
   const { data, error } = await supabase.from('words').select(WORDS_SELECT);
   if (error || !data) return [];
-  return data.map(mapRow);
+  return withoutBlockedAdultWords(data.map(mapRow));
 }
 
 /** 지정한 ID의 단어만 조회한다. 저장 목록처럼 대상이 이미 확정된 화면에서 전체 사전 로드를 피한다. */
@@ -80,7 +92,9 @@ export async function fetchWordsByIds(ids: string[]): Promise<Word[]> {
   const { data, error } = await supabase.from('words').select(WORDS_SELECT).in('id', ids);
   if (error || !data) return [];
   const byId = new Map(data.map(row => [row.id, mapRow(row)]));
-  return ids.map(id => byId.get(id)).filter((word): word is Word => !!word);
+  return withoutBlockedAdultWords(
+    ids.map(id => byId.get(id)).filter((word): word is Word => !!word),
+  );
 }
 
 /** 단어 상세 — id 하나만 조회 */

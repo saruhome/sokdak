@@ -18,7 +18,7 @@ import { Eye, Heart, MessageCircle, Pencil } from 'lucide-react-native';
 
 const JJAEKI_READING = require('../../../assets/characters/transparent/jjaeki-reading.png');
 
-const BOARD_TABS: CommunityBoardTab[] = ['전체', '궁금해요', 'Q&A', '질문하기'];
+const BOARD_TABS: CommunityBoardTab[] = ['전체', '질문', '자유'];
 
 /**
  * 화제의 질문 노출 정책 — 백엔드 featured 기준이 없으므로 첫 페이지 안에서

@@ -56,7 +56,7 @@ const mockFetchPost = fetchPost as jest.Mock;
 const POST = {
   id: 'post-1',
   authorId: 'other',
-  board: '궁금해요' as const,
+  board: '질문' as const,
   title: "'갓벽'이 무슨 뜻인가요?",
   content: '너무 어려운 한국어',
   author: { name: '한국어공부어려워', emoji: '🐦', level: '초급' },

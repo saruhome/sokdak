@@ -6,7 +6,7 @@ import { supabase } from '../../../shared/api/supabaseClient';
 import { entitlementStore } from '../../auth/model/entitlementStore';
 import { youtubeThumbnailUrl } from '../model/youtube';
 
-export { localizedText, type BodyI18n } from '../model/localizedText';
+export { localizedText, cardGloss, type BodyI18n } from '../model/localizedText';
 import type { BodyI18n } from '../model/localizedText';
 
 export type Word = {

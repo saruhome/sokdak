@@ -4,7 +4,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
-import { fetchWords, localizedText, type Word } from '../../constants/words';
+import { cardGloss, fetchWords, localizedText, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
 import { getCategoryBySlug, getCategoryName } from '../../constants/categories';
@@ -204,7 +204,7 @@ export default function HomeScreen() {
                   </>
                 )}
                 <Text style={[styles.wordCardTitle, word.thumbnailUrl && styles.wordCardTitleOnImage]} numberOfLines={1}>{word.word}</Text>
-                <Text style={[styles.wordCardDesc, word.thumbnailUrl && styles.wordCardDescOnImage]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{localizedText(word.shortDesc, word.shortDescI18n, language)}</Text>
+                <Text style={[styles.wordCardDesc, word.thumbnailUrl && styles.wordCardDescOnImage]} numberOfLines={1}>{cardGloss(word, language)}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>

@@ -11,7 +11,7 @@ import type { CommunityPostSummary } from '@/constants/community';
 const POST: CommunityPostSummary = {
   id: 'p1',
   authorId: 'a1',
-  board: '궁금해요',
+  board: '질문',
   title: "'갓벽'이 무슨 뜻인가요?",
   content: '**너무** 어려운 한국어 ![](https://img.example/x.png) [링크](https://example.com)',
   author: { name: '한국어공부어려워', emoji: '🐦', level: '초급' },
@@ -39,7 +39,7 @@ describe('CommunityPostCard', () => {
     expect(screen.getByText(`${POST.author.emoji} ${POST.author.name}`)).toBeTruthy();
     expect(screen.getByText('2026-08-20')).toBeTruthy();
     /* localized metadata — en에서는 board 라벨이 영어로 나온다 */
-    expect(screen.getByText('Curious')).toBeTruthy();
+    expect(screen.getByText('Questions')).toBeTruthy();
   });
 
   it('fires onPress for a tap anywhere on the card and exposes a semantic label', async () => {
@@ -68,26 +68,26 @@ describe('CommunityPostCard', () => {
   });
 });
 
-const TABS: CommunityBoardTab[] = ['전체', '궁금해요', 'Q&A', '질문하기'];
+const TABS: CommunityBoardTab[] = ['전체', '질문', '자유'];
 
 describe('CommunityFilterBar', () => {
   it('renders every board, marks selection via accessibilityState, and scrolls horizontally', async () => {
     const onSelect = jest.fn();
     const screen = await render(
-      <CommunityFilterBar tabs={TABS} active="Q&A" onSelect={onSelect} language="ko" />,
+      <CommunityFilterBar tabs={TABS} active="질문" onSelect={onSelect} language="ko" />,
     );
 
     const tabs = screen.getAllByRole('tab');
-    expect(tabs).toHaveLength(4);
+    expect(tabs).toHaveLength(3);
     const selected = tabs.filter(tab => tab.props.accessibilityState?.selected);
     expect(selected).toHaveLength(1);
-    expect(screen.getByText('Q&A')).toBeTruthy();
+    expect(screen.getByText('질문')).toBeTruthy();
 
     /* 긴 locale/큰 글꼴에서 잘리는 대신 가로 스크롤 — horizontal ScrollView여야 한다 */
     const horizontalScrolls = screen.container.queryAll(node => node.props.horizontal === true);
     expect(horizontalScrolls.length).toBeGreaterThanOrEqual(1);
 
-    await fireEvent.press(screen.getByText('질문하기'));
-    expect(onSelect).toHaveBeenCalledWith('질문하기');
+    await fireEvent.press(screen.getByText('자유'));
+    expect(onSelect).toHaveBeenCalledWith('자유');
   });
 });

@@ -36,24 +36,24 @@ describe('community write screen', () => {
   it('always shows the current board name with its one-line description', async () => {
     const screen = await render(<WritePostScreen />);
 
-    /* 기본 선택: 궁금해요 — 뱃지 + 설명이 항상 보인다 */
-    expect(screen.getByText(tFor('ko', 'boardCurious'))).toBeTruthy();
-    expect(screen.getByText(tFor('ko', 'boardDescCurious'))).toBeTruthy();
-
-    /* 게시판을 질문하기로 바꾸면 설명도 함께 바뀌고, 질문 템플릿이 placeholder로만 제안된다 */
-    await fireEvent.press(screen.getByText(tFor('ko', 'boardDescCurious')));
-    await fireEvent.press(screen.getByText(tFor('ko', 'boardDescAsk')));
-
-    expect(screen.getAllByText(tFor('ko', 'boardDescAsk')).length).toBeGreaterThanOrEqual(1);
+    /* 기본 선택: 질문 — 뱃지 + 설명이 항상 보이고, 질문 템플릿이 placeholder로만 제안된다 */
+    expect(screen.getByText(tFor('ko', 'boardQuestion'))).toBeTruthy();
+    expect(screen.getByText(tFor('ko', 'boardDescQuestion'))).toBeTruthy();
     const contentInput = screen.getByPlaceholderText(tFor('ko', 'askTemplatePlaceholder'));
     /* 템플릿은 placeholder일 뿐 — 제출될 content 값에 자동 포함되지 않는다 */
     expect(contentInput.props.value).toBe('');
+
+    /* 게시판을 자유로 바꾸면 설명이 바뀌고 일반 placeholder로 돌아간다 */
+    await fireEvent.press(screen.getByText(tFor('ko', 'boardDescQuestion')));
+    await fireEvent.press(screen.getByText(tFor('ko', 'boardDescFree')));
+    expect(screen.getAllByText(tFor('ko', 'boardDescFree')).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByPlaceholderText(tFor('ko', 'contentPlaceholder'))).toBeTruthy();
   });
 
   it('shows per-field validation helpers next to each field, not only alerts', async () => {
     const screen = await render(<WritePostScreen />);
     const title = screen.getByPlaceholderText(tFor('ko', 'titlePlaceholder'));
-    const content = screen.getByPlaceholderText(tFor('ko', 'contentPlaceholder'));
+    const content = screen.getByPlaceholderText(tFor('ko', 'askTemplatePlaceholder'));
 
     await fireEvent.changeText(title, '가');
     await fireEvent(title, 'blur');
@@ -81,7 +81,7 @@ describe('community write screen', () => {
     expect(submit().props.accessibilityState?.disabled).toBe(true);
 
     const title = screen.getByPlaceholderText(tFor('ko', 'titlePlaceholder'));
-    const content = screen.getByPlaceholderText(tFor('ko', 'contentPlaceholder'));
+    const content = screen.getByPlaceholderText(tFor('ko', 'askTemplatePlaceholder'));
     await fireEvent.changeText(title, '갓벽이 무슨 뜻인가요?');
     await fireEvent.changeText(content, '드라마에서 봤는데 무슨 뜻인지 궁금해요.');
 

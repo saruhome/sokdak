@@ -15,7 +15,7 @@ import { createPost, fetchPost, updatePost, uploadPostImage } from '../../../con
 import { validateCommunityPost } from '../../../constants/communitySafety';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
-const BOARD_OPTIONS: PostBoard[] = ['궁금해요', 'Q&A', '질문하기'];
+const BOARD_OPTIONS: PostBoard[] = ['질문', '자유'];
 
 /** Figma: Controls/Icon/Icon Group — 하단 툴바 아이콘 */
 const TOOLBAR_ITEMS = [
@@ -28,7 +28,7 @@ export default function WritePostScreen() {
   const language = useLanguage();
   const t = languageStore.t;
   const { editId } = useLocalSearchParams<{ editId?: string }>();
-  const [board, setBoard]       = useState<PostBoard>('궁금해요');
+  const [board, setBoard]       = useState<PostBoard>('질문');
   const [accordionOpen, setAccordionOpen] = useState(false);
   const [title, setTitle]       = useState('');
   const [content, setContent]   = useState('');
@@ -73,7 +73,7 @@ export default function WritePostScreen() {
   const contentInvalid = content.trim().length < 10;
 
   const boardDesc = (value: PostBoard) =>
-    value === '궁금해요' ? t('boardDescCurious') : value === 'Q&A' ? t('boardDescQA') : t('boardDescAsk');
+    value === '질문' ? t('boardDescQuestion') : t('boardDescFree');
 
   /* 선택된 구간(없으면 커서 위치)을 before/after 마크업으로 감싼다 — 서식(굵게/기울임)용 */
   const wrapSelection = (before: string, after: string, placeholder: string) => {
@@ -246,9 +246,8 @@ export default function WritePostScreen() {
                     <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[opt].fg }]}>{getBoardLabel(opt, language)}</Text>
                   </View>
                   <Text style={styles.boardOptionDesc}>
-                    {opt === '궁금해요' && t('boardDescCurious')}
-                    {opt === 'Q&A'      && t('boardDescQA')}
-                    {opt === '질문하기' && t('boardDescAsk')}
+                    {opt === '질문' && t('boardDescQuestion')}
+                    {opt === '자유' && t('boardDescFree')}
                   </Text>
                   {board === opt && <AppIcon icon={Check} size={16} color={BOARD_COLORS[opt].fg} />}
                 </TouchableOpacity>
@@ -281,7 +280,7 @@ export default function WritePostScreen() {
             ref={contentInputRef}
             style={styles.contentInput}
             /* 질문하기 첫 작성에는 질문 템플릿을 placeholder로만 제안 — 제출 내용에 자동 포함되지 않는다 */
-            placeholder={board === '질문하기' && !editId ? t('askTemplatePlaceholder') : t('contentPlaceholder')}
+            placeholder={board === '질문' && !editId ? t('askTemplatePlaceholder') : t('contentPlaceholder')}
             placeholderTextColor={Colors.textTertiary}
             value={content}
             onChangeText={setContent}

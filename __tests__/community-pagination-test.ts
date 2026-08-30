@@ -19,7 +19,7 @@ import { fetchPostsPage } from '@/constants/community';
 
 const POST_ROW = {
   author_id: 'author-1',
-  board: '궁금해요',
+  board: '질문',
   title: '게시글 제목',
   content: '게시글 내용',
   view_count: 3,
@@ -55,9 +55,9 @@ describe('fetchPostsPage', () => {
     mockRange.mockReturnValue({ eq: mockEq });
     mockEq.mockResolvedValue({ data: [{ ...POST_ROW, id: 'question' }], error: null });
 
-    const page = await fetchPostsPage({ board: '궁금해요', limit: 20 });
+    const page = await fetchPostsPage({ board: '질문', limit: 20 });
 
-    expect(mockEq).toHaveBeenCalledWith('board', '궁금해요');
+    expect(mockEq).toHaveBeenCalledWith('board', '질문');
     expect(page.posts.map(post => post.id)).toEqual(['question']);
     expect(page.hasMore).toBe(false);
   });

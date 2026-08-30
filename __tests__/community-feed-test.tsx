@@ -28,7 +28,7 @@ const mockFetchPostsPage = fetchPostsPage as jest.Mock;
 const post = (id: string, views = 0) => ({
   id,
   authorId: `author-${id}`,
-  board: '궁금해요' as const,
+  board: '질문' as const,
   title: `게시글 ${id}`,
   content: '내용',
   author: { name: '테스터', emoji: '🐦', level: '초급' },

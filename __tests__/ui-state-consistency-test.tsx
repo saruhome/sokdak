@@ -27,7 +27,7 @@ jest.mock('@/constants/community', () => ({
 }));
 jest.mock('@/constants/notifications', () => ({ fetchUnreadNotificationCount: jest.fn(async () => 0) }));
 jest.mock('@/constants/authStore', () => ({ authStore: { isLoggedIn: jest.fn(() => false), subscribe: jest.fn(() => () => {}) } }));
-jest.mock('@/constants/mockPosts', () => ({ BOARD_COLORS: { '궁금해요': { bg: '#A4484D', fg: '#F6F2EA' }, 'Q&A': { bg: '#E2B55D', fg: '#A4484D' }, '질문하기': { bg: '#BBCA9F', fg: '#526192' } }, getBoardLabel: (value: string) => value }));
+jest.mock('@/constants/mockPosts', () => ({ BOARD_COLORS: { '질문': { bg: '#A4484D', fg: '#F6F2EA' }, '자유': { bg: '#BBCA9F', fg: '#526192' } }, getBoardLabel: (value: string) => value }));
 jest.mock('@/constants/languageStore', () => ({
   useLanguage: () => 'en',
   tFor: (_lang: string, key: string) => (require('@/constants/languageStore') as any).languageStore.t(key),

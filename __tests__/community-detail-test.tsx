@@ -6,7 +6,7 @@ const mockPush = jest.fn();
 jest.mock('expo-router', () => {
   const React = require('react');
   return {
-    router: { push: (...args: unknown[]) => mockPush(...args), replace: (...args: unknown[]) => mockReplace(...args) },
+    router: { push: (...args: unknown[]) => mockPush(...args), replace: (...args: unknown[]) => mockReplace(...args), canGoBack: () => false, back: () => {} },
     useFocusEffect: (effect: () => void | (() => void)) => React.useEffect(effect, [effect]),
     useLocalSearchParams: () => ({ id: 'post-1' }),
   };

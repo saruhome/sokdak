@@ -41,6 +41,18 @@ export const entitlementStore = {
 
   isPremium: () => sessionStore.getUser()?.isPremium ?? false,
 
+  /** 베타 mock 결제 — Edge Function(service_role)이 is_premium을 켠다.
+   *  ponytail: 실결제 도입 시 영수증 검증 흐름으로 교체. */
+  async activateBetaPremium() {
+    const user = sessionStore.getUser();
+    if (!user) return { error: '로그인이 필요해요.' };
+    const { error } = await supabase.functions.invoke('activate-premium-beta');
+    if (error) return { error: error.message };
+    sessionStore.patchUser({ isPremium: true });
+    sessionStore.notify();
+    return { error: null };
+  },
+
   /* ── 성인 확인 — slang(속어) 카테고리 게이트 ──
    * 프리미엄(베타 무제한 포함)과 별개 축: 베타 플래그가 성인 확인을 우회하지 않는다. */
   isAdultVerified: () => !!sessionStore.getUser()?.adultVerifiedAt,

@@ -299,6 +299,8 @@ export const vi = {
     adultGateBody: 'Nội dung này chứa từ chửi thề và biểu đạt người lớn. Chỉ dành cho người từ 19 tuổi trở lên.',
     adultGateConfirm: 'Tôi từ 19 tuổi trở lên',
     adultGateCancel: 'Hủy',
+    premiumBetaCta: 'Bắt đầu dùng thử beta miễn phí',
+    premiumBetaActivated: 'Đã kích hoạt Premium! Bạn có thể xem tất cả nội dung.',
     premiumFeatureUnlimitedSaves: 'Lưu từ không giới hạn',
     premiumFeatureOffline: 'Dùng từ điển ngoại tuyến',
     premiumFeatureSituational: 'Học theo tình huống (quán cà phê, tàu điện, công ty...)',

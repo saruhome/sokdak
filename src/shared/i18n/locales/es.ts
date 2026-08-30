@@ -299,6 +299,8 @@ export const es = {
     adultGateBody: 'Este contenido incluye lenguaje soez y expresiones para adultos. Solo mayores de 19 años.',
     adultGateConfirm: 'Tengo 19 años o más',
     adultGateCancel: 'Cancelar',
+    premiumBetaCta: 'Empezar prueba beta gratis',
+    premiumBetaActivated: '¡Premium activado! Ya puedes acceder a todo el contenido.',
     premiumFeatureUnlimitedSaves: 'Guardado ilimitado de palabras',
     premiumFeatureOffline: 'Acceso al diccionario sin conexión',
     premiumFeatureSituational: 'Lecciones por situación (cafetería, metro, oficina y más)',

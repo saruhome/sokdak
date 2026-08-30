@@ -5,6 +5,7 @@ export function mockSupabaseModuleFactory() {
     supabase: {
       rpc: jest.fn(),
       from: jest.fn(),
+      functions: { invoke: jest.fn(async () => ({ data: { ok: true }, error: null })) },
       storage: { from: jest.fn() },
       auth: {
         getSession: jest.fn(),

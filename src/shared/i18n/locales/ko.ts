@@ -299,6 +299,8 @@ export const ko = {
     adultGateBody: '이 콘텐츠에는 욕설·성인 표현이 포함되어 있어요. 만 19세 이상만 볼 수 있어요.',
     adultGateConfirm: '만 19세 이상입니다',
     adultGateCancel: '취소',
+    premiumBetaCta: '베타 무료 체험 시작',
+    premiumBetaActivated: '프리미엄이 활성화됐어요! 이제 모든 콘텐츠를 볼 수 있어요.',
     premiumFeatureUnlimitedSaves: '무제한 단어 저장',
     premiumFeatureOffline: '오프라인 사전 이용',
     premiumFeatureSituational: '상황별 실전 학습 (카페·지하철·회사 등)',

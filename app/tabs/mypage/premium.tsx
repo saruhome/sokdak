@@ -1,8 +1,8 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
@@ -33,10 +33,22 @@ export default function PremiumScreen() {
   useLanguage();
   const t = languageStore.t;
   const isPremium = authStore.isPremium();
+  const [activating, setActivating] = useState(false);
+  /* 베타 mock 결제 성공(activateBetaPremium)이 세션을 갱신하면 화면도 따라가도록 구독 */
+  const [, forceRender] = useState(0);
+  useEffect(() => authStore.subscribe(() => forceRender(n => n + 1)), []);
 
   useEffect(() => {
     if (BETA_UNLIMITED_ENTITLEMENTS) router.replace('/tabs/mypage');
   }, []);
+
+  const startBetaPremium = async () => {
+    setActivating(true);
+    const { error } = await authStore.activateBetaPremium();
+    setActivating(false);
+    if (error) Alert.alert(t('saveFailedTitle'), error);
+    else Alert.alert(t('premiumBetaActivated'));
+  };
 
   if (BETA_UNLIMITED_ENTITLEMENTS) return null;
 
@@ -85,6 +97,16 @@ export default function PremiumScreen() {
           ))}
         </View>
 
+        {!isPremium && (
+          <TouchableOpacity
+            style={[styles.betaCta, activating && styles.betaCtaDisabled]}
+            onPress={startBetaPremium}
+            disabled={activating}
+          >
+            <Text style={styles.betaCtaText}>{t('premiumBetaCta')}</Text>
+          </TouchableOpacity>
+        )}
+
         <View style={styles.pendingCard}>
           <Text style={styles.pendingTitle}>{t('premiumComingSoonNote')}</Text>
           <Text style={styles.pendingBody}>{t('premiumPendingBody')}</Text>
@@ -123,6 +145,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.premium + '15',
   },
   featureLabel: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontWeight: '500' },
+  betaCta: {
+    alignItems: 'center', paddingVertical: 14, borderRadius: 12,
+    backgroundColor: Colors.navBar, marginBottom: 16,
+  },
+  betaCtaDisabled: { opacity: 0.6 },
+  betaCtaText: { fontSize: 15, fontWeight: '700', color: Colors.navBarIconActive },
   pendingCard: {
     gap: 8, padding: 16, borderRadius: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,

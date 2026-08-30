@@ -148,6 +148,7 @@ export const authStore = {
   recordTtsPlay: entitlementStore.recordTtsPlay,
 
   /* ── 성인 확인 — slang(속어) 열람 게이트: 프리미엄과 별개 축(베타 무제한이 우회 못 함) ── */
+  activateBetaPremium: () => entitlementStore.activateBetaPremium(),
   isAdultVerified: entitlementStore.isAdultVerified,
   canViewAdultContent: entitlementStore.canViewAdultContent,
   promptAdultVerification: entitlementStore.promptAdultVerification,

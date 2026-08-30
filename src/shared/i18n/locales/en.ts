@@ -299,6 +299,8 @@ export const en = {
     adultGateBody: 'This content contains profanity and adult expressions. You must be 19 or older to view it.',
     adultGateConfirm: 'I am 19 or older',
     adultGateCancel: 'Cancel',
+    premiumBetaCta: 'Start free beta trial',
+    premiumBetaActivated: 'Premium activated! You can now access all content.',
     premiumFeatureUnlimitedSaves: 'Unlimited word saves',
     premiumFeatureOffline: 'Offline dictionary access',
     premiumFeatureSituational: 'Situational lessons (cafés, subway, work, and more)',

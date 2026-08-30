@@ -299,6 +299,8 @@ export const de = {
     adultGateBody: 'Dieser Inhalt enthält Kraftausdrücke und Erwachsenensprache. Nur ab 19 Jahren.',
     adultGateConfirm: 'Ich bin 19 oder älter',
     adultGateCancel: 'Abbrechen',
+    premiumBetaCta: 'Kostenlose Beta-Testphase starten',
+    premiumBetaActivated: 'Premium aktiviert! Du hast jetzt Zugriff auf alle Inhalte.',
     premiumFeatureUnlimitedSaves: 'Unbegrenzt Wörter speichern',
     premiumFeatureOffline: 'Offline-Wörterbuch',
     premiumFeatureSituational: 'Situationsbezogenes Lernen (Café, U-Bahn, Arbeit und mehr)',

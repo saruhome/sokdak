@@ -298,6 +298,8 @@ export type TranslationKey =
   | 'adultGateBody'
   | 'adultGateConfirm'
   | 'adultGateCancel'
+  | 'premiumBetaCta'
+  | 'premiumBetaActivated'
   | 'premiumBannerTitle'
   | 'premiumBannerSub'
   | 'premiumFeatureUnlimitedSaves'

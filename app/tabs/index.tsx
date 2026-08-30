@@ -39,7 +39,12 @@ export default function HomeScreen() {
 
   useEffect(() => {
     fetchWords().then(words => {
-      setHeroWords(pickDaily(words, 5, new Date().toISOString().slice(0, 10)));
+      /* 히어로는 매주 교체, 인기 순(운영 결정 2026-08-30): 좋아요 상위 10개 풀에서
+       * 주 번호를 시드로 5개를 뽑고 인기순으로 표시 — 한 주 동안은 고정, 주가 바뀌면 교체.
+       * ponytail: 주 경계는 epoch 7일 단위(UTC 목요일) — 요일 기준이 중요해지면 ISO week로 */
+      const week = Math.floor(Date.now() / 604800000);
+      const topPool = sortWords(words, 0).slice(0, 10);
+      setHeroWords(sortWords(pickDaily(topPool, 5, 'hero-w' + week), 0));
       /* 사전 화면의 최신순(SORT_TABS[1])과 동일한 순서 */
       setNewSlangWords(sortWords(words.filter(w => w.category === 'new-slang'), 1));
     });

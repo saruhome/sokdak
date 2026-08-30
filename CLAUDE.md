@@ -106,8 +106,8 @@ error:            '#C04A3A'
 | new-slang | #3DAA6E |
 | frequently-used | #FF6B35 |
 | consonant | #52514E |
-| muhandoejeon | #1A73E8 |
 | outdated-slang | #8B7355 |
+| work | #AFC4B0 |
 
 ---
 

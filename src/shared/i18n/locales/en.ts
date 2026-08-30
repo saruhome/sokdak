@@ -301,6 +301,7 @@ export const en = {
     adultGateCancel: 'Cancel',
     premiumBetaCta: 'Start free beta trial',
     premiumBetaActivated: 'Premium activated! You can now access all content.',
+    globalSearchDidYouMean: 'Did you mean ‘{word}’?',
     premiumFeatureUnlimitedSaves: 'Unlimited word saves',
     premiumFeatureOffline: 'Offline dictionary access',
     premiumFeatureSituational: 'Situational lessons (cafés, subway, work, and more)',

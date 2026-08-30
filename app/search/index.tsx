@@ -13,6 +13,7 @@ import { CATEGORIES, getCategoryBySlug, getCategoryName } from '../../constants/
 import { authStore } from '../../constants/authStore';
 import { tFor, useLanguage } from '../../constants/languageStore';
 import { filterPostResults, filterWordResults, suggestWords } from '@/src/features/search/model/searchResults';
+import { suggestSimilarWord } from '@/src/features/dictionary/model/wordSearch';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Search, BookOpen, Heart, Star, Eye, MessageCircle, X } from 'lucide-react-native';
 import { BackIcon } from '@/components/icons/SocialIcons';
@@ -90,6 +91,12 @@ export default function SearchScreen() {
   const postResults = useMemo<CommunityPostSummary[]>(
     () => filterPostResults(communityPosts, submittedQuery ?? ''),
     [submittedQuery, communityPosts],
+  );
+
+  /* 결과가 없을 때만 오타 후보를 계산한다 — "혹시 '킹받다'인가요?" */
+  const didYouMean = useMemo(
+    () => (submittedQuery && wordResults.length === 0 ? suggestSimilarWord(allWords, submittedQuery) : null),
+    [allWords, submittedQuery, wordResults.length],
   );
 
   const showEmptyState = submittedQuery === null && query.trim() === '';
@@ -285,6 +292,17 @@ export default function SearchScreen() {
                       description={tr('trySearchingCategory')}
                       testID="global-search-no-word-results"
                     />
+                    {didYouMean && (
+                      <TouchableOpacity
+                        style={styles.didYouMeanBtn}
+                        testID="global-search-did-you-mean"
+                        onPress={() => { setQuery(didYouMean.word); setSubmittedQuery(didYouMean.word); }}
+                      >
+                        <Text style={styles.didYouMeanText}>
+                          {trWith('globalSearchDidYouMean', { word: didYouMean.word })}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
                 }
                 contentContainerStyle={wordResults.length === 0 ? { flex: 1 } : undefined}
@@ -442,6 +460,11 @@ const styles = StyleSheet.create({
 
   /* 결과 없음 */
   resultEmptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 40 },
+  didYouMeanBtn: {
+    marginTop: 4, paddingHorizontal: 16, paddingVertical: 10,
+    borderRadius: 20, backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+  },
+  didYouMeanText: { fontSize: 14, fontWeight: '600', color: Colors.accent },
   resultEmptyTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, textAlign: 'center' },
   resultEmptyHint: { fontSize: 12, color: Colors.textTertiary },
 });

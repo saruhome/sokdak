@@ -300,6 +300,7 @@ export type TranslationKey =
   | 'adultGateCancel'
   | 'premiumBetaCta'
   | 'premiumBetaActivated'
+  | 'globalSearchDidYouMean'
   | 'premiumBannerTitle'
   | 'premiumBannerSub'
   | 'premiumFeatureUnlimitedSaves'

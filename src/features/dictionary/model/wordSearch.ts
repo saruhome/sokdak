@@ -57,3 +57,41 @@ export function getWordSearchMatch(word: Word, query: string): WordSearchMatch |
 export function wordMatchesSearch(word: Word, query: string): boolean {
   return getWordSearchMatch(word, query) !== null || !normalizeWordSearchText(query);
 }
+
+/* ponytail: O(n·m²) 레벤슈타인 전수 비교 — 사전이 수천 단어가 되면 초성/자모 인덱스로 교체 */
+function editDistance(a: string, b: string): number {
+  const prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let diagonal = prev[0];
+    prev[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const next = a[i - 1] === b[j - 1] ? diagonal : Math.min(diagonal, prev[j], prev[j - 1]) + 1;
+      diagonal = prev[j];
+      prev[j] = next;
+    }
+  }
+  return prev[b.length];
+}
+
+/**
+ * 오타·유사 검색어에 대해 "혹시 이 단어인가요?" 후보를 하나 고른다.
+ * 표제어(한글 음절 단위)와 로마자(정규화) 양쪽에서 편집 거리가 가장 가까운 단어를
+ * 길이 비례 허용치(짧은 검색어 1, 긴 검색어 2) 안에서 반환한다. 없으면 null.
+ */
+export function suggestSimilarWord(words: Word[], query: string): Word | null {
+  const normalized = normalizeWordSearchText(query);
+  if (normalized.length < 2) return null;
+
+  let best: { word: Word; distance: number } | null = null;
+  for (const word of words) {
+    const candidates = [normalizeWordSearchText(word.word), normalizeWordSearchText(word.romanization)];
+    for (const candidate of candidates) {
+      if (!candidate) continue;
+      const allowed = Math.min(candidate.length, normalized.length) <= 4 ? 1 : 2;
+      const distance = editDistance(candidate, normalized);
+      if (distance === 0 || distance > allowed) continue;
+      if (!best || distance < best.distance) best = { word, distance };
+    }
+  }
+  return best?.word ?? null;
+}

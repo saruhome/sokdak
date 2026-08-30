@@ -301,6 +301,7 @@ export const de = {
     adultGateCancel: 'Abbrechen',
     premiumBetaCta: 'Kostenlose Beta-Testphase starten',
     premiumBetaActivated: 'Premium aktiviert! Du hast jetzt Zugriff auf alle Inhalte.',
+    globalSearchDidYouMean: 'Meintest du „{word}“?',
     premiumFeatureUnlimitedSaves: 'Unbegrenzt Wörter speichern',
     premiumFeatureOffline: 'Offline-Wörterbuch',
     premiumFeatureSituational: 'Situationsbezogenes Lernen (Café, U-Bahn, Arbeit und mehr)',

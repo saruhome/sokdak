@@ -301,6 +301,7 @@ export const vi = {
     adultGateCancel: 'Hủy',
     premiumBetaCta: 'Bắt đầu dùng thử beta miễn phí',
     premiumBetaActivated: 'Đã kích hoạt Premium! Bạn có thể xem tất cả nội dung.',
+    globalSearchDidYouMean: 'Có phải bạn muốn tìm ‘{word}’?',
     premiumFeatureUnlimitedSaves: 'Lưu từ không giới hạn',
     premiumFeatureOffline: 'Dùng từ điển ngoại tuyến',
     premiumFeatureSituational: 'Học theo tình huống (quán cà phê, tàu điện, công ty...)',

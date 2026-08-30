@@ -301,6 +301,7 @@ export const ja = {
     adultGateCancel: 'キャンセル',
     premiumBetaCta: 'ベータ無料体験を開始',
     premiumBetaActivated: 'プレミアムが有効になりました!すべてのコンテンツを利用できます。',
+    globalSearchDidYouMean: 'もしかして「{word}」ですか?',
     premiumFeatureUnlimitedSaves: '単語を無制限に保存',
     premiumFeatureOffline: 'オフライン辞書の利用',
     premiumFeatureSituational: '状況別の実践学習（カフェ・地下鉄・会社など）',

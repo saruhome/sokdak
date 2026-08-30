@@ -157,8 +157,8 @@ export default function CategoryScreen() {
                   </Text>
                   {/* 박스가 이미 이 텍스트의 실측 너비에 맞춰져 있어 adjustsFontSizeToFit이 불필요 —
                    * 오히려 폭이 넓어지기 전 첫 렌더의 축소값이 그대로 굳어버리는 문제가 있었다 */}
-                  {/* 줄 수 제한 없음 — 말풍선 문구는 절대 …으로 잘리면 안 된다(운영자 규칙) */}
-                  <Text style={styles.recommendLabel}>
+                  {/* 말풍선 힌트는 글씨를 줄여서라도 한 줄(운영자 규칙) — 축소라 …로 잘리지 않는다 */}
+                  <Text style={styles.recommendLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}>
                     {HORANG_HINTS[language][hintIndex]}
                   </Text>
                   <Text style={styles.recommendName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>

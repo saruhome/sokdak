@@ -25,17 +25,23 @@ export const SITUATION_LABEL_KEY: Record<Situation, TranslationKey> = {
   hospital: 'situationHospital', sns: 'situationSns', dinner: 'situationDinner',
 };
 
+/** 교과서 문장 금지 — 10~20대가 실제로 쓰는 말투로, 사투리도 간간이 섞는다(운영자 지시).
+ * 사투리 항목은 en에 지역·상대(친구끼리 등)를 반드시 표기해 잘못 쓰는 일을 막는다. */
 export const EXPRESSIONS: { situation: Situation; ko: string; en: string }[] = [
-  { situation: 'cafe', ko: '이거 하나 주세요', en: 'One of these, please (pointing at the menu)' },
-  { situation: 'cafe', ko: '테이크아웃 할게요', en: "I'll take it to go" },
-  { situation: 'subway', ko: '이번 역에서 내리세요?', en: 'Are you getting off at this stop?' },
-  { situation: 'subway', ko: '여기 자리 있어요?', en: 'Is this seat taken?' },
-  { situation: 'work', ko: '먼저 퇴근하겠습니다', en: "I'll head out first (leaving before others)" },
-  { situation: 'work', ko: '확인 후 회신 드리겠습니다', en: "I'll check and get back to you" },
-  { situation: 'hospital', ko: '여기가 아파요', en: 'It hurts here' },
-  { situation: 'hospital', ko: '실비보험 있어요', en: 'I have private (supplemental) insurance' },
-  { situation: 'sns', ko: '선팔하고 갈게요', en: "I'll follow you first" },
-  { situation: 'sns', ko: '댓글 감사해요', en: 'Thanks for the comment' },
-  { situation: 'dinner', ko: '제가 한 잔 따라드릴게요', en: 'Let me pour you a drink' },
-  { situation: 'dinner', ko: '저는 술을 잘 못 마셔요', en: "I don't drink well (polite way to decline alcohol)" },
+  { situation: 'cafe', ko: '아아 한 잔 주세요', en: 'One iced americano, please ("a-a" = iced americano slang)' },
+  { situation: 'cafe', ko: '여기 콘센트 있는 자리 있어요?', en: 'Is there a seat with a power outlet? (study-café essential)' },
+  { situation: 'subway', ko: '나 이번에 내려, 이따 봐', en: "I'm getting off here — see you later (texting a friend)" },
+  { situation: 'subway', ko: '몇 정거장 남았어?', en: 'How many stops left? (casual, to a friend)' },
+  { situation: 'subway', ko: '언제 오노? 퍼뜩 온나', en: 'When are you coming? Hurry up! (Busan/Gyeongsang dialect, close friends only)' },
+  { situation: 'work', ko: '넵! 바로 확인하겠습니다', en: 'Got it! Checking right away (넵 = the eager work "yes" every young employee types)' },
+  { situation: 'work', ko: '오늘 칼퇴 각이에요', en: 'Today looks like an on-the-dot leave (칼퇴 = leaving sharp on time, 각 = "the vibe is right")' },
+  { situation: 'hospital', ko: '어제부터 몸살 기운이 있어요', en: "I've felt achy and feverish since yesterday" },
+  { situation: 'hospital', ko: '주사 꼭 맞아야 돼요?', en: 'Do I really have to get a shot? (casual)' },
+  { situation: 'sns', ko: '스토리 봤어, 개웃겨 ㅋㅋ', en: 'Saw your story — hilarious (개- = slangy intensifier, friends only)' },
+  { situation: 'sns', ko: '맞팔해요!', en: "Let's follow each other! (맞팔 = mutual follow)" },
+  { situation: 'sns', ko: '완전 인생샷이다', en: 'That is THE shot of your life (인생샷 = best photo ever taken of you)' },
+  { situation: 'dinner', ko: '오늘은 제가 쏠게요', en: "Tonight's on me (쏘다 = to treat someone)" },
+  { situation: 'dinner', ko: '저 술 잘 못 마셔요, 콜라로 할게요', en: "I'm not much of a drinker — I'll have a cola (natural way to pass)" },
+  { situation: 'dinner', ko: '겁나 맛있어요', en: 'This is crazy good (겁나 = Jeolla-dialect "super", now used nationwide)' },
+  { situation: 'dinner', ko: '마이 무라!', en: 'Dig in! (Busan/Gyeongsang dialect, banmal — close friends only)' },
 ];

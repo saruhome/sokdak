@@ -17,6 +17,7 @@ import { validateCommunityText } from '../../../constants/communitySafety';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { PostRichText } from '@/components/PostRichText';
 import { TopAppBar } from '@/components/navigation/TopAppBar';
+import { safeGoBack } from '@/constants/navigation';
 import { CommunityCommentItem } from '@/src/features/community/components/CommunityCommentItem';
 import { CommunityCommentComposer } from '@/src/features/community/components/CommunityCommentComposer';
 import { CommunitySafetyActionSheet } from '@/src/features/community/components/CommunitySafetyActionSheet';
@@ -325,7 +326,7 @@ export default function PostDetailScreen() {
          * back은 직접 진입(딥링크) 시에도 항상 커뮤니티 목록으로 돌아가는 기존 동작 유지 */}
         <TopAppBar
           variant="post"
-          onBack={() => router.replace('/tabs/community')}
+          onBack={() => safeGoBack('/tabs/community')}
           onShare={handleShare}
           onMenu={() => { setMenuAnchorTop(44); setMenuTarget({ kind: 'post' }); }}
         />

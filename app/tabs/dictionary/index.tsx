@@ -49,7 +49,10 @@ export default function DictionaryScreen() {
           activeOpacity={0.85}
         >
           <AppIcon icon={Crown} size={15} color={Colors.premium} />
-          <Text style={styles.premiumBannerText}>{t('dictionaryPremiumBannerText')}</Text>
+          {/* 운영자 규칙: 항상 한 줄 정렬 — 긴 번역은 줄바꿈 대신 글자를 줄여서 맞춘다 */}
+          <Text style={styles.premiumBannerText} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+            {t('dictionaryPremiumBannerText')}
+          </Text>
         </TouchableOpacity>
       )}
 
@@ -77,8 +80,8 @@ const styles = StyleSheet.create({
 
   premiumBanner: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
-    paddingVertical: 10, backgroundColor: Colors.premium + '12',
+    paddingVertical: 10, paddingHorizontal: 16, backgroundColor: Colors.premium + '12',
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
-  premiumBannerText: { fontSize: 12, fontWeight: '600', color: Colors.premium },
+  premiumBannerText: { flexShrink: 1, fontSize: 12, fontWeight: '600', color: Colors.premium },
 });

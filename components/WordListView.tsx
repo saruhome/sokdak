@@ -6,7 +6,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors, getReadableTextColor } from '@/constants/Colors';
-import { fetchWords, type Word } from '@/constants/words';
+import { fetchWords, localizedText, type Word } from '@/constants/words';
 import { getCategoryBySlug, getCategoryName, pickLeastPopular } from '@/constants/categories';
 import { languageStore, useLanguage, type Language } from '@/constants/languageStore';
 import { authStore } from '@/constants/authStore';
@@ -278,7 +278,7 @@ export function WordListView({
                       {t('translationSearchMatch')} {translationSearchMatch.lang}
                     </Text>
                   ) : (
-                    <Text style={styles.wordDesc} numberOfLines={1}>{item.shortDesc}</Text>
+                    <Text style={styles.wordDesc} numberOfLines={1}>{localizedText(item.shortDesc, item.shortDescI18n, language)}</Text>
                   )}
                   <View style={styles.likeRow}>
                     <AppIcon icon={Heart} size={11} color={Colors.textTertiary} />

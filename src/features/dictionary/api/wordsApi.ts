@@ -6,6 +6,9 @@ import { supabase } from '../../../shared/api/supabaseClient';
 import { entitlementStore } from '../../auth/model/entitlementStore';
 import { youtubeThumbnailUrl } from '../model/youtube';
 
+export { localizedText, type BodyI18n } from '../model/localizedText';
+import type { BodyI18n } from '../model/localizedText';
+
 export type Word = {
   id: string;
   word: string;
@@ -15,17 +18,22 @@ export type Word = {
   /** Figma: 단어가 두 카테고리에 걸치는 경우(예: "오빠" = 감탄사+릴스) 상세 화면에 배지/탭 2개로 표시 */
   secondaryCategory?: string;
   shortDesc: string;
+  shortDescI18n?: BodyI18n;
   pronunciation?: string;
   meanings: Array<{
     type: string;
     definition: string;
+    /** 언어별 정의 번역 — DB meanings jsonb의 definition_i18n 키 그대로 */
+    definition_i18n?: BodyI18n;
     /** kor 원문 + 언어별 번역. eng는 항상 존재(폴백), ja/es/vi/de는 다국어화 이후 추가 */
     examples: Array<{ kor: string; eng: string; ja?: string; es?: string; vi?: string; de?: string }>;
   }>;
   origin?: string;
   originEn?: string;
+  originI18n?: BodyI18n;
   usage: string;
   usageEn?: string;
+  usageI18n?: BodyI18n;
   relatedWords: string[];
   likes: number;
   saves: number;
@@ -41,7 +49,7 @@ export type Word = {
 };
 
 const WORDS_SELECT =
-  'id, word, romanization, category, secondary_category, short_desc, pronunciation, meanings, origin, origin_en, usage, usage_en, related_words, likes, saves, translations, video_url, video_youtube_id, video_start_sec, video_end_sec, thumbnail_url';
+  'id, word, romanization, category, secondary_category, short_desc, short_desc_i18n, pronunciation, meanings, origin, origin_en, origin_i18n, usage, usage_en, usage_i18n, related_words, likes, saves, translations, video_url, video_youtube_id, video_start_sec, video_end_sec, thumbnail_url';
 
 function mapRow(row: any): Word {
   return {
@@ -51,12 +59,15 @@ function mapRow(row: any): Word {
     category: row.category,
     secondaryCategory: row.secondary_category ?? undefined,
     shortDesc: row.short_desc,
+    shortDescI18n: row.short_desc_i18n ?? undefined,
     pronunciation: row.pronunciation ?? undefined,
     meanings: row.meanings ?? [],
     origin: row.origin ?? undefined,
     originEn: row.origin_en ?? undefined,
+    originI18n: row.origin_i18n ?? undefined,
     usage: row.usage,
     usageEn: row.usage_en ?? undefined,
+    usageI18n: row.usage_i18n ?? undefined,
     relatedWords: row.related_words ?? [],
     likes: row.likes,
     saves: row.saves,

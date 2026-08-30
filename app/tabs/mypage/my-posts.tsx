@@ -70,7 +70,7 @@ export default function MyPostsScreen() {
             style={[styles.tab, tab === tabItem.key && styles.tabActive]}
             onPress={() => setTab(tabItem.key)}
           >
-            <Text style={[styles.tabText, tab === tabItem.key && styles.tabTextActive]}>{tabItem.label}</Text>
+            <Text style={[styles.tabText, tab === tabItem.key && styles.tabTextActive]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{tabItem.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
 
-  tabs: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: Colors.divider },
+  tabs: { flexDirection: 'row', paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: Colors.divider },
   tab: { flex: 1, alignItems: 'center', paddingVertical: 12, borderBottomWidth: 2, borderBottomColor: 'transparent' },
   tabActive: { borderBottomColor: Colors.navBar },
   tabText: { fontSize: 13, color: Colors.textTertiary },

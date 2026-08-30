@@ -604,16 +604,19 @@ export type Database = {
           meanings: Json
           origin: string | null
           origin_en: string | null
+          origin_i18n: Json | null
           pronunciation: string | null
           related_words: string[]
           romanization: string | null
           saves: number
           secondary_category: string | null
           short_desc: string
+          short_desc_i18n: Json | null
           thumbnail_url: string | null
           translations: Json
           usage: string
           usage_en: string | null
+          usage_i18n: Json | null
           video_end_sec: number | null
           video_start_sec: number | null
           video_url: string | null
@@ -628,16 +631,19 @@ export type Database = {
           meanings?: Json
           origin?: string | null
           origin_en?: string | null
+          origin_i18n?: Json | null
           pronunciation?: string | null
           related_words?: string[]
           romanization?: string | null
           saves?: number
           secondary_category?: string | null
           short_desc: string
+          short_desc_i18n?: Json | null
           thumbnail_url?: string | null
           translations?: Json
           usage: string
           usage_en?: string | null
+          usage_i18n?: Json | null
           video_end_sec?: number | null
           video_start_sec?: number | null
           video_url?: string | null
@@ -652,16 +658,19 @@ export type Database = {
           meanings?: Json
           origin?: string | null
           origin_en?: string | null
+          origin_i18n?: Json | null
           pronunciation?: string | null
           related_words?: string[]
           romanization?: string | null
           saves?: number
           secondary_category?: string | null
           short_desc?: string
+          short_desc_i18n?: Json | null
           thumbnail_url?: string | null
           translations?: Json
           usage?: string
           usage_en?: string | null
+          usage_i18n?: Json | null
           video_end_sec?: number | null
           video_start_sec?: number | null
           video_url?: string | null

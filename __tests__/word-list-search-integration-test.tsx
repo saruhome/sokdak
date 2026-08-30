@@ -61,6 +61,7 @@ jest.mock('@/components/WordFilterBar', () => {
 
 jest.mock('@/constants/words', () => ({
   fetchWords: jest.fn(),
+  localizedText: jest.requireActual('@/src/features/dictionary/model/localizedText').localizedText,
 }));
 
 jest.mock('@/constants/categories', () => ({

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Alert } from '@/constants/alert';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { fetchWordById, fetchWords, type Word } from '../../../constants/words';
+import { fetchWordById, fetchWords, localizedText, type Word } from '../../../constants/words';
 import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
@@ -215,7 +215,13 @@ export default function WordDetailScreen() {
                 <Text style={styles.sectionTitle}>{t('meaning')}</Text>
                 {language === 'ko' && <Text style={styles.sectionTitleEn}>Meaning</Text>}
               </View>
-              <Text style={styles.definitionText}>{word.meanings[0]?.definition}</Text>
+              {/* 다의어(오빠 등)는 정의를 전부 번호로 나열 — 이전엔 첫 정의만 보였다 */}
+              {word.meanings.map((m, i) => (
+                <Text key={i} style={styles.definitionText}>
+                  {word.meanings.length > 1 ? `${i + 1}. ` : ''}
+                  {localizedText(m.definition, m.definition_i18n, language)}
+                </Text>
+              ))}
               {englishGloss && <Text style={styles.definitionEng}>{englishGloss}</Text>}
             </View>
 
@@ -226,8 +232,8 @@ export default function WordDetailScreen() {
                   <Text style={styles.sectionTitleSm}>{t('culturalContext')}</Text>
                   {language === 'ko' && <Text style={styles.sectionTitleEnSm}>Cultural Context</Text>}
                 </View>
-                <Text style={styles.contextBody}>{word.usage}</Text>
-                {word.usageEn && <Text style={styles.contextBodyEn}>{word.usageEn}</Text>}
+                <Text style={styles.contextBody}>{localizedText(word.usage, word.usageI18n, language)}</Text>
+                {language === 'ko' && word.usageEn && <Text style={styles.contextBodyEn}>{word.usageEn}</Text>}
               </View>
             )}
 
@@ -283,8 +289,8 @@ export default function WordDetailScreen() {
                 <Text style={styles.tipTitle}>{t('additionalInfo')}</Text>
                 {language === 'ko' && <Text style={styles.tipTitleEn}>Additional Tip</Text>}
               </View>
-              <Text style={styles.contextBody}>{word.origin}</Text>
-              {word.originEn && <Text style={styles.contextBodyEn}>{word.originEn}</Text>}
+              <Text style={styles.contextBody}>{localizedText(word.origin, word.originI18n, language)}</Text>
+              {language === 'ko' && word.originEn && <Text style={styles.contextBodyEn}>{word.originEn}</Text>}
             </View>
           )}
 

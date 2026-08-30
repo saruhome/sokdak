@@ -4,7 +4,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
-import { fetchWords, type Word } from '../../constants/words';
+import { fetchWords, localizedText, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
 import { getCategoryBySlug, getCategoryName } from '../../constants/categories';
@@ -117,7 +117,7 @@ export default function HomeScreen() {
                       </View>
                     )}
                     <Text style={styles.heroWord} numberOfLines={1}>{word.word}</Text>
-                    <Text style={styles.heroDesc} numberOfLines={2}>{word.shortDesc}</Text>
+                    <Text style={styles.heroDesc} numberOfLines={2}>{localizedText(word.shortDesc, word.shortDescI18n, language)}</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -153,7 +153,15 @@ export default function HomeScreen() {
                 activeOpacity={0.8}
               >
                 <AppIcon icon={Crown} size={14} color={Colors.premium} />
-                <Text style={styles.exprPremiumTeaserText}>{t('dictionaryPremiumBannerText')}</Text>
+                {/* 운영자 규칙: 항상 한 줄 정렬 — 긴 번역은 줄바꿈 대신 글자를 줄여서 맞춘다 */}
+                <Text
+                  style={styles.exprPremiumTeaserText}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}
+                >
+                  {t('dictionaryPremiumBannerText')}
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -196,7 +204,7 @@ export default function HomeScreen() {
                   </>
                 )}
                 <Text style={[styles.wordCardTitle, word.thumbnailUrl && styles.wordCardTitleOnImage]} numberOfLines={1}>{word.word}</Text>
-                <Text style={[styles.wordCardDesc, word.thumbnailUrl && styles.wordCardDescOnImage]} numberOfLines={2}>{word.shortDesc}</Text>
+                <Text style={[styles.wordCardDesc, word.thumbnailUrl && styles.wordCardDescOnImage]} numberOfLines={2}>{localizedText(word.shortDesc, word.shortDescI18n, language)}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -326,10 +334,10 @@ const styles = StyleSheet.create({
   exprEn: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
   exprPremiumTeaser: {
     flexDirection: 'row', alignItems: 'center', gap: 6, justifyContent: 'center',
-    paddingVertical: 12, backgroundColor: Colors.premium + '12',
+    paddingVertical: 12, paddingHorizontal: 16, backgroundColor: Colors.premium + '12',
     borderTopWidth: 1, borderTopColor: Colors.divider,
   },
-  exprPremiumTeaserText: { fontSize: 12, fontWeight: '600', color: Colors.premium },
+  exprPremiumTeaserText: { flexShrink: 1, fontSize: 12, fontWeight: '600', color: Colors.premium },
 
   /* 새로운 신조어 카드 */
   wordCardRow: { gap: 16, paddingRight: 24 },

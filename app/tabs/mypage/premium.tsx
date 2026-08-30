@@ -1,4 +1,4 @@
-import { Alert, Modal, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, Image, Modal, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { router } from 'expo-router';
@@ -12,6 +12,9 @@ import { BackIcon } from '@/components/icons/SocialIcons';
 import {
   Crown, Infinity as InfinityIcon, Download, MapPin, RotateCcw, Sparkles, Gem,
 } from 'lucide-react-native';
+
+const HORANG_CHEER = require('../../../assets/characters/transparent/horang-cheer.png');
+const JJAEKI_FULL = require('../../../assets/characters/transparent/jjaeki-full.png');
 
 const FEATURES = [
   { icon: InfinityIcon, labelKey: 'premiumFeatureUnlimitedSaves' } as const,
@@ -83,6 +86,11 @@ export default function PremiumScreen() {
           <AppIcon icon={Crown} size={40} color={Colors.premium} />
           <Text style={styles.heroTitle}>{t('premiumBannerTitle')}</Text>
           <Text style={styles.heroSub}>{t('premiumBannerSub')}</Text>
+          {/* 앱 마스코트 — 호랭(응원)과 짹이가 프리미엄을 홍보하는 자리(운영자 요청) */}
+          <View style={styles.heroMascots}>
+            <Image source={HORANG_CHEER} style={styles.heroMascot} resizeMode="contain" />
+            <Image source={JJAEKI_FULL} style={styles.heroMascot} resizeMode="contain" />
+          </View>
           {isPremium && (
             <View style={styles.activeBadge}>
               <AppIcon icon={Crown} size={13} color={Colors.premium} />
@@ -125,7 +133,7 @@ export default function PremiumScreen() {
             <Text style={styles.checkoutTitle}>{t('mockCheckoutTitle')}</Text>
             <View style={styles.checkoutRow}>
               <Text style={styles.checkoutProduct}>{t('mockCheckoutProduct')}</Text>
-              <Text style={styles.checkoutPrice}>₩4,900 / {t('mockCheckoutPerMonth')}</Text>
+              <Text style={styles.checkoutPrice} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>₩4,900 / {t('mockCheckoutPerMonth')}</Text>
             </View>
             <TouchableOpacity
               style={[styles.checkoutPayBtn, activating && styles.betaCtaDisabled]}
@@ -159,6 +167,8 @@ const styles = StyleSheet.create({
   },
   heroTitle: { fontSize: 19, fontWeight: '800', color: Colors.navBarIconActive, textAlign: 'center', marginTop: 4 },
   heroSub: { fontSize: 13, color: Colors.navBarIconMuted, textAlign: 'center', lineHeight: 19 },
+  heroMascots: { flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 8 },
+  heroMascot: { width: 72, height: 84 },
   activeBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     marginTop: 8, paddingHorizontal: 12, paddingVertical: 6,
@@ -198,7 +208,7 @@ const styles = StyleSheet.create({
     padding: 12, borderRadius: 10, backgroundColor: Colors.background,
   },
   checkoutProduct: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  checkoutPrice: { fontSize: 14, fontWeight: '700', color: Colors.accent },
+  checkoutPrice: { flexShrink: 1, fontSize: 14, fontWeight: '700', color: Colors.accent },
   checkoutPayBtn: {
     alignItems: 'center', paddingVertical: 13, borderRadius: 10, backgroundColor: Colors.navBar,
   },

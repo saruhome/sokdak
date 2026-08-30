@@ -57,7 +57,7 @@ export default function CategoryDetailScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <BackIcon size={24} color={Colors.navBarIconActive} />
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>{getCategoryName(category, language)}</Text>
+        <Text style={styles.topBarTitle} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>{getCategoryName(category, language)}</Text>
         <View style={styles.topBarBell}>
           <AppIcon icon={Bell} size={22} color={Colors.navBarIconActive} onPress={() => router.push('/notifications')} />
           <View style={styles.notifDot} />

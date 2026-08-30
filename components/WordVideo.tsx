@@ -3,7 +3,6 @@ import { createElement } from 'react';
 import { AppText as Text } from '@/components/AppText';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { Colors } from '../constants/Colors';
-import { PlayIcon } from './icons/PlayIcon';
 import { AppIcon } from './AppIcon';
 import { ExternalLink, Play } from 'lucide-react-native';
 
@@ -50,11 +49,8 @@ export function WordVideo({ videoUrl, youtubeId, videoStartSec, videoEndSec, thu
     );
   }
 
-  return (
-    <View style={styles.wrap}>
-      <PlayIcon size={58} color="#EBEBEB" opacity={0.8} />
-    </View>
-  );
+  /* 미디어가 하나도 없으면 자리 자체를 만들지 않는다(운영자 규칙) — 빈 재생 박스 금지 */
+  return null;
 }
 
 function VideoPlayerBox({ url }: { url: string }) {

@@ -149,13 +149,15 @@ export default function SuggestScreen() {
                     onPress={() => setCategorySlug(c.slug)}
                     activeOpacity={0.8}
                   >
+                    {/* 운영자 규칙: 칩 라벨은 아이콘 없이 무조건 한 줄 */}
                     <Text
                       style={[
                         styles.categoryChipText,
                         selected && { color: getReadableTextColor(c.colorBg) },
                       ]}
+                      numberOfLines={1}
                     >
-                      {c.emoji} {getCategoryName(c, language)}
+                      {getCategoryName(c, language)}
                     </Text>
                   </TouchableOpacity>
                 );

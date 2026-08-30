@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
 import { hasUnseenReply } from '../../../constants/support';
-import { languageStore, LANGUAGE_NATIVE_NAME } from '../../../constants/languageStore';
+import { languageStore } from '../../../constants/languageStore';
 import ProfileAvatar from '@/components/ProfileAvatar';
 import { AppIcon } from '@/components/AppIcon';
 import { ChevronRight, Crown, Flame } from 'lucide-react-native';
@@ -145,7 +145,7 @@ export default function MyPageScreen() {
             activeOpacity={0.85}
           >
             <Text style={styles.groupRowLabel} numberOfLines={1} ellipsizeMode="tail">
-              {LANGUAGE_NATIVE_NAME[language]}
+              {t('languageSettings')}
             </Text>
             <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
           </TouchableOpacity>

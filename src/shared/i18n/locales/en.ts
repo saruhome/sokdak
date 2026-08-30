@@ -8,7 +8,7 @@ export const en = {
     mypage: 'My Page',
     settings: 'Settings',
     notifications: 'Notifications',
-    languageSettings: 'Language Settings',
+    languageSettings: 'Change Language',
     activity: 'Activity',
     savedWords: 'Saved Words',
     likedPosts: 'Liked Posts',

@@ -81,13 +81,13 @@ describe('CommunityFilterBar', () => {
     expect(tabs).toHaveLength(3);
     const selected = tabs.filter(tab => tab.props.accessibilityState?.selected);
     expect(selected).toHaveLength(1);
-    expect(screen.getByText('질문')).toBeTruthy();
+    expect(screen.getByText('궁금해요')).toBeTruthy();
 
     /* 긴 locale/큰 글꼴에서 잘리는 대신 가로 스크롤 — horizontal ScrollView여야 한다 */
     const horizontalScrolls = screen.container.queryAll(node => node.props.horizontal === true);
     expect(horizontalScrolls.length).toBeGreaterThanOrEqual(1);
 
-    await fireEvent.press(screen.getByText('자유'));
+    await fireEvent.press(screen.getByText('속닥속닥'));
     expect(onSelect).toHaveBeenCalledWith('자유');
   });
 });

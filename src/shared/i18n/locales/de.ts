@@ -134,7 +134,7 @@ export const de = {
     guestCalloutTitle: 'Melde dich an und stelle deine Frage',
     guestCalloutBenefit: 'Frage nach Ausdrücken und lerne gemeinsam über Kommentare und Likes.',
     noPostsYet: 'Noch keine Beiträge',
-    boardQuestion: 'Fragen',
+    boardQuestion: 'Neugierig?',
     boardFree: 'Plauderecke',
     postNotFound: 'Beitrag nicht gefunden',
     loginRequiredTitle: 'Anmeldung erforderlich',

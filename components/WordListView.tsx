@@ -74,8 +74,6 @@ export function WordListView({
   const [savedFeedbackWord, setSavedFeedbackWord] = useState<string | null>(null);
   /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
   const [hintIndex] = useState(() => Math.floor(Math.random() * JJAEKI_HINTS.ko.length));
-  /* 말풍선 폭을 첫째 줄(힌트 문구) 실측 너비에 맞춰 늘였다 줄였다 하기 위한 측정값 */
-  const [hintWidth, setHintWidth] = useState<number | null>(null);
 
   useEffect(() => { fetchWords().then(data => { setWords(data); setLoading(false); }); }, []);
 
@@ -183,31 +181,12 @@ export function WordListView({
                 onPress={() => router.push(`/tabs/dictionary/${tipWord.id}`)}
                 activeOpacity={0.85}
               >
-                {/* 캐릭터는 항상 고정 위치(운영자 규칙) — 말풍선이 캐릭터를 밀어내면 안 된다.
-                 * 실측 폭은 maxWidth로만 반영: 짧은 힌트면 내용에 딱 맞고, 긴 힌트(ja/de 번역)면
-                 * flexShrink로 가용 폭까지만 늘어난 뒤 텍스트가 2줄로 감싼다. */}
-                <View
-                  style={[
-                    styles.tipTextWrap,
-                    hintWidth != null && {
-                      maxWidth: hintWidth + TIP_BUBBLE_PAD * 2 + TIP_BUBBLE_BORDER * 2,
-                    },
-                  ]}
-                >
+                {/* 캐릭터 고정, 말풍선은 내용 크기(운영자 규칙). 예전의 고스트 실측 장치는
+                 * 웹에서 줄어든 컨테이너 폭이 다시 측정을 제한하는 되먹임 락을 만들어 삭제 —
+                 * 힌트 문구가 말풍선 최대 폭에 맞게 짧아진 지금은 자연 크기로 충분하다. */}
+                <View style={styles.tipTextWrap}>
                   <View style={styles.bubbleTailOuter} pointerEvents="none" />
                   <View style={styles.bubbleTailInner} pointerEvents="none" />
-                  {/* 화면 밖에서 폭 제약 없이 자연 너비를 재는 측정용 사본 — 실제 표시되는 줄과 폭 제약을
-                   * 공유하면 잰 값이 잰 값을 되먹임해 너비가 굳어버리므로 별도로 분리한다 */}
-                  <Text
-                    style={[styles.tipHint, styles.measureGhost]}
-                    numberOfLines={1}
-                    onLayout={e => setHintWidth(e.nativeEvent.layout.width)}
-                  >
-                    {JJAEKI_HINTS[language][hintIndex]}
-                  </Text>
-                  {/* 박스가 이미 이 텍스트의 실측 너비에 맞춰져 있어 adjustsFontSizeToFit이 불필요 —
-                   * 오히려 폭이 넓어지기 전 첫 렌더의 축소값이 그대로 굳어버리는 문제가 있었다 */}
-                  {/* 말풍선 힌트는 글씨를 줄여서라도 한 줄(운영자 규칙) — 축소라 …로 잘리지 않는다 */}
                   <Text style={styles.tipHint} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}>
                     {JJAEKI_HINTS[language][hintIndex]}
                   </Text>
@@ -386,7 +365,7 @@ const styles = StyleSheet.create({
   /* minWidth:0 없으면 Text 내용 너비가 최소 크기로 잡혀 flexShrink가 안 먹고 오른쪽 캐릭터와 겹친다.
    * 말풍선 배경 자체를 이 View가 담당 — 3줄 텍스트 크기에 맞춰 폭/높이가 정해지고 사방 8px 여백만 준다. */
   tipTextWrap: {
-    flexShrink: 1, minWidth: 0, maxWidth: TIP_BUBBLE_MAX_WIDTH, gap: 4,
+    alignSelf: 'center', flexShrink: 1, minWidth: 0, maxWidth: TIP_BUBBLE_MAX_WIDTH, gap: 4,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, borderRadius: 12,
     paddingHorizontal: TIP_BUBBLE_PAD, paddingVertical: TIP_BUBBLE_PAD,
   },
@@ -406,7 +385,6 @@ const styles = StyleSheet.create({
     borderTopColor: 'transparent', borderBottomColor: 'transparent', borderLeftColor: Colors.surface,
   },
   tipHint: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },
-  measureGhost: { position: 'absolute', opacity: 0, left: -9999, top: 0 },
   tipWord: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
   tipClick: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
   /* 짹이 크기/위치는 고정 — 카드가 고정 폭(312)이라 줄어들 필요가 없다.

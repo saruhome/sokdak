@@ -68,8 +68,6 @@ export default function CategoryScreen() {
   );
   /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
   const [hintIndex] = useState(() => Math.floor(Math.random() * HORANG_HINTS.ko.length));
-  /* 말풍선 폭을 첫째 줄(힌트 문구) 실측 너비에 맞춰 늘였다 줄였다 하기 위한 측정값 */
-  const [hintWidth, setHintWidth] = useState<number | null>(null);
 
   const sortedCategories = [...CATEGORIES].sort((a, b) =>
     sortMode === '인기순'
@@ -132,32 +130,11 @@ export default function CategoryScreen() {
                 onPress={() => router.push(`/tabs/category/${topCategory.slug}`)}
                 activeOpacity={0.85}
               >
-                {/* 캐릭터는 항상 고정 위치(운영자 규칙) — 말풍선이 캐릭터를 밀어내면 안 된다.
-                 * 실측 폭은 maxWidth로만 반영: 짧은 힌트면 내용에 딱 맞고, 긴 힌트면 flexShrink로
-                 * 가용 폭까지만 늘어난 뒤 텍스트가 줄바꿈된다. */}
-                <View
-                  style={[
-                    styles.recommendTextWrap,
-                    hintWidth != null && {
-                      maxWidth: hintWidth + RECOMMEND_BUBBLE_PAD * 2 + RECOMMEND_BUBBLE_BORDER * 2 + 4,
-                      marginLeft: 1,
-                    },
-                  ]}
-                >
+                {/* 캐릭터 고정, 말풍선은 내용 크기(운영자 규칙). 고스트 실측 장치는 웹에서
+                 * 줄어든 폭이 측정을 다시 제한하는 되먹임 락 때문에 삭제 — 힌트가 짧아져 불필요. */}
+                <View style={styles.recommendTextWrap}>
                   <View style={styles.bubbleTailOuter} pointerEvents="none" />
                   <View style={styles.bubbleTailInner} pointerEvents="none" />
-                  {/* 화면 밖에서 폭 제약 없이 자연 너비를 재는 측정용 사본 — 실제 표시되는 줄과 폭 제약을
-                   * 공유하면 잰 값이 잰 값을 되먹임해 너비가 굳어버리므로 별도로 분리한다 */}
-                  <Text
-                    style={[styles.recommendLabel, styles.measureGhost]}
-                    numberOfLines={1}
-                    onLayout={e => setHintWidth(e.nativeEvent.layout.width)}
-                  >
-                    {HORANG_HINTS[language][hintIndex]}
-                  </Text>
-                  {/* 박스가 이미 이 텍스트의 실측 너비에 맞춰져 있어 adjustsFontSizeToFit이 불필요 —
-                   * 오히려 폭이 넓어지기 전 첫 렌더의 축소값이 그대로 굳어버리는 문제가 있었다 */}
-                  {/* 말풍선 힌트는 글씨를 줄여서라도 한 줄(운영자 규칙) — 축소라 …로 잘리지 않는다 */}
                   <Text style={styles.recommendLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}>
                     {HORANG_HINTS[language][hintIndex]}
                   </Text>
@@ -297,7 +274,6 @@ const styles = StyleSheet.create({
     borderTopColor: 'transparent', borderBottomColor: 'transparent', borderLeftColor: Colors.surface,
   },
   recommendLabel: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },
-  measureGhost: { position: 'absolute', opacity: 0, left: -9999, top: 0 },
   recommendName: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
   recommendClick: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
   /* 호랭이 크기/위치는 고정 — 카드가 고정 폭(312)이라 줄어들 필요가 없다.

@@ -256,6 +256,10 @@ export default function WritePostScreen() {
             </View>
           )}
 
+          {/* 언어 안내 — 나라별 그룹 대신 단일 피드 + "서툰 한국어 환영" 넛지(운영 결정 2026-08-30).
+           * ponytail: 비한국어 글 30% 초과 또는 일 20글 초과 시 board 값 추가로 언어별 게시판 분리 */}
+          <Text style={styles.languageNudge}>{t('writeLanguageNudge')}</Text>
+
           {/* ── Controls/Text Field/Title_02 (375×44) */}
           <TextInput
             style={styles.titleInput}
@@ -480,6 +484,11 @@ const styles = StyleSheet.create({
   toolbarBtnDisabled: { opacity: 0.4 },
   /* field 바로 아래 붙는 validation helper — alert 전용 검증 금지 */
   fieldHelper: { paddingHorizontal: 16, paddingBottom: 8, fontSize: 11, color: Colors.error },
+  languageNudge: {
+    marginHorizontal: 16, marginTop: 10, paddingHorizontal: 12, paddingVertical: 8,
+    borderRadius: 8, backgroundColor: Colors.accent + '12',
+    fontSize: 12, lineHeight: 17, color: Colors.accent,
+  },
   toolbarLabel: { fontSize: 12, color: Colors.textSecondary },
   toolbarDivider: { flex: 1 },
   charCountCompact: { paddingRight: 8 },

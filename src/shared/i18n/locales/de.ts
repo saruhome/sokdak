@@ -185,6 +185,7 @@ export const de = {
     boardDescAsk: 'Um deine Gedanken frei zu teilen',
     askTemplatePlaceholder: 'Welcher Ausdruck interessiert dich? Schreibe dazu, wo du ihn gesehen hast und was unklar ist – so bekommst du bessere Antworten.',
     titlePlaceholder: 'Titel eingeben (mind. 2 Zeichen)',
+    writeLanguageNudge: 'Versuch es auf Koreanisch — Fehler sind völlig okay! Deine eigene Sprache geht auch.',
     contentPlaceholder: 'Inhalt eingeben (mind. 10 Zeichen)\n\nz. B. „Hallo! Mit SokDak lernst du echtes Koreanisch, das nicht in Lehrbüchern steht!“',
     toolbarPhoto: 'Foto',
     toolbarLink: 'Link',

@@ -185,6 +185,7 @@ export const ja = {
     boardDescAsk: '自由に意見を交わすとき',
     askTemplatePlaceholder: 'どんな表現が気になりますか？どこで見たか、何が分かりにくいかも書くと、より良い回答がもらえます。',
     titlePlaceholder: 'タイトルを入力してください（2文字以上）',
+    writeLanguageNudge: '韓国語で書いてみましょう — 下手でも大丈夫!母語で書いてもOKです。',
     contentPlaceholder: '内容を入力してください（10文字以上）\n\n例）「こんにちは、教科書にはない本当の韓国語をソクダクで！」',
     toolbarPhoto: '写真',
     toolbarLink: 'リンク',

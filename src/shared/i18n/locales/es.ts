@@ -185,6 +185,7 @@ export const es = {
     boardDescAsk: 'Para compartir tus opiniones libremente',
     askTemplatePlaceholder: '¿Qué expresión te genera dudas? Indicar dónde la viste y qué te confunde ayuda a recibir mejores respuestas.',
     titlePlaceholder: 'Escribe un título (2+ caracteres)',
+    writeLanguageNudge: 'Anímate a escribir en coreano — ¡los errores están bien! También puedes usar tu idioma.',
     contentPlaceholder: 'Escribe tu contenido (10+ caracteres)\n\nej. "¡Hola! Aprende coreano real que no está en los libros de texto con Sokdak"',
     toolbarPhoto: 'Foto',
     toolbarLink: 'Enlace',

@@ -191,6 +191,7 @@ export type TranslationKey =
   | 'boardDescAsk'
   | 'askTemplatePlaceholder'
   | 'titlePlaceholder'
+  | 'writeLanguageNudge'
   | 'contentPlaceholder'
   | 'toolbarPhoto'
   | 'toolbarLink'

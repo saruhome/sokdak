@@ -423,7 +423,9 @@ const styles = StyleSheet.create({
   chatRowInner: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   chatName: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
   chatAvatar: { width: 32, height: 32, borderRadius: 16 },
-  chatBubble: { maxWidth: 244, borderRadius: 12, padding: 12, gap: 2 },
+  /* 버블+간격(8)+아바타(32)가 컬럼 한계 안에 들어야 아바타가 가장자리로 밀리지 않는다
+   * (운영자 규칙: 말풍선이 캐릭터를 밀어내지 않기, 좌우 여백 대칭) */
+  chatBubble: { flexShrink: 1, maxWidth: 208, borderRadius: 12, padding: 12, gap: 2 },
   chatBubbleLeft: {
     backgroundColor: Colors.surface, borderWidth: 0.5, borderColor: Colors.border,
     borderTopLeftRadius: 0,

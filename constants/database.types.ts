@@ -559,27 +559,27 @@ export type Database = {
       }
       word_suggestions: {
         Row: {
-          category_slug: string
+          category_slug: string | null
           created_at: string
-          definition: string
+          definition: string | null
           example: string | null
           id: string
           user_id: string
           word: string
         }
         Insert: {
-          category_slug: string
+          category_slug?: string | null
           created_at?: string
-          definition: string
+          definition?: string | null
           example?: string | null
           id?: string
           user_id: string
           word: string
         }
         Update: {
-          category_slug?: string
+          category_slug?: string | null
           created_at?: string
-          definition?: string
+          definition?: string | null
           example?: string | null
           id?: string
           user_id?: string

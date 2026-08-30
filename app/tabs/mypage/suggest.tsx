@@ -26,7 +26,8 @@ export default function SuggestScreen() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const isValid = word.trim().length >= 1 && !!categorySlug && definition.trim().length >= 5;
+  /* 단어만 필수 — 카테고리·뜻은 몰라도 제안 가능(운영 결정) */
+  const isValid = word.trim().length >= 1;
 
   const handleSubmit = async () => {
     if (!isValid) return;
@@ -40,7 +41,7 @@ export default function SuggestScreen() {
     setSubmitting(true);
     const { error } = await submitWordSuggestion({
       word: word.trim(),
-      categorySlug: categorySlug!,
+      categorySlug,
       definition: definition.trim(),
       example: example.trim(),
     });
@@ -93,7 +94,7 @@ export default function SuggestScreen() {
                 ) : null;
               })()}
             </View>
-            <Text style={styles.donePreviewDefinition}>{definition}</Text>
+            {!!definition.trim() && <Text style={styles.donePreviewDefinition}>{definition}</Text>}
           </View>
 
           <TouchableOpacity style={styles.doneCtaPrimary} onPress={handleReset} activeOpacity={0.85}>
@@ -146,7 +147,8 @@ export default function SuggestScreen() {
                       styles.categoryChip,
                       selected && { backgroundColor: c.colorBg, borderColor: c.colorBg },
                     ]}
-                    onPress={() => setCategorySlug(c.slug)}
+                    /* 선택 항목이라 같은 칩을 다시 누르면 해제 */
+                    onPress={() => setCategorySlug(prev => prev === c.slug ? null : c.slug)}
                     activeOpacity={0.8}
                   >
                     {/* 운영자 규칙: 칩 라벨은 아이콘 없이 무조건 한 줄 */}

@@ -4,8 +4,9 @@ import { supabase } from '../../../shared/api/supabaseClient';
 
 export async function submitWordSuggestion(params: {
   word: string;
-  categorySlug: string;
-  definition: string;
+  /* 카테고리·뜻은 선택 — 단어만 알아도 제안 가치가 있다(운영 결정 2026-08-30) */
+  categorySlug?: string | null;
+  definition?: string;
   example?: string;
 }) {
   const { data: { user } } = await supabase.auth.getUser();
@@ -14,8 +15,8 @@ export async function submitWordSuggestion(params: {
   const { error } = await supabase.from('word_suggestions').insert({
     user_id: user.id,
     word: params.word,
-    category_slug: params.categorySlug,
-    definition: params.definition,
+    category_slug: params.categorySlug || null,
+    definition: params.definition || null,
     example: params.example || null,
   });
   return { error: error?.message ?? null };

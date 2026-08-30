@@ -1,5 +1,5 @@
 import type { RefObject } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { Colors } from '@/constants/Colors';
 import { tFor, type Language } from '@/constants/languageStore';
@@ -88,9 +88,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'flex-end',
     paddingHorizontal: 12, paddingVertical: 8, gap: 8,
   },
-  /* 1줄(36px)로 시작해 3줄(~80px)까지 확장 — 그 이상은 내부 스크롤 */
+  /* 네이티브: 1줄(36px)로 시작해 3줄(~80px)까지 확장 — 그 이상은 내부 스크롤.
+   * 웹: textarea가 minHeight를 무시하고 기본 2줄 높이로 렌더돼 전송 버튼(36px)보다
+   * 커지므로 높이를 버튼과 동일하게 고정한다(길어지면 내부 스크롤). */
   input: {
     flex: 1, minHeight: 36, maxHeight: 80,
+    ...(Platform.OS === 'web' ? { height: 36, maxHeight: 36 } : null),
     backgroundColor: Colors.surface,
     borderRadius: 18, borderWidth: 1, borderColor: Colors.border,
     paddingHorizontal: 14, paddingVertical: 8,

@@ -6,7 +6,7 @@ describe('languageStore critical localization strings', () => {
     en: 'No results found for “MZ”.',
     ja: '「MZ」の検索結果はありません。',
     vi: 'Không tìm thấy kết quả cho “MZ”.',
-    es: 'No se encontraron resultados para «MZ».',
+    es: 'No se encontraron resultados para “MZ”.',
     de: 'Keine Ergebnisse für „MZ“ gefunden.',
   };
 

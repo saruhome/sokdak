@@ -27,4 +27,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.127.1" # assets 설정은 wrangler 4 필요 (기본 3.90은 entry-point 에러)
           command: deploy

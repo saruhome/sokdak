@@ -18,7 +18,8 @@ const useIphoneFrame =
  * 실기기처럼 뷰포트를 꽉 채운다. 고정 800px 프레임은 폰의 가시 영역(~660px)보다 커서
  * 하단 탭바가 잘리기 때문. ponytail: 로드 시점 1회 판정, 회전/리사이즈는 새로고침으로 충분 */
 export const IS_PHONE_VIEWPORT =
-  Platform.OS === 'web' && typeof window !== 'undefined' && window.innerWidth < 500;
+  Platform.OS === 'web' && typeof window !== 'undefined' &&
+  window.innerWidth > 0 && window.innerWidth < 500; // 0 = 숨김 탭/프리렌더 등 측정 불가 → 데스크톱 프레임 기본값
 
 /** 화면 폭/높이: 웹 데스크톱 프리뷰는 360×800(또는 ?device=iphone 시 390×844) 고정 프레임
  *  (app/_layout.tsx DeviceFrame) 기준, 네이티브·폰 브라우저는 실제 기기 크기.

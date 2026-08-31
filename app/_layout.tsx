@@ -9,7 +9,7 @@ import { NotoSerifKR_400Regular } from '@expo-google-fonts/noto-serif-kr/400Regu
 import { NotoSerifKR_600SemiBold } from '@expo-google-fonts/noto-serif-kr/600SemiBold';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
-import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants/layout';
+import { IS_PHONE_VIEWPORT, SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants/layout';
 import { authStore } from '../constants/authStore';
 import { languageStore } from '../constants/languageStore';
 import { reportAppError } from '../constants/errorReporting';
@@ -22,7 +22,8 @@ const SPLASH = require('../assets/splash-screen.png');
  *  (?device=iphone 쿼리로 390×844 아이폰 프레임으로 전환 가능 — constants/layout.ts 참고).
  *  네이티브(안드로이드/iOS)에서는 그대로 전체 화면을 사용한다. */
 function DeviceFrame({ children }: { children: React.ReactNode }) {
-  if (Platform.OS !== 'web') return <>{children}</>;
+  // 폰 브라우저(테스터의 아이폰 사파리 등)는 프레임 없이 실기기처럼 뷰포트를 채운다
+  if (Platform.OS !== 'web' || IS_PHONE_VIEWPORT) return <>{children}</>;
   return (
     <View style={frameStyles.outer}>
       <View style={frameStyles.device}>{children}</View>

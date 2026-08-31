@@ -7,7 +7,7 @@ Supabase project_id는 `etvrsqfhettkehpltkcp` 고정 — list_projects 호출 �
 
 ## 절차
 
-1. 웹 검색으로 최근 한국 신조어/유행어 후보를 2~5개 발굴한다
+1. 웹 검색으로 최근 한국 신조어/유행어 후보를 10개 발굴한다
    (검색 예: "2026 신조어", "요즘 유행어 뜻", 최근 밈·챌린지). 나무위키·복수 블로그 등
    **서로 독립적인 출처 2개 이상**으로 뜻과 유래를 교차 확인한다.
 2. 중복 제거: `select word from words` 와 `select normalized_term from slang_candidates`에

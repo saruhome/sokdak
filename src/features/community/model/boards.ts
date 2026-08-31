@@ -34,8 +34,8 @@ export type Post = {
 
 /** Figma: Display/게시판 종류 배지 — bg(채움)+fg(글자) 페어 (Point 컬러 조합) */
 export const BOARD_COLORS: Record<PostBoard, { bg: string; fg: string }> = {
-  // 2026-08-31 밝은 오렌지 계열로 통일 (카테고리 포인트 컬러 frequently-used/daily 재사용).
+  // 2026-08-31 질문=밝은 오렌지(frequently-used), 자유=밝고 진한 초록(new-slang) 토큰 재사용.
   // bg는 배지 채움 + 필터바 탭 텍스트/밑줄 색으로도 쓰이므로 파스텔 금지(크림 배경 위 가독성).
   '질문': { bg: '#FF6B35', fg: '#FFF7EF' },
-  '자유': { bg: '#E8943A', fg: '#FFF7EF' },
+  '자유': { bg: '#3DAA6E', fg: '#FFF7EF' },
 };

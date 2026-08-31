@@ -1,0 +1,13 @@
+// Cloudflare Workers 정적 배포 설정 (2026-08-31 Vercel → Cloudflare 이전).
+// 서버 로직 없음 — dist/(expo export -p web 산출물)를 정적 서빙하고
+// SPA 라우팅은 not_found_handling이 담당한다 (Vercel의 rewrite와 동일 역할).
+// 기존 Vercel 프로젝트는 삭제하지 않는다: 동의 원장(community_policy_locales)의
+// content_url이 sokdak-pink.vercel.app을 가리키므로 그 URL은 불변으로 유지해야 한다.
+{
+  "name": "sokdak",
+  "compatibility_date": "2026-08-31",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

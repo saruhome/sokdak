@@ -211,7 +211,7 @@ export default function CategoryScreen() {
                   )}
                 </View>
                 {/* 이미지 카드 한정 스크림 — 배경 그림이 복잡해도 이름이 항상 읽히게 */}
-                <View style={[styles.cardTextWrap, item.image && styles.cardTextScrim]}>
+                <View style={[styles.cardTextWrap, item.image ? styles.cardTextScrim : null]}>
                   <Text
                     style={[styles.categoryName, { color: labelColor }]}
                     numberOfLines={2}

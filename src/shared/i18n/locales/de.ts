@@ -42,9 +42,7 @@ export const de = {
     suggestBackToMypage: 'Zurück zu Mein Bereich',
     suggestNewSlang: 'Neuen Slang vorschlagen',
     loginNeeded: 'Anmeldung erforderlich',
-    tapToLogin: 'Zum Anmelden tippen →',
-    startWithSokdak: 'Starte mit SokDak!',
-    loginPrompt: 'Melde dich an, um Wörter zu speichern und die Community zu nutzen',
+    loginPrompt: 'Melde dich an, um Wörter zu speichern\nund die Community zu nutzen',
     termsOfService: 'Nutzungsbedingungen',
     privacyPolicy: 'Datenschutzerklärung',
     mypageCommunityPolicy: 'Community-Richtlinien',
@@ -74,7 +72,6 @@ export const de = {
     inquiryReplyLabel: 'Antwort des Support-Teams',
     saveWordCount: 'Gespeicherte Wörter',
     likesCount: 'Gefällt mir',
-    loginBannerSubtitle: 'Melde dich an, um Wörter zu speichern und die Community zu nutzen',
 
     newSlangSection: 'Neuer Slang',
     newSlangSub: 'Frisch aus dem Netz',

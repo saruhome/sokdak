@@ -42,9 +42,7 @@ export const ja = {
     suggestBackToMypage: 'マイページに戻る',
     suggestNewSlang: '新造語を提案する',
     loginNeeded: 'ログインが必要です',
-    tapToLogin: 'タップしてログイン →',
-    startWithSokdak: 'ソクダクと一緒に始めましょう！',
-    loginPrompt: 'ログインすると単語の保存・コミュニティが利用できます',
+    loginPrompt: 'ログインすると\n単語保存とコミュニティが使えます',
     termsOfService: '利用規約',
     privacyPolicy: 'プライバシーポリシー',
     mypageCommunityPolicy: 'コミュニティ運営ポリシー',
@@ -74,7 +72,6 @@ export const ja = {
     inquiryReplyLabel: '運営からの回答',
     saveWordCount: '保存した単語',
     likesCount: 'いいね',
-    loginBannerSubtitle: 'ログインすると単語の保存・コミュニティが利用できます',
 
     newSlangSection: '最新の新造語',
     newSlangSub: '出たばかりの新語',

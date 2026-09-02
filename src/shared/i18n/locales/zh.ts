@@ -48,9 +48,7 @@ export const zh = {
     suggestBackToMypage: '返回我的页面',
     suggestNewSlang: '推荐新流行语',
     loginNeeded: '需要登录',
-    tapToLogin: '点击登录 →',
-    startWithSokdak: '和 SokDak 一起开始吧！',
-    loginPrompt: '登录后即可保存单词、使用社区',
+    loginPrompt: '登录后\n可保存单词并使用社区',
     termsOfService: '服务条款',
     privacyPolicy: '隐私政策',
     mypageCommunityPolicy: '社区规范',
@@ -80,7 +78,6 @@ export const zh = {
     inquiryReplyLabel: '运营团队的回复',
     saveWordCount: '已保存的单词',
     likesCount: '点赞',
-    loginBannerSubtitle: '登录后即可保存单词、使用社区',
 
     newSlangSection: '最新流行语',
     newSlangSub: '刚出现的新词',

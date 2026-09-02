@@ -42,9 +42,7 @@ export const ko = {
     suggestBackToMypage: '마이페이지로 돌아가기',
     suggestNewSlang: '신조어 제안하기',
     loginNeeded: '로그인이 필요해요',
-    tapToLogin: '눌러서 로그인 →',
-    startWithSokdak: '속닥과 함께 시작해요!',
-    loginPrompt: '로그인하면 단어 저장·커뮤니티 이용 가능',
+    loginPrompt: '로그인하면\n단어 저장과 커뮤니티를 쓸 수 있어요',
     termsOfService: '이용약관',
     privacyPolicy: '개인정보처리방침',
     mypageCommunityPolicy: '커뮤니티 운영정책',
@@ -74,7 +72,6 @@ export const ko = {
     inquiryReplyLabel: '운영진 답변',
     saveWordCount: '저장한 단어',
     likesCount: '좋아요',
-    loginBannerSubtitle: '로그인하면 단어 저장·커뮤니티 이용 가능',
 
     newSlangSection: '새로운 신조어',
     newSlangSub: '방금 등장한 새 단어들',

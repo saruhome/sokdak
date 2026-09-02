@@ -47,9 +47,7 @@ export const tr = {
     suggestBackToMypage: 'Sayfama dön',
     suggestNewSlang: 'Yeni argo öner',
     loginNeeded: 'Giriş gerekli',
-    tapToLogin: 'Giriş yapmak için dokun →',
-    startWithSokdak: 'SokDak ile başla!',
-    loginPrompt: 'Kelimeleri kaydetmek ve topluluğu kullanmak için giriş yap',
+    loginPrompt: 'Giriş yaparsan kelime kaydedebilir\nve topluluğu kullanabilirsin',
     termsOfService: 'Hizmet Şartları',
     privacyPolicy: 'Gizlilik Politikası',
     mypageCommunityPolicy: 'Topluluk Kuralları',
@@ -79,7 +77,6 @@ export const tr = {
     inquiryReplyLabel: 'Destek ekibinin yanıtı',
     saveWordCount: 'Kaydedilen kelimeler',
     likesCount: 'Beğeniler',
-    loginBannerSubtitle: 'Kelimeleri kaydetmek ve topluluğu kullanmak için giriş yap',
 
     newSlangSection: 'En yeni argolar',
     newSlangSub: 'Yeni çıkan kelimeler',

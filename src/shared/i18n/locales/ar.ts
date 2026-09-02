@@ -49,9 +49,7 @@ export const ar = {
     suggestBackToMypage: 'العودة إلى صفحتي',
     suggestNewSlang: 'اقترح كلمة عامية جديدة',
     loginNeeded: 'يلزم تسجيل الدخول',
-    tapToLogin: 'اضغط لتسجيل الدخول ←',
-    startWithSokdak: 'ابدأ مع SokDak!',
-    loginPrompt: 'سجّل الدخول لحفظ الكلمات واستخدام المجتمع',
+    loginPrompt: 'سجّل الدخول لحفظ الكلمات\nوالمشاركة في المجتمع',
     termsOfService: 'شروط الخدمة',
     privacyPolicy: 'سياسة الخصوصية',
     mypageCommunityPolicy: 'قواعد المجتمع',
@@ -81,7 +79,6 @@ export const ar = {
     inquiryReplyLabel: 'رد فريق الدعم',
     saveWordCount: 'الكلمات المحفوظة',
     likesCount: 'الإعجابات',
-    loginBannerSubtitle: 'سجّل الدخول لحفظ الكلمات واستخدام المجتمع',
 
     newSlangSection: 'أحدث الكلمات العامية',
     newSlangSub: 'كلمات ظهرت للتو',

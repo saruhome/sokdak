@@ -48,8 +48,6 @@ export type TranslationKey =
   | 'suggestBackToMypage'
   | 'suggestNewSlang'
   | 'loginNeeded'
-  | 'tapToLogin'
-  | 'startWithSokdak'
   | 'loginPrompt'
   | 'termsOfService'
   | 'privacyPolicy'
@@ -80,7 +78,6 @@ export type TranslationKey =
   | 'inquiryReplyLabel'
   | 'saveWordCount'
   | 'likesCount'
-  | 'loginBannerSubtitle'
   // 홈
   | 'newSlangSection'
   | 'newSlangSub'

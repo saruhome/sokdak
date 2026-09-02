@@ -42,9 +42,7 @@ export const vi = {
     suggestBackToMypage: 'Về trang cá nhân',
     suggestNewSlang: 'Đề xuất từ mới',
     loginNeeded: 'Cần đăng nhập',
-    tapToLogin: 'Nhấn để đăng nhập →',
-    startWithSokdak: 'Bắt đầu cùng Sokdak!',
-    loginPrompt: 'Đăng nhập để lưu từ và dùng cộng đồng',
+    loginPrompt: 'Đăng nhập để lưu từ\nvà tham gia cộng đồng',
     termsOfService: 'Điều khoản dịch vụ',
     privacyPolicy: 'Chính sách bảo mật',
     mypageCommunityPolicy: 'Chính sách cộng đồng',
@@ -74,7 +72,6 @@ export const vi = {
     inquiryReplyLabel: 'Phản hồi từ đội ngũ hỗ trợ',
     saveWordCount: 'Từ đã lưu',
     likesCount: 'Lượt thích',
-    loginBannerSubtitle: 'Đăng nhập để lưu từ và dùng cộng đồng',
 
     newSlangSection: 'Từ lóng mới',
     newSlangSub: 'Từ mới vừa xuất hiện',

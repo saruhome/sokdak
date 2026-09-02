@@ -80,7 +80,14 @@ export default function MyPageScreen() {
               emoji={loggedIn && user ? user.emoji : '👤'}
               size={40}
             />
-            <Text style={styles.profileName}>{loggedIn && user ? user.name : t('loginNeeded')}</Text>
+            {loggedIn && user ? (
+              <Text style={styles.profileName}>{user.name}</Text>
+            ) : (
+              <View>
+                <Text style={styles.profileName}>{t('loginNeeded')}</Text>
+                <Text style={styles.loginBenefitSub}>{t('loginPrompt')}</Text>
+              </View>
+            )}
           </View>
           <AppIcon icon={ChevronRight} size={20} color={Colors.textTertiary} />
         </TouchableOpacity>
@@ -204,6 +211,8 @@ const styles = StyleSheet.create({
   },
   profileRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   profileName: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
+  /* 비로그인 혜택 안내 — 운영자 승인 2줄 고정 문구(줄바꿈은 로케일 문자열의 \n) */
+  loginBenefitSub: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17, marginTop: 2 },
 
   /* 프리미엄 상태/업그레이드 행 */
   premiumRow: {

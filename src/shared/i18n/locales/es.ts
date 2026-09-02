@@ -42,9 +42,7 @@ export const es = {
     suggestBackToMypage: 'Volver a Mi página',
     suggestNewSlang: 'Sugerir jerga nueva',
     loginNeeded: 'Inicio de sesión requerido',
-    tapToLogin: 'Toca para iniciar sesión →',
-    startWithSokdak: '¡Empieza con Sokdak!',
-    loginPrompt: 'Inicia sesión para guardar palabras y usar la comunidad',
+    loginPrompt: 'Inicia sesión para guardar palabras\ny unirte a la comunidad',
     termsOfService: 'Términos de servicio',
     privacyPolicy: 'Política de privacidad',
     mypageCommunityPolicy: 'Normas de la comunidad',
@@ -74,7 +72,6 @@ export const es = {
     inquiryReplyLabel: 'Respuesta del equipo',
     saveWordCount: 'Palabras guardadas',
     likesCount: 'Me gusta',
-    loginBannerSubtitle: 'Inicia sesión para guardar palabras y usar la comunidad',
 
     newSlangSection: 'Jerga nueva',
     newSlangSub: 'Recién salida de internet',

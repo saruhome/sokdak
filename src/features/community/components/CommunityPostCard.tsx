@@ -1,4 +1,4 @@
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { Colors } from '@/constants/Colors';
 import { BOARD_COLORS, getBoardLabel } from '@/constants/mockPosts';
@@ -6,11 +6,6 @@ import { tFor, type Language } from '@/constants/languageStore';
 import type { CommunityPostSummary } from '@/constants/community';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle } from 'lucide-react-native';
-
-/** 본문 첫 첨부 이미지 URL — 목록 카드 우측 썸네일용(마케팅 목업과 동일 배치) */
-export function firstImageUrl(content: string): string | undefined {
-  return content.match(/!\[[^\]]*\]\(([^)]+)\)/)?.[1];
-}
 
 /** 본문 마크업(이미지/링크/서식)을 걷어낸 1줄 미리보기 텍스트 */
 export function previewText(content: string): string {
@@ -39,7 +34,6 @@ export function CommunityPostCard({
 }) {
   const boardLabel = getBoardLabel(post.board, language);
   const preview = previewText(post.content);
-  const thumb = firstImageUrl(post.content);
   return (
     <TouchableOpacity
       style={styles.card}
@@ -52,16 +46,11 @@ export function CommunityPostCard({
         `${tFor(language, 'commentsLabel')} ${post.commentCount}`
       }
     >
-      <View style={styles.topRow}>
-        <View style={styles.topLeft}>
-          <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[post.board].bg }]}>
-            <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[post.board].fg }]}>{boardLabel}</Text>
-          </View>
-          <Text style={styles.title} numberOfLines={2}>{post.title}</Text>
-          {preview ? <Text style={styles.preview} numberOfLines={1}>{preview}</Text> : null}
-        </View>
-        {thumb ? <Image source={{ uri: thumb }} style={styles.thumb} testID="post-card-thumb" /> : null}
+      <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[post.board].bg }]}>
+        <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[post.board].fg }]}>{boardLabel}</Text>
       </View>
+      <Text style={styles.title} numberOfLines={2}>{post.title}</Text>
+      {preview ? <Text style={styles.preview} numberOfLines={1}>{preview}</Text> : null}
       <View style={styles.metaRow}>
         <Text style={styles.author} numberOfLines={1}>{post.author.emoji} {post.author.name}</Text>
         <Text style={styles.date}>{post.createdAt}</Text>
@@ -81,9 +70,6 @@ export function CommunityPostCard({
 
 const styles = StyleSheet.create({
   card: { paddingHorizontal: 24, paddingVertical: 12, gap: 8, minHeight: 92, justifyContent: 'center' },
-  topRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  topLeft: { flex: 1, gap: 8 },
-  thumb: { width: 60, height: 60, borderRadius: 8, backgroundColor: Colors.divider },
   /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
   boardBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
   boardBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },

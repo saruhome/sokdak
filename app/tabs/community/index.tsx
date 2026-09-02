@@ -51,6 +51,9 @@ export default function CommunityScreen() {
     return () => unsub();
   }, []);
 
+  /* 화제의 글은 게시판 중립(전체 첫 페이지 기준)이라 탭 필터와 별개로 유지한다 —
+   * 게시판 탭에서도 같은 화제의 글이 보이도록 전체 탭이 아닐 때만 한 번 더 가져온다 */
+  const [allPosts, setAllPosts] = useState<CommunityPostSummary[]>([]);
   useFocusEffect(useCallback(() => {
     let cancelled = false;
     setLoading(true);
@@ -58,12 +61,18 @@ export default function CommunityScreen() {
     fetchPostsPage({ board, limit: COMMUNITY_POST_PAGE_SIZE }).then(page => {
       if (!cancelled) {
         setPosts(page.posts);
+        if (!board) setAllPosts(page.posts);
         setHasMore(page.hasMore);
         setNextOffset(page.nextOffset);
         setLoadFailed(page.failed === true);
         setLoading(false);
       }
     });
+    if (board) {
+      fetchPostsPage({ limit: COMMUNITY_POST_PAGE_SIZE }).then(page => {
+        if (!cancelled && page.failed !== true) setAllPosts(page.posts);
+      });
+    }
     return () => { cancelled = true; };
   }, [activeTab, retryKey]));
 
@@ -84,9 +93,10 @@ export default function CommunityScreen() {
     });
   }, [activeTab, hasMore, loading, loadingMore, nextOffset]);
 
+  /* 화제의 글은 게시판 탭과 무관하게 항상 노출 — 선정 기준도 탭 필터와 무관하게 전체 글 */
   const featured = useMemo(
-    () => activeTab === '전체' && !loading ? selectFeaturedPosts(posts) : [],
-    [activeTab, loading, posts],
+    () => !loading ? selectFeaturedPosts(allPosts.length ? allPosts : posts) : [],
+    [loading, allPosts, posts],
   );
   /* 화제의 글으로 올라간 글은 아래 목록에서 제외 — 같은 화면에 같은 글이 두 번 보이지 않게 */
   const listPosts = useMemo(() => {

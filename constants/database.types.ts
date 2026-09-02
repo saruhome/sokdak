@@ -258,6 +258,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          is_pinned: boolean
           moderated_at: string | null
           moderation_reason: string | null
           moderation_status: string
@@ -270,6 +271,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          is_pinned?: boolean
           moderated_at?: string | null
           moderation_reason?: string | null
           moderation_status?: string
@@ -282,6 +284,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          is_pinned?: boolean
           moderated_at?: string | null
           moderation_reason?: string | null
           moderation_status?: string

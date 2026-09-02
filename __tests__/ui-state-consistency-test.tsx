@@ -23,6 +23,7 @@ jest.mock('@/components/AppIcon', () => {
 });
 jest.mock('@/constants/community', () => ({
   COMMUNITY_POST_PAGE_SIZE: 20,
+  fetchPinnedPost: jest.fn(async () => null),
   fetchPostsPage: jest.fn(),
 }));
 jest.mock('@/constants/notifications', () => ({ fetchUnreadNotificationCount: jest.fn(async () => 0) }));

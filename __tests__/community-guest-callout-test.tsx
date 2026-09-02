@@ -15,6 +15,7 @@ jest.mock('lucide-react-native', () => ({
 jest.mock('@/components/AppIcon', () => ({ AppIcon: () => null, IconStat: () => null }));
 jest.mock('@/constants/community', () => ({
   COMMUNITY_POST_PAGE_SIZE: 20,
+  fetchPinnedPost: jest.fn(async () => null),
   fetchPostsPage: jest.fn(async () => ({ posts: [], hasMore: false, nextOffset: 0 })),
 }));
 jest.mock('@/constants/notifications', () => ({ fetchUnreadNotificationCount: jest.fn(async () => 0) }));

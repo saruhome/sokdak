@@ -112,11 +112,27 @@ function mapPostSummaryRow(row: any): CommunityPostSummary {
   };
 }
 
+/** 공지 핀 — 운영자가 Supabase Studio(service_role)에서 is_pinned를 켠 글.
+ * 관리자 화면은 의도적으로 없다. 커뮤니티 탭 최상단(화제의 글 위)에 노출되며,
+ * 아래 목록 쿼리들은 핀 글을 제외해 같은 화면에 두 번 보이지 않는다.
+ * ponytail: 핀은 한 번에 1개(최신 우선) — 공지가 여러 개 필요해지면 limit 해제 */
+export async function fetchPinnedPost(): Promise<CommunityPostSummary | null> {
+  const { data, error } = await supabase
+    .from('posts')
+    .select(POST_SUMMARY_SELECT)
+    .eq('is_pinned', true)
+    .order('created_at', { ascending: false })
+    .limit(1);
+  if (error || !data?.[0]) return null;
+  return mapPostSummaryRow(data[0]);
+}
+
 /** 커뮤니티 목록 (게시판 필터 옵션) — 조회수/좋아요/댓글수 집계 포함 */
 export async function fetchPosts(board?: PostBoard): Promise<CommunityPostSummary[]> {
   let query = supabase
     .from('posts')
     .select(POST_SUMMARY_SELECT)
+    .eq('is_pinned', false)
     .order('created_at', { ascending: false });
   if (board) query = query.eq('board', board);
 
@@ -140,6 +156,7 @@ export async function fetchPostsPage({
   let query = supabase
     .from('posts')
     .select(POST_SUMMARY_SELECT)
+    .eq('is_pinned', false)
     .order('created_at', { ascending: false })
     .range(safeOffset, safeOffset + safeLimit);
   if (board) query = query.eq('board', board);

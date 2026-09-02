@@ -1,7 +1,9 @@
 const mockEq: jest.Mock = jest.fn();
 const mockRange: jest.Mock = jest.fn();
 const mockOrder: jest.Mock = jest.fn(() => ({ range: mockRange }));
-const mockSelect: jest.Mock = jest.fn(() => ({ order: mockOrder }));
+/* 목록 쿼리는 공지 핀 글을 항상 제외한다 — select 직후의 .eq('is_pinned', false) 체인 */
+const mockPinnedFilter: jest.Mock = jest.fn(() => ({ order: mockOrder }));
+const mockSelect: jest.Mock = jest.fn(() => ({ eq: mockPinnedFilter }));
 const mockFrom: jest.Mock = jest.fn(() => ({ select: mockSelect }));
 
 jest.mock('@/constants/supabase', () => ({
@@ -46,6 +48,7 @@ describe('fetchPostsPage', () => {
     const page = await fetchPostsPage({ limit: 1 });
 
     expect(mockFrom).toHaveBeenCalledWith('posts');
+    expect(mockPinnedFilter).toHaveBeenCalledWith('is_pinned', false);
     expect(mockRange).toHaveBeenCalledWith(0, 1);
     expect(page.posts.map(post => post.id)).toEqual(['first']);
     expect(page.hasMore).toBe(true);

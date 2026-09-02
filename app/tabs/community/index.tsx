@@ -5,7 +5,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { BOARD_COLORS, getBoardLabel } from '../../../constants/mockPosts';
-import { COMMUNITY_POST_PAGE_SIZE, fetchPostsPage, type CommunityPostSummary } from '../../../constants/community';
+import { COMMUNITY_POST_PAGE_SIZE, fetchPinnedPost, fetchPostsPage, type CommunityPostSummary } from '../../../constants/community';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { TopAppBar } from '@/components/navigation/TopAppBar';
@@ -54,9 +54,12 @@ export default function CommunityScreen() {
   /* 화제의 글은 게시판 중립(전체 첫 페이지 기준)이라 탭 필터와 별개로 유지한다 —
    * 게시판 탭에서도 같은 화제의 글이 보이도록 전체 탭이 아닐 때만 한 번 더 가져온다 */
   const [allPosts, setAllPosts] = useState<CommunityPostSummary[]>([]);
+  /* 운영자 공지 핀 — 화제의 글 위 고정, 목록 쿼리에서는 제외되어 중복 노출 없음 */
+  const [pinned, setPinned] = useState<CommunityPostSummary | null>(null);
   useFocusEffect(useCallback(() => {
     let cancelled = false;
     setLoading(true);
+    fetchPinnedPost().then(post => { if (!cancelled) setPinned(post); });
     const board = activeTab === '전체' ? undefined : activeTab;
     fetchPostsPage({ board, limit: COMMUNITY_POST_PAGE_SIZE }).then(page => {
       if (!cancelled) {
@@ -115,6 +118,20 @@ export default function CommunityScreen() {
         keyExtractor={item => item.id}
         ListHeaderComponent={
           <>
+            {/* ── 운영자 공지 핀 — 언어 중립 📌 아이콘만 사용, 별도 라벨/번역 키 없음 */}
+            {pinned && (
+              <TouchableOpacity
+                style={styles.pinnedRow}
+                onPress={() => router.push(`/tabs/community/${pinned.id}`)}
+                activeOpacity={0.8}
+                accessibilityRole="button"
+                testID="community-pinned-notice"
+              >
+                <Text style={styles.pinnedEmoji}>📌</Text>
+                <Text style={styles.pinnedTitle} numberOfLines={1}>{pinned.title}</Text>
+              </TouchableOpacity>
+            )}
+
             {/* ── 게스트 로그인 유도 — 화면당 1회, 목록 최상단에만 (카드마다 반복 금지) */}
             {!loggedIn && (
               <CommunityGuestCallout
@@ -230,6 +247,17 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
 
   /* Figma: data-badge="on" — 벨 아이콘 우측 상단 알림 점 */
+
+  /* 공지 핀 — 유저 글 카드와 구분되는 운영자 배너 톤(초록 보더) */
+  pinnedRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    marginHorizontal: 24, marginTop: 16,
+    paddingHorizontal: 14, paddingVertical: 12,
+    backgroundColor: Colors.surface, borderRadius: 10,
+    borderWidth: 1, borderColor: Colors.accent,
+  },
+  pinnedEmoji: { fontSize: 14 },
+  pinnedTitle: { flex: 1, fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
 
   /* Featured */
   featuredSection: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 4, gap: 16 },

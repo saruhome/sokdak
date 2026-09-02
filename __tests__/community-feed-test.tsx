@@ -15,12 +15,13 @@ jest.mock('lucide-react-native', () => ({
 jest.mock('@/components/AppIcon', () => ({ AppIcon: () => null, IconStat: () => null }));
 jest.mock('@/constants/community', () => ({
   COMMUNITY_POST_PAGE_SIZE: 20,
+  fetchPinnedPost: jest.fn(async () => null),
   fetchPostsPage: jest.fn(),
 }));
 jest.mock('@/constants/notifications', () => ({ fetchUnreadNotificationCount: jest.fn(async () => 0) }));
 jest.mock('@/constants/authStore', () => ({ authStore: { isLoggedIn: jest.fn(() => true), subscribe: jest.fn(() => () => {}) } }));
 
-import { fetchPostsPage } from '@/constants/community';
+import { fetchPinnedPost, fetchPostsPage } from '@/constants/community';
 import CommunityScreen, { selectFeaturedPosts } from '@/app/tabs/community/index';
 
 const mockFetchPostsPage = fetchPostsPage as jest.Mock;
@@ -60,6 +61,15 @@ describe('community feed featured dedup', () => {
     for (const id of ['a', 'b', 'c', 'd', 'e']) {
       expect(screen.getAllByText(`게시글 ${id}`)).toHaveLength(1);
     }
+  });
+
+  it('renders the operator pinned notice above the feed when one exists', async () => {
+    (fetchPinnedPost as jest.Mock).mockResolvedValue({ ...post('notice'), title: '베타 테스트 공지' });
+    mockFetchPostsPage.mockResolvedValue({ posts: [post('a')], hasMore: false, nextOffset: 1 });
+
+    const screen = await render(<CommunityScreen />);
+    await waitFor(() => expect(screen.getByTestId('community-pinned-notice')).toBeTruthy());
+    expect(screen.getByText('베타 테스트 공지')).toBeTruthy();
   });
 });
 

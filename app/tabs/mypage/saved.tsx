@@ -79,7 +79,7 @@ export default function SavedWordsScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
+        <TouchableOpacity accessibilityRole="button" style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
           <BackIcon size={24} color={Colors.navBarIconActive} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{t('favoritesTitle')}</Text>
@@ -109,7 +109,7 @@ export default function SavedWordsScreen() {
             </Text>
             <View style={styles.categoryRow}>
               {visibleCategories.map(category => (
-                <TouchableOpacity
+                <TouchableOpacity accessibilityRole="button"
                   key={category.slug}
                   style={styles.categoryCard}
                   onPress={() => router.push(`/tabs/category/${category.slug}`)}
@@ -119,7 +119,7 @@ export default function SavedWordsScreen() {
                     <View style={StyleSheet.absoluteFill}>
                       <View style={styles.categoryCardOverlay} />
                     </View>
-                    <TouchableOpacity
+                    <TouchableOpacity accessibilityRole="button"
                       style={styles.likeBtn}
                       onPress={e => {
                         e.stopPropagation?.();
@@ -144,7 +144,7 @@ export default function SavedWordsScreen() {
               ))}
             </View>
             {likedCategories.length > 2 && (
-              <TouchableOpacity onPress={() => setShowAllCategories(p => !p)} style={styles.moreBtn}>
+              <TouchableOpacity accessibilityRole="button" onPress={() => setShowAllCategories(p => !p)} style={styles.moreBtn}>
                 <Text style={styles.moreBtnText}>{showAllCategories ? t('collapseLabel') : t('moreLink')}</Text>
               </TouchableOpacity>
             )}
@@ -161,7 +161,7 @@ export default function SavedWordsScreen() {
               const category = getCategoryBySlug(word.category);
               const secondaryCategory = word.secondaryCategory ? getCategoryBySlug(word.secondaryCategory) : undefined;
               return (
-                <TouchableOpacity
+                <TouchableOpacity accessibilityRole="button"
                   key={word.id}
                   style={styles.wordItem}
                   onPress={() => router.push(`/tabs/dictionary/${word.id}`)}

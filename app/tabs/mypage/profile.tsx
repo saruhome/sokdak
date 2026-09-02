@@ -154,7 +154,7 @@ export default function ProfileScreen() {
     return (
       <SafeAreaView style={styles.notFound}>
         <Text style={styles.notFoundText}>{t('loginRequiredGeneric')}</Text>
-        <TouchableOpacity style={styles.notFoundBtn} onPress={() => router.replace('/auth/login')}>
+        <TouchableOpacity accessibilityRole="button" style={styles.notFoundBtn} onPress={() => router.replace('/auth/login')}>
           <Text style={styles.notFoundBtnText}>{t('goToLogin')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -261,11 +261,11 @@ export default function ProfileScreen() {
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
+          <TouchableOpacity accessibilityRole="button" style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
             <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>{t('myInfoTitle')}</Text>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={[styles.saveBtn, isValid && !saving && { backgroundColor: Colors.navBar }]}
             onPress={handleSave}
             disabled={!isValid || saving}
@@ -301,13 +301,13 @@ export default function ProfileScreen() {
           </View>
           {photoMenuOpen && (
             <View style={styles.photoMenuRow}>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 style={styles.photoMenuBtn}
                 onPress={() => { setPhotoMenuOpen(false); pickPhoto(); }}
               >
                 <Text style={styles.photoMenuText}>{t('changePhoto')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 style={styles.photoMenuBtn}
                 onPress={() => { setPhotoMenuOpen(false); removePhoto(); }}
               >
@@ -342,7 +342,7 @@ export default function ProfileScreen() {
                 secureTextEntry
               />
             </View>
-            <TouchableOpacity style={styles.cardItem} onPress={() => setTzPickerOpen(true)} activeOpacity={0.7}>
+            <TouchableOpacity accessibilityRole="button" style={styles.cardItem} onPress={() => setTzPickerOpen(true)} activeOpacity={0.7}>
               <Text style={styles.cardLabel}>{t('timezoneLabel')}</Text>
               <View style={styles.tzValueRow}>
                 <Text style={styles.cardInput}>{timezone}</Text>
@@ -364,7 +364,7 @@ export default function ProfileScreen() {
           />
           <View style={styles.emojiGrid} onLayout={e => setFlagGridW(e.nativeEvent.layout.width)}>
             {filteredCountries.map(c => (
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 key={c.flag}
                 style={[
                   styles.emojiOption,
@@ -403,7 +403,7 @@ export default function ProfileScreen() {
                 style={styles.tzList}
                 keyboardShouldPersistTaps="handled"
                 renderItem={({ item }) => (
-                  <TouchableOpacity
+                  <TouchableOpacity accessibilityRole="button"
                     style={[styles.tzRow, item === timezone && styles.tzRowActive]}
                     onPress={() => { setTimezone(item); setTzQuery(''); setTzPickerOpen(false); }}
                   >
@@ -411,7 +411,7 @@ export default function ProfileScreen() {
                   </TouchableOpacity>
                 )}
               />
-              <TouchableOpacity style={styles.tzCloseBtn} onPress={() => { setTzQuery(''); setTzPickerOpen(false); }}>
+              <TouchableOpacity accessibilityRole="button" style={styles.tzCloseBtn} onPress={() => { setTzQuery(''); setTzPickerOpen(false); }}>
                 <Text style={styles.tzCloseText}>{t('cancelLabel')}</Text>
               </TouchableOpacity>
             </View>

@@ -29,7 +29,7 @@ export default function LanguageSettingsScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
+        <TouchableOpacity accessibilityRole="button" style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
           <BackIcon size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{languageStore.t('languageSettings')}</Text>
@@ -38,7 +38,7 @@ export default function LanguageSettingsScreen() {
 
       <View style={styles.content}>
         {LANGUAGE_OPTIONS.map(option => (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             key={option.value}
             style={[styles.optionRow, language === option.value && styles.optionRowActive]}
             onPress={() => selectLanguage(option.value)}

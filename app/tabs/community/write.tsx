@@ -264,6 +264,7 @@ export default function WritePostScreen() {
             style={styles.titleInput}
             placeholder={t('titlePlaceholder')}
             placeholderTextColor={Colors.textTertiary}
+            accessibilityLabel={t('titlePlaceholder')}
             value={title}
             onChangeText={setTitle}
             onBlur={() => setTitleTouched(true)}
@@ -282,6 +283,7 @@ export default function WritePostScreen() {
             /* 질문하기 첫 작성에는 질문 템플릿을 placeholder로만 제안 — 제출 내용에 자동 포함되지 않는다 */
             placeholder={board === '질문' && !editId ? t('askTemplatePlaceholder') : t('contentPlaceholder')}
             placeholderTextColor={Colors.textTertiary}
+            accessibilityLabel={t('contentPlaceholder')}
             value={content}
             onChangeText={setContent}
             onBlur={() => setContentTouched(true)}

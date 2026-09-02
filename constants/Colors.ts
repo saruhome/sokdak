@@ -15,7 +15,9 @@ export const Colors = {
 
   textPrimary:   '#333333',   // Sok-Dak Color/Font_02 (타이틀)
   textSecondary: '#666666',   // Sok-Dak Color/Font_03 (본문)
-  textTertiary:  '#888888',   // Sok-Dak Color/Font_04 (비강조)
+  // 2026-09-02 #888888(크림 위 3.17:1)에서 다크닝 — 날짜·힌트·placeholder가 전부 이 색이라
+  // WCAG AA(4.5:1) 통과가 필요. 크림 4.60:1 / 흰 카드 5.14:1.
+  textTertiary:  '#716D67',   // Sok-Dak Color/Font_04 (비강조)
   textEmphasis:  '#121212',   // Sok-Dak Color/Font_01 (강조, 버튼)
 
   white:      '#FFFFFF',

@@ -203,7 +203,7 @@ export default function SupportScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
+        <TouchableOpacity accessibilityRole="button" style={styles.backBtn} onPress={() => safeGoBack('/tabs/mypage')}>
           <AppIcon icon={ChevronRight} size={20} color={Colors.navBarIconActive} style={{ transform: [{ rotate: '180deg' }] }} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{t('customerService')}</Text>
@@ -227,7 +227,7 @@ export default function SupportScreen() {
         {/* ── 카테고리 필터 ── */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryRow}>
           {FAQ_CATEGORY_SLUGS.map(slug => (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               key={slug}
               style={[styles.categoryChip, activeCategory === slug && styles.categoryChipActive]}
               onPress={() => { setActiveCategory(slug); setOpenIndex(null); }}
@@ -244,7 +244,7 @@ export default function SupportScreen() {
             const open = openIndex === i;
             return (
               <View key={item.q}>
-                <TouchableOpacity
+                <TouchableOpacity accessibilityRole="button"
                   style={styles.faqQuestionRow}
                   onPress={() => setOpenIndex(open ? null : i)}
                   activeOpacity={0.7}
@@ -268,7 +268,7 @@ export default function SupportScreen() {
          *  비로그인은 기존 mailto 카드로 폴백(추가 인프라 없이 이미 동작하던 경로 재사용) */}
         {loggedIn ? (
           <View style={styles.inquirySection}>
-            <TouchableOpacity style={styles.inquiryTriggerCard} onPress={() => setFormOpen(true)} activeOpacity={0.85}>
+            <TouchableOpacity accessibilityRole="button" style={styles.inquiryTriggerCard} onPress={() => setFormOpen(true)} activeOpacity={0.85}>
               <View style={styles.contactTitleRow}>
                 <AppIcon icon={Mail} size={16} color={Colors.textPrimary} />
                 <Text style={styles.contactTitle}>{t('contactDirectly')}</Text>
@@ -303,7 +303,7 @@ export default function SupportScreen() {
             ))}
           </View>
         ) : (
-          <TouchableOpacity style={styles.contactCard} onPress={handleContact} activeOpacity={0.85}>
+          <TouchableOpacity accessibilityRole="button" style={styles.contactCard} onPress={handleContact} activeOpacity={0.85}>
             <View style={styles.contactTitleRow}>
               <AppIcon icon={Mail} size={16} color={Colors.textPrimary} />
               <Text style={styles.contactTitle}>{t('contactDirectly')}</Text>
@@ -320,7 +320,7 @@ export default function SupportScreen() {
 
         <View style={styles.formField}>
           <Text style={styles.formLabel}>{t('inquiryTypeLabel')}</Text>
-          <TouchableOpacity style={styles.typeSelect} onPress={() => setTypePickerOpen(true)} activeOpacity={0.8}>
+          <TouchableOpacity accessibilityRole="button" style={styles.typeSelect} onPress={() => setTypePickerOpen(true)} activeOpacity={0.8}>
             <Text style={[styles.typeSelectText, inquiryType && styles.typeSelectTextFilled]}>
               {inquiryType ? INQUIRY_TYPE_LABELS[language][inquiryType] : t('inquiryTypePlaceholder')}
             </Text>
@@ -342,19 +342,19 @@ export default function SupportScreen() {
           {attachment ? (
             <View style={styles.attachPreviewRow}>
               <Image source={{ uri: attachment.uri }} style={styles.attachPreview} />
-              <TouchableOpacity onPress={() => setAttachment(null)} hitSlop={8}>
+              <TouchableOpacity accessibilityRole="button" onPress={() => setAttachment(null)} hitSlop={8}>
                 <Text style={styles.attachRemoveText}>{t('removePhoto')}</Text>
               </TouchableOpacity>
             </View>
           ) : (
-            <TouchableOpacity style={styles.attachBtn} onPress={pickAttachment} activeOpacity={0.8}>
+            <TouchableOpacity accessibilityRole="button" style={styles.attachBtn} onPress={pickAttachment} activeOpacity={0.8}>
               <Text style={styles.attachBtnText}>📷 {t('addPhoto')}</Text>
             </TouchableOpacity>
           )}
         </View>
 
         <View style={styles.sheetDivider} />
-        <TouchableOpacity
+        <TouchableOpacity accessibilityRole="button"
           style={[styles.inquirySubmitBtn, (!ticketMessage.trim() || !inquiryType || submitting) && styles.inquirySubmitBtnDisabled]}
           onPress={handleSubmitTicket}
           disabled={!ticketMessage.trim() || !inquiryType || submitting}
@@ -368,7 +368,7 @@ export default function SupportScreen() {
       <BottomSheet visible={typePickerOpen} onClose={() => setTypePickerOpen(false)} panelStyle={styles.typePickerSheet}>
         <View style={styles.sheetHandle} />
         {INQUIRY_TYPE_SLUGS.map(slug => (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             key={slug}
             style={styles.typeOptionRow}
             onPress={() => { setInquiryType(slug); setTypePickerOpen(false); }}

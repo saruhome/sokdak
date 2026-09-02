@@ -177,7 +177,7 @@ export function WordListView({
 
             {/* ── 추천 단어 배너 – Figma: Callout Card/Recommend_짹이 ── */}
             {showTipCard && tipWord && (
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 style={styles.tipCard}
                 onPress={() => router.push(`/tabs/dictionary/${tipWord.id}`)}
                 activeOpacity={0.85}
@@ -219,7 +219,7 @@ export function WordListView({
           const searchMatch = getWordSearchMatch(item, query);
           const translationSearchMatch = searchMatch?.field === 'translation' ? searchMatch.translation : null;
           return (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               style={[
                 styles.wordItem,
                 index === 0 && styles.wordItemFirst,
@@ -317,7 +317,7 @@ export function WordListView({
         </View>
       ) : null}
       {showScrollToTopButton && (
-        <TouchableOpacity
+        <TouchableOpacity accessibilityRole="button"
           style={styles.scrollTopBtn}
           onPress={() => listRef.current?.scrollToOffset({ offset: 0, animated: true })}
           activeOpacity={0.85}

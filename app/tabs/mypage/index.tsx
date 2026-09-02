@@ -69,7 +69,7 @@ export default function MyPageScreen() {
       </View>
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        <TouchableOpacity
+        <TouchableOpacity accessibilityRole="button"
           style={styles.profileRow}
           onPress={() => router.push(loggedIn ? '/tabs/mypage/profile' : '/auth/login')}
           activeOpacity={0.75}
@@ -86,7 +86,7 @@ export default function MyPageScreen() {
         </TouchableOpacity>
 
         {loggedIn && !BETA_UNLIMITED_ENTITLEMENTS && (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={[styles.premiumRow, isPremium && styles.premiumRowActive]}
             onPress={() => router.push('/tabs/mypage/premium')}
             activeOpacity={0.85}
@@ -109,7 +109,7 @@ export default function MyPageScreen() {
         <Text style={styles.sectionHeader}>{t('activity')}</Text>
         <View style={styles.activityCards}>
           {ACTIVITY_MENU.map((item, i) => (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               key={item.key}
               style={[
                 styles.groupRow,
@@ -129,7 +129,7 @@ export default function MyPageScreen() {
 
         <Text style={styles.sectionHeader}>{t('settings')}</Text>
         <View style={styles.settingsGroup}>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={styles.settingRow}
             onPress={() => router.push('/tabs/mypage/notifications')}
             activeOpacity={0.85}
@@ -139,7 +139,7 @@ export default function MyPageScreen() {
             </Text>
             <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
           </TouchableOpacity>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={styles.settingRow}
             onPress={() => router.push('/tabs/mypage/settings/language')}
             activeOpacity={0.85}
@@ -149,7 +149,7 @@ export default function MyPageScreen() {
             </Text>
             <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
           </TouchableOpacity>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={styles.settingRow}
             onPress={() => router.push('/tabs/mypage/community-guidelines')}
             activeOpacity={0.85}
@@ -157,7 +157,7 @@ export default function MyPageScreen() {
             <Text style={styles.groupRowLabel}>{t('mypageCommunityPolicy')}</Text>
             <AppIcon icon={ChevronRight} size={18} color={Colors.textTertiary} />
           </TouchableOpacity>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={styles.settingRow}
             onPress={() => router.push('/tabs/mypage/legal')}
             activeOpacity={0.85}
@@ -167,13 +167,13 @@ export default function MyPageScreen() {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.supportRow} onPress={() => router.push('/tabs/mypage/support')} activeOpacity={0.8}>
+        <TouchableOpacity accessibilityRole="button" style={styles.supportRow} onPress={() => router.push('/tabs/mypage/support')} activeOpacity={0.8}>
           <Text style={styles.supportLabel}>{t('customerService')}</Text>
           {hasUnseenTicketReply && <View style={styles.supportDot} />}
         </TouchableOpacity>
 
         {loggedIn && (
-          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.85}>
+          <TouchableOpacity accessibilityRole="button" style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.85}>
             <Text style={styles.logoutText}>{t('logout')}</Text>
           </TouchableOpacity>
         )}

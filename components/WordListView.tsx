@@ -228,11 +228,7 @@ export function WordListView({
               onPress={() => router.push(`/tabs/dictionary/${item.id}`)}
               activeOpacity={0.7}
             >
-              {/* 인기순일 때만 순위 번호 — 상위 3개는 강조 */}
-              {sortIndex === 0 && (
-                <Text style={[styles.rank, index < 3 && styles.rankTop]}>{index + 1}</Text>
-              )}
-
+              {/* 순위 번호 삭제(운영자 결정 2026-09-02) — 좁은 폭에서 초성 단어(ㅠㅠ)가 세로로 꺾이던 원인 */}
               <View style={styles.wordItemLeft}>
                 <View style={styles.wordTopRow}>
                   <Text style={styles.wordText}>{item.word}</Text>
@@ -404,8 +400,6 @@ const styles = StyleSheet.create({
   },
   wordItemFirst: { borderTopLeftRadius: 10, borderTopRightRadius: 10 },
   wordItemLast: { borderBottomLeftRadius: 10, borderBottomRightRadius: 10, borderBottomWidth: 1 },
-  rank: { width: 18, textAlign: 'center', fontSize: 14, fontWeight: '600', color: Colors.textTertiary },
-  rankTop: { color: Colors.point1, fontWeight: '800' },
   wordItemLeft: { flex: 1, gap: 8 },
   wordBottomRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   likeRow: { flexDirection: 'row', alignItems: 'center', gap: 3, marginLeft: 'auto' },

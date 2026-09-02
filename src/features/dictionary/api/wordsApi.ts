@@ -84,7 +84,13 @@ function mapRow(row: any): Word {
 export const isAdultOnlyWord = (w: Word) =>
   w.category === 'slang' || w.secondaryCategory === 'slang';
 
-/* 목록 계열에서 성인 전용 단어를 걸러낸다 — 사전/검색/홈/저장 전 화면의 단일 관문.
+/** 지금 세션에서 잠긴 단어인가 — 성인 전용인데 열람 권한(프리미엄+성인 확인)이 없다.
+ * 목록·검색은 잠긴 단어를 블러+팝업으로 보여주고, 상세는 진입을 막는다. */
+export const isLockedWord = (w: Word) =>
+  isAdultOnlyWord(w) && !entitlementStore.canViewAdultContent();
+
+/* 목록 계열에서 성인 전용 단어를 걸러낸다 — 잠금 UI가 없는 화면(홈 히어로·저장 목록)의 관문.
+ * 사전 목록·검색은 includeLocked로 남겨서 표제어만 보이는 블러 행 + 프리미엄 팝업을 그린다.
  * 상세(fetchWordById)는 거르지 않고 화면에서 게이트 UI를 보여준다.
  * ponytail: 클라이언트 필터 — REST로는 여전히 조회 가능. 사전 콘텐츠 노출 제어(UX)이며
  * 보안 경계가 아님. 법적 요건·실결제 도입 시 RLS + KYC로 승격. */
@@ -92,10 +98,11 @@ const withoutBlockedAdultWords = (words: Word[]) =>
   entitlementStore.canViewAdultContent() ? words : words.filter(w => !isAdultOnlyWord(w));
 
 /** 전체 단어 목록 (사전/카테고리/저장/검색/홈 공통 데이터 소스) */
-export async function fetchWords(): Promise<Word[]> {
+export async function fetchWords(opts?: { includeLocked?: boolean }): Promise<Word[]> {
   const { data, error } = await supabase.from('words').select(WORDS_SELECT);
   if (error || !data) return [];
-  return withoutBlockedAdultWords(data.map(mapRow));
+  const all = data.map(mapRow);
+  return opts?.includeLocked ? all : withoutBlockedAdultWords(all);
 }
 
 /** 지정한 ID의 단어만 조회한다. 저장 목록처럼 대상이 이미 확정된 화면에서 전체 사전 로드를 피한다. */

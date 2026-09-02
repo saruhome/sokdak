@@ -291,6 +291,8 @@ export const ja = {
 
     premiumTitle: 'プレミアム',
     premiumUpgradeCta: 'プレミアムにアップグレード',
+    premiumWordLockedTitle: 'この単語はプレミアム専用です',
+    premiumWordLockedBody: '俗語カテゴリーの意味と例文はプレミアムで見られます。',
     premiumActiveLabel: 'プレミアム会員',
     premiumBannerTitle: '実践韓国語を、制限なく',
     premiumBannerSub: '無料保存は3個まで · プレミアムならすべて無制限',

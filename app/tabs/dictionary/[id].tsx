@@ -14,6 +14,7 @@ import { speakWord } from '../../../constants/speech';
 import { AppIcon } from '@/components/AppIcon';
 import { Star, Volume2, MessageCircle } from 'lucide-react-native';
 import { WordVideo } from '@/components/WordVideo';
+import { PremiumLockModal } from '@/components/PremiumLockModal';
 import { FocusIcon } from '@/components/icons/FocusIcon';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
@@ -31,6 +32,7 @@ export default function WordDetailScreen() {
 
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
+  const [lockModalVisible, setLockModalVisible] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -61,7 +63,9 @@ export default function WordDetailScreen() {
         .some(slug => slug && getCategoryBySlug(slug)?.premiumOnly);
       if (!premiumGated) return;
       if (!BETA_UNLIMITED_ENTITLEMENTS && !authStore.isPremium()) {
-        router.replace('/tabs/mypage/premium');
+        /* 진입 자체를 막고 캐릭터 팝업으로 결제 유도(운영자 결정 2026-09-02) —
+         * 닫으면 사전으로 돌아가고, CTA는 팝업 컴포넌트가 프리미엄 화면으로 보낸다. */
+        setLockModalVisible(true);
         return;
       }
       if (!authStore.isAdultVerified()) {
@@ -88,6 +92,21 @@ export default function WordDetailScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/tabs/dictionary')}>
           <Text style={styles.backBtnText}>{t('goBack')}</Text>
         </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
+  /* 비프리미엄의 속어 상세 — 본문을 그리지 않고 캐릭터 팝업만 노출, 닫으면 사전으로 */
+  const premiumLocked = [word.category, word.secondaryCategory]
+    .some(slug => slug && getCategoryBySlug(slug)?.premiumOnly)
+    && !BETA_UNLIMITED_ENTITLEMENTS && !authStore.isPremium();
+  if (premiumLocked) {
+    return (
+      <SafeAreaView style={styles.notFound}>
+        <PremiumLockModal
+          visible={lockModalVisible}
+          onClose={() => { setLockModalVisible(false); safeGoBack('/tabs/dictionary'); }}
+        />
       </SafeAreaView>
     );
   }

@@ -291,6 +291,8 @@ export const es = {
 
     premiumTitle: 'Premium',
     premiumUpgradeCta: 'Pasar a Premium',
+    premiumWordLockedTitle: 'Esta palabra es solo Premium',
+    premiumWordLockedBody: 'El significado y los ejemplos de la jerga están disponibles con Premium.',
     premiumActiveLabel: 'Miembro Premium',
     premiumBannerTitle: 'Coreano real, sin límites',
     premiumBannerSub: 'Gratis solo guardas 3 · Premium lo hace ilimitado',

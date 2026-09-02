@@ -291,6 +291,8 @@ export const vi = {
 
     premiumTitle: 'Premium',
     premiumUpgradeCta: 'Nâng cấp Premium',
+    premiumWordLockedTitle: 'Từ này chỉ dành cho Premium',
+    premiumWordLockedBody: 'Nghĩa và ví dụ của từ lóng chỉ xem được với Premium.',
     premiumActiveLabel: 'Thành viên Premium',
     premiumBannerTitle: 'Tiếng Hàn thực tế, không giới hạn',
     premiumBannerSub: 'Miễn phí chỉ lưu được 3 từ · Premium mở khóa không giới hạn',

@@ -6,11 +6,12 @@ import { useMemo, useState, useCallback, useEffect } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
-import { cardGloss, fetchWords, type Word } from '../../constants/words';
+import { cardGloss, fetchWords, isLockedWord, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
 import { CATEGORIES, getCategoryBySlug, getCategoryName } from '../../constants/categories';
-import { authStore } from '../../constants/authStore';
+import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStore';
+import { PremiumLockModal, lockedTextStyle } from '@/components/PremiumLockModal';
 import { tFor, useLanguage } from '../../constants/languageStore';
 import { filterPostResults, filterWordResults, suggestWords } from '@/src/features/search/model/searchResults';
 import { suggestSimilarWord } from '@/src/features/dictionary/model/wordSearch';
@@ -44,8 +45,19 @@ export default function SearchScreen() {
   }, []);
   useEffect(() => { fetchPosts().then(setCommunityPosts); }, []);
   useEffect(() => {
-    fetchWords().then(setAllWords);
+    /* 잠긴 속어도 표제어 검색은 되게 포함 — 행이 블러, 탭이 팝업 게이트(WordListView와 동일 규칙) */
+    fetchWords({ includeLocked: true }).then(setAllWords);
   }, []);
+
+  const [lockModalVisible, setLockModalVisible] = useState(false);
+  const openWord = (word: Word) => {
+    if (!isLockedWord(word)) { router.push(`/tabs/dictionary/${word.id}`); return; }
+    if ((BETA_UNLIMITED_ENTITLEMENTS || authStore.isPremium()) && !authStore.isAdultVerified()) {
+      authStore.promptAdultVerification(() => router.push(`/tabs/dictionary/${word.id}`), () => {});
+      return;
+    }
+    setLockModalVisible(true);
+  };
 
   const toggleSave = (id: string) => {
     if (!authStore.isLoggedIn()) {
@@ -190,7 +202,7 @@ export default function SearchScreen() {
             >
               <AppIcon icon={BookOpen} size={15} style={styles.suggestIconWrap} />
               <Text style={styles.suggestWord}>{item.word}</Text>
-              <Text style={styles.suggestDesc} numberOfLines={1}>{cardGloss(item, language)}</Text>
+              <Text style={[styles.suggestDesc, isLockedWord(item) && lockedTextStyle]} numberOfLines={1}>{cardGloss(item, language)}</Text>
             </TouchableOpacity>
           )}
         />
@@ -253,15 +265,16 @@ export default function SearchScreen() {
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => {
                   const saved = savedIds.includes(item.id);
+                  const locked = isLockedWord(item);
                   return (
                     <TouchableOpacity
                       style={styles.wordItem}
-                      onPress={() => router.push(`/tabs/dictionary/${item.id}`)}
+                      onPress={() => openWord(item)}
                       activeOpacity={0.7}
                     >
                       <View style={styles.wordItemLeft}>
                         <Text style={styles.wordText}>{item.word}</Text>
-                        <Text style={styles.wordDesc} numberOfLines={1}>{cardGloss(item, language)}</Text>
+                        <Text style={[styles.wordDesc, locked && lockedTextStyle]} numberOfLines={1}>{cardGloss(item, language)}</Text>
                       </View>
                       <View style={styles.wordRight}>
                         <Text style={styles.wordCategory}>{(() => {
@@ -353,6 +366,7 @@ export default function SearchScreen() {
           )}
         </View>
       )}
+      <PremiumLockModal visible={lockModalVisible} onClose={() => setLockModalVisible(false)} />
     </SafeAreaView>
   );
 }

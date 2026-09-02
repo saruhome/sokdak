@@ -291,6 +291,8 @@ export const de = {
 
     premiumTitle: 'Premium',
     premiumUpgradeCta: 'Auf Premium upgraden',
+    premiumWordLockedTitle: 'Dieses Wort ist nur mit Premium',
+    premiumWordLockedBody: 'Bedeutung und Beispiele von Umgangssprache gibt es mit Premium.',
     premiumActiveLabel: 'Premium-Mitglied',
     premiumBannerTitle: 'Echtes Koreanisch – ohne Grenzen',
     premiumBannerSub: 'Gratis endet bei 3 gespeicherten Wörtern · Premium hebt das Limit auf',

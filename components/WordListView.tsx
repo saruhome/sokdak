@@ -6,10 +6,11 @@ import { AppText as Text } from '@/components/AppText';
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors, getReadableTextColor } from '@/constants/Colors';
-import { cardGloss, fetchWords, type Word } from '@/constants/words';
+import { cardGloss, fetchWords, isLockedWord, type Word } from '@/constants/words';
+import { PremiumLockModal, lockedTextStyle } from '@/components/PremiumLockModal';
 import { getCategoryBySlug, getCategoryName, pickLeastPopular } from '@/constants/categories';
 import { languageStore, useLanguage, type Language } from '@/constants/languageStore';
-import { authStore } from '@/constants/authStore';
+import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '@/constants/authStore';
 import { speakWord } from '@/constants/speech';
 import { AppIcon } from '@/components/AppIcon';
 import { VoiceSearchButton } from '@/components/VoiceSearchButton';
@@ -75,8 +76,21 @@ export function WordListView({
   const [savedFeedbackWord, setSavedFeedbackWord] = useState<string | null>(null);
   /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
   const [hintIndex] = useState(() => Math.floor(Math.random() * JJAEKI_HINTS.ko.length));
+  const [lockModalVisible, setLockModalVisible] = useState(false);
 
-  useEffect(() => { fetchWords().then(data => { setWords(data); setLoading(false); }); }, []);
+  /* 속어 단어도 검색·목록에 노출(표제어만) — 행 렌더가 블러, 탭이 팝업 게이트를 담당 */
+  useEffect(() => { fetchWords({ includeLocked: true }).then(data => { setWords(data); setLoading(false); }); }, []);
+
+  /* 잠긴 단어 탭 — 프리미엄인데 성인 확인만 남은 경우는 확인 대화상자([slug] 게이트와 동일),
+   * 그 외(비프리미엄)는 캐릭터 팝업으로 결제 유도. 열려 있으면 상세로. */
+  const openWord = (word: Word) => {
+    if (!isLockedWord(word)) { router.push(`/tabs/dictionary/${word.id}`); return; }
+    if ((BETA_UNLIMITED_ENTITLEMENTS || authStore.isPremium()) && !authStore.isAdultVerified()) {
+      authStore.promptAdultVerification(() => router.push(`/tabs/dictionary/${word.id}`), () => {});
+      return;
+    }
+    setLockModalVisible(true);
+  };
 
   /* 카테고리 상세에서 다른 카테고리로 이동하면 필터를 새 slug로 리셋 */
   useEffect(() => { setCategorySlugs(initialCategorySlugs); }, [initialCategorySlugs.join(',')]);
@@ -95,8 +109,9 @@ export function WordListView({
   /* 추천 배너 단어 — 항상 인기 단어 대신, (필터가 걸려 있으면 그 안에서) 좋아요가 적어
    * 잘 안 찾아보는 단어부터 랜덤하게 고른다. 필터가 바뀔 때만 다시 뽑는다. */
   const tipWord = useMemo(() => {
-    const pool = words.filter(w => matchesCategories(w, categorySlugs));
-    return pool.length > 0 ? pickLeastPopular(pool, w => w.likes) : words[0];
+    /* 잠긴 속어는 추천 배너에서 제외 — 배너는 상세로 바로 보내는 자리라 게이트가 없다 */
+    const pool = words.filter(w => matchesCategories(w, categorySlugs) && !isLockedWord(w));
+    return pool.length > 0 ? pickLeastPopular(pool, w => w.likes) : pool[0];
   }, [words, categorySlugs]);
 
   const filtered = useMemo(() => {
@@ -216,6 +231,7 @@ export function WordListView({
           const category = getCategoryBySlug(item.category);
           const secondaryCategory = item.secondaryCategory ? getCategoryBySlug(item.secondaryCategory) : undefined;
           const saved = savedIds.includes(item.id);
+          const locked = isLockedWord(item);
           const searchMatch = getWordSearchMatch(item, query);
           const translationSearchMatch = searchMatch?.field === 'translation' ? searchMatch.translation : null;
           return (
@@ -225,14 +241,14 @@ export function WordListView({
                 index === 0 && styles.wordItemFirst,
                 index === visible.length - 1 && styles.wordItemLast,
               ]}
-              onPress={() => router.push(`/tabs/dictionary/${item.id}`)}
+              onPress={() => openWord(item)}
               activeOpacity={0.7}
             >
               {/* 순위 번호 삭제(운영자 결정 2026-09-02) — 좁은 폭에서 초성 단어(ㅠㅠ)가 세로로 꺾이던 원인 */}
               <View style={styles.wordItemLeft}>
                 <View style={styles.wordTopRow}>
                   <Text style={styles.wordText}>{item.word}</Text>
-                  <Text style={styles.wordReading} numberOfLines={1}>{item.romanization}</Text>
+                  <Text style={[styles.wordReading, locked && lockedTextStyle]} numberOfLines={1}>{item.romanization}</Text>
                   {category && (
                     <View style={[styles.wordBadge, { backgroundColor: category.colorBg }]}>
                       <Text style={[styles.wordBadgeText, { color: getReadableTextColor(category.colorBg) }]} numberOfLines={1} ellipsizeMode="tail">{getCategoryName(category, language)}</Text>
@@ -254,7 +270,7 @@ export function WordListView({
                       {t('translationSearchMatch')} {translationSearchMatch.lang}
                     </Text>
                   ) : (
-                    <Text style={styles.wordDesc} numberOfLines={1}>{cardGloss(item, language)}</Text>
+                    <Text style={[styles.wordDesc, locked && lockedTextStyle]} numberOfLines={1}>{cardGloss(item, language)}</Text>
                   )}
                   <View style={styles.likeRow}>
                     <AppIcon icon={Heart} size={11} color={Colors.textTertiary} />
@@ -302,6 +318,7 @@ export function WordListView({
         }
         contentContainerStyle={visible.length === 0 ? { flexGrow: 1 } : styles.listContent}
       />
+      <PremiumLockModal visible={lockModalVisible} onClose={() => setLockModalVisible(false)} />
       {savedFeedbackWord ? (
         <View pointerEvents="none" style={styles.saveFeedbackWrap}>
           <CharacterSuccessFeedback

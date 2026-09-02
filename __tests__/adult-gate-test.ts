@@ -57,6 +57,14 @@ it('성인 미확인이면 목록에서 slang 단어(주/보조 모두)가 걸�
   expect(words.map((w: { word: string }) => w.word)).toEqual(['킹받다']);
 });
 
+it('includeLocked면 잠긴 속어도 목록에 남는다 — 블러 행+팝업 게이트는 화면 책임', async () => {
+  const m = await loadWithStage('production');
+  const words = await m.wordsApi.fetchWords({ includeLocked: true });
+  expect(words).toHaveLength(3);
+  expect(words.filter((w: object) => m.wordsApi.isLockedWord(w)).map((w: { word: string }) => w.word))
+    .toEqual(['좆소', '가상속어']);
+});
+
 it('isAdultOnlyWord는 보조 카테고리 slang도 성인 전용으로 판정한다', async () => {
   const m = await loadWithStage(undefined);
   expect(m.wordsApi.isAdultOnlyWord({ category: 'slang' })).toBe(true);

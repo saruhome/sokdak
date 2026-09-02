@@ -297,6 +297,8 @@ export type TranslationKey =
   // 프리미엄
   | 'premiumTitle'
   | 'premiumUpgradeCta'
+  | 'premiumWordLockedTitle'
+  | 'premiumWordLockedBody'
   | 'premiumActiveLabel'
   | 'adultGateTitle'
   | 'adultGateBody'

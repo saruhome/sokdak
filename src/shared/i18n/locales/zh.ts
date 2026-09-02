@@ -297,6 +297,8 @@ export const zh = {
 
     premiumTitle: 'Premium',
     premiumUpgradeCta: '升级 Premium',
+    premiumWordLockedTitle: '该词为高级会员专属',
+    premiumWordLockedBody: '俗语类单词的释义和例句需高级会员才能查看。',
     premiumActiveLabel: 'Premium 会员',
     premiumBannerTitle: '地道韩语，不设上限',
     premiumBannerSub: '免费最多保存3个 · 高级版全部无限',

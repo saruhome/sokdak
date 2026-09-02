@@ -291,6 +291,8 @@ export const en = {
 
     premiumTitle: 'Premium',
     premiumUpgradeCta: 'Upgrade to Premium',
+    premiumWordLockedTitle: 'This word is premium-only',
+    premiumWordLockedBody: 'Meanings and examples for slang words are available with Premium.',
     premiumActiveLabel: 'Premium Member',
     premiumBannerTitle: 'Real Korean, without limits',
     premiumBannerSub: 'Free saves stop at 3 · Premium unlocks unlimited',

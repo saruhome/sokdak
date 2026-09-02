@@ -298,6 +298,8 @@ export const ar = {
 
     premiumTitle: 'Premium',
     premiumUpgradeCta: 'الترقية إلى Premium',
+    premiumWordLockedTitle: 'هذه الكلمة حصرية للمشتركين',
+    premiumWordLockedBody: 'معاني الكلمات العامية وأمثلتها متاحة مع الاشتراك المميز.',
     premiumActiveLabel: 'عضو Premium',
     premiumBannerTitle: 'كورية حقيقية بلا حدود',
     premiumBannerSub: 'الحفظ المجاني حتى 3 كلمات · بريميوم بلا حدود',

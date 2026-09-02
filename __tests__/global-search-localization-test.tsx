@@ -43,7 +43,7 @@ jest.mock('lucide-react-native', () => ({
   Inbox: () => null,
   X: () => null,
 }));
-jest.mock('@/constants/words', () => ({ fetchWords: jest.fn(), localizedText: jest.requireActual('@/src/features/dictionary/model/localizedText').localizedText, cardGloss: jest.requireActual('@/src/features/dictionary/model/localizedText').cardGloss }));
+jest.mock('@/constants/words', () => ({ fetchWords: jest.fn(), isLockedWord: () => false, localizedText: jest.requireActual('@/src/features/dictionary/model/localizedText').localizedText, cardGloss: jest.requireActual('@/src/features/dictionary/model/localizedText').cardGloss }));
 jest.mock('@/constants/community', () => ({ fetchPosts: jest.fn() }));
 jest.mock('@/constants/categories', () => ({
   CATEGORIES: [{ slug: 'daily', name: '일상', nameEn: 'Daily', nameJa: '日常', nameVi: 'Hằng ngày', nameEs: 'Cotidiano', emoji: '☀️' }],
@@ -63,6 +63,7 @@ jest.mock('@/constants/authStore', () => ({
 jest.mock('@/constants/alert', () => ({ Alert: { alert: jest.fn() } }));
 jest.mock('@/constants/languageStore', () => ({
   useLanguage: () => 'en',
+  languageStore: { t: (key: string) => key },
   tFor: (_language: string, key: string) => ({
     goBack: 'Go back',
     wordSearchPlaceholder: 'Search words, meanings, or romanization',

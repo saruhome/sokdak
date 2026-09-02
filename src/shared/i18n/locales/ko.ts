@@ -291,6 +291,8 @@ export const ko = {
 
     premiumTitle: '프리미엄',
     premiumUpgradeCta: '프리미엄 업그레이드',
+    premiumWordLockedTitle: '프리미엄 전용 단어예요',
+    premiumWordLockedBody: '속어 카테고리 단어의 뜻과 예문은 프리미엄에서 볼 수 있어요.',
     premiumActiveLabel: '프리미엄 회원',
     premiumBannerTitle: '실전 한국어, 막힘없이',
     premiumBannerSub: '무료 저장은 3개까지 · 프리미엄은 무제한',

@@ -296,6 +296,8 @@ export const tr = {
 
     premiumTitle: 'Premium',
     premiumUpgradeCta: 'Premium\'a geç',
+    premiumWordLockedTitle: 'Bu kelime Premium üyelere özel',
+    premiumWordLockedBody: 'Kaba dil kelimelerinin anlamı ve örnekleri Premium ile görülebilir.',
     premiumActiveLabel: 'Premium üye',
     premiumBannerTitle: 'Gerçek Korece, sınırsız',
     premiumBannerSub: 'Ücretsizde 3 kayıt · Premium ile hepsi sınırsız',

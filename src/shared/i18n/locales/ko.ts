@@ -296,7 +296,7 @@ export const ko = {
     premiumUpgradeCta: '프리미엄 업그레이드',
     premiumActiveLabel: '프리미엄 회원',
     premiumBannerTitle: '실전 한국어, 막힘없이',
-    premiumBannerSub: '무료 저장은 3개까지 · 프리미엄은 전부 무제한이에요',
+    premiumBannerSub: '무료 저장은 3개까지 · 프리미엄은 무제한',
     adultGateTitle: '성인 확인',
     adultGateBody: '이 콘텐츠에는 욕설·성인 표현이 포함되어 있어요. 만 19세 이상만 볼 수 있어요.',
     adultGateConfirm: '만 19세 이상입니다',

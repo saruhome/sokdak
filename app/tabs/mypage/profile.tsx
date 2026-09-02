@@ -351,7 +351,9 @@ export default function ProfileScreen() {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.avatarHint}>{t('profileIconHint')}</Text>
+          {/* 계정 정보 섹션과 같은 타이틀 + 내부 간격 8px */}
+          <View style={styles.avatarSection}>
+          <Text style={[styles.sectionTitle, styles.noMargin]}>{t('profileIconHint')}</Text>
           <Text style={styles.avatarHintSmall}>{t('avatarHintSmall')}</Text>
           <TextInput
             style={styles.countrySearchInput}
@@ -374,6 +376,7 @@ export default function ProfileScreen() {
                 <Text style={styles.emojiOptionText}>{c.flag}</Text>
               </TouchableOpacity>
             ))}
+          </View>
           </View>
 
           <TouchableOpacity style={styles.logoutBtn} onPress={handleDeleteAccount}>
@@ -455,8 +458,9 @@ const styles = StyleSheet.create({
   cardLabel: { fontSize: 11, color: Colors.textTertiary },
   cardInput: { fontSize: 15, color: Colors.textPrimary, padding: 0 },
 
-  avatarHint: { fontSize: 12, color: Colors.textTertiary, marginBottom: 8 },
-  avatarHintSmall: { fontSize: 11, color: Colors.textTertiary, marginBottom: 14 },
+  avatarSection: { gap: 8 },
+  noMargin: { marginBottom: 0 },
+  avatarHintSmall: { fontSize: 11, color: Colors.textTertiary },
   avatarBadge: {
     position: 'absolute', right: -2, bottom: -2,
     width: 26, height: 26, borderRadius: 13,
@@ -493,7 +497,7 @@ const styles = StyleSheet.create({
   countrySearchInput: {
     height: 40, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, paddingHorizontal: 12,
-    fontSize: 14, color: Colors.textPrimary, marginBottom: 10,
+    fontSize: 14, color: Colors.textPrimary,
   },
   emojiGrid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8 },
   emojiOption: {

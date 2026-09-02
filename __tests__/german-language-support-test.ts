@@ -10,7 +10,7 @@ describe('German language support', () => {
     languageStore.setLanguage('de');
 
     expect(languageStore.getLanguage()).toBe('de');
-    expect(languageStore.t('wordSearchPlaceholder')).toBe('Wörter, Bedeutungen oder Romanisierung suchen');
+    expect(languageStore.t('wordSearchPlaceholder')).toBe('Welches Wort suchst du?');
     expect(tFor('de', 'voiceSearchPermissionTitle')).toBe('Mikrofonberechtigung erforderlich');
     expect(tFor('de', 'errorBoundaryRetry')).toBe('Erneut versuchen');
   });

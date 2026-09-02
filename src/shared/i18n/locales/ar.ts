@@ -337,4 +337,5 @@ export const ar = {
     situationDinner: 'عشاء العمل',
     streakLabel: 'أيام التعلم المتتالية',
     streakDayCount: 'اليوم {n}',
+    mascotBubbleCta: 'اضغط >',
 } satisfies Record<TranslationKey, string>;

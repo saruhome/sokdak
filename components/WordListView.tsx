@@ -194,7 +194,7 @@ export function WordListView({
                   <Text style={styles.tipWord} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
                     &quot;{tipWord.word}&quot;
                   </Text>
-                  <Text style={styles.tipClick}>Click &gt;</Text>
+                  <Text style={styles.tipClick}>{t('mascotBubbleCta')}</Text>
                 </View>
                 <Image source={JJAEKI_ICON} style={styles.tipImg} resizeMode="contain" />
               </TouchableOpacity>

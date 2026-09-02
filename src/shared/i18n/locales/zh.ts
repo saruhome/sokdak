@@ -336,4 +336,5 @@ export const zh = {
     situationDinner: '公司聚餐',
     streakLabel: '连续学习',
     streakDayCount: '第{n}天',
+    mascotBubbleCta: '点一下 >',
 } satisfies Record<TranslationKey, string>;

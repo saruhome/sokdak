@@ -142,7 +142,7 @@ export default function CategoryScreen() {
                   <Text style={styles.recommendName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
                     &quot;{getCategoryName(topCategory, language)}&quot;
                   </Text>
-                  <Text style={styles.recommendClick}>Click &gt;</Text>
+                  <Text style={styles.recommendClick}>{t('mascotBubbleCta')}</Text>
                 </View>
                 <Image source={HORANG_ICON} style={styles.recommendImg} resizeMode="contain" />
               </TouchableOpacity>
@@ -214,7 +214,7 @@ export default function CategoryScreen() {
                 <View style={[styles.cardTextWrap, item.image ? styles.cardTextScrim : null]}>
                   <Text
                     style={[styles.categoryName, { color: labelColor }]}
-                    numberOfLines={2}
+                    numberOfLines={1}
                     adjustsFontSizeToFit
                     minimumFontScale={0.6}
                   >

@@ -136,7 +136,7 @@ export default function SavedWordsScreen() {
                       />
                     </TouchableOpacity>
                     <View style={styles.categoryTextWrap}>
-                      <Text style={styles.categoryName} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.7}>{getCategoryName(category, language)}</Text>
+                      <Text style={styles.categoryName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>{getCategoryName(category, language)}</Text>
                       <Text style={styles.categoryDesc} numberOfLines={1}>{category.description}</Text>
                     </View>
                   </ImageBackground>

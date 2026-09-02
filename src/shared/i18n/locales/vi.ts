@@ -330,4 +330,5 @@ export const vi = {
     situationDinner: 'Liên hoan',
     streakLabel: 'Chuỗi ngày học',
     streakDayCount: 'Ngày {n}',
+    mascotBubbleCta: 'Nhấn thử >',
 } satisfies Record<TranslationKey, string>;

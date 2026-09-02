@@ -330,4 +330,5 @@ export const es = {
     situationDinner: 'Cena de equipo',
     streakLabel: 'Racha de días',
     streakDayCount: 'Día {n}',
+    mascotBubbleCta: 'Toca >',
 } satisfies Record<TranslationKey, string>;

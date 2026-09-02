@@ -335,4 +335,5 @@ export const tr = {
     situationDinner: 'Şirket yemeği',
     streakLabel: 'Çalışma serisi',
     streakDayCount: '{n}. gün',
+    mascotBubbleCta: 'Dokun >',
 } satisfies Record<TranslationKey, string>;

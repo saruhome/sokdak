@@ -330,4 +330,5 @@ export const ja = {
     situationDinner: '飲み会',
     streakLabel: '連続学習',
     streakDayCount: '{n}日目',
+    mascotBubbleCta: 'タップ >',
 } satisfies Record<TranslationKey, string>;

@@ -335,4 +335,5 @@ export type TranslationKey =
   | 'situationSns'
   | 'situationDinner'
   | 'streakLabel'
-  | 'streakDayCount';
+  | 'streakDayCount'
+  | 'mascotBubbleCta';

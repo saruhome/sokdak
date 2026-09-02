@@ -379,8 +379,9 @@ export default function ProfileScreen() {
           </View>
           </View>
 
-          <TouchableOpacity style={styles.logoutBtn} onPress={handleDeleteAccount}>
-            <Text style={styles.logoutText}>{t('withdrawAccount')}</Text>
+          {/* 파괴적 액션은 일반 버튼과 같은 무게로 두지 않는다 — 작은 텍스트 링크로 강등(디자인 감사 2026-09-02) */}
+          <TouchableOpacity style={styles.withdrawLink} onPress={handleDeleteAccount} accessibilityRole="button">
+            <Text style={styles.withdrawLinkText}>{t('withdrawAccount')}</Text>
           </TouchableOpacity>
         </ScrollView>
 
@@ -508,12 +509,8 @@ const styles = StyleSheet.create({
   emojiOptionActive: { borderColor: Colors.accent, backgroundColor: Colors.accent + '15' },
   emojiOptionText: { fontSize: 20 },
 
-  logoutBtn: {
-    width: '100%', height: 48,
-    borderRadius: 10, backgroundColor: Colors.divider,
-    alignItems: 'center', justifyContent: 'center', marginTop: 16,
-  },
-  logoutText: { fontSize: 15, color: Colors.textSecondary },
+  withdrawLink: { alignSelf: 'center', marginTop: 20, paddingVertical: 10, paddingHorizontal: 12 },
+  withdrawLinkText: { fontSize: 13, color: Colors.textTertiary, textDecorationLine: 'underline' },
 
   fieldLabel: { fontSize: 13, fontWeight: '700', color: Colors.textSecondary },
   fieldInput: {

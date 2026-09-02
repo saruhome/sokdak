@@ -226,8 +226,8 @@ export default function WritePostScreen() {
             <View style={[styles.boardBadge, { backgroundColor: BOARD_COLORS[board].bg }]}>
               <Text style={[styles.boardBadgeText, { color: BOARD_COLORS[board].fg }]}>{getBoardLabel(board, language)}</Text>
             </View>
-            {/* 현재 선택된 게시판이 무엇을 위한 곳인지 1줄 설명을 항상 보여준다 */}
-            <Text style={styles.accordionLabel} numberOfLines={1}>{boardDesc(board)}</Text>
+            {/* 현재 선택된 게시판이 무엇을 위한 곳인지 1줄 설명을 항상 보여준다 — 줄임표 대신 축소 맞춤(한 줄 철칙) */}
+            <Text style={styles.accordionLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{boardDesc(board)}</Text>
             <Text style={styles.accordionArrow}>{accordionOpen ? '▲' : '▼'}</Text>
           </TouchableOpacity>
 

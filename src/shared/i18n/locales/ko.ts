@@ -330,4 +330,5 @@ export const ko = {
     situationDinner: '회식',
     streakLabel: '연속 학습',
     streakDayCount: '{n}일째',
+    mascotBubbleCta: '눌러봐요 >',
 } satisfies Record<TranslationKey, string>;

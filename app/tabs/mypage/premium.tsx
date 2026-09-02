@@ -164,10 +164,12 @@ const styles = StyleSheet.create({
   scroll: { padding: 24, paddingBottom: 40 },
   hero: {
     alignItems: 'center', gap: 8, paddingVertical: 24, paddingHorizontal: 16,
-    backgroundColor: Colors.navBar, borderRadius: 16, marginBottom: 24,
+    // 2026-09-02 밝게 조정 (어두운 navBar 배경 피드백) — 크림 카드 + 골드 포인트 유지
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    borderRadius: 16, marginBottom: 24,
   },
-  heroTitle: { fontSize: 19, fontWeight: '800', color: Colors.navBarIconActive, textAlign: 'center', marginTop: 4 },
-  heroSub: { fontSize: 13, color: Colors.navBarIconMuted, textAlign: 'center', lineHeight: 19 },
+  heroTitle: { fontSize: 19, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center', marginTop: 4 },
+  heroSub: { fontSize: 13, color: Colors.textSecondary, textAlign: 'center', lineHeight: 19 },
   heroMascots: { flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 12, marginTop: 8 },
   heroMascotHorang: { width: 96, height: 110 },
   heroMascotJjaeki: { width: 52, height: 62 },

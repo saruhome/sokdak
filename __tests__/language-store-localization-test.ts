@@ -2,7 +2,7 @@ import { tFor, type Language } from '@/constants/languageStore';
 
 describe('languageStore critical localization strings', () => {
   const categoryNoResults: Record<Language, string> = {
-    ko: '“MZ”에 대한 검색 결과가 없습니다.',
+    ko: '“MZ”에 대한 검색 결과가 없어요',
     en: 'No results found for “MZ”.',
     ja: '「MZ」の検索結果はありません。',
     vi: 'Không tìm thấy kết quả cho “MZ”.',

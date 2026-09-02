@@ -6,12 +6,12 @@ import { useMemo, useState, useCallback, useEffect } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
-import { cardGloss, fetchWords, isLockedWord, type Word } from '../../constants/words';
+import { cardGloss, fetchWords, isLockedWord, isWordTitleBlurred, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
 import { CATEGORIES, getCategoryBySlug, getCategoryName } from '../../constants/categories';
-import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStore';
-import { PremiumLockModal, lockedTextStyle } from '@/components/PremiumLockModal';
+import { authStore } from '../../constants/authStore';
+import { PremiumLockModal, gateLockedWord, lockedTextStyle } from '@/components/PremiumLockModal';
 import { tFor, useLanguage } from '../../constants/languageStore';
 import { filterPostResults, filterWordResults, suggestWords } from '@/src/features/search/model/searchResults';
 import { suggestSimilarWord } from '@/src/features/dictionary/model/wordSearch';
@@ -50,14 +50,7 @@ export default function SearchScreen() {
   }, []);
 
   const [lockModalVisible, setLockModalVisible] = useState(false);
-  const openWord = (word: Word) => {
-    if (!isLockedWord(word)) { router.push(`/tabs/dictionary/${word.id}`); return; }
-    if ((BETA_UNLIMITED_ENTITLEMENTS || authStore.isPremium()) && !authStore.isAdultVerified()) {
-      authStore.promptAdultVerification(() => router.push(`/tabs/dictionary/${word.id}`), () => {});
-      return;
-    }
-    setLockModalVisible(true);
-  };
+  const openWord = (word: Word) => gateLockedWord(word, () => setLockModalVisible(true));
 
   const toggleSave = (id: string) => {
     if (!authStore.isLoggedIn()) {
@@ -201,7 +194,7 @@ export default function SearchScreen() {
               activeOpacity={0.7}
             >
               <AppIcon icon={BookOpen} size={15} style={styles.suggestIconWrap} />
-              <Text style={styles.suggestWord}>{item.word}</Text>
+              <Text style={[styles.suggestWord, isWordTitleBlurred(item) && lockedTextStyle]}>{item.word}</Text>
               <Text style={[styles.suggestDesc, isLockedWord(item) && lockedTextStyle]} numberOfLines={1}>{cardGloss(item, language)}</Text>
             </TouchableOpacity>
           )}
@@ -265,7 +258,7 @@ export default function SearchScreen() {
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => {
                   const saved = savedIds.includes(item.id);
-                  const locked = isLockedWord(item);
+                  const titleBlurred = isWordTitleBlurred(item);
                   return (
                     <TouchableOpacity
                       style={styles.wordItem}
@@ -273,8 +266,8 @@ export default function SearchScreen() {
                       activeOpacity={0.7}
                     >
                       <View style={styles.wordItemLeft}>
-                        <Text style={styles.wordText}>{item.word}</Text>
-                        <Text style={[styles.wordDesc, locked && lockedTextStyle]} numberOfLines={1}>{cardGloss(item, language)}</Text>
+                        <Text style={[styles.wordText, titleBlurred && lockedTextStyle]}>{item.word}</Text>
+                        <Text style={[styles.wordDesc, isLockedWord(item) && lockedTextStyle]} numberOfLines={1}>{cardGloss(item, language)}</Text>
                       </View>
                       <View style={styles.wordRight}>
                         <Text style={styles.wordCategory}>{(() => {

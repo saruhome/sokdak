@@ -89,6 +89,10 @@ export const isAdultOnlyWord = (w: Word) =>
 export const isLockedWord = (w: Word) =>
   isAdultOnlyWord(w) && !entitlementStore.canViewAdultContent();
 
+/** 성인 확인 전에는 속어의 표제어까지 블러 — 확인 후엔 표제어는 보이고 뜻만 잠긴다. */
+export const isWordTitleBlurred = (w: Word) =>
+  isAdultOnlyWord(w) && !entitlementStore.isAdultVerified();
+
 /* 목록 계열에서 성인 전용 단어를 걸러낸다 — 잠금 UI가 없는 화면(홈 히어로·저장 목록)의 관문.
  * 사전 목록·검색은 includeLocked로 남겨서 표제어만 보이는 블러 행 + 프리미엄 팝업을 그린다.
  * 상세(fetchWordById)는 거르지 않고 화면에서 게이트 UI를 보여준다.

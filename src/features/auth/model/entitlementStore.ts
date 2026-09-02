@@ -6,7 +6,8 @@
  * 호출부가 개수를 넘긴다 — 북마크 상태를 이 스토어로 끌고 오지 않기 위한 의도적 경계.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert } from 'react-native';
+/* RN Alert는 react-native-web에서 no-op — 웹에서도 성인 확인 대화상자가 떠야 해서 shim 사용 */
+import { Alert } from '../../../../constants/alert';
 import { supabase } from '../../../shared/api/supabaseClient';
 import { languageStore } from '../../../shared/i18n/languageStore';
 import { sessionStore } from './sessionStore';

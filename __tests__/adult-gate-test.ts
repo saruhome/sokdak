@@ -65,6 +65,14 @@ it('includeLocked면 잠긴 속어도 목록에 남는다 — 블러 행+팝업 
     .toEqual(['좆소', '가상속어']);
 });
 
+it('성인 확인 전엔 표제어까지 블러(isWordTitleBlurred), 확인 후엔 표제어만 노출', async () => {
+  const before = await loadWithStage('production');
+  expect(before.wordsApi.isWordTitleBlurred({ category: 'slang' })).toBe(true);
+  const after = await loadWithStage('production', { adultVerifiedAt: new Date().toISOString() });
+  expect(after.wordsApi.isWordTitleBlurred({ category: 'slang' })).toBe(false);
+  expect(after.wordsApi.isLockedWord({ category: 'slang' })).toBe(true); // 비프리미엄 — 뜻은 여전히 잠김
+});
+
 it('isAdultOnlyWord는 보조 카테고리 slang도 성인 전용으로 판정한다', async () => {
   const m = await loadWithStage(undefined);
   expect(m.wordsApi.isAdultOnlyWord({ category: 'slang' })).toBe(true);

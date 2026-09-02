@@ -9,20 +9,15 @@ import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authS
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { BackIcon } from '@/components/icons/SocialIcons';
-import {
-  Crown, Infinity as InfinityIcon, Download, MapPin, RotateCcw, Sparkles, Gem,
-} from 'lucide-react-native';
+import { Crown, Infinity as InfinityIcon, MapPin } from 'lucide-react-native';
 
 const HORANG_CHEER = require('../../../assets/characters/transparent/horang-cheer.png');
-const JJAEKI_FULL = require('../../../assets/characters/transparent/jjaeki-full.png');
 
+/* 실제로 존재하는 프리미엄 기능만 나열한다 — 미구현 기능(오프라인·퀴즈·추천 등)을
+ * 여기 적으면 체험 시작 직후 신뢰가 깨진다. 기능이 실제로 출시될 때만 행을 추가할 것. */
 const FEATURES = [
   { icon: InfinityIcon, labelKey: 'premiumFeatureUnlimitedSaves' } as const,
-  { icon: Download,     labelKey: 'premiumFeatureOffline' } as const,
   { icon: MapPin,       labelKey: 'premiumFeatureSituational' } as const,
-  { icon: RotateCcw,    labelKey: 'premiumFeatureQuiz' } as const,
-  { icon: Sparkles,     labelKey: 'premiumFeaturePersonalized' } as const,
-  { icon: Gem,          labelKey: 'premiumFeatureExclusiveContent' } as const,
 ];
 
 /**
@@ -83,15 +78,10 @@ export default function PremiumScreen() {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.hero}>
-          <AppIcon icon={Crown} size={40} color={Colors.premium} />
           <Text style={styles.heroTitle}>{t('premiumBannerTitle')}</Text>
           <Text style={styles.heroSub}>{t('premiumBannerSub')}</Text>
-          {/* 앱 마스코트 — 호랭(응원)과 짹이가 프리미엄을 홍보하는 자리(운영자 요청) */}
-          {/* 호랭이는 짹이보다 항상 크게(세계관 크기 위계 — 운영자 규칙), 바닥선 정렬 */}
-          <View style={styles.heroMascots}>
-            <Image source={HORANG_CHEER} style={styles.heroMascotHorang} resizeMode="contain" />
-            <Image source={JJAEKI_FULL} style={styles.heroMascotJjaeki} resizeMode="contain" />
-          </View>
+          {/* 환호하는 호랭 단독 — 상승 카피 옆에 찌푸린 짹이를 두지 않는다(디자인 크리틱 2026-09-02) */}
+          <Image source={HORANG_CHEER} style={styles.heroMascotHorang} resizeMode="contain" />
           {isPremium && (
             <View style={styles.activeBadge}>
               <AppIcon icon={Crown} size={13} color={Colors.premium} />
@@ -170,9 +160,7 @@ const styles = StyleSheet.create({
   },
   heroTitle: { fontSize: 19, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center', marginTop: 4 },
   heroSub: { fontSize: 13, color: Colors.textSecondary, textAlign: 'center', lineHeight: 19 },
-  heroMascots: { flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 12, marginTop: 8 },
-  heroMascotHorang: { width: 96, height: 110 },
-  heroMascotJjaeki: { width: 52, height: 62 },
+  heroMascotHorang: { width: 110, height: 126, marginTop: 8 },
   activeBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     marginTop: 8, paddingHorizontal: 12, paddingVertical: 6,
@@ -188,11 +176,13 @@ const styles = StyleSheet.create({
   },
   featureLabel: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontWeight: '500' },
   betaCta: {
+    // 앱 유일의 골드 CTA — 프리미엄 화면에서만 허용되는 차별화(디자인 크리틱 2026-09-02).
+    // 골드 배경 + 진한 텍스트(#1E1D1A)는 대비 약 9:1로 WCAG 통과 — 금색 '텍스트' 금지 규칙과는 별개.
     alignItems: 'center', paddingVertical: 14, borderRadius: 12,
-    backgroundColor: Colors.navBar, marginBottom: 16,
+    backgroundColor: Colors.premium, marginBottom: 16,
   },
   betaCtaDisabled: { opacity: 0.6 },
-  betaCtaText: { fontSize: 15, fontWeight: '700', color: Colors.navBarIconActive },
+  betaCtaText: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
   checkoutBackdrop: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center', justifyContent: 'center', padding: 24,

@@ -4,6 +4,7 @@
  */
 import { supabase } from '../../../shared/api/supabaseClient';
 import { authStore } from '../../../../constants/authStore';
+import { languageStore } from '../../../shared/i18n/languageStore';
 import { isProfileAvatarPath } from '../../../../constants/profileAvatarStorage';
 import type { PostBoard } from '../model/boards';
 
@@ -67,8 +68,27 @@ export function toCommunityAuthor(profile: ProfileRow): CommunityAuthor {
   };
 }
 
-function toDate(iso: string) {
-  return iso.slice(0, 10);
+/** 게시글/댓글 시각 — 7일 이내는 접속 언어 기준 상대시간("3분 전"/"vor 3 Minuten"),
+ * 그 이후는 로컬 날짜. 기기 시계로 계산하므로 유저 시간대 변환이 자동으로 맞는다.
+ * ponytail: fetch 시점에 문자열로 굳는다(화면을 오래 켜두거나 언어를 바꿔도 갱신 안 됨) —
+ * 모든 목록이 focus마다 재조회하므로 충분, 실시간 갱신이 필요해지면 렌더 시점 포맷으로 이동. */
+export function formatPostDate(iso: string, now = Date.now()): string {
+  const time = new Date(iso).getTime();
+  if (Number.isNaN(time)) return iso.slice(0, 10);
+  const language = languageStore.getLanguage();
+  const diffSec = Math.max(0, (now - time) / 1000);
+  try {
+    if (diffSec >= 7 * 86400) {
+      return new Date(time).toLocaleDateString(language, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    const rtf = new Intl.RelativeTimeFormat(language, { numeric: 'auto' });
+    if (diffSec < 60) return rtf.format(-Math.floor(diffSec), 'second');
+    if (diffSec < 3600) return rtf.format(-Math.floor(diffSec / 60), 'minute');
+    if (diffSec < 86400) return rtf.format(-Math.floor(diffSec / 3600), 'hour');
+    return rtf.format(-Math.floor(diffSec / 86400), 'day');
+  } catch {
+    return iso.slice(0, 10); // Intl 미지원 런타임 폴백 — 기존 표기(YYYY-MM-DD) 유지
+  }
 }
 
 /* profiles!posts_author_id_fkey — posts→profiles 경로가 direct FK와 post_likes 경유 두 가지라
@@ -85,7 +105,7 @@ function mapPostSummaryRow(row: any): CommunityPostSummary {
     title: row.title,
     content: row.content,
     author: toCommunityAuthor(row.profiles as ProfileRow),
-    createdAt: toDate(row.created_at),
+    createdAt: formatPostDate(row.created_at),
     views: row.view_count,
     likes: (row.post_likes as { count: number }[])[0]?.count ?? 0,
     commentCount: (row.comments as { count: number }[])[0]?.count ?? 0,
@@ -199,7 +219,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
     authorId: r.author_id,
     author: toCommunityAuthor(r.profiles as ProfileRow),
     content: r.content,
-    createdAt: toDate(r.created_at),
+    createdAt: formatPostDate(r.created_at),
     likes: (r.comment_likes as { count: number }[])[0]?.count ?? 0,
     replies: [],
   }));
@@ -223,7 +243,7 @@ export async function fetchPost(id: string): Promise<CommunityPostDetail | null>
     title: post.title,
     content: post.content,
     author: toCommunityAuthor(post.profiles as ProfileRow),
-    createdAt: toDate(post.created_at),
+    createdAt: formatPostDate(post.created_at),
     views: post.view_count + 1,
     likes: (post.post_likes as { count: number }[])[0]?.count ?? 0,
     commentCount: rows.length,

@@ -13,7 +13,23 @@ export type SupportTicket = {
   reply: string | null;
   createdAt: string;
   repliedAt: string | null;
+  imagePath: string | null;
 };
+
+/** 첨부 사진 — 개인정보가 담길 수 있어 비공개 버킷 + 본인 폴더 정책 + signed URL(profile-avatars와 동일 패턴) */
+const SUPPORT_ATTACHMENT_BUCKET = 'support-attachments';
+const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+const ATTACHMENT_EXTENSIONS: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+};
+
+export async function createSupportAttachmentSignedUrl(path: string | null): Promise<string | null> {
+  if (!path) return null;
+  const { data, error } = await supabase.storage.from(SUPPORT_ATTACHMENT_BUCKET).createSignedUrl(path, 60 * 60);
+  return error ? null : data.signedUrl;
+}
 
 export async function fetchMyTickets(): Promise<SupportTicket[]> {
   const { data: { user } } = await supabase.auth.getUser();
@@ -21,7 +37,7 @@ export async function fetchMyTickets(): Promise<SupportTicket[]> {
 
   const { data, error } = await supabase
     .from('support_tickets')
-    .select('id, message, status, reply, created_at, replied_at')
+    .select('id, message, status, reply, created_at, replied_at, image_path')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
   if (error || !data) return [];
@@ -33,14 +49,39 @@ export async function fetchMyTickets(): Promise<SupportTicket[]> {
     reply: t.reply,
     createdAt: t.created_at,
     repliedAt: t.replied_at,
+    imagePath: t.image_path ?? null,
   }));
 }
 
-export async function submitTicket(message: string): Promise<{ error: string | null }> {
+export async function submitTicket(
+  message: string,
+  image?: { uri: string; mimeType?: string | null } | null,
+): Promise<{ error: string | null }> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: '로그인이 필요해요.' };
 
-  const { error } = await supabase.from('support_tickets').insert({ user_id: user.id, message });
+  let imagePath: string | null = null;
+  if (image) {
+    try {
+      const response = await fetch(image.uri);
+      const arrayBuffer = await response.arrayBuffer();
+      const contentType = (image.mimeType || response.headers.get('content-type') || '').toLowerCase().split(';')[0];
+      const extension = ATTACHMENT_EXTENSIONS[contentType];
+      if (!extension) return { error: 'JPEG, PNG 또는 WebP 이미지만 첨부할 수 있어요.' };
+      if (arrayBuffer.byteLength > MAX_ATTACHMENT_BYTES) return { error: '첨부 사진은 5MB 이하만 가능해요.' };
+
+      imagePath = `${user.id}/${Date.now()}.${extension}`;
+      const { error: uploadError } = await supabase.storage
+        .from(SUPPORT_ATTACHMENT_BUCKET)
+        .upload(imagePath, arrayBuffer, { contentType });
+      if (uploadError) return { error: uploadError.message };
+    } catch {
+      return { error: '사진을 읽지 못했어요. 다시 시도해 주세요.' };
+    }
+  }
+
+  const { error } = await supabase.from('support_tickets').insert({ user_id: user.id, message, image_path: imagePath });
+  if (error && imagePath) await supabase.storage.from(SUPPORT_ATTACHMENT_BUCKET).remove([imagePath]);
   return { error: error?.message ?? null };
 }
 

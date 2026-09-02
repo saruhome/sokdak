@@ -1,4 +1,5 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity, Linking, TextInput, Animated, Easing } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Linking, TextInput, Animated, Easing, Image } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
@@ -9,6 +10,7 @@ import { safeGoBack } from '../../../constants/navigation';
 import { languageStore, useLanguage, type Language } from '../../../constants/languageStore';
 import { authStore } from '../../../constants/authStore';
 import { fetchMyTickets, submitTicket, markRepliesSeen, type SupportTicket } from '../../../constants/support';
+import { createSupportAttachmentSignedUrl } from '@/src/features/mypage/api/supportApi';
 import { AppIcon } from '@/components/AppIcon';
 import { BottomSheet } from '@/components/BottomSheet';
 import { Mail, ChevronDown, ChevronRight, Search, Check } from 'lucide-react-native';
@@ -125,11 +127,18 @@ export default function SupportScreen() {
   const [ticketMessage, setTicketMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [receipt, setReceipt] = useState<{ typeLabel: string; number: string } | null>(null);
+  const [attachment, setAttachment] = useState<{ uri: string; mimeType?: string | null } | null>(null);
+  const [attachmentUrls, setAttachmentUrls] = useState<Record<string, string>>({});
 
   useFocusEffect(useCallback(() => {
     setLoggedIn(authStore.isLoggedIn());
     if (authStore.isLoggedIn()) {
-      fetchMyTickets().then(setTickets);
+      fetchMyTickets().then(async list => {
+        setTickets(list);
+        const entries = await Promise.all(list.filter(tk => tk.imagePath).map(async tk =>
+          [tk.id, await createSupportAttachmentSignedUrl(tk.imagePath)] as const));
+        setAttachmentUrls(Object.fromEntries(entries.filter(([, u]) => u) as [string, string][]));
+      });
       markRepliesSeen();
     }
   }, []));
@@ -153,6 +162,22 @@ export default function SupportScreen() {
     });
   };
 
+  const pickAttachment = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(t('permissionNeededTitle'), t('galleryPermissionMessage'));
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.7,
+    });
+    if (!result.canceled && result.assets[0]?.uri) {
+      const asset = result.assets[0];
+      setAttachment({ uri: asset.uri, mimeType: asset.mimeType });
+    }
+  };
+
   const handleSubmitTicket = async () => {
     const message = ticketMessage.trim();
     if (!message || !inquiryType || submitting) return;
@@ -160,13 +185,17 @@ export default function SupportScreen() {
     const typeLabel = INQUIRY_TYPE_LABELS[language][inquiryType];
     /* ponytail: 문의 유형 전용 컬럼이 없어 메시지 앞에 라벨을 붙여 저장 —
      * 유형별 집계/필터링이 필요해지면 support_tickets에 type 컬럼 추가. */
-    const { error } = await submitTicket(`[${typeLabel}] ${message}`);
+    const { error } = await submitTicket(`[${typeLabel}] ${message}`, attachment);
     if (error) { setSubmitting(false); Alert.alert(t('saveFailedTitle'), error); return; }
     const latest = await fetchMyTickets();
     setTickets(latest);
+    const entries = await Promise.all(latest.filter(tk => tk.imagePath).map(async tk =>
+      [tk.id, await createSupportAttachmentSignedUrl(tk.imagePath)] as const));
+    setAttachmentUrls(Object.fromEntries(entries.filter(([, u]) => u) as [string, string][]));
     setSubmitting(false);
     setTicketMessage('');
     setInquiryType(null);
+    setAttachment(null);
     setFormOpen(false);
     setReceipt({ typeLabel, number: ticketNumberFrom(latest[0]?.id) });
   };
@@ -261,6 +290,9 @@ export default function SupportScreen() {
                   </View>
                 </View>
                 <Text style={styles.ticketMessage}>{ticket.message}</Text>
+                  {attachmentUrls[ticket.id] ? (
+                    <Image source={{ uri: attachmentUrls[ticket.id] }} style={styles.ticketAttachment} />
+                  ) : null}
                 {ticket.reply && (
                   <View style={styles.ticketReplyBox}>
                     <Text style={styles.ticketReplyLabel}>{t('inquiryReplyLabel')}</Text>
@@ -307,6 +339,18 @@ export default function SupportScreen() {
             multiline
             numberOfLines={4}
           />
+          {attachment ? (
+            <View style={styles.attachPreviewRow}>
+              <Image source={{ uri: attachment.uri }} style={styles.attachPreview} />
+              <TouchableOpacity onPress={() => setAttachment(null)} hitSlop={8}>
+                <Text style={styles.attachRemoveText}>{t('removePhoto')}</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity style={styles.attachBtn} onPress={pickAttachment} activeOpacity={0.8}>
+              <Text style={styles.attachBtnText}>📷 {t('addPhoto')}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={styles.sheetDivider} />
@@ -356,6 +400,15 @@ export default function SupportScreen() {
 }
 
 const styles = StyleSheet.create({
+  attachBtn: {
+    marginTop: 10, height: 40, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center',
+  },
+  attachBtnText: { fontSize: 14, color: Colors.textSecondary, fontWeight: '600' },
+  attachPreviewRow: { marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  attachPreview: { width: 64, height: 64, borderRadius: 8, backgroundColor: Colors.divider },
+  attachRemoveText: { fontSize: 13, color: Colors.error },
+  ticketAttachment: { width: 96, height: 96, borderRadius: 8, marginTop: 8, backgroundColor: Colors.divider },
   safeArea: { flex: 1, backgroundColor: Colors.background },
 
   topBar: {

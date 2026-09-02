@@ -12,12 +12,13 @@ import { ja } from './locales/ja';
 import { vi } from './locales/vi';
 import { es } from './locales/es';
 import { de } from './locales/de';
+import { tr } from './locales/tr';
 
 export type { Language, TranslationKey };
 
 const LANGUAGE_KEY = 'sokdak.language';
 
-const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = { ko, en, ja, vi, es, de };
+const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = { ko, en, ja, vi, es, de, tr };
 
 let _language: Language = 'ko';
 let _initialized = false;

@@ -36,6 +36,10 @@ const CONTENT_ITEMS: Record<Language, { key: NotificationKey; label: string; des
     { key: 'newSlang',     label: 'Neuer Slang und Kategorien', desc: 'Erhalte Hinweise zu neuem Slang' },
     { key: 'popularSlang', label: 'Beliebter Slang und Kategorien', desc: 'Erhalte Hinweise zu den meistgesuchten Wörtern' },
   ],
+  tr: [
+    { key: 'newSlang',     label: 'Yeni argo ve kategoriler', desc: 'Yeni argo haberlerini al' },
+    { key: 'popularSlang', label: 'Popüler argo ve kategoriler', desc: 'En çok aranan kelimeleri öğren' },
+  ],
 };
 
 const COMMUNITY_ITEMS: Record<Language, { key: NotificationKey; label: string; desc: string }[]> = {
@@ -68,6 +72,11 @@ const COMMUNITY_ITEMS: Record<Language, { key: NotificationKey; label: string; d
     { key: 'popularPost', label: 'Beliebte Beiträge', desc: 'Erhalte Hinweise zu den besten Beiträgen' },
     { key: 'like',        label: 'Gefällt mir', desc: 'Erhalte eine Benachrichtigung, wenn jemand deinen Beitrag liked' },
     { key: 'comment',     label: 'Kommentare', desc: 'Erhalte eine Benachrichtigung, wenn jemand deinen Beitrag kommentiert' },
+  ],
+  tr: [
+    { key: 'popularPost', label: 'Popüler gönderiler', desc: 'En iyi gönderileri hemen haber veririz' },
+    { key: 'like',        label: 'Beğeni bildirimi', desc: 'Gönderin beğenilince haber veririz' },
+    { key: 'comment',     label: 'Yorum bildirimi', desc: 'Gönderine yorum yapılınca haber veririz' },
   ],
 };
 

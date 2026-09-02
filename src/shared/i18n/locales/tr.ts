@@ -1,10 +1,9 @@
 import type { TranslationKey } from '../keys';
 
 /**
- * 터키어 번역 — 준비만 된 상태, 아직 미노출.
- * 활성화 체크리스트: keys.ts의 Language 유니언·SUPPORTED_LANGUAGES·LANGUAGE_NATIVE_NAME에 'tr' 추가,
- * languageStore.ts TRANSLATIONS에 등록, 언어 선택 UI에 항목 추가, 단어 콘텐츠(words *_i18n 컬럼)에 tr 추가.
- * 노출 전 터키어 네이티브 검수 필수 (호칭은 학습 앱 관례에 따라 sen체).
+ * 터키어 번역 — 2026-09-02부터 노출 (터키인 베타 테스터 대응).
+ * 단어 콘텐츠(words *_i18n 컬럼)에는 아직 tr이 없어 영어로 폴백된다 — 콘텐츠 번역은 별도 작업.
+ * 호칭은 학습 앱 관례에 따라 sen체. 네이티브 검수는 베타 테스터 피드백으로 진행.
  */
 export const tr = {
     home: 'Ana Sayfa',

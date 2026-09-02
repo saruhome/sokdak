@@ -22,6 +22,7 @@ const INQUIRY_TYPE_LABELS: Record<Language, Record<InquiryTypeSlug, string>> = {
   vi: { account: 'Đăng nhập/Tài khoản', bug: 'Báo lỗi', billing: 'Sử dụng beta', suggestion: 'Đề xuất/Ý kiến', other: 'Khác' },
   es: { account: 'Inicio de sesión/Cuenta', bug: 'Reporte de error', billing: 'Acceso beta', suggestion: 'Sugerencia', other: 'Otro' },
   de: { account: 'Anmeldung/Konto', bug: 'Fehler melden', billing: 'Beta-Zugang', suggestion: 'Vorschlag', other: 'Sonstiges' },
+  tr: { account: 'Giriş/Hesap', bug: 'Hata bildir', billing: 'Beta erişimi', suggestion: 'Öneri/Görüş', other: 'Diğer' },
 };
 
 /* ponytail: support_tickets에 접수번호 컬럼이 없어 row id에서 짧은 코드를 파생시킴 —
@@ -40,6 +41,7 @@ const FAQ_CATEGORY_LABELS: Record<Language, Record<FaqCategorySlug, string>> = {
   vi: { all: 'Tất cả', howTo: 'Cách dùng', account: 'Tài khoản', suggest: 'Đề xuất', community: 'Cộng đồng' },
   es: { all: 'Todos', howTo: 'Cómo usar', account: 'Cuenta', suggest: 'Sugerencias', community: 'Comunidad' },
   de: { all: 'Alle', howTo: 'So funktioniert es', account: 'Konto', suggest: 'Vorschläge', community: 'Community' },
+  tr: { all: 'Tümü', howTo: 'Nasıl kullanılır', account: 'Hesap', suggest: 'Öneriler', community: 'Topluluk' },
 };
 
 type FaqItem = { category: Exclude<FaqCategorySlug, 'all'>; q: string; a: string };
@@ -85,6 +87,13 @@ const FAQ_ITEMS: Record<Language, FaqItem[]> = {
     { category: 'suggest', q: 'Ich möchte einen neuen Slangbegriff vorschlagen.', a: 'Unter Mein Bereich > Neuen Slang vorschlagen kannst du ein Wort und seine Bedeutung einreichen. Nach der Prüfung kann es ins Wörterbuch aufgenommen werden.' },
     { category: 'account', q: 'Kann ich die App ohne Anmeldung verwenden?', a: 'Du kannst im Wörterbuch suchen und Kategorien ohne Anmeldung durchsuchen. Zum Speichern von Wörtern und zur Teilnahme an der Community brauchst du ein angemeldetes Konto.' },
     { category: 'community', q: 'Welche Regeln gelten in der Community?', a: 'Wir möchten eine respektvolle Lern-Community schaffen. Beleidigungen, Werbung und Hassrede können moderiert werden.' },
+  ],
+  tr: [
+    { category: 'howTo', q: 'SokDak nasıl bir uygulama?', a: 'Kore\'de yaşayan orta-ileri seviye yabancı öğrenciler için Korece argo öğrenme uygulaması. Ders kitaplarında olmayan gerçek günlük Koreceyi öğrenebilirsin.' },
+    { category: 'howTo', q: 'Kelimeleri nasıl kaydederim?', a: "Kelime detay ekranında 'Kaydet' düğmesine bas; kaydettiklerin Sayfam > Favoriler altında toplanır." },
+    { category: 'suggest', q: 'Yeni bir argo önermek istiyorum.', a: 'Sayfam > Yeni argo öner menüsünden kelimeyi ve anlamını gönderebilirsin. İncelemeden sonra sözlüğe eklenir.' },
+    { category: 'account', q: 'Giriş yapmadan kullanabilir miyim?', a: 'Sözlükte arama ve kategorilere göz atma giriş gerektirmez. Kelime kaydetmek ve topluluğa katılmak için giriş yapman gerekir.' },
+    { category: 'community', q: 'Topluluk kuralları neler?', a: 'Birbirine saygılı bir öğrenme topluluğu hedefliyoruz. Küfür, reklam ve nefret söylemi yaptırıma tabi olabilir.' },
   ],
 };
 

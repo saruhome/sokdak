@@ -1,9 +1,9 @@
-export type Language = 'ko' | 'en' | 'ja' | 'vi' | 'es' | 'de';
-export const SUPPORTED_LANGUAGES: Language[] = ['ko', 'en', 'ja', 'vi', 'es', 'de'];
+export type Language = 'ko' | 'en' | 'ja' | 'vi' | 'es' | 'de' | 'tr';
+export const SUPPORTED_LANGUAGES: Language[] = ['ko', 'en', 'ja', 'vi', 'es', 'de', 'tr'];
 
 /** 각 언어의 자기 표기 — 언어 선택 화면과 마이페이지 언어 행이 공유한다(번역 대상 아님). */
 export const LANGUAGE_NATIVE_NAME: Record<Language, string> = {
-  ko: '한국어', en: 'English', ja: '日本語', vi: 'Tiếng Việt', es: 'Español', de: 'Deutsch',
+  ko: '한국어', en: 'English', ja: '日本語', vi: 'Tiếng Việt', es: 'Español', de: 'Deutsch', tr: 'Türkçe',
 };
 
 export type TranslationKey =

@@ -39,6 +39,7 @@ const JJAEKI_HINTS: Record<Language, string[]> = {
   vi: ['Cái này biết chưa?', 'Phải biết cái này chứ', 'Không biết thật à?', 'Biết thì tốt đó'],
   es: ['¿Tampoco esta?', 'Esta hay que saberla.', '¿En serio no la sabes?', 'Te conviene saberla.'],
   de: ['Auch das neu?', 'Das musst du kennen.', 'Echt jetzt nicht?', 'Gut zu wissen.'],
+  tr: ['Bunu bilmiyor musun?', 'Bunu bilmelisin.', 'Cidden bilmiyorsun?', 'Bilsen iyi olur.'],
 };
 
 /**

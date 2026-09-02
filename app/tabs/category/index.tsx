@@ -30,6 +30,7 @@ const HORANG_HINTS: Record<Language, string[]> = {
   vi: ['Chưa ghé nhỉ?', 'Hôm nay bắt đầu đây!', 'Tò mò chứ?', 'Ghé xem thử nhé!'],
   es: ['¿Aún sin explorar?', '¿Empezamos aquí?', '¿Te pica la curiosidad?', '¡Échale un ojo!'],
   de: ['Noch unentdeckt!', 'Heute hier starten?', 'Auch neugierig?', 'Schau mal rein!'],
+  tr: ['Burayı gezdin mi?', 'Bugün buradan!', 'Merak ettin mi?', 'Bir göz at!'],
 };
 
 type SortMode = '인기순' | '가나다순';

@@ -26,7 +26,7 @@ export type Word = {
     /** 언어별 정의 번역 — DB meanings jsonb의 definition_i18n 키 그대로 */
     definition_i18n?: BodyI18n;
     /** kor 원문 + 언어별 번역. eng는 항상 존재(폴백), ja/es/vi/de는 다국어화 이후 추가 */
-    examples: Array<{ kor: string; eng: string; ja?: string; es?: string; vi?: string; de?: string }>;
+    examples: Array<{ kor: string; eng: string; ja?: string; es?: string; vi?: string; de?: string; tr?: string }>;
   }>;
   origin?: string;
   originEn?: string;

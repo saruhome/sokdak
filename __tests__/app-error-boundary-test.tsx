@@ -43,6 +43,11 @@ const ERROR_COPY: Record<Language, { title: string; body: string; retry: string 
     body: 'Bitte versuche es gleich noch einmal.',
     retry: 'Erneut versuchen',
   },
+  tr: {
+    title: 'Bu ekran yüklenemedi',
+    body: 'Lütfen birazdan tekrar dene.',
+    retry: 'Tekrar dene',
+  },
 };
 
 describe('<AppErrorBoundary />', () => {

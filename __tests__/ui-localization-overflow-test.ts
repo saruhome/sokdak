@@ -8,10 +8,11 @@ import { ja } from '@/src/shared/i18n/locales/ja';
 import { vi } from '@/src/shared/i18n/locales/vi';
 import { es } from '@/src/shared/i18n/locales/es';
 import { de } from '@/src/shared/i18n/locales/de';
+import { tr } from '@/src/shared/i18n/locales/tr';
 import type { Language, TranslationKey } from '@/src/shared/i18n/keys';
 
-const LOCALES: Record<Language, Record<TranslationKey, string>> = { ko, en, ja, vi, es, de };
-const LANGUAGES: Language[] = ['ko', 'en', 'ja', 'vi', 'es', 'de'];
+const LOCALES: Record<Language, Record<TranslationKey, string>> = { ko, en, ja, vi, es, de, tr };
+const LANGUAGES: Language[] = ['ko', 'en', 'ja', 'vi', 'es', 'de', 'tr'];
 
 const CORE_SCREEN_KEYS: TranslationKey[] = [
   // 홈

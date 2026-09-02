@@ -8,6 +8,7 @@ describe('languageStore critical localization strings', () => {
     vi: 'Không tìm thấy kết quả cho “MZ”.',
     es: 'No se encontraron resultados para “MZ”.',
     de: 'Keine Ergebnisse für „MZ“ gefunden.',
+    tr: '"MZ" için sonuç bulunamadı.',
   };
 
   it.each(Object.entries(categoryNoResults))(
@@ -25,6 +26,7 @@ describe('languageStore critical localization strings', () => {
       vi: 'Xóa nội dung tìm kiếm danh mục',
       es: 'Limpiar búsqueda de categorías',
       de: 'Kategoriesuche löschen',
+      tr: 'Kategori aramasını temizle',
     };
 
     (Object.entries(expected) as [Language, string][]).forEach(([language, label]) => {
@@ -40,6 +42,7 @@ describe('languageStore critical localization strings', () => {
       vi: 'Khớp với nghĩa dịch:',
       es: 'Coincide con la traducción:',
       de: 'Entspricht der Übersetzung:',
+      tr: 'Çeviriyle eşleşiyor:',
     };
 
     (Object.entries(expected) as [Language, string][]).forEach(([language, label]) => {

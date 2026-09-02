@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12, paddingHorizontal: 16, backgroundColor: Colors.premium + '12',
     borderTopWidth: 1, borderTopColor: Colors.divider,
   },
-  exprPremiumTeaserText: { flexShrink: 1, fontSize: 12, fontWeight: '600', color: Colors.premium },
+  exprPremiumTeaserText: { flexShrink: 1, fontSize: 12, fontWeight: '600', color: Colors.premiumText },
 
   /* 새로운 신조어 카드 */
   wordCardRow: { gap: 16, paddingRight: 24 },

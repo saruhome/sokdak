@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   premiumRowActive: { backgroundColor: Colors.premium + '12', borderColor: Colors.premium },
   premiumRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   premiumRowLabel: { fontSize: 14, fontWeight: '700', color: Colors.textSecondary },
-  premiumRowLabelActive: { color: Colors.premium },
+  premiumRowLabelActive: { color: Colors.premiumText },
   streakChip: {
     flexDirection: 'row', alignItems: 'center', gap: 3,
     paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,

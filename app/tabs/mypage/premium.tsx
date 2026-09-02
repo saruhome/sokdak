@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     marginTop: 8, paddingHorizontal: 12, paddingVertical: 6,
     borderRadius: 14, backgroundColor: Colors.premium + '20', borderWidth: 1, borderColor: Colors.premium,
   },
-  activeBadgeText: { fontSize: 12, fontWeight: '700', color: Colors.premium },
+  activeBadgeText: { fontSize: 12, fontWeight: '700', color: Colors.premiumText },
   featureList: { gap: 14, marginBottom: 28 },
   featureRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   featureIconWrap: {

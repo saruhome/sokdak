@@ -128,7 +128,7 @@ export default function CommunityScreen() {
                 testID="community-pinned-notice"
               >
                 <Text style={styles.pinnedEmoji}>📌</Text>
-                <Text style={styles.pinnedTitle} numberOfLines={1}>{pinned.title}</Text>
+                <Text style={styles.pinnedTitle} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{pinned.title}</Text>
               </TouchableOpacity>
             )}
 
@@ -248,16 +248,14 @@ const styles = StyleSheet.create({
 
   /* Figma: data-badge="on" — 벨 아이콘 우측 상단 알림 점 */
 
-  /* 공지 핀 — 유저 글 카드와 구분되는 운영자 배너 톤(초록 보더) */
+  /* 공지 핀 — 사전 상단 프리미엄 배너(premiumBanner)와 동일 디자인(운영자 지시 2026-09-03) */
   pinnedRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 8,
-    marginHorizontal: 24, marginTop: 16,
-    paddingHorizontal: 14, paddingVertical: 12,
-    backgroundColor: Colors.surface, borderRadius: 10,
-    borderWidth: 1, borderColor: Colors.accent,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+    paddingVertical: 10, paddingHorizontal: 16, backgroundColor: Colors.premium + '12',
+    borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
-  pinnedEmoji: { fontSize: 14 },
-  pinnedTitle: { flex: 1, fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
+  pinnedEmoji: { fontSize: 12 },
+  pinnedTitle: { flexShrink: 1, fontSize: 12, fontWeight: '600', color: Colors.premiumText },
 
   /* Featured */
   featuredSection: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 4, gap: 16 },

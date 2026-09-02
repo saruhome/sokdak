@@ -11,6 +11,8 @@ import { safeGoBack } from '../../../constants/navigation';
 import { authStore } from '../../../constants/authStore';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { BackIcon } from '@/components/icons/SocialIcons';
+import { Camera } from 'lucide-react-native';
+import { AppIcon } from '@/components/AppIcon';
 import { removeProfileAvatar, uploadProfileAvatar } from '@/constants/profileAvatarStorage';
 
 /** featured: 기본으로 노출 12개국(6×2줄) — 한국어 학습 인구가 많은 나라 (세종학당 수강생 통계 기준,
@@ -285,7 +287,8 @@ export default function ProfileScreen() {
               activeOpacity={0.8}
             >
               <ProfileAvatar uri={avatarPreviewUrl} emoji={emoji} size={76} style={styles.avatarPreview} />
-              <View style={styles.avatarBadge}><Text style={styles.avatarBadgeText}>📷</Text></View>
+              {/* 편집 배지는 뒤로가기·알림과 같은 벡터 아이콘 계열(운영자 지시 2026-09-03) */}
+              <View style={styles.avatarBadge}><AppIcon icon={Camera} size={14} color={Colors.textPrimary} /></View>
             </TouchableOpacity>
             <View style={styles.profileNameBox}>
               <Text style={styles.fieldLabel}>{t('nicknameLabel')}</Text>
@@ -468,7 +471,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  avatarBadgeText: { fontSize: 13 },
   photoMenuRow: { flexDirection: 'row', gap: 10, marginTop: -8 },
   photoMenuBtn: {
     flex: 1, height: 40, borderRadius: 10,

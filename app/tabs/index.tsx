@@ -16,13 +16,10 @@ import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStor
 import { TopAppBar } from '@/components/navigation/TopAppBar';
 import { EXPRESSIONS, SITUATION_LABEL_KEY, expressionGloss, pickDaily } from '@/src/features/home/model/dailyPicks';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Eye, Heart, MessageCircle, Crown, ChevronRight } from 'lucide-react-native';
+import { Eye, Heart, MessageCircle, ChevronRight } from 'lucide-react-native';
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */
 const HERO_AUTOPLAY_INTERVAL = 4000;
-
-/** 썸네일 없는 단어의 히어로가 색면만 노출되지 않도록 채우는 마스코트(호랭 우선 규칙) */
-const HERO_FALLBACK_MASCOT = require('../../assets/characters/transparent/horang-cheer.png');
 
 export default function HomeScreen() {
   const language = useLanguage();
@@ -65,12 +62,13 @@ export default function HomeScreen() {
 
   /* 히어로 캐러셀 자동 재생 — 오른쪽에서 왼쪽으로 넘어가도록 다음 인덱스로 스크롤.
    * 사용자가 직접 스와이프하는 동안(heroPausedRef)에는 타이머가 끼어들지 않게 건너뜀. */
+  const heroSlideCount = heroWords.length + todayExpressions.length;
   useEffect(() => {
-    if (heroWords.length === 0) return;
+    if (heroSlideCount === 0) return;
     const timer = setInterval(() => {
       if (heroPausedRef.current) return;
       setHeroIndex(prev => {
-        const next = (prev + 1) % heroWords.length;
+        const next = (prev + 1) % heroSlideCount;
         // 웹(react-native-web)에서는 animated:true인 scrollTo가 실제로 스크롤을
         // 이동시키지 않는 버그가 있어(로컬 검증 완료) 웹만 즉시 이동으로 처리.
         heroScrollRef.current?.scrollTo({ x: next * SCREEN_WIDTH, animated: Platform.OS !== 'web' });
@@ -78,7 +76,7 @@ export default function HomeScreen() {
       });
     }, HERO_AUTOPLAY_INTERVAL);
     return () => clearInterval(timer);
-  }, [heroWords.length]);
+  }, [heroSlideCount]);
 
   const handleHeroScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH));
@@ -118,10 +116,6 @@ export default function HomeScreen() {
                     <Image source={{ uri: word.thumbnailUrl }} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
                   )}
                   <View style={styles.heroScrim} />
-                  {/* 스크림 뒤에 두면 55% 워시아웃되므로 스크림 위에 선명하게 렌더 */}
-                  {!word.thumbnailUrl && (
-                    <Image source={HERO_FALLBACK_MASCOT} style={styles.heroMascot} resizeMode="contain" accessible={false} />
-                  )}
                   <View style={styles.heroContent}>
                     {category && (
                       <View style={[styles.heroBadge, { backgroundColor: category.colorBg }]}>
@@ -134,57 +128,39 @@ export default function HomeScreen() {
                 </TouchableOpacity>
               );
             })}
-          </ScrollView>
-          <View style={styles.dotsRow}>
-            {heroWords.map((_, i) => (
-              <View key={i} style={[styles.dot, i === heroIndex && styles.dotActive]} />
-            ))}
-          </View>
-        </View>
-
-        {/* ── 오늘의 실전 표현 ── 리텐션 훅: 3분 학습, 매일 갱신 */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('todayExpressionTitle')}</Text>
-            <Text style={styles.sectionSub} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{t('todayExpressionSub')}</Text>
-          </View>
-          <View style={styles.exprCard}>
+            {/* ── 오늘의 실전 표현 — 별도 카드가 아닌 히어로 콘텐츠 유형(운영자 지시 2026-09-03) */}
             {todayExpressions.map((expr, i) => (
-              <View key={i} style={[styles.exprRow, i > 0 && styles.exprRowBorder]}>
-                <View style={styles.exprSituationBadge}>
-                  <Text style={styles.exprSituationText}>{t(SITUATION_LABEL_KEY[expr.situation])}</Text>
-                </View>
-                <Text style={styles.exprKo}>{expr.ko}</Text>
-                {/* 뜻/해석은 프리미엄 전용 — 한국어 원문은 공개해 궁금증(전환 훅)을 남긴다 */}
-                {BETA_UNLIMITED_ENTITLEMENTS || isPremium ? (
-                  <Text style={styles.exprEn}>{expressionGloss(expr, language)}</Text>
-                ) : (
-                  <TouchableOpacity onPress={() => router.push('/tabs/mypage/premium')} activeOpacity={0.8}>
+              <TouchableOpacity
+                key={`expr-${i}`}
+                style={[styles.heroCard, { backgroundColor: Colors.point1 }]}
+                onPress={() => { if (!BETA_UNLIMITED_ENTITLEMENTS && !isPremium) router.push('/tabs/mypage/premium'); }}
+                activeOpacity={0.9}
+                testID="hero-expression-slide"
+              >
+                <View style={styles.heroScrim} />
+                <View style={styles.heroContent}>
+                  <View style={[styles.heroBadge, styles.exprSituationBadge]}>
+                    <Text style={[styles.heroBadgeText, styles.exprSituationText]}>
+                      {t('todayExpressionTitle')} · {t(SITUATION_LABEL_KEY[expr.situation])}
+                    </Text>
+                  </View>
+                  <Text style={styles.heroWord} numberOfLines={1}>{expr.ko}</Text>
+                  {/* 뜻/해석은 프리미엄 전용 — 한국어 원문은 공개해 궁금증(전환 훅)을 남긴다 */}
+                  {BETA_UNLIMITED_ENTITLEMENTS || isPremium ? (
+                    <Text style={styles.heroDesc} numberOfLines={1}>{expressionGloss(expr, language)}</Text>
+                  ) : (
                     <Text style={styles.exprLocked} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
                       {t('premiumGlossLocked')}
                     </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            ))}
-            {!BETA_UNLIMITED_ENTITLEMENTS && !isPremium && (
-              <TouchableOpacity
-                style={styles.exprPremiumTeaser}
-                onPress={() => router.push('/tabs/mypage/premium')}
-                activeOpacity={0.8}
-              >
-                <AppIcon icon={Crown} size={14} color={Colors.premium} />
-                {/* 운영자 규칙: 항상 한 줄 정렬 — 긴 번역은 줄바꿈 대신 글자를 줄여서 맞춘다 */}
-                <Text
-                  style={styles.exprPremiumTeaserText}
-                  numberOfLines={1}
-                  adjustsFontSizeToFit
-                  minimumFontScale={0.7}
-                >
-                  {t('dictionaryPremiumBannerText')}
-                </Text>
+                  )}
+                </View>
               </TouchableOpacity>
-            )}
+            ))}
+          </ScrollView>
+          <View style={styles.dotsRow}>
+            {[...heroWords, ...todayExpressions].map((_, i) => (
+              <View key={i} style={[styles.dot, i === heroIndex && styles.dotActive]} />
+            ))}
           </View>
         </View>
 
@@ -303,10 +279,6 @@ const styles = StyleSheet.create({
   heroThumbnail: {
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
   },
-  /* 문구(좌하단)와 겹치지 않는 우측에 바닥선 정렬 */
-  heroMascot: {
-    position: 'absolute', right: 20, bottom: 24, width: 120, height: 138,
-  },
   /* 태그→제목→소제목 간격을 오늘의 실전 표현 카드(exprRow)와 동일하게: gap 6 + 제목에 marginTop 2 */
   heroContent: { gap: 6, marginBottom: 20 }, // heroCard는 justifyContent:'flex-end'라 marginBottom만큼 문구가 위로 올라감
   heroBadge: {
@@ -342,28 +314,10 @@ const styles = StyleSheet.create({
   moreLink: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   moreLinkText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
 
-  /* 오늘의 실전 표현 카드 */
-  exprCard: {
-    backgroundColor: Colors.surface, borderRadius: 10,
-    borderWidth: 1, borderColor: Colors.border, overflow: 'hidden',
-  },
-  exprRow: { padding: 16, gap: 6 },
+  /* 오늘의 실전 표현 히어로 슬라이드 */
   exprLocked: { fontSize: 13, fontWeight: '600', color: Colors.premiumText },
-  exprRowBorder: { borderTopWidth: 1, borderTopColor: Colors.divider },
-  /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
-  exprSituationBadge: {
-    alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2,
-    borderRadius: 12, backgroundColor: Colors.point1 + '15',
-  },
-  exprSituationText: { fontSize: 10, fontWeight: '700', color: Colors.point1 },
-  exprKo: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, marginTop: 2 },
-  exprEn: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  exprPremiumTeaser: {
-    flexDirection: 'row', alignItems: 'center', gap: 6, justifyContent: 'center',
-    paddingVertical: 12, paddingHorizontal: 16, backgroundColor: Colors.premium + '12',
-    borderTopWidth: 1, borderTopColor: Colors.divider,
-  },
-  exprPremiumTeaserText: { flexShrink: 1, fontSize: 12, fontWeight: '600', color: Colors.premiumText },
+  exprSituationBadge: { backgroundColor: Colors.surface },
+  exprSituationText: { color: Colors.point1 },
 
   /* 새로운 신조어 카드 */
   wordCardRow: { gap: 16, paddingRight: 24 },

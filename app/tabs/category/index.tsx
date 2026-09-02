@@ -214,9 +214,7 @@ export default function CategoryScreen() {
                 <View style={[styles.cardTextWrap, item.image ? styles.cardTextScrim : null]}>
                   <Text
                     style={[styles.categoryName, { color: labelColor }]}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                    minimumFontScale={0.6}
+                    numberOfLines={2}
                   >
                     {getCategoryName(item, language)}
                   </Text>
@@ -297,7 +295,7 @@ const styles = StyleSheet.create({
   /* Figma: Selection/Card/Category (150×104) — 카드 배경은 카테고리별 일러스트. */
   categoryCard: {
     width: 150,
-    height: 104,
+    height: 116,
     borderRadius: 10,
     borderWidth: 1, borderColor: Colors.border,
     overflow: 'hidden',
@@ -325,6 +323,6 @@ const styles = StyleSheet.create({
     borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4,
     alignSelf: 'flex-start',
   },
-  /* 카드 텍스트는 기존 대비 더 작게 보여야 하므로 70% 크기로 조정. */
-  categoryName: { fontSize: 26, lineHeight: 31, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
+  /* 이름은 축약(글자 축소) 대신 데이터의 개행 그대로 2줄 — 카드 높이·텍스트 영역이 수용한다 */
+  categoryName: { fontSize: 20, lineHeight: 25, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
 });

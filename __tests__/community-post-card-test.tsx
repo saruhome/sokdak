@@ -56,6 +56,15 @@ describe('CommunityPostCard', () => {
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
+  it('shows a right-side thumbnail from the first content image, and none without images', async () => {
+    const withImage = await render(<CommunityPostCard post={POST} language="ko" onPress={jest.fn()} />);
+    expect(withImage.getByTestId('post-card-thumb').props.source).toEqual({ uri: 'https://img.example/x.png' });
+    const textOnly = await render(
+      <CommunityPostCard post={{ ...POST, content: '텍스트뿐' }} language="ko" onPress={jest.fn()} />,
+    );
+    expect(textOnly.queryByTestId('post-card-thumb')).toBeNull();
+  });
+
   it('omits the preview line when content is image-only', async () => {
     const screen = await render(
       <CommunityPostCard

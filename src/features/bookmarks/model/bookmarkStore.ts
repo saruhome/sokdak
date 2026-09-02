@@ -42,6 +42,7 @@ function toggle(set: Set<string>, id: string, table: BookmarkTable, idColumn: st
   const userId = user.id;
 
   // ponytail: 테이블/컬럼이 런타임 문자열이라 Supabase의 리터럴 유니언 타입과 안 맞음 — any로 우회.
+  // supabase gen types로 Database 타입을 도입하는 시점에 제네릭 오버로드로 교체.
   const write = was
     ? supabase.from(table as any).delete().eq('user_id', userId).eq(idColumn, id)
     : supabase.from(table as any).insert({ user_id: userId, [idColumn]: id });

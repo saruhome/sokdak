@@ -21,6 +21,9 @@ import { Eye, Heart, MessageCircle, Crown, ChevronRight } from 'lucide-react-nat
 /** 히어로 캐러셀 자동 재생 간격(ms) */
 const HERO_AUTOPLAY_INTERVAL = 4000;
 
+/** 썸네일 없는 단어의 히어로가 색면만 노출되지 않도록 채우는 마스코트(호랭 우선 규칙) */
+const HERO_FALLBACK_MASCOT = require('../../assets/characters/transparent/horang-cheer.png');
+
 export default function HomeScreen() {
   const language = useLanguage();
   const t = languageStore.t;
@@ -115,6 +118,10 @@ export default function HomeScreen() {
                     <Image source={{ uri: word.thumbnailUrl }} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
                   )}
                   <View style={styles.heroScrim} />
+                  {/* 스크림 뒤에 두면 55% 워시아웃되므로 스크림 위에 선명하게 렌더 */}
+                  {!word.thumbnailUrl && (
+                    <Image source={HERO_FALLBACK_MASCOT} style={styles.heroMascot} resizeMode="contain" accessible={false} />
+                  )}
                   <View style={styles.heroContent}>
                     {category && (
                       <View style={[styles.heroBadge, { backgroundColor: category.colorBg }]}>
@@ -286,6 +293,10 @@ const styles = StyleSheet.create({
   },
   heroThumbnail: {
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+  },
+  /* 문구(좌하단)와 겹치지 않는 우측에 바닥선 정렬 */
+  heroMascot: {
+    position: 'absolute', right: 20, bottom: 24, width: 120, height: 138,
   },
   /* 태그→제목→소제목 간격을 오늘의 실전 표현 카드(exprRow)와 동일하게: gap 6 + 제목에 marginTop 2 */
   heroContent: { gap: 6, marginBottom: 20 }, // heroCard는 justifyContent:'flex-end'라 marginBottom만큼 문구가 위로 올라감

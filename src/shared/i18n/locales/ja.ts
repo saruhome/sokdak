@@ -329,5 +329,5 @@ export const ja = {
     situationSns: 'SNS',
     situationDinner: '飲み会',
     streakLabel: '連続学習',
-    streakDaysSuffix: '日目',
+    streakDayCount: '{n}日目',
 } satisfies Record<TranslationKey, string>;

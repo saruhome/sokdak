@@ -100,7 +100,7 @@ export default function MyPageScreen() {
             {streakCount > 0 && (
               <View style={styles.streakChip}>
                 <AppIcon icon={Flame} size={13} color={Colors.point1} />
-                <Text style={styles.streakChipText}>{streakCount}{t('streakDaysSuffix')}</Text>
+                <Text style={styles.streakChipText}>{t('streakDayCount').replace('{n}', String(streakCount))}</Text>
               </View>
             )}
           </TouchableOpacity>

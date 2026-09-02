@@ -334,5 +334,5 @@ export const tr = {
     situationSns: 'Sosyal medya',
     situationDinner: 'Şirket yemeği',
     streakLabel: 'Çalışma serisi',
-    streakDaysSuffix: 'gün',
+    streakDayCount: '{n}. gün',
 } satisfies Record<TranslationKey, string>;

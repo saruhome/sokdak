@@ -335,5 +335,5 @@ export const zh = {
     situationSns: '社交媒体',
     situationDinner: '公司聚餐',
     streakLabel: '连续学习',
-    streakDaysSuffix: '天',
+    streakDayCount: '第{n}天',
 } satisfies Record<TranslationKey, string>;

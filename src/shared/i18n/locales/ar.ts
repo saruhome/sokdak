@@ -336,5 +336,5 @@ export const ar = {
     situationSns: 'وسائل التواصل',
     situationDinner: 'عشاء العمل',
     streakLabel: 'أيام التعلم المتتالية',
-    streakDaysSuffix: 'أيام',
+    streakDayCount: 'اليوم {n}',
 } satisfies Record<TranslationKey, string>;

@@ -335,4 +335,4 @@ export type TranslationKey =
   | 'situationSns'
   | 'situationDinner'
   | 'streakLabel'
-  | 'streakDaysSuffix';
+  | 'streakDayCount';

@@ -252,11 +252,12 @@ const styles = StyleSheet.create({
     position: 'absolute', right: 4, top: 4, width: 28, height: 28,
     alignItems: 'center', justifyContent: 'center',
   },
-  categoryScrim: {
-    position: 'absolute', left: 0, right: 0, bottom: 0, height: 44,
-    backgroundColor: 'rgba(248,248,248,0.88)',
+  /* 카테고리 그리드와 동일한 크림 스크림 — 이미지 위 텍스트 가독성 확보 */
+  categoryTextWrap: {
+    position: 'absolute', left: 8, right: 8, bottom: 8, gap: 2,
+    backgroundColor: 'rgba(246, 242, 234, 0.85)',
+    borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4,
   },
-  categoryTextWrap: { position: 'absolute', left: 12, right: 12, bottom: 10, gap: 2 },
   categoryName: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   categoryDesc: { fontSize: 11, color: Colors.textTertiary, fontFamily: undefined },
   moreBtn: { alignItems: 'center', paddingTop: 4 },

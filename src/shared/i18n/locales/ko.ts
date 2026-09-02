@@ -329,5 +329,5 @@ export const ko = {
     situationSns: 'SNS',
     situationDinner: '회식',
     streakLabel: '연속 학습',
-    streakDaysSuffix: '일째',
+    streakDayCount: '{n}일째',
 } satisfies Record<TranslationKey, string>;

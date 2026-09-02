@@ -329,5 +329,5 @@ export const de = {
     situationSns: 'Soziale Medien',
     situationDinner: 'Firmenessen',
     streakLabel: 'Lernserie',
-    streakDaysSuffix: 'Tage',
+    streakDayCount: 'Tag {n}',
 } satisfies Record<TranslationKey, string>;

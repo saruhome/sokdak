@@ -329,5 +329,5 @@ export const vi = {
     situationSns: 'Mạng xã hội',
     situationDinner: 'Liên hoan',
     streakLabel: 'Chuỗi ngày học',
-    streakDaysSuffix: 'ngày',
+    streakDayCount: 'Ngày {n}',
 } satisfies Record<TranslationKey, string>;

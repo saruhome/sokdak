@@ -244,7 +244,7 @@ export const vi = {
     addPhoto: 'Thêm ảnh',
     removePhoto: 'Xóa ảnh',
     avatarHintSmall: 'Bạn có thể chọn biểu tượng cờ hoặc ảnh đại diện.',
-    countrySearchPlaceholder: 'Tìm quốc gia',
+    countrySearchPlaceholder: 'Bạn đến từ đâu?',
     withdrawAccount: 'Xóa tài khoản',
     withdrawConfirmTitle: 'Xóa tài khoản',
     withdrawConfirmMessage: 'Bạn có chắc chắn không? Từ đã lưu, bài viết và toàn bộ dữ liệu sẽ bị xóa vĩnh viễn.',

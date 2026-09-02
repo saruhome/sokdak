@@ -244,7 +244,7 @@ export const ko = {
     addPhoto: '사진 추가',
     removePhoto: '사진 제거',
     avatarHintSmall: '국기 이모지 또는 프로필 사진을 선택할 수 있어요.',
-    countrySearchPlaceholder: '국가 검색',
+    countrySearchPlaceholder: '어느 나라에서 왔어요?',
     withdrawAccount: '회원탈퇴',
     withdrawConfirmTitle: '회원탈퇴',
     withdrawConfirmMessage: '정말 탈퇴하시겠어요? 저장한 단어, 작성한 글 등 모든 정보가 삭제되며 되돌릴 수 없어요.',

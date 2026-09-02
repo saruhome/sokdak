@@ -250,7 +250,7 @@ export const zh = {
     addPhoto: '添加照片',
     removePhoto: '删除照片',
     avatarHintSmall: '可以选择国旗表情或个人照片作为头像。',
-    countrySearchPlaceholder: '搜索国家',
+    countrySearchPlaceholder: '你来自哪里？',
     withdrawAccount: '注销账号',
     withdrawConfirmTitle: '注销账号',
     withdrawConfirmMessage: '确定要注销吗？已保存的单词、帖子等所有数据将被永久删除，无法恢复。',

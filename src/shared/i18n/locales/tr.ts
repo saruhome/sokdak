@@ -249,7 +249,7 @@ export const tr = {
     addPhoto: 'Fotoğraf ekle',
     removePhoto: 'Fotoğrafı kaldır',
     avatarHintSmall: 'Bayrak emojisi veya profil fotoğrafı seçebilirsin.',
-    countrySearchPlaceholder: 'Ülke ara',
+    countrySearchPlaceholder: 'Nerelisin?',
     withdrawAccount: 'Hesabı sil',
     withdrawConfirmTitle: 'Hesabı sil',
     withdrawConfirmMessage: 'Emin misin? Kaydedilen kelimeler, gönderiler ve tüm verilerin kalıcı olarak silinir, geri alınamaz.',

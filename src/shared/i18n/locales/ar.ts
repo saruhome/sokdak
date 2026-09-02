@@ -251,7 +251,7 @@ export const ar = {
     addPhoto: 'إضافة صورة',
     removePhoto: 'إزالة الصورة',
     avatarHintSmall: 'يمكنك اختيار إيموجي علم أو صورة شخصية.',
-    countrySearchPlaceholder: 'ابحث عن بلد (بالكورية/الإنجليزية)',
+    countrySearchPlaceholder: 'ابحث عن بلد',
     withdrawAccount: 'حذف الحساب',
     withdrawConfirmTitle: 'حذف الحساب',
     withdrawConfirmMessage: 'هل أنت متأكد؟ ستُحذف الكلمات المحفوظة والمنشورات وجميع بياناتك نهائيًا ولا يمكن استرجاعها.',

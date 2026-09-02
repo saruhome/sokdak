@@ -1,11 +1,11 @@
-import { StyleSheet, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Modal, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
 import ProfileAvatar from '@/components/ProfileAvatar';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Colors } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
 import { authStore } from '../../../constants/authStore';
@@ -13,7 +13,8 @@ import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { BackIcon } from '@/components/icons/SocialIcons';
 import { removeProfileAvatar, uploadProfileAvatar } from '@/constants/profileAvatarStorage';
 
-/** featured: 기본으로 노출 — 한국·일본 다음으로 한국어 학습 인구가 많은 8개국 (세종학당 수강생 통계 기준) */
+/** featured: 기본으로 노출 12개국(6×2줄) — 한국어 학습 인구가 많은 나라 (세종학당 수강생 통계 기준,
+ * 튀르키예·인도는 최근 수요 급증국으로 추가) */
 const COUNTRY_OPTIONS = [
   { flag: '🇰🇷', en: 'South Korea', ko: '대한민국', featured: true },
   { flag: '🇯🇵', en: 'Japan', ko: '일본', featured: true },
@@ -26,7 +27,7 @@ const COUNTRY_OPTIONS = [
   { flag: '🇮🇩', en: 'Indonesia', ko: '인도네시아', featured: true },
   { flag: '🇲🇾', en: 'Malaysia', ko: '말레이시아' },
   { flag: '🇸🇬', en: 'Singapore', ko: '싱가포르' },
-  { flag: '🇮🇳', en: 'India', ko: '인도' },
+  { flag: '🇮🇳', en: 'India', ko: '인도', featured: true },
   { flag: '🇲🇳', en: 'Mongolia', ko: '몽골', featured: true },
   { flag: '🇰🇭', en: 'Cambodia', ko: '캄보디아' },
   { flag: '🇲🇲', en: 'Myanmar', ko: '미얀마' },
@@ -39,7 +40,7 @@ const COUNTRY_OPTIONS = [
   { flag: '🇸🇦', en: 'Saudi Arabia', ko: '사우디아라비아' },
   { flag: '🇦🇪', en: 'United Arab Emirates', ko: '아랍에미리트' },
   { flag: '🇮🇱', en: 'Israel', ko: '이스라엘' },
-  { flag: '🇹🇷', en: 'Turkey', ko: '튀르키예' },
+  { flag: '🇹🇷', en: 'Turkey', ko: '튀르키예', featured: true },
   { flag: '🇮🇷', en: 'Iran', ko: '이란' },
   { flag: '🇮🇶', en: 'Iraq', ko: '이라크' },
   { flag: '🇪🇬', en: 'Egypt', ko: '이집트' },
@@ -84,7 +85,7 @@ const COUNTRY_OPTIONS = [
 /** Figma: 229:3295 — 내 정보 관리 (닉네임·이메일·프로필 이미지 수정) */
 export default function ProfileScreen() {
   const t = languageStore.t;
-  useLanguage();
+  const language = useLanguage();
   const user = authStore.getUser();
 
   const [name, setName] = useState(user?.name ?? '');
@@ -98,15 +99,50 @@ export default function ProfileScreen() {
   const [flagGridW, setFlagGridW] = useState(0);
   const FLAG_GAP = 8;
   const flagCell = flagGridW > 0 ? Math.floor((flagGridW - FLAG_GAP * 5) / 6) : 44;
-  const filteredCountries = countryQuery.trim()
+  /* 현재 UI 언어 국가명은 데이터를 따로 두지 않고 국기 이모지→ISO 코드→Intl.DisplayNames로 얻는다.
+   * Intl 미지원 환경(구형 Hermes 등)에서는 기존 한국어/영어 검색으로 폴백. */
+  const regionNames = useMemo(() => {
+    try { return new Intl.DisplayNames([language], { type: 'region' }); } catch { return null; }
+  }, [language]);
+  const codeOfFlag = (flag: string) =>
+    [...flag].map(ch => String.fromCodePoint((ch.codePointAt(0) ?? 0) - 0x1f1e6 + 65)).join('');
+  const localCountryName = (flag: string) => {
+    try { return regionNames?.of(codeOfFlag(flag)) ?? ''; } catch { return ''; }
+  };
+  const q = countryQuery.trim().toLowerCase();
+  const filteredCountries = q
     ? COUNTRY_OPTIONS.filter(c =>
-        c.en.toLowerCase().includes(countryQuery.trim().toLowerCase()) ||
-        c.ko.includes(countryQuery.trim()),
+        c.en.toLowerCase().includes(q) ||
+        c.ko.includes(countryQuery.trim()) ||
+        localCountryName(c.flag).toLowerCase().includes(q),
       )
     : COUNTRY_OPTIONS.filter(c => c.featured);
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null | undefined>(user?.avatarUrl ?? null);
   const [avatarChange, setAvatarChange] = useState<'unchanged' | 'replace' | 'remove'>('unchanged');
   const [pendingAvatar, setPendingAvatar] = useState<{ uri: string; mimeType?: string | null } | null>(null);
+  /* 사진 관리 진입점은 닉네임 옆 아바타 탭 — 사진 없으면 바로 선택기, 있으면 인라인 메뉴(변경/삭제).
+   * 웹 Alert 래퍼가 버튼 2개까지만 지원해 액션시트 대신 인라인 메뉴를 쓴다. */
+  const [photoMenuOpen, setPhotoMenuOpen] = useState(false);
+  const [tzPickerOpen, setTzPickerOpen] = useState(false);
+  const [tzQuery, setTzQuery] = useState('');
+  const timezoneOptions = useMemo<string[]>(() => {
+    try {
+      const list = (Intl as { supportedValuesOf?: (k: string) => string[] }).supportedValuesOf?.('timeZone');
+      if (list?.length) return ['UTC', ...list.filter(z => z !== 'UTC')];
+    } catch { /* 구형 엔진 폴백 */ }
+    // ponytail: Intl.supportedValuesOf 미지원 엔진용 최소 목록 — 유저 국가 분포 기준, 부족하면 추가
+    return ['UTC', 'Asia/Seoul', 'Asia/Tokyo', 'Asia/Shanghai', 'Asia/Taipei', 'Asia/Hong_Kong',
+      'Asia/Ho_Chi_Minh', 'Asia/Bangkok', 'Asia/Manila', 'Asia/Jakarta', 'Asia/Kuala_Lumpur',
+      'Asia/Singapore', 'Asia/Kolkata', 'Asia/Ulaanbaatar', 'Asia/Tashkent', 'Asia/Almaty',
+      'Europe/Istanbul', 'Asia/Dubai', 'Asia/Riyadh', 'Africa/Cairo', 'Europe/London', 'Europe/Berlin',
+      'Europe/Paris', 'Europe/Madrid', 'Europe/Rome', 'Europe/Moscow', 'Europe/Kyiv', 'Europe/Warsaw',
+      'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Toronto',
+      'America/Mexico_City', 'America/Sao_Paulo', 'America/Buenos_Aires', 'America/Santiago',
+      'America/Bogota', 'America/Lima', 'Australia/Sydney', 'Pacific/Auckland', 'Africa/Johannesburg'];
+  }, []);
+  const filteredTimezones = tzQuery.trim()
+    ? timezoneOptions.filter(z => z.toLowerCase().includes(tzQuery.trim().toLowerCase()))
+    : timezoneOptions;
 
   useEffect(() => {
     return authStore.subscribe(() => {
@@ -242,7 +278,15 @@ export default function ProfileScreen() {
 
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.profileHeader}>
-            <ProfileAvatar uri={avatarPreviewUrl} emoji={emoji} size={76} style={styles.avatarPreview} />
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={avatarPreviewUrl ? t('changePhoto') : t('addPhoto')}
+              onPress={() => (avatarPreviewUrl ? setPhotoMenuOpen(v => !v) : pickPhoto())}
+              activeOpacity={0.8}
+            >
+              <ProfileAvatar uri={avatarPreviewUrl} emoji={emoji} size={76} style={styles.avatarPreview} />
+              <View style={styles.avatarBadge}><Text style={styles.avatarBadgeText}>📷</Text></View>
+            </TouchableOpacity>
             <View style={styles.profileNameBox}>
               <Text style={styles.fieldLabel}>{t('nicknameLabel')}</Text>
               <TextInput
@@ -255,6 +299,22 @@ export default function ProfileScreen() {
               />
             </View>
           </View>
+          {photoMenuOpen && (
+            <View style={styles.photoMenuRow}>
+              <TouchableOpacity
+                style={styles.photoMenuBtn}
+                onPress={() => { setPhotoMenuOpen(false); pickPhoto(); }}
+              >
+                <Text style={styles.photoMenuText}>{t('changePhoto')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.photoMenuBtn}
+                onPress={() => { setPhotoMenuOpen(false); removePhoto(); }}
+              >
+                <Text style={[styles.photoMenuText, { color: Colors.error }]}>{t('removePhoto')}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           <Text style={styles.sectionTitle}>{t('accountInfoSection')}</Text>
 
@@ -282,30 +342,16 @@ export default function ProfileScreen() {
                 secureTextEntry
               />
             </View>
-            <View style={styles.cardItem}>
+            <TouchableOpacity style={styles.cardItem} onPress={() => setTzPickerOpen(true)} activeOpacity={0.7}>
               <Text style={styles.cardLabel}>{t('timezoneLabel')}</Text>
-              <TextInput
-                style={styles.cardInput}
-                value={timezone}
-                onChangeText={setTimezone}
-                placeholder={t('timezonePlaceholder')}
-                placeholderTextColor={Colors.textTertiary}
-                autoCapitalize="none"
-              />
-            </View>
+              <View style={styles.tzValueRow}>
+                <Text style={styles.cardInput}>{timezone}</Text>
+                <Text style={styles.tzChevron}>›</Text>
+              </View>
+            </TouchableOpacity>
           </View>
 
           <Text style={styles.avatarHint}>{t('profileIconHint')}</Text>
-          <View style={styles.avatarActionRow}>
-            <TouchableOpacity style={styles.photoBtn} onPress={pickPhoto} activeOpacity={0.8}>
-              <Text style={styles.photoBtnText}>{avatarPreviewUrl ? t('changePhoto') : t('addPhoto')}</Text>
-            </TouchableOpacity>
-            {avatarPreviewUrl ? (
-              <TouchableOpacity style={styles.photoRemoveBtn} onPress={removePhoto} activeOpacity={0.8}>
-                <Text style={styles.photoRemoveText}>{t('removePhoto')}</Text>
-              </TouchableOpacity>
-            ) : null}
-          </View>
           <Text style={styles.avatarHintSmall}>{t('avatarHintSmall')}</Text>
           <TextInput
             style={styles.countrySearchInput}
@@ -334,6 +380,39 @@ export default function ProfileScreen() {
             <Text style={styles.logoutText}>{t('withdrawAccount')}</Text>
           </TouchableOpacity>
         </ScrollView>
+
+        <Modal visible={tzPickerOpen} transparent animationType="fade" onRequestClose={() => setTzPickerOpen(false)}>
+          <View style={styles.tzModalBackdrop}>
+            <View style={styles.tzModalCard}>
+              <Text style={styles.tzModalTitle}>{t('timezoneLabel')}</Text>
+              <TextInput
+                style={styles.countrySearchInput}
+                value={tzQuery}
+                onChangeText={setTzQuery}
+                placeholder={t('timezonePlaceholder')}
+                placeholderTextColor={Colors.textTertiary}
+                autoCapitalize="none"
+              />
+              <FlatList
+                data={filteredTimezones}
+                keyExtractor={z => z}
+                style={styles.tzList}
+                keyboardShouldPersistTaps="handled"
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[styles.tzRow, item === timezone && styles.tzRowActive]}
+                    onPress={() => { setTimezone(item); setTzQuery(''); setTzPickerOpen(false); }}
+                  >
+                    <Text style={[styles.tzRowText, item === timezone && styles.tzRowTextActive]}>{item}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+              <TouchableOpacity style={styles.tzCloseBtn} onPress={() => { setTzQuery(''); setTzPickerOpen(false); }}>
+                <Text style={styles.tzCloseText}>{t('cancelLabel')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
@@ -378,26 +457,38 @@ const styles = StyleSheet.create({
 
   avatarHint: { fontSize: 12, color: Colors.textTertiary, marginBottom: 8 },
   avatarHintSmall: { fontSize: 11, color: Colors.textTertiary, marginBottom: 14 },
-  avatarActionRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
-  photoBtn: {
-    flex: 1,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: Colors.navBar,
-    alignItems: 'center',
-    justifyContent: 'center',
+  avatarBadge: {
+    position: 'absolute', right: -2, bottom: -2,
+    width: 26, height: 26, borderRadius: 13,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    alignItems: 'center', justifyContent: 'center',
   },
-  photoBtnText: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
-  photoRemoveBtn: {
-    height: 44,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
+  avatarBadgeText: { fontSize: 13 },
+  photoMenuRow: { flexDirection: 'row', gap: 10, marginTop: -8 },
+  photoMenuBtn: {
+    flex: 1, height: 40, borderRadius: 10,
+    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.surface,
+    alignItems: 'center', justifyContent: 'center',
   },
-  photoRemoveText: { fontSize: 14, color: Colors.textSecondary },
+  photoMenuText: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
+  tzValueRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  tzChevron: { fontSize: 18, color: Colors.textTertiary },
+  tzModalBackdrop: {
+    flex: 1, backgroundColor: 'rgba(30, 29, 26, 0.45)',
+    alignItems: 'center', justifyContent: 'center', padding: 24,
+  },
+  tzModalCard: {
+    width: '100%', maxHeight: '75%',
+    backgroundColor: Colors.background, borderRadius: 16, padding: 16, gap: 10,
+  },
+  tzModalTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  tzList: { flexGrow: 0 },
+  tzRow: { paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: Colors.divider },
+  tzRowActive: { backgroundColor: Colors.accent + '15', borderRadius: 8 },
+  tzRowText: { fontSize: 14, color: Colors.textPrimary },
+  tzRowTextActive: { color: Colors.accent, fontWeight: '700' },
+  tzCloseBtn: { height: 44, alignItems: 'center', justifyContent: 'center' },
+  tzCloseText: { fontSize: 15, color: Colors.textSecondary },
 
   countrySearchInput: {
     height: 40, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,

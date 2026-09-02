@@ -244,7 +244,7 @@ export const es = {
     addPhoto: 'Agregar foto',
     removePhoto: 'Quitar foto',
     avatarHintSmall: 'Puedes elegir un emoji de bandera o una foto de perfil.',
-    countrySearchPlaceholder: 'Buscar país (coreano/inglés)',
+    countrySearchPlaceholder: 'Buscar país',
     withdrawAccount: 'Eliminar cuenta',
     withdrawConfirmTitle: 'Eliminar cuenta',
     withdrawConfirmMessage: '¿Estás seguro? Las palabras guardadas, publicaciones y todos tus datos se eliminarán de forma permanente.',

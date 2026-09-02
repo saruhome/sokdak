@@ -244,7 +244,7 @@ export const ja = {
     addPhoto: '写真を追加',
     removePhoto: '写真を削除',
     avatarHintSmall: '国旗の絵文字またはプロフィール写真を選択できます。',
-    countrySearchPlaceholder: '国を検索（韓国語/英語）',
+    countrySearchPlaceholder: '国を検索',
     withdrawAccount: '退会する',
     withdrawConfirmTitle: '退会する',
     withdrawConfirmMessage: '本当に退会しますか？保存した単語、投稿など、すべての情報が削除され、元に戻せません。',

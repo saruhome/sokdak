@@ -36,6 +36,6 @@ export type Post = {
 export const BOARD_COLORS: Record<PostBoard, { bg: string; fg: string }> = {
   // 2026-08-31 질문=밝은 오렌지(frequently-used), 자유=밝고 진한 초록(new-slang) 토큰 재사용.
   // bg는 배지 채움 + 필터바 탭 텍스트/밑줄 색으로도 쓰이므로 파스텔 금지(크림 배경 위 가독성).
-  '질문': { bg: '#FF6B35', fg: '#FFF7EF' },
+  '질문': { bg: '#E06A3B', fg: '#FFF7EF' }, // 2026-09-02 톤 다운 (#FF6B35가 너무 쨍하다는 피드백)
   '자유': { bg: '#3DAA6E', fg: '#FFF7EF' },
 };

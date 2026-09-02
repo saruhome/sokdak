@@ -244,7 +244,7 @@ export const en = {
     addPhoto: 'Add photo',
     removePhoto: 'Remove photo',
     avatarHintSmall: 'Choose a flag emoji or a profile photo.',
-    countrySearchPlaceholder: 'Search country (Korean/English)',
+    countrySearchPlaceholder: 'Search country',
     withdrawAccount: 'Delete Account',
     withdrawConfirmTitle: 'Delete Account',
     withdrawConfirmMessage: 'Are you sure? Saved words, posts, and all your data will be permanently deleted.',

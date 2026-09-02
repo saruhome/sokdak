@@ -4,7 +4,8 @@ import { AppText as Text } from '@/components/AppText';
 import { Colors } from '@/constants/Colors';
 import { tFor, type Language, type TranslationKey } from '@/constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
-import { Ban, Flag, Pencil, Trash2 } from 'lucide-react-native';
+import { BottomSheet } from '@/components/BottomSheet';
+import { Ban, Check, ChevronDown, Flag, Pencil, Trash2 } from 'lucide-react-native';
 
 export type SafetyTarget = { kind: 'post' | 'comment'; isOwner: boolean };
 
@@ -27,8 +28,9 @@ export function composeReportReason(slug: string, freeText: string): string {
  * 게시글/댓글 공용 안전 액션 시트.
  * - 내 글: 수정/삭제 (동작은 콜백 — 삭제 확인은 부모의 confirm 다이얼로그가 담당)
  * - 남의 글: 신고/차단 (차단 확인도 부모 담당)
- * - 신고는 사유 chip 1개 선택이 필수, 자유 입력은 선택. menu → form → sending → success
- *   상태를 내부에서 분리해 사용자가 결과를 예측할 수 있게 한다.
+ * - 신고 폼/완료는 고객센터 문의 폼과 동일한 바텀시트 디자인·애니메이션(운영자 지시 2026-09-02):
+ *   슬라이드업 BottomSheet + 유형 드롭다운(사유 피커 시트) + 접수 완료 시트.
+ *   menu → form → sending → success 상태 분리는 그대로 유지.
  */
 export function CommunitySafetyActionSheet({
   language,
@@ -52,6 +54,7 @@ export function CommunitySafetyActionSheet({
   const t = (key: TranslationKey) => tFor(language, key);
   const [stage, setStage] = useState<'menu' | 'form' | 'sending' | 'success'>('menu');
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const [reasonPickerOpen, setReasonPickerOpen] = useState(false);
   const [freeText, setFreeText] = useState('');
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -60,6 +63,7 @@ export function CommunitySafetyActionSheet({
     if (target) {
       setStage('menu');
       setSelectedSlug(null);
+      setReasonPickerOpen(false);
       setFreeText('');
       setSubmitError(null);
     }
@@ -80,14 +84,12 @@ export function CommunitySafetyActionSheet({
     setStage('success');
   };
 
-  return (
-    <Modal visible transparent animationType="fade" onRequestClose={onClose}>
-      <TouchableOpacity
-        style={[styles.backdrop, stage !== 'menu' && styles.backdropCentered]}
-        activeOpacity={1}
-        onPress={stage === 'sending' ? undefined : onClose}
-      >
-        {stage === 'menu' ? (
+  const selectedLabel = REPORT_REASONS.find(r => r.slug === selectedSlug)?.labelKey;
+
+  if (stage === 'menu') {
+    return (
+      <Modal visible transparent animationType="fade" onRequestClose={onClose}>
+        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose}>
           <View style={[styles.menuSheet, { top: anchorTop }]}>
             {target.isOwner ? (
               <>
@@ -115,86 +117,108 @@ export function CommunitySafetyActionSheet({
               </>
             )}
           </View>
-        ) : stage === 'success' ? (
-          <TouchableOpacity style={styles.card} activeOpacity={1}>
-            <Text style={styles.cardTitle}>{t('reportReceivedTitle')}</Text>
-            <Text style={styles.cardSub}>{t('reportReceivedMessage')}</Text>
-            <TouchableOpacity style={styles.primaryBtn} onPress={onClose} accessibilityRole="button">
-              <Text style={styles.primaryBtnText}>{t('confirmLabel')}</Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        ) : (
-          /* form + sending */
-          <TouchableOpacity style={styles.card} activeOpacity={1}>
-            <Text style={styles.cardTitle}>
-              {target.kind === 'comment' ? t('reportCommentTitle') : t('reportPostTitle')}
+        </TouchableOpacity>
+      </Modal>
+    );
+  }
+
+  if (stage === 'success') {
+    return (
+      <BottomSheet visible onClose={onClose} panelStyle={styles.receiptPanel}>
+        <View style={styles.sheetHandle} />
+        <View style={styles.receiptCheckBadge}>
+          <AppIcon icon={Check} size={28} color={Colors.textPrimary} />
+        </View>
+        <Text style={styles.receiptTitle}>{t('reportReceivedTitle')}</Text>
+        <Text style={styles.receiptSub}>{t('reportReceivedMessage')}</Text>
+      </BottomSheet>
+    );
+  }
+
+  /* form + sending — 고객센터 문의 폼과 동일 구성: 제목/유형 드롭다운/내용 입력/구분선/전체폭 제출 */
+  return (
+    <>
+      <BottomSheet
+        visible
+        onClose={stage === 'sending' ? () => {} : onClose}
+        panelStyle={styles.sheetPanel}
+      >
+        <View style={styles.sheetHandle} />
+        <Text style={styles.sheetTitle}>
+          {target.kind === 'comment' ? t('reportCommentTitle') : t('reportPostTitle')}
+        </Text>
+        <Text style={styles.sheetSub}>{t('reportSheetSub')}</Text>
+
+        <View style={styles.formField}>
+          <Text style={styles.formLabel}>{t('inquiryTypeLabel')}</Text>
+          <TouchableOpacity
+            accessibilityRole="button"
+            style={styles.typeSelect}
+            onPress={() => setReasonPickerOpen(true)}
+            disabled={stage === 'sending'}
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.typeSelectText, selectedLabel && styles.typeSelectTextFilled]}>
+              {selectedLabel ? t(selectedLabel) : t('inquiryTypePlaceholder')}
             </Text>
-            <Text style={styles.cardSub}>{t('reportSheetSub')}</Text>
-
-            <View style={styles.chipWrap}>
-              {REPORT_REASONS.map(({ slug, labelKey }) => {
-                const selected = selectedSlug === slug;
-                return (
-                  <TouchableOpacity
-                    key={slug}
-                    style={[styles.chip, selected && styles.chipSelected]}
-                    onPress={() => setSelectedSlug(slug)}
-                    disabled={stage === 'sending'}
-                    accessibilityRole="button"
-                    accessibilityLabel={t(labelKey)}
-                    accessibilityState={{ selected }}
-                  >
-                    <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{t(labelKey)}</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-
-            <TextInput
-              style={styles.detailInput}
-              value={freeText}
-              onChangeText={setFreeText}
-              placeholder={t('reportReasonPlaceholder')}
-              placeholderTextColor={Colors.textTertiary}
-              multiline
-              maxLength={300}
-              editable={stage !== 'sending'}
-            />
-
-            {submitError && <Text style={styles.errorText}>{submitError}</Text>}
-
-            <View style={styles.actions}>
-              <TouchableOpacity
-                style={styles.cancelBtn}
-                onPress={onClose}
-                disabled={stage === 'sending'}
-                accessibilityRole="button"
-              >
-                <Text style={styles.cancelText}>{t('cancelLabel')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.primaryBtn, styles.actionsPrimary, (!selectedSlug || stage === 'sending') && styles.btnDisabled]}
-                onPress={handleSubmit}
-                disabled={!selectedSlug || stage === 'sending'}
-                accessibilityRole="button"
-                accessibilityLabel={t('reportSubmitBtn')}
-                accessibilityState={{ disabled: !selectedSlug || stage === 'sending', busy: stage === 'sending' }}
-              >
-                <Text style={styles.primaryBtnText}>
-                  {stage === 'sending' ? t('reportSubmittingLabel') : t('reportSubmitBtn')}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <AppIcon icon={ChevronDown} size={16} color={Colors.textSecondary} />
           </TouchableOpacity>
-        )}
-      </TouchableOpacity>
-    </Modal>
+        </View>
+
+        <View style={styles.formField}>
+          <Text style={styles.formLabel}>{t('inquiryContentLabel')}</Text>
+          <TextInput
+            style={styles.detailInput}
+            value={freeText}
+            onChangeText={setFreeText}
+            placeholder={t('reportReasonPlaceholder')}
+            placeholderTextColor={Colors.textTertiary}
+            multiline
+            numberOfLines={4}
+            maxLength={300}
+            editable={stage !== 'sending'}
+          />
+        </View>
+
+        {submitError && <Text style={styles.errorText}>{submitError}</Text>}
+
+        <View style={styles.sheetDivider} />
+        <TouchableOpacity
+          accessibilityRole="button"
+          style={[styles.submitBtn, (!selectedSlug || stage === 'sending') && styles.submitBtnDisabled]}
+          onPress={handleSubmit}
+          disabled={!selectedSlug || stage === 'sending'}
+          activeOpacity={0.85}
+          accessibilityLabel={t('reportSubmitBtn')}
+          accessibilityState={{ disabled: !selectedSlug || stage === 'sending', busy: stage === 'sending' }}
+        >
+          <Text style={styles.submitBtnText}>
+            {stage === 'sending' ? t('reportSubmittingLabel') : t('reportSubmitBtn')}
+          </Text>
+        </TouchableOpacity>
+      </BottomSheet>
+
+      {/* ── 신고 사유 선택 시트 (고객센터 유형 피커와 동일 패턴) ── */}
+      <BottomSheet visible={reasonPickerOpen} onClose={() => setReasonPickerOpen(false)} panelStyle={styles.pickerSheet}>
+        <View style={styles.sheetHandle} />
+        {REPORT_REASONS.map(({ slug, labelKey }) => (
+          <TouchableOpacity
+            accessibilityRole="button"
+            key={slug}
+            style={styles.pickerOptionRow}
+            onPress={() => { setSelectedSlug(slug); setReasonPickerOpen(false); }}
+            accessibilityState={{ selected: selectedSlug === slug }}
+          >
+            <Text style={styles.pickerOptionText}>{t(labelKey)}</Text>
+          </TouchableOpacity>
+        ))}
+      </BottomSheet>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   backdrop: { flex: 1 },
-  backdropCentered: { justifyContent: 'center' },
 
   /* 케밥 메뉴 — 기존 [id].tsx menuSheet와 동일 스펙 */
   menuSheet: {
@@ -211,45 +235,69 @@ const styles = StyleSheet.create({
   menuItemText: { fontSize: 13, color: Colors.textPrimary, fontFamily: undefined, flexShrink: 0 },
   menuDivider: { height: 1, backgroundColor: Colors.border },
 
-  /* 신고 form/성공 카드 — 기존 reportSheet와 동일 스펙 */
-  card: {
-    marginHorizontal: 24, padding: 20, borderRadius: 14,
-    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
-    gap: 10,
-  },
-  cardTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  cardSub: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17 },
-
-  chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: {
-    minHeight: 36, paddingHorizontal: 12, justifyContent: 'center',
-    borderRadius: 18, borderWidth: 1, borderColor: Colors.border,
+  /* ── 이하 전부 고객센터(support.tsx) 문의 시트와 동일 스펙 ── */
+  sheetPanel: {
     backgroundColor: Colors.background,
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    borderWidth: 1, borderColor: Colors.border, borderBottomWidth: 0,
+    paddingHorizontal: 24, paddingTop: 12, paddingBottom: 32,
+    gap: 16, alignItems: 'center',
   },
-  chipSelected: { backgroundColor: Colors.navBar, borderColor: Colors.navBar },
-  chipText: { fontSize: 12, color: Colors.textSecondary },
-  chipTextSelected: { color: Colors.navBarIconActive, fontWeight: '700' },
+  sheetHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: Colors.border, marginBottom: 4 },
+  sheetTitle: { alignSelf: 'flex-start', fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
+  sheetSub: { alignSelf: 'flex-start', fontSize: 12, color: Colors.textSecondary, lineHeight: 17, marginTop: -8 },
+  sheetDivider: { alignSelf: 'stretch', height: 1, backgroundColor: Colors.border },
+
+  formField: { alignSelf: 'stretch', gap: 8 },
+  formLabel: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary, fontFamily: undefined },
+  typeSelect: {
+    height: 44, paddingHorizontal: 16, borderRadius: 10,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+  },
+  typeSelectText: { fontSize: 13, color: Colors.textTertiary, fontFamily: undefined },
+  typeSelectTextFilled: { color: Colors.textPrimary },
 
   detailInput: {
-    minHeight: 64, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
-    backgroundColor: Colors.background, padding: 12,
+    minHeight: 88, borderRadius: 10, padding: 12,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
     fontSize: 14, color: Colors.textPrimary, textAlignVertical: 'top',
   },
-  errorText: { fontSize: 12, color: Colors.error },
+  errorText: { alignSelf: 'flex-start', fontSize: 12, color: Colors.error },
 
-  actions: { flexDirection: 'row', gap: 8, marginTop: 4 },
-  cancelBtn: {
-    flex: 1, height: 44, borderRadius: 10,
+  submitBtn: {
+    alignSelf: 'stretch',
+    height: 44, borderRadius: 10, backgroundColor: Colors.navBar,
     alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.border,
   },
-  cancelText: { fontSize: 14, color: Colors.textSecondary },
-  primaryBtn: {
-    height: 44, borderRadius: 10,
+  submitBtnDisabled: { opacity: 0.4 },
+  submitBtnText: { fontSize: 14, fontWeight: '600', color: Colors.navBarIconActive },
+
+  pickerSheet: {
+    backgroundColor: Colors.background,
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    borderWidth: 1, borderColor: Colors.border, borderBottomWidth: 0,
+    paddingHorizontal: 24, paddingTop: 12, paddingBottom: 32,
+    alignItems: 'center',
+  },
+  pickerOptionRow: {
+    alignSelf: 'stretch', paddingVertical: 14,
+    borderBottomWidth: 1, borderBottomColor: Colors.divider,
+  },
+  pickerOptionText: { fontSize: 15, color: Colors.textPrimary, fontFamily: undefined },
+
+  receiptPanel: {
+    backgroundColor: Colors.background,
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    borderWidth: 1, borderColor: Colors.border, borderBottomWidth: 0,
+    paddingHorizontal: 24, paddingTop: 12, paddingBottom: 40,
+    gap: 20, alignItems: 'center',
+  },
+  receiptCheckBadge: {
+    width: 72, height: 72, borderRadius: 36, marginTop: 12,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
     alignItems: 'center', justifyContent: 'center',
-    backgroundColor: Colors.navBar, paddingHorizontal: 16,
   },
-  actionsPrimary: { flex: 1 },
-  primaryBtnText: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
-  btnDisabled: { backgroundColor: Colors.border },
+  receiptTitle: { fontSize: 19, fontWeight: '700', fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, textAlign: 'center' },
+  receiptSub: { fontSize: 12, color: Colors.textSecondary, textAlign: 'center', marginTop: -12 },
 });

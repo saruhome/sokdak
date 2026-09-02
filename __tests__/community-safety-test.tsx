@@ -80,11 +80,11 @@ describe('CommunitySafetyActionSheet', () => {
     await fireEvent.press(submit);
     expect(onSubmitReport).not.toHaveBeenCalled();
 
-    /* chip 선택 + 자유 입력 → slug와 합쳐진 단일 reason 문자열로 제출 */
-    await fireEvent.press(screen.getByLabelText(tFor('ko', 'reportReasonSpam')));
-    expect(
-      screen.getByLabelText(tFor('ko', 'reportReasonSpam')).props.accessibilityState?.selected,
-    ).toBe(true);
+    /* 사유 피커 시트에서 선택 + 자유 입력 → slug와 합쳐진 단일 reason 문자열로 제출 */
+    await fireEvent.press(screen.getByText(tFor('ko', 'inquiryTypePlaceholder')));
+    await fireEvent.press(screen.getByText(tFor('ko', 'reportReasonSpam')));
+    /* 드롭다운에 선택된 라벨이 표시된다 */
+    expect(screen.getAllByText(tFor('ko', 'reportReasonSpam')).length).toBeGreaterThanOrEqual(1);
     await fireEvent.changeText(
       screen.getByPlaceholderText(tFor('ko', 'reportReasonPlaceholder')),
       '광고 계정 같아요',
@@ -92,10 +92,9 @@ describe('CommunitySafetyActionSheet', () => {
     await fireEvent.press(screen.getByLabelText(tFor('ko', 'reportSubmitBtn')));
 
     expect(onSubmitReport).toHaveBeenCalledWith('[spam-ad] 광고 계정 같아요');
-    /* success 상태 — 접수 안내와 확인 버튼 */
+    /* success 상태 — 고객센터 접수 완료와 동일한 시트 */
     await waitFor(() => expect(screen.getByText(tFor('ko', 'reportReceivedTitle'))).toBeTruthy());
-    await fireEvent.press(screen.getByText(tFor('ko', 'confirmLabel')));
-    expect(baseProps.onClose).toHaveBeenCalled();
+    expect(screen.getByText(tFor('ko', 'reportReceivedMessage'))).toBeTruthy();
   });
 
   it('surfaces a submit failure and stays on the form with input preserved', async () => {
@@ -108,14 +107,13 @@ describe('CommunitySafetyActionSheet', () => {
       />,
     );
     await fireEvent.press(screen.getByText(tFor('ko', 'reportLabel')));
-    await fireEvent.press(screen.getByLabelText(tFor('ko', 'reportReasonHarassment')));
+    await fireEvent.press(screen.getByText(tFor('ko', 'inquiryTypePlaceholder')));
+    await fireEvent.press(screen.getByText(tFor('ko', 'reportReasonHarassment')));
     await fireEvent.press(screen.getByLabelText(tFor('ko', 'reportSubmitBtn')));
 
     await waitFor(() => expect(screen.getByText('네트워크 오류')).toBeTruthy());
     /* 실패 후에도 form 유지 + 선택 보존 → 바로 재시도 가능 */
     expect(screen.getByText(tFor('ko', 'reportPostTitle'))).toBeTruthy();
-    expect(
-      screen.getByLabelText(tFor('ko', 'reportReasonHarassment')).props.accessibilityState?.selected,
-    ).toBe(true);
+    expect(screen.getAllByText(tFor('ko', 'reportReasonHarassment')).length).toBeGreaterThanOrEqual(1);
   });
 });

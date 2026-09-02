@@ -330,5 +330,5 @@ export const de = {
     streakLabel: 'Lernserie',
     streakDayCount: 'Tag {n}',
     mascotBubbleCta: 'Antippen >',
-    premiumGlossLocked: '🔒 Die Bedeutung gibt\'s mit Premium',
+    premiumGlossLocked: 'Die Bedeutung gibt\'s mit Premium',
 } satisfies Record<TranslationKey, string>;

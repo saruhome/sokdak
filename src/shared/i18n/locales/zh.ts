@@ -336,5 +336,5 @@ export const zh = {
     streakLabel: '连续学习',
     streakDayCount: '第{n}天',
     mascotBubbleCta: '点一下 >',
-    premiumGlossLocked: '🔒 解锁释义需要高级版',
+    premiumGlossLocked: '解锁释义需要高级版',
 } satisfies Record<TranslationKey, string>;

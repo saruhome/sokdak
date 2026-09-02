@@ -337,5 +337,5 @@ export const ar = {
     streakLabel: 'أيام التعلم المتتالية',
     streakDayCount: 'اليوم {n}',
     mascotBubbleCta: 'اضغط >',
-    premiumGlossLocked: '🔒 افتح الشرح مع بريميوم',
+    premiumGlossLocked: 'افتح الشرح مع بريميوم',
 } satisfies Record<TranslationKey, string>;

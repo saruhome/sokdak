@@ -335,5 +335,5 @@ export const tr = {
     streakLabel: 'Çalışma serisi',
     streakDayCount: '{n}. gün',
     mascotBubbleCta: 'Dokun >',
-    premiumGlossLocked: '🔒 Anlamı Premium ile aç',
+    premiumGlossLocked: 'Anlamı Premium ile aç',
 } satisfies Record<TranslationKey, string>;

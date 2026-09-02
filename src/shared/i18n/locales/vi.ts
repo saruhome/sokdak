@@ -330,5 +330,5 @@ export const vi = {
     streakLabel: 'Chuỗi ngày học',
     streakDayCount: 'Ngày {n}',
     mascotBubbleCta: 'Nhấn thử >',
-    premiumGlossLocked: '🔒 Mở khóa phần giải nghĩa với Premium',
+    premiumGlossLocked: 'Mở khóa phần giải nghĩa với Premium',
 } satisfies Record<TranslationKey, string>;

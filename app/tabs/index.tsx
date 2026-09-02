@@ -16,7 +16,7 @@ import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStor
 import { TopAppBar } from '@/components/navigation/TopAppBar';
 import { EXPRESSIONS, SITUATION_LABEL_KEY, expressionGloss, pickDaily } from '@/src/features/home/model/dailyPicks';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Eye, Heart, MessageCircle, ChevronRight } from 'lucide-react-native';
+import { Eye, Heart, MessageCircle, ChevronRight, Crown, Lock } from 'lucide-react-native';
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */
 const HERO_AUTOPLAY_INTERVAL = 4000;
@@ -128,30 +128,34 @@ export default function HomeScreen() {
                 </TouchableOpacity>
               );
             })}
-            {/* ── 오늘의 실전 표현 — 별도 카드가 아닌 히어로 콘텐츠 유형(운영자 지시 2026-09-03) */}
+            {/* ── 오늘의 실전 표현 — 히어로 콘텐츠 유형. 프리미엄 훅 슬라이드는 항상
+             * 더 특별하게(운영자 규칙 2026-09-03): 골드 배경 + Crown 배지 + 라인 Lock */}
             {todayExpressions.map((expr, i) => (
               <TouchableOpacity
                 key={`expr-${i}`}
-                style={[styles.heroCard, { backgroundColor: Colors.point1 }]}
+                style={[styles.heroCard, { backgroundColor: Colors.premium }]}
                 onPress={() => { if (!BETA_UNLIMITED_ENTITLEMENTS && !isPremium) router.push('/tabs/mypage/premium'); }}
                 activeOpacity={0.9}
                 testID="hero-expression-slide"
               >
-                <View style={styles.heroScrim} />
                 <View style={styles.heroContent}>
-                  <View style={[styles.heroBadge, styles.exprSituationBadge]}>
-                    <Text style={[styles.heroBadgeText, styles.exprSituationText]}>
+                  <View style={[styles.heroBadge, styles.exprHeroBadge]}>
+                    <AppIcon icon={Crown} size={12} color={Colors.premiumText} />
+                    <Text style={[styles.heroBadgeText, styles.exprHeroBadgeText]}>
                       {t('todayExpressionTitle')} · {t(SITUATION_LABEL_KEY[expr.situation])}
                     </Text>
                   </View>
                   <Text style={styles.heroWord} numberOfLines={1}>{expr.ko}</Text>
                   {/* 뜻/해석은 프리미엄 전용 — 한국어 원문은 공개해 궁금증(전환 훅)을 남긴다 */}
                   {BETA_UNLIMITED_ENTITLEMENTS || isPremium ? (
-                    <Text style={styles.heroDesc} numberOfLines={1}>{expressionGloss(expr, language)}</Text>
+                    <Text style={styles.exprHeroGloss} numberOfLines={1}>{expressionGloss(expr, language)}</Text>
                   ) : (
-                    <Text style={styles.exprLocked} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
-                      {t('premiumGlossLocked')}
-                    </Text>
+                    <View style={styles.exprLockedRow}>
+                      <AppIcon icon={Lock} size={13} color={Colors.textPrimary} />
+                      <Text style={styles.exprLocked} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+                        {t('premiumGlossLocked')}
+                      </Text>
+                    </View>
                   )}
                 </View>
               </TouchableOpacity>
@@ -314,10 +318,12 @@ const styles = StyleSheet.create({
   moreLink: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   moreLinkText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
 
-  /* 오늘의 실전 표현 히어로 슬라이드 */
-  exprLocked: { fontSize: 13, fontWeight: '600', color: Colors.premiumText },
-  exprSituationBadge: { backgroundColor: Colors.surface },
-  exprSituationText: { color: Colors.point1 },
+  /* 오늘의 실전 표현 히어로 슬라이드 — 골드 배경 위 텍스트는 textPrimary(≈8.8:1) */
+  exprLockedRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  exprLocked: { flexShrink: 1, fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  exprHeroBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.surface },
+  exprHeroBadgeText: { color: Colors.premiumText },
+  exprHeroGloss: { fontSize: 14, color: Colors.textPrimary, lineHeight: 18, fontFamily: undefined, opacity: 0.85 },
 
   /* 새로운 신조어 카드 */
   wordCardRow: { gap: 16, paddingRight: 24 },

@@ -14,7 +14,7 @@ import { CharacterEmptyState } from '@/components/CharacterEmptyState';
 import { CommunityPostCard } from '@/src/features/community/components/CommunityPostCard';
 import { CommunityFilterBar, type CommunityBoardTab } from '@/src/features/community/components/CommunityFilterBar';
 import { CommunityGuestCallout } from '@/src/features/community/components/CommunityGuestCallout';
-import { Eye, Heart, MessageCircle, Pencil } from 'lucide-react-native';
+import { Pin, Eye, Heart, MessageCircle, Pencil } from 'lucide-react-native';
 
 const JJAEKI_READING = require('../../../assets/characters/transparent/jjaeki-reading.png');
 
@@ -118,7 +118,7 @@ export default function CommunityScreen() {
         keyExtractor={item => item.id}
         ListHeaderComponent={
           <>
-            {/* ── 운영자 공지 핀 — 언어 중립 📌 아이콘만 사용, 별도 라벨/번역 키 없음 */}
+            {/* ── 운영자 공지 핀 — 언어 중립 라인 아이콘(Pin)만 사용, 별도 라벨/번역 키 없음 */}
             {pinned && (
               <TouchableOpacity
                 style={styles.pinnedRow}
@@ -127,7 +127,7 @@ export default function CommunityScreen() {
                 accessibilityRole="button"
                 testID="community-pinned-notice"
               >
-                <Text style={styles.pinnedEmoji}>📌</Text>
+                <AppIcon icon={Pin} size={13} color={Colors.premiumText} />
                 <Text style={styles.pinnedTitle} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{pinned.title}</Text>
               </TouchableOpacity>
             )}
@@ -254,7 +254,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10, paddingHorizontal: 16, backgroundColor: Colors.premium + '12',
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
-  pinnedEmoji: { fontSize: 12 },
   pinnedTitle: { flexShrink: 1, fontSize: 12, fontWeight: '600', color: Colors.premiumText },
 
   /* Featured */

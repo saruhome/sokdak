@@ -210,7 +210,8 @@ export default function CategoryScreen() {
                     </TouchableOpacity>
                   )}
                 </View>
-                <View style={styles.cardTextWrap}>
+                {/* 이미지 카드 한정 스크림 — 배경 그림이 복잡해도 이름이 항상 읽히게 */}
+                <View style={[styles.cardTextWrap, item.image && styles.cardTextScrim]}>
                   <Text
                     style={[styles.categoryName, { color: labelColor }]}
                     numberOfLines={2}
@@ -318,6 +319,12 @@ const styles = StyleSheet.create({
   likeBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   likeIcon: { width: 24, height: 24 },
   cardTextWrap: { position: 'absolute', left: 12, right: 12, bottom: 10 },
+  cardTextScrim: {
+    left: 8, right: 8, bottom: 8,
+    backgroundColor: 'rgba(246, 242, 234, 0.85)',
+    borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4,
+    alignSelf: 'flex-start',
+  },
   /* 카드 텍스트는 기존 대비 더 작게 보여야 하므로 70% 크기로 조정. */
   categoryName: { fontSize: 26, lineHeight: 31, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
 });

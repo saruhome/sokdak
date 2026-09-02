@@ -101,11 +101,6 @@ export default function CommunityScreen() {
     () => !loading ? selectFeaturedPosts(allPosts.length ? allPosts : posts) : [],
     [loading, allPosts, posts],
   );
-  /* 화제의 글으로 올라간 글은 아래 목록에서 제외 — 같은 화면에 같은 글이 두 번 보이지 않게 */
-  const listPosts = useMemo(() => {
-    const featuredIds = new Set(featured.map(post => post.id));
-    return featuredIds.size === 0 ? posts : posts.filter(post => !featuredIds.has(post.id));
-  }, [featured, posts]);
   const goToWrite = () => router.push(authStore.isLoggedIn() ? '/tabs/community/write' : '/auth/login');
 
   return (
@@ -114,7 +109,7 @@ export default function CommunityScreen() {
 
       <FlatList
         testID="community-post-list"
-        data={listPosts}
+        data={posts}
         keyExtractor={item => item.id}
         ListHeaderComponent={
           <>

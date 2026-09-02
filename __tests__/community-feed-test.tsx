@@ -47,20 +47,20 @@ describe('selectFeaturedPosts policy', () => {
   });
 });
 
-describe('community feed featured dedup', () => {
+describe('community feed featured posts', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('does not show a featured post twice — it is removed from the main list', async () => {
+  it('keeps featured posts in the board list too (operator decision 2026-09-03)', async () => {
     const posts = [post('a', 1), post('b', 50), post('c', 3), post('d', 40), post('e', 2)];
     mockFetchPostsPage.mockResolvedValue({ posts, hasMore: false, nextOffset: 5 });
 
     const screen = await render(<CommunityScreen />);
     await waitFor(() => expect(screen.getByText('게시글 a')).toBeTruthy());
 
-    /* b·d는 화제의 질문 카드에만, 나머지는 목록에만 — 각 제목이 화면에 정확히 한 번 */
-    for (const id of ['a', 'b', 'c', 'd', 'e']) {
-      expect(screen.getAllByText(`게시글 ${id}`)).toHaveLength(1);
-    }
+    /* b·d는 화제의 글 카드 + 게시판 목록 양쪽에(2회), 나머지는 목록에만(1회) —
+     * 화제 카드 때문에 보드 탭 목록에서 글이 사라지면 안 된다 */
+    for (const id of ['b', 'd']) expect(screen.getAllByText(`게시글 ${id}`)).toHaveLength(2);
+    for (const id of ['a', 'c', 'e']) expect(screen.getAllByText(`게시글 ${id}`)).toHaveLength(1);
   });
 
   it('renders the operator pinned notice above the feed when one exists', async () => {

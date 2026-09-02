@@ -331,4 +331,5 @@ export const ko = {
     streakLabel: '연속 학습',
     streakDayCount: '{n}일째',
     mascotBubbleCta: '눌러봐요 >',
+    premiumGlossLocked: '🔒 해석은 프리미엄에서 볼 수 있어요',
 } satisfies Record<TranslationKey, string>;

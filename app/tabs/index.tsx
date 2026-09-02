@@ -155,7 +155,16 @@ export default function HomeScreen() {
                   <Text style={styles.exprSituationText}>{t(SITUATION_LABEL_KEY[expr.situation])}</Text>
                 </View>
                 <Text style={styles.exprKo}>{expr.ko}</Text>
-                <Text style={styles.exprEn}>{expressionGloss(expr, language)}</Text>
+                {/* 뜻/해석은 프리미엄 전용 — 한국어 원문은 공개해 궁금증(전환 훅)을 남긴다 */}
+                {BETA_UNLIMITED_ENTITLEMENTS || isPremium ? (
+                  <Text style={styles.exprEn}>{expressionGloss(expr, language)}</Text>
+                ) : (
+                  <TouchableOpacity onPress={() => router.push('/tabs/mypage/premium')} activeOpacity={0.8}>
+                    <Text style={styles.exprLocked} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+                      {t('premiumGlossLocked')}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </View>
             ))}
             {!BETA_UNLIMITED_ENTITLEMENTS && !isPremium && (
@@ -339,6 +348,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border, overflow: 'hidden',
   },
   exprRow: { padding: 16, gap: 6 },
+  exprLocked: { fontSize: 13, fontWeight: '600', color: Colors.premiumText },
   exprRowBorder: { borderTopWidth: 1, borderTopColor: Colors.divider },
   /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
   exprSituationBadge: {

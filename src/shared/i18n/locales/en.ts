@@ -331,4 +331,5 @@ export const en = {
     streakLabel: 'Day Streak',
     streakDayCount: 'Day {n}',
     mascotBubbleCta: 'Tap >',
+    premiumGlossLocked: '🔒 Unlock the meaning with Premium',
 } satisfies Record<TranslationKey, string>;

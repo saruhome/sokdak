@@ -331,4 +331,5 @@ export const ja = {
     streakLabel: '連続学習',
     streakDayCount: '{n}日目',
     mascotBubbleCta: 'タップ >',
+    premiumGlossLocked: '🔒 意味の解説はプレミアムで見られます',
 } satisfies Record<TranslationKey, string>;

@@ -336,4 +336,5 @@ export type TranslationKey =
   | 'situationDinner'
   | 'streakLabel'
   | 'streakDayCount'
-  | 'mascotBubbleCta';
+  | 'mascotBubbleCta'
+  | 'premiumGlossLocked';

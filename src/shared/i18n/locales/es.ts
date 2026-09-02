@@ -331,4 +331,5 @@ export const es = {
     streakLabel: 'Racha de días',
     streakDayCount: 'Día {n}',
     mascotBubbleCta: 'Toca >',
+    premiumGlossLocked: '🔒 Desbloquea el significado con Premium',
 } satisfies Record<TranslationKey, string>;

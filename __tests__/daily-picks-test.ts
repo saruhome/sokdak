@@ -16,5 +16,7 @@ it('expression data stays well-formed for the home card', () => {
   for (const e of EXPRESSIONS) {
     expect(e.ko.trim()).not.toBe('');
     expect(e.en.trim()).not.toBe('');
+    // 사전 연결 칩은 id와 표제어가 항상 쌍으로 있어야 렌더된다
+    expect(!!e.wordId).toBe(!!e.wordLabel);
   }
 });

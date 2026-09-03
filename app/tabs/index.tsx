@@ -16,7 +16,7 @@ import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStor
 import { TopAppBar } from '@/components/navigation/TopAppBar';
 import { EXPRESSIONS, SITUATION_LABEL_KEY, expressionGloss, pickDaily } from '@/src/features/home/model/dailyPicks';
 import { AppIcon, IconStat } from '@/components/AppIcon';
-import { Eye, Heart, MessageCircle, ChevronRight, Crown, Lock } from 'lucide-react-native';
+import { Eye, Heart, MessageCircle, ChevronRight, Crown, Lock, BookOpen } from 'lucide-react-native';
 
 /** 실전 표현 상황별 배너 일러스트(Canva 생성, 2026-09-03) — 배너 이미지 상시 규칙.
  * 좌하단 여백을 남긴 크림·골드 수채 스타일로 통일, 글자 없는 그림만 사용. */
@@ -166,7 +166,22 @@ export default function HomeScreen() {
                   <Text style={styles.heroWord} numberOfLines={1}>{expr.ko}</Text>
                   {/* 뜻/해석은 프리미엄 전용 — 한국어 원문은 공개해 궁금증(전환 훅)을 남긴다 */}
                   {BETA_UNLIMITED_ENTITLEMENTS || isPremium ? (
-                    <Text style={styles.exprHeroGloss} numberOfLines={1}>{expressionGloss(expr, language)}</Text>
+                    <View style={styles.exprGlossRow}>
+                      <Text style={[styles.exprHeroGloss, styles.exprGlossShrink]} numberOfLines={1}>{expressionGloss(expr, language)}</Text>
+                      {/* 문장 속 신조어가 사전에 있으면 표제어 칩으로 상세 연결 */}
+                      {expr.wordId && (
+                        <TouchableOpacity
+                          style={styles.exprWordChip}
+                          onPress={e => { e.stopPropagation?.(); router.push(`/tabs/dictionary/${expr.wordId}`); }}
+                          hitSlop={8}
+                          accessibilityRole="button"
+                          accessibilityLabel={expr.wordLabel}
+                        >
+                          <AppIcon icon={BookOpen} size={11} color={Colors.premiumText} />
+                          <Text style={styles.exprWordChipText}>{expr.wordLabel}</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
                   ) : (
                     <View style={styles.exprLockedRow}>
                       <AppIcon icon={Lock} size={13} color={Colors.textPrimary} />
@@ -350,6 +365,15 @@ const styles = StyleSheet.create({
   exprHeroBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.surface },
   exprHeroBadgeText: { color: Colors.premiumText },
   exprHeroGloss: { fontSize: 14, color: Colors.textPrimary, lineHeight: 18, fontFamily: undefined, opacity: 0.85 },
+  exprGlossRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  exprGlossShrink: { flexShrink: 1 },
+  /* 사전 연결 칩 — 골드 배경 위 surface 캡슐(프리미엄 배지와 동일 문법) */
+  exprWordChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: Colors.surface, borderRadius: 10,
+    paddingHorizontal: 8, paddingVertical: 3,
+  },
+  exprWordChipText: { fontSize: 12, fontWeight: '600', color: Colors.premiumText },
 
   /* 새로운 신조어 카드 */
   wordCardRow: { gap: 16, paddingRight: 24 },

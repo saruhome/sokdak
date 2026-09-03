@@ -29,6 +29,8 @@ export const SITUATION_LABEL_KEY: Record<Situation, TranslationKey> = {
  * 사투리 항목은 글로스에 지역·상대(친구끼리 등)를 반드시 표기해 잘못 쓰는 일을 막는다. */
 export type Expression = {
   situation: Situation; ko: string; en: string; ja: string; es: string; vi: string; de: string;
+  /** 문장 속 신조어가 사전에 있으면 그 단어 상세로 연결(표제어, words.id) */
+  wordId?: string; wordLabel?: string;
 };
 
 /** 사전 예문과 동일한 규칙: ko/en UI는 영어 글로스, 나머지는 UI 언어(없으면 en 폴백). */
@@ -47,7 +49,8 @@ export const EXPRESSIONS: Expression[] = [
     ja: '私は얼죽아です(얼죽아=凍え死んでもアイスアメリカーノ派)',
     es: 'Yo soy del equipo 얼죽아 (americano helado aunque me congele)',
     vi: 'Mình là hội 얼죽아 (chết cóng vẫn uống americano đá)',
-    de: 'Ich bin Team 얼죽아 (Iced Americano, egal wie kalt es ist)' },
+    de: 'Ich bin Team 얼죽아 (Iced Americano, egal wie kalt es ist)',
+    wordId: '136', wordLabel: '얼죽아' },
   { situation: 'subway', ko: '나 이번에 내려, 이따 봐',
     en: "I'm getting off here — see you later (texting a friend)",
     ja: 'ここで降りるね、また後で(友達へのメッセージ)',
@@ -71,13 +74,15 @@ export const EXPRESSIONS: Expression[] = [
     ja: 'はい!すぐ確認します(「넵」=若手社員の定番の返事)',
     es: '¡Entendido! Lo reviso ahora mismo (넵 = el "sí" entusiasta del trabajo)',
     vi: 'Vâng ạ! Em kiểm tra ngay (넵 = kiểu "vâng" nhiệt tình nơi công sở)',
-    de: 'Jawohl! Prüfe ich sofort (넵 = das eifrige Arbeits-„Ja“ junger Angestellter)' },
+    de: 'Jawohl! Prüfe ich sofort (넵 = das eifrige Arbeits-„Ja“ junger Angestellter)',
+    wordId: '4', wordLabel: '넵병' },
   { situation: 'work', ko: '오늘 칼퇴 각이에요',
     en: 'Today looks like an on-the-dot leave (칼퇴 = leaving sharp on time, 각 = "the vibe is right")',
     ja: '今日は定時退社できそう(칼퇴=時間ぴったりの退勤、각=「その流れ」)',
     es: 'Hoy pinta que salgo puntual (칼퇴 = salir del trabajo justo a la hora)',
     vi: 'Hôm nay chắc được về đúng giờ (칼퇴 = tan làm đúng giờ tăm tắp)',
-    de: 'Heute sieht’s nach pünktlichem Feierabend aus (칼퇴 = auf die Minute gehen)' },
+    de: 'Heute sieht’s nach pünktlichem Feierabend aus (칼퇴 = auf die Minute gehen)',
+    wordId: '170', wordLabel: '칼퇴' },
   { situation: 'hospital', ko: '어제부터 몸살 기운이 있어요',
     en: "I've felt achy and feverish since yesterday",
     ja: '昨日から体がだるくて熱っぽいです',

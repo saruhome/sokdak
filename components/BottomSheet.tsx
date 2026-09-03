@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
-  Modal, View, TouchableOpacity, Animated, Easing, StyleSheet,
+  Modal, View, TouchableOpacity, Animated, Easing, StyleSheet, KeyboardAvoidingView, Platform,
   type ViewStyle, type StyleProp,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SCREEN_WIDTH } from '@/constants/layout';
 
 /** 시트 시작 위치(화면 밖) — 실제 패널 높이를 몰라도 화면 밖으로 밀어내기 충분한 값 */
@@ -22,6 +23,7 @@ export function BottomSheet({
   panelStyle?: StyleProp<ViewStyle>;
 }) {
   const [mounted, setMounted] = useState(visible);
+  const insets = useSafeAreaInsets();
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const panelY = useRef(new Animated.Value(OFFSCREEN_Y)).current;
 
@@ -44,16 +46,24 @@ export function BottomSheet({
 
   return (
     <Modal visible transparent animationType="none" onRequestClose={onClose}>
-      <View style={styles.root}>
-        <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={onClose}>
-          <Animated.View style={[StyleSheet.absoluteFill, styles.dim, { opacity: backdropOpacity }]} />
-        </TouchableOpacity>
-        <Animated.View style={{ transform: [{ translateY: panelY }] }}>
-          <TouchableOpacity activeOpacity={1} style={panelStyle}>
-            {children}
+      {/* iOS에서 키보드가 시트 입력창(문의·신고 폼)을 가리지 않게 패널을 밀어올린다 */}
+      <KeyboardAvoidingView
+        style={styles.avoider}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.root}>
+          <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={onClose}>
+            <Animated.View style={[StyleSheet.absoluteFill, styles.dim, { opacity: backdropOpacity }]} />
           </TouchableOpacity>
-        </Animated.View>
-      </View>
+          <Animated.View style={{ transform: [{ translateY: panelY }] }}>
+            <TouchableOpacity activeOpacity={1} style={panelStyle}>
+              {children}
+              {/* 홈 인디케이터만큼 패널 배경째 늘리는 스페이서 — inset 0(웹/구형 기기)이면 0 */}
+              <View style={{ height: insets.bottom }} />
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -61,6 +71,7 @@ export function BottomSheet({
 const styles = StyleSheet.create({
   /* RN Modal은 웹에서 DeviceFrame(360px 고정 프레임) 밖 document.body로 그대로 포탈되므로
    * width를 SCREEN_WIDTH로 잡고 가운데 정렬해야 프레임과 같은 폭으로 보인다 */
+  avoider: { flex: 1 },
   root: {
     flex: 1, width: '100%', maxWidth: SCREEN_WIDTH, alignSelf: 'center', justifyContent: 'flex-end',
   },

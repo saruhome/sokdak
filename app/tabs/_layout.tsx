@@ -1,5 +1,6 @@
 import { Tabs, useRouter } from 'expo-router';
 import { TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Colors } from '../../constants/Colors';
 import { TabIcon, type TabIconName } from '@/components/icons/TabIcon';
@@ -67,6 +68,9 @@ const ROOT_TAB_ROUTE: Record<string, string> = {
 };
 
 export default function TabLayout() {
+  /* iOS 홈 인디케이터(및 안드로이드 제스처 바) 영역만큼 탭바를 키워 아이콘이 가려지지 않게 —
+   * 웹은 inset 0이라 기존 49px 그대로 */
+  const insets = useSafeAreaInsets();
   /* 언어 변경 시 탭 title 재렌더용 — 값 자체는 languageStore.t가 직접 읽는다 */
   const [, setLanguage] = useState(languageStore.getLanguage());
 
@@ -83,8 +87,8 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: Colors.navBar,      // #52514E 다크 올리브 그레이
           borderTopWidth: 0,
-          height: 49,                          // Figma Navigation/BottomBar height
-          paddingBottom: 0,
+          height: 49 + insets.bottom,          // Figma Navigation/BottomBar height + 기기 하단 inset
+          paddingBottom: insets.bottom,
           paddingTop: 6,
           elevation: 0,
           shadowOpacity: 0,

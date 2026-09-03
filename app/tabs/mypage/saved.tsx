@@ -109,7 +109,8 @@ export default function SavedWordsScreen() {
             </Text>
             <View style={styles.categoryRow}>
               {visibleCategories.map(category => (
-                <TouchableOpacity accessibilityRole="button"
+                /* role="button" 금지 — 카드 안에 즐겨찾기 버튼이 있어 웹에서 <button> 중첩 오류 */
+                <TouchableOpacity
                   key={category.slug}
                   style={styles.categoryCard}
                   onPress={() => router.push(`/tabs/category/${category.slug}`)}
@@ -165,7 +166,8 @@ export default function SavedWordsScreen() {
               const category = getCategoryBySlug(word.category);
               const secondaryCategory = word.secondaryCategory ? getCategoryBySlug(word.secondaryCategory) : undefined;
               return (
-                <TouchableOpacity accessibilityRole="button"
+                /* role="button" 금지 — 행 안에 별/발음 버튼이 있어 웹에서 <button> 중첩 오류 */
+                <TouchableOpacity
                   key={word.id}
                   style={styles.wordItem}
                   onPress={() => router.push(`/tabs/dictionary/${word.id}`)}

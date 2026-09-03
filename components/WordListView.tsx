@@ -226,7 +226,9 @@ export function WordListView({
           const searchMatch = getWordSearchMatch(item, query);
           const translationSearchMatch = searchMatch?.field === 'translation' ? searchMatch.translation : null;
           return (
-            <TouchableOpacity accessibilityRole="button"
+            /* role="button" 금지 — 행 안에 별/발음 Pressable(button)이 있어 웹에서
+             * <button> 중첩 = invalid HTML + hydration 오류 (카테고리 그리드와 동일 규칙) */
+            <TouchableOpacity
               style={[
                 styles.wordItem,
                 index === 0 && styles.wordItemFirst,

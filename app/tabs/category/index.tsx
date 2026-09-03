@@ -11,6 +11,7 @@ import { languageStore, useLanguage, type Language } from '../../../constants/la
 import { Alert } from '@/constants/alert';
 import { AppIcon } from '@/components/AppIcon';
 import { TopAppBar } from '@/components/navigation/TopAppBar';
+import { PremiumLockModal } from '@/components/PremiumLockModal';
 import { Search, Mic, Star, ChevronDown, Crown } from 'lucide-react-native';
 import { SCREEN_WIDTH } from '../../../constants/layout';
 
@@ -43,6 +44,7 @@ export default function CategoryScreen() {
   const [, forceUpdate] = useState(0);
   const [isPremium, setIsPremium] = useState(authStore.isPremium());
   const [words, setWords] = useState<Word[]>([]);
+  const [showLockModal, setShowLockModal] = useState(false);
   /* 항상 같은(가장 인기 있는) 카테고리 대신, 잘 안 찾아보는 카테고리부터 랜덤하게 추천 —
    * 화면을 다시 열 때마다 바뀌도록 마운트당 한 번만 뽑고, 좋아요 토글 등 재렌더로는 안 바뀌게 고정한다. */
   const [topCategory, setTopCategory] = useState<Category | null>(null);
@@ -177,7 +179,8 @@ export default function CategoryScreen() {
           return (
             <TouchableOpacity
               style={styles.categoryCard}
-              onPress={() => router.push(locked ? '/tabs/mypage/premium' : `/tabs/category/${item.slug}`)}
+              /* 잠긴 카드(비프리미엄 속어)는 화면 이동 대신 캐릭터 팝업 — 단어 게이트와 동일 UX */
+              onPress={() => (locked ? setShowLockModal(true) : router.push(`/tabs/category/${item.slug}`))}
               activeOpacity={0.85}
               /* role="button"을 주면 웹에서 <button> 안에 별(즐겨찾기) <button>이 중첩돼
                * invalid HTML + hydration 오류 — 내부에 개별 컨트롤이 있는 카드에는 붙이지 않는다 */
@@ -228,6 +231,7 @@ export default function CategoryScreen() {
           );
         }}
       />
+      <PremiumLockModal visible={showLockModal} onClose={() => setShowLockModal(false)} />
     </SafeAreaView>
   );
 }

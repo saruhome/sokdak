@@ -32,7 +32,8 @@ export default function CategoryDetailScreen() {
       return;
     }
     if (!authStore.isAdultVerified()) {
-      authStore.promptAdultVerification(() => {}, () => safeGoBack('/tabs/category'));
+      /* 취소 시 웹 history.back()은 홈 등 진입 전 화면으로 튈 수 있어 카테고리 그리드로 고정 */
+      authStore.promptAdultVerification(() => {}, () => router.replace('/tabs/category'));
     }
   }, [category?.premiumOnly]));
 

@@ -184,8 +184,6 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        <View style={styles.sectionDivider} />
-
         {/* ── 새로운 신조어 ── */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>

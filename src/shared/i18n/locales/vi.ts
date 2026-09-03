@@ -41,7 +41,6 @@ export const vi = {
     suggestAnother: 'Đề xuất từ khác',
     suggestBackToMypage: 'Về trang cá nhân',
     suggestNewSlang: 'Đề xuất từ mới',
-    loginNeeded: 'Cần đăng nhập',
     loginPrompt: 'Đăng nhập để lưu từ\nvà tham gia cộng đồng',
     termsOfService: 'Điều khoản dịch vụ',
     privacyPolicy: 'Chính sách bảo mật',

@@ -41,7 +41,6 @@ export const de = {
     suggestAnother: 'Weiteres Wort vorschlagen',
     suggestBackToMypage: 'Zurück zu Mein Bereich',
     suggestNewSlang: 'Neuen Slang vorschlagen',
-    loginNeeded: 'Anmeldung erforderlich',
     loginPrompt: 'Melde dich an, um Wörter zu speichern\nund die Community zu nutzen',
     termsOfService: 'Nutzungsbedingungen',
     privacyPolicy: 'Datenschutzerklärung',

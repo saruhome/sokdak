@@ -41,7 +41,6 @@ export const ja = {
     suggestAnother: '他の単語を提案する',
     suggestBackToMypage: 'マイページに戻る',
     suggestNewSlang: '新造語を提案する',
-    loginNeeded: 'ログインが必要です',
     loginPrompt: 'ログインすると\n単語保存とコミュニティが使えます',
     termsOfService: '利用規約',
     privacyPolicy: 'プライバシーポリシー',

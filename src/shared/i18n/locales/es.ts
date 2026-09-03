@@ -41,7 +41,6 @@ export const es = {
     suggestAnother: 'Sugerir otra palabra',
     suggestBackToMypage: 'Volver a Mi página',
     suggestNewSlang: 'Sugerir jerga nueva',
-    loginNeeded: 'Inicio de sesión requerido',
     loginPrompt: 'Inicia sesión para guardar palabras\ny unirte a la comunidad',
     termsOfService: 'Términos de servicio',
     privacyPolicy: 'Política de privacidad',

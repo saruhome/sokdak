@@ -41,7 +41,6 @@ export const en = {
     suggestAnother: 'Suggest another word',
     suggestBackToMypage: 'Back to My Page',
     suggestNewSlang: 'Suggest New Slang',
-    loginNeeded: 'Login required',
     loginPrompt: 'Log in to save words\nand join the community',
     termsOfService: 'Terms of Service',
     privacyPolicy: 'Privacy Policy',

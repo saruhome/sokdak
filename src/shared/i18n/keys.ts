@@ -47,7 +47,6 @@ export type TranslationKey =
   | 'suggestAnother'
   | 'suggestBackToMypage'
   | 'suggestNewSlang'
-  | 'loginNeeded'
   | 'loginPrompt'
   | 'termsOfService'
   | 'privacyPolicy'

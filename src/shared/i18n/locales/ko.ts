@@ -41,7 +41,6 @@ export const ko = {
     suggestAnother: '다른 단어 제안하기',
     suggestBackToMypage: '마이페이지로 돌아가기',
     suggestNewSlang: '신조어 제안하기',
-    loginNeeded: '로그인이 필요해요',
     loginPrompt: '로그인하면\n단어 저장과 커뮤니티를 쓸 수 있어요',
     termsOfService: '이용약관',
     privacyPolicy: '개인정보처리방침',

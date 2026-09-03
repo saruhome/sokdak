@@ -48,7 +48,6 @@ export const ar = {
     suggestAnother: 'اقتراح كلمة أخرى',
     suggestBackToMypage: 'العودة إلى صفحتي',
     suggestNewSlang: 'اقترح كلمة عامية جديدة',
-    loginNeeded: 'يلزم تسجيل الدخول',
     loginPrompt: 'سجّل الدخول لحفظ الكلمات\nوالمشاركة في المجتمع',
     termsOfService: 'شروط الخدمة',
     privacyPolicy: 'سياسة الخصوصية',

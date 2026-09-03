@@ -47,7 +47,6 @@ export const zh = {
     suggestAnother: '推荐其他单词',
     suggestBackToMypage: '返回我的页面',
     suggestNewSlang: '推荐新流行语',
-    loginNeeded: '需要登录',
     loginPrompt: '登录后\n可保存单词并使用社区',
     termsOfService: '服务条款',
     privacyPolicy: '隐私政策',

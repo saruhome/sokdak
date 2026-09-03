@@ -46,7 +46,6 @@ export const tr = {
     suggestAnother: 'Başka kelime öner',
     suggestBackToMypage: 'Sayfama dön',
     suggestNewSlang: 'Yeni argo öner',
-    loginNeeded: 'Giriş gerekli',
     loginPrompt: 'Giriş yaparsan kelime kaydedebilir\nve topluluğu kullanabilirsin',
     termsOfService: 'Hizmet Şartları',
     privacyPolicy: 'Gizlilik Politikası',

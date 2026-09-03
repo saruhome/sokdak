@@ -10,6 +10,7 @@ import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authS
 import { hasUnseenReply } from '../../../constants/support';
 import { languageStore } from '../../../constants/languageStore';
 import ProfileAvatar from '@/components/ProfileAvatar';
+import { TabIcon } from '@/components/icons/TabIcon';
 import { AppIcon } from '@/components/AppIcon';
 import { ChevronRight, Crown, Flame } from 'lucide-react-native';
 
@@ -75,17 +76,20 @@ export default function MyPageScreen() {
           activeOpacity={0.75}
         >
           <View style={styles.profileRowLeft}>
-            <ProfileAvatar
-              uri={loggedIn ? user?.avatarUrl : null}
-              emoji={loggedIn && user ? user.emoji : '👤'}
-              size={40}
-            />
+            {loggedIn && user ? (
+              <ProfileAvatar uri={user.avatarUrl} emoji={user.emoji} size={40} />
+            ) : (
+              /* 비로그인 아이콘은 하단 회원정보 탭 아이콘과 동일한 라인 아이콘(운영자 결정 2026-09-03) */
+              <View style={styles.guestAvatar}>
+                <TabIcon name="mypage" size={22} color={Colors.textSecondary} />
+              </View>
+            )}
             {loggedIn && user ? (
               <Text style={styles.profileName}>{user.name}</Text>
             ) : (
-              <View>
-                <Text style={styles.profileName}>{t('loginNeeded')}</Text>
-                <Text style={styles.loginBenefitSub}>{t('loginPrompt')}</Text>
+              /* 타이틀 없이 안내 2줄만(줄바꿈은 로케일 \n) — 운영자 결정 2026-09-03 */
+              <View style={styles.loginTextWrap}>
+                <Text style={styles.loginBenefitSub} numberOfLines={2}>{t('loginPrompt')}</Text>
               </View>
             )}
           </View>
@@ -211,8 +215,13 @@ const styles = StyleSheet.create({
   },
   profileRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   profileName: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
-  /* 비로그인 혜택 안내 — 운영자 승인 2줄 고정 문구(줄바꿈은 로케일 문자열의 \n) */
-  loginBenefitSub: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17, marginTop: 2 },
+  /* 비로그인 행 — 라인 아이콘 원형 배경 + 한 줄 축소 맞춤 안내(3줄 금지, 운영자 결정 2026-09-03) */
+  guestAvatar: {
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: Colors.divider, alignItems: 'center', justifyContent: 'center',
+  },
+  loginTextWrap: { flex: 1, minWidth: 0 },
+  loginBenefitSub: { fontSize: 14, color: Colors.textPrimary, lineHeight: 20 },
 
   /* 프리미엄 상태/업그레이드 행 */
   premiumRow: {

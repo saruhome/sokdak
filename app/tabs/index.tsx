@@ -31,6 +31,8 @@ const SITUATION_BANNERS = {
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */
 const HERO_AUTOPLAY_INTERVAL = 4000;
+/* 새로운 신조어 타이포 카드 틴트/워터마크 — 카테고리 마스터 색을 그대로 쓴다(하드코딩 금지 규칙) */
+const NEW_SLANG_COLORS = getCategoryBySlug('new-slang') ?? { colorBg: Colors.border, colorFg: Colors.textPrimary };
 
 export default function HomeScreen() {
   const language = useLanguage();
@@ -208,18 +210,28 @@ export default function HomeScreen() {
             {newSlangWords.map(word => (
               <TouchableOpacity
                 key={word.id}
-                style={styles.wordCard}
+                style={[styles.wordCard, !word.thumbnailUrl && styles.wordCardTypo]}
                 onPress={() => router.push(`/tabs/dictionary/${word.id}`)}
                 activeOpacity={0.85}
               >
-                {word.thumbnailUrl && (
+                {word.thumbnailUrl ? (
                   <>
                     <Image source={{ uri: word.thumbnailUrl }} style={styles.wordCardThumbnail} resizeMode="cover" accessible={false} />
                     <View style={styles.wordCardScrim} />
                   </>
+                ) : (
+                  /* 썸네일 없는 신조어는 단어 자체가 주인공 — 카테고리 틴트 + 따옴표 워터마크 타이포 카드 */
+                  <Text style={styles.wordCardWatermark} accessible={false}>&rdquo;</Text>
                 )}
-                <Text style={[styles.wordCardTitle, word.thumbnailUrl && styles.wordCardTitleOnImage]} numberOfLines={1}>{word.word}</Text>
-                <Text style={[styles.wordCardDesc, word.thumbnailUrl && styles.wordCardDescOnImage]} numberOfLines={1}>{cardGloss(word, language)}</Text>
+                <Text
+                  style={[styles.wordCardTitle, word.thumbnailUrl ? styles.wordCardTitleOnImage : styles.wordCardTitleTypo]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.6}
+                >
+                  {word.word}
+                </Text>
+                <Text style={[styles.wordCardDesc, word.thumbnailUrl ? styles.wordCardDescOnImage : styles.wordCardDescTypo]} numberOfLines={1}>{cardGloss(word, language)}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -350,6 +362,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15, shadowRadius: 2.5, elevation: 3,
     overflow: 'hidden',
   },
+  /* 타이포 카드 — new-slang 카테고리 틴트(#RRGGBBAA 8%) 배경 위 대형 세리프 단어.
+   * 이미지 에셋 없이 단어마다 다른 카드가 된다(단어 자체가 콘텐츠). */
+  wordCardTypo: { backgroundColor: `${NEW_SLANG_COLORS.colorBg}14` },
+  wordCardWatermark: {
+    position: 'absolute', top: -30, right: 10,
+    fontSize: 110, lineHeight: 120, fontFamily: 'NotoSerifKR_600SemiBold',
+    color: `${NEW_SLANG_COLORS.colorBg}4D`,
+  },
+  wordCardTitleTypo: { fontSize: 30, lineHeight: 40 },
+  wordCardDescTypo: { color: Colors.textSecondary },
   wordCardThumbnail: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   wordCardScrim: {
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,

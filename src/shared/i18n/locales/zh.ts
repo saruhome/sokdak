@@ -297,11 +297,11 @@ export const zh = {
 
     premiumTitle: 'Premium',
     premiumUpgradeCta: '升级 Premium',
-    premiumWordLockedTitle: '该词为高级会员专属',
-    premiumWordLockedBody: '俗语类单词的释义和例句需高级会员才能查看。',
+    premiumWordLockedTitle: '该词为 Premium 会员专属',
+    premiumWordLockedBody: '俗语类单词的释义和例句需 Premium 会员才能查看。',
     premiumActiveLabel: 'Premium 会员',
     premiumBannerTitle: '地道韩语，不设上限',
-    premiumBannerSub: '免费最多保存3个 · 高级版全部无限',
+    premiumBannerSub: '免费最多保存 3 个 · Premium 无限保存',
     adultGateTitle: '年龄确认',
     adultGateBody: '此内容包含粗俗用语和成人表达，仅限满 19 岁的用户查看。',
     adultGateConfirm: '我已满 19 岁',
@@ -336,5 +336,5 @@ export const zh = {
     streakLabel: '连续学习',
     streakDayCount: '第{n}天',
     mascotBubbleCta: '点一下 >',
-    premiumGlossLocked: '解锁释义需要高级版',
+    premiumGlossLocked: '解锁释义需要 Premium',
 } satisfies Record<TranslationKey, string>;

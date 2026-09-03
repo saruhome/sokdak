@@ -136,8 +136,12 @@ export default function SavedWordsScreen() {
                       />
                     </TouchableOpacity>
                     <View style={styles.categoryTextWrap}>
-                      <Text style={styles.categoryName} numberOfLines={2}>{getCategoryName(category, language)}</Text>
-                      <Text style={styles.categoryDesc} numberOfLines={1}>{category.description}</Text>
+                      <View style={styles.categoryTextScrim}>
+                        <Text style={styles.categoryName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
+                          {getCategoryName(category, language).replace('\n', ' ')}
+                        </Text>
+                        <Text style={styles.categoryDesc} numberOfLines={1}>{category.description}</Text>
+                      </View>
                     </View>
                   </ImageBackground>
                 </TouchableOpacity>
@@ -243,7 +247,9 @@ const styles = StyleSheet.create({
   },
   /* width/height 미지정 시 ImageBackground가 이미지 원본 폭 기준으로 커져 카드가 넘친다 */
   categoryCardBg: { flex: 1, width: '100%', height: '100%' },
-  categoryCardBgImage: { resizeMode: 'cover' },
+  /* 카테고리 그리드와 동일 — 좌상단 앵커로 소재가 잘리지 않게. 카드 폭이 flex라 %+aspectRatio 사용
+   * (에셋 600×395). 125%는 기기 폭 430dp까지 카드를 덮는다. */
+  categoryCardBgImage: { resizeMode: 'cover', top: 0, left: 0, width: '125%', height: undefined, aspectRatio: 600 / 395 },
   categoryCardOverlay: {
     flex: 1,
     backgroundColor: 'rgba(255,255,255,0.3)',
@@ -252,11 +258,12 @@ const styles = StyleSheet.create({
     position: 'absolute', right: 4, top: 4, width: 28, height: 28,
     alignItems: 'center', justifyContent: 'center',
   },
-  /* 카테고리 그리드와 동일한 크림 스크림 — 이미지 위 텍스트 가독성 확보 */
-  categoryTextWrap: {
-    position: 'absolute', left: 8, right: 8, bottom: 8, gap: 2,
+  /* 카테고리 그리드와 동일 — 래퍼는 위치만, 안쪽 스크림이 제목 폭에 딱 맞게 수축 */
+  categoryTextWrap: { position: 'absolute', left: 8, right: 8, bottom: 8, alignItems: 'flex-start' },
+  categoryTextScrim: {
+    gap: 2, maxWidth: '100%',
     backgroundColor: 'rgba(246, 242, 234, 0.85)',
-    borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4,
+    borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3,
   },
   categoryName: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   categoryDesc: { fontSize: 11, color: Colors.textTertiary, fontFamily: undefined },

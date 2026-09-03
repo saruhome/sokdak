@@ -123,9 +123,12 @@ export default function HomeScreen() {
                   onPress={() => router.push(`/tabs/dictionary/${word.id}`)}
                   activeOpacity={0.9}
                 >
-                  {word.thumbnailUrl && (
+                  {word.thumbnailUrl ? (
                     <Image source={{ uri: word.thumbnailUrl }} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
-                  )}
+                  ) : category?.image ? (
+                    /* 영상 썸네일이 없는 단어는 카테고리 일러스트가 배경을 채운다 — 단색 카드 방지 */
+                    <Image source={category.image} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
+                  ) : null}
                   <View style={styles.heroScrim} />
                   <View style={styles.heroContent}>
                     {category && (

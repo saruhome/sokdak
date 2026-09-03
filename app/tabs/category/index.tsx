@@ -331,5 +331,5 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   /* 한 줄 고정 + 축소 맞춤(줄임표 금지) — 스크림(alignSelf flex-start)이 제목 폭에 딱 맞게 줄어든다 */
-  categoryName: { fontSize: 16, lineHeight: 21, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
+  categoryName: { fontSize: 16.5, lineHeight: 21.6, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
 });

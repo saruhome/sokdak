@@ -214,9 +214,11 @@ export default function CategoryScreen() {
                 <View style={[styles.cardTextWrap, item.image ? styles.cardTextScrim : null]}>
                   <Text
                     style={[styles.categoryName, { color: labelColor }]}
-                    numberOfLines={2}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.6}
                   >
-                    {getCategoryName(item, language)}
+                    {getCategoryName(item, language).replace('\n', ' ')}
                   </Text>
                 </View>
               </CardBg>
@@ -305,7 +307,9 @@ const styles = StyleSheet.create({
   /* width/height를 명시하지 않으면 ImageBackground가 이미지 원본 폭(600px)을 기준으로
    * 크기를 잡아 카드가 화면 밖으로 늘어난다(flex: 0 0 auto라 줄어들지도 않음). */
   cardBg: { flex: 1, width: '100%', height: '100%' },
-  cardBgImage: { resizeMode: 'cover' },
+  /* left/top+width가 right/bottom(absoluteFill)보다 우선 — 카드(150×116)보다 넓게 커버하되
+   * 좌상단 기준으로 고정해 에셋의 주요 소재(좌상단 배치)가 잘리지 않게 한다. 에셋은 전부 600×395. */
+  cardBgImage: { resizeMode: 'cover', top: 0, left: 0, width: (116 * 600) / 395, height: 116 },
   cardOverlay: {
     ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(255,255,255,0.3)',
@@ -320,9 +324,9 @@ const styles = StyleSheet.create({
   cardTextScrim: {
     left: 8, right: 8, bottom: 8,
     backgroundColor: 'rgba(246, 242, 234, 0.85)',
-    borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4,
+    borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3,
     alignSelf: 'flex-start',
   },
-  /* 이름은 축약(글자 축소) 대신 데이터의 개행 그대로 2줄 — 카드 높이·텍스트 영역이 수용한다 */
-  categoryName: { fontSize: 20, lineHeight: 25, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
+  /* 한 줄 고정 + 축소 맞춤(줄임표 금지) — 스크림(alignSelf flex-start)이 제목 폭에 딱 맞게 줄어든다 */
+  categoryName: { fontSize: 16, lineHeight: 21, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
 });

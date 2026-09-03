@@ -199,6 +199,8 @@ export default function WordDetailScreen() {
               videoStartSec={word.videoStartSec}
               videoEndSec={word.videoEndSec}
               thumbnailUrl={word.thumbnailUrl}
+              word={word.word}
+              tintColor={getCategoryBySlug(word.category)?.colorBg}
             />
 
             {/* 단어 헤더 */}

@@ -16,13 +16,16 @@ type Props = {
   videoEndSec?: number;
   /** 재생 가능한 영상이 없는 단어의 정지 이미지(운영자가 직접 올린 캡처컷) */
   thumbnailUrl?: string;
+  /** 미디어가 하나도 없을 때 홈 카드와 동일한 타이포 배너를 그리기 위한 단어/카테고리 틴트색 */
+  word?: string;
+  tintColor?: string;
 };
 
 /**
  * 단어 상세 영상 슬롯 (Figma node 683:3679 — heroicons-solid:play, 311×147).
  * 우선순위: videoUrl(보유 클립 인앱 재생) → youtubeId(임베드/딥링크) → thumbnailUrl(정지 이미지) → 빈 상태.
  */
-export function WordVideo({ videoUrl, youtubeId, videoStartSec, videoEndSec, thumbnailUrl }: Props) {
+export function WordVideo({ videoUrl, youtubeId, videoStartSec, videoEndSec, thumbnailUrl, word, tintColor }: Props) {
   if (videoUrl) {
     return (
       <View style={styles.wrap}>
@@ -49,7 +52,16 @@ export function WordVideo({ videoUrl, youtubeId, videoStartSec, videoEndSec, thu
     );
   }
 
-  /* 미디어가 하나도 없으면 자리 자체를 만들지 않는다(운영자 규칙) — 빈 재생 박스 금지 */
+  /* 미디어가 없으면 홈 '새로운 신조어' 카드와 동일한 타이포 배너(운영자 결정 2026-09-03) —
+   * 단어+카테고리 틴트가 없으면 기존 규칙대로 자리 자체를 만들지 않는다(빈 재생 박스 금지) */
+  if (word && tintColor) {
+    return (
+      <View style={[styles.wrap, { backgroundColor: `${tintColor}14` }]}>
+        <Text style={[styles.typoWatermark, { color: `${tintColor}4D` }]} accessible={false}>&rdquo;</Text>
+        <Text style={styles.typoWord} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5}>{word}</Text>
+      </View>
+    );
+  }
   return null;
 }
 
@@ -114,6 +126,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   player: { flex: 1, width: '100%' },
+  /* 홈 타이포 카드와 같은 문법 — 대형 세리프 단어 + 따옴표 워터마크 */
+  typoWord: { fontSize: 34, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, paddingHorizontal: 24 },
+  typoWatermark: {
+    position: 'absolute', top: -26, right: 12,
+    fontSize: 96, lineHeight: 104, fontFamily: 'NotoSerifKR_600SemiBold',
+  },
   tapWrap: { flex: 1, width: '100%', backgroundColor: Colors.navBar },
   playOverlay: {
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,

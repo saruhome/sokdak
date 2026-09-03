@@ -211,15 +211,17 @@ export default function CategoryScreen() {
                   )}
                 </View>
                 {/* 이미지 카드 한정 스크림 — 배경 그림이 복잡해도 이름이 항상 읽히게 */}
-                <View style={[styles.cardTextWrap, item.image ? styles.cardTextScrim : null]}>
-                  <Text
-                    style={[styles.categoryName, { color: labelColor }]}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                    minimumFontScale={0.6}
-                  >
-                    {getCategoryName(item, language).replace('\n', ' ')}
-                  </Text>
+                <View style={styles.cardTextWrap}>
+                  <View style={item.image ? styles.cardTextScrim : null}>
+                    <Text
+                      style={[styles.categoryName, { color: labelColor }]}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                      minimumFontScale={0.6}
+                    >
+                      {getCategoryName(item, language).replace('\n', ' ')}
+                    </Text>
+                  </View>
                 </View>
               </CardBg>
             </TouchableOpacity>
@@ -320,12 +322,13 @@ const styles = StyleSheet.create({
   },
   likeBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   likeIcon: { width: 24, height: 24 },
-  cardTextWrap: { position: 'absolute', left: 12, right: 12, bottom: 10 },
+  /* absolute 박스에 left+right를 함께 주면 폭이 강제로 늘어나 스크림이 제목보다 길어진다 —
+   * 바깥 래퍼가 위치만 잡고, 안쪽 스크림 View가 내용 폭에 딱 맞게 줄어든다(alignItems). */
+  cardTextWrap: { position: 'absolute', left: 8, right: 8, bottom: 8, alignItems: 'flex-start' },
   cardTextScrim: {
-    left: 8, right: 8, bottom: 8,
     backgroundColor: 'rgba(246, 242, 234, 0.85)',
     borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3,
-    alignSelf: 'flex-start',
+    maxWidth: '100%',
   },
   /* 한 줄 고정 + 축소 맞춤(줄임표 금지) — 스크림(alignSelf flex-start)이 제목 폭에 딱 맞게 줄어든다 */
   categoryName: { fontSize: 16, lineHeight: 21, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },

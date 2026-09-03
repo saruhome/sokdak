@@ -11,12 +11,15 @@ Supabase project_id는 `etvrsqfhettkehpltkcp` 고정 — list_projects 호출 �
    — 최신 유행어뿐 아니라 2000년대 이후 생겨나 지금도 쓰이는 신조어도 포함한다
    (검색 예: "2026 신조어", "요즘 유행어 뜻", "2010년대 신조어", 최근 밈·챌린지). 나무위키·복수 블로그 등
    **서로 독립적인 출처 2개 이상**으로 뜻과 유래를 교차 확인한다.
+   교차 확인이 안 되더라도 후보를 버리지 않는다 — 3의 규칙대로 표시해서 적재한다.
 2. 중복 제거: `select word from words` 와 `select normalized_term from slang_candidates`에
    이미 있으면 건너뛴다.
 3. 검증 원칙 (절대 규칙):
    - 어원이 불확실하면 지어내지 말고 "여러 설이 있으며 확정되지 않음"으로 기록하고 설을 나열한다.
    - 욕설·19금 계열이면 draft의 category를 'slang'으로 표시한다 (성인 게이트 대상).
    - 출처 URL을 sources 배열에 남긴다.
+   - **후보를 탈락시키지 않는다.** 독립 출처가 1개뿐이거나 출처마다 뜻이 갈려도 그대로 적재하고,
+     review_note에 미검증 사유(출처 수, 뜻이 갈리는 지점)를 적는다. 판단은 운영자가 아침 검수에서 한다.
 4. 각 후보의 **완성 초안**을 words 테이블 형태 JSON으로 작성해 draft_payload에 담는다.
    기존 컨벤션(supabase/migrations/20260830220000_add_yareu_syagal.sql 참고)을 그대로 따른다:
    - word, romanization(국립국어원 RR, 음절 하이픈), category('new-slang' 기본, 속어는 'slang'),

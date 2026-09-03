@@ -18,8 +18,16 @@ import { EXPRESSIONS, SITUATION_LABEL_KEY, expressionGloss, pickDaily } from '@/
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle, ChevronRight, Crown, Lock } from 'lucide-react-native';
 
-/** 실전 표현 슬라이드 상시 배너 이미지 — 프리미엄 화면과 동일한 응원 호랭 */
-const EXPR_BANNER_MASCOT = require('../../assets/characters/transparent/horang-cheer.png');
+/** 실전 표현 상황별 배너 일러스트(Canva 생성, 2026-09-03) — 배너 이미지 상시 규칙.
+ * 좌하단 여백을 남긴 크림·골드 수채 스타일로 통일, 글자 없는 그림만 사용. */
+const SITUATION_BANNERS = {
+  cafe: require('../../assets/expressions/cafe.jpg'),
+  subway: require('../../assets/expressions/subway.jpg'),
+  work: require('../../assets/expressions/work.jpg'),
+  hospital: require('../../assets/expressions/hospital.jpg'),
+  sns: require('../../assets/expressions/sns.jpg'),
+  dinner: require('../../assets/expressions/dinner.jpg'),
+} as const;
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */
 const HERO_AUTOPLAY_INTERVAL = 4000;
@@ -141,9 +149,8 @@ export default function HomeScreen() {
                 activeOpacity={0.9}
                 testID="hero-expression-slide"
               >
-                {/* 배너 이미지는 항상 존재(운영자 규칙 2026-09-03) — 응원 호랭 상시 배치.
-                 * ponytail: 상황별 전용 일러스트는 이미지 생성 수단 확보 시 교체. */}
-                <Image source={EXPR_BANNER_MASCOT} style={styles.exprMascot} resizeMode="contain" accessible={false} />
+                {/* 배너 이미지는 항상 존재(운영자 규칙 2026-09-03) — 상황별 일러스트 */}
+                <Image source={SITUATION_BANNERS[expr.situation]} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
                 <View style={styles.heroContent}>
                   <View style={[styles.heroBadge, styles.exprHeroBadge]}>
                     <AppIcon icon={Crown} size={12} color={Colors.premiumText} />
@@ -326,8 +333,6 @@ const styles = StyleSheet.create({
 
   /* 오늘의 실전 표현 히어로 슬라이드 — 골드 배경 위 텍스트는 textPrimary(≈8.8:1) */
   exprLockedRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  /* 문구(좌하단)와 겹치지 않는 우측 바닥선 정렬 */
-  exprMascot: { position: 'absolute', right: 20, bottom: 24, width: 120, height: 138 },
   exprLocked: { flexShrink: 1, fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
   exprHeroBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.surface },
   exprHeroBadgeText: { color: Colors.premiumText },

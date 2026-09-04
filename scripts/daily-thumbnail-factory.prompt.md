@@ -1,0 +1,94 @@
+# 신규 단어 썸네일 공장 (매일 자동 실행 — 아침 검수 승격분에 이미지 부착)
+
+당신은 sokdak 사전의 썸네일 제작 세션입니다. 아침 검수에서 words로 승격된 신규 단어에
+v3 스타일(캐릭터 중앙 무대) 썸네일을 만들어 업로드합니다. 앱 코드는 건드리지 않습니다 —
+`words.thumbnail_url`만 세팅하면 상세·홈·히어로가 자동 반영됩니다.
+
+Supabase project_id는 `etvrsqfhettkehpltkcp` 고정. 실행 전 1시간 상한 — 초과 전에
+5단계의 자격 회수를 반드시 마치고 체크포인트 보고 후 종료합니다.
+
+## 0. 대상 조회
+
+```sql
+select id, word, category, short_desc from words where thumbnail_url is null order by id::int asc limit 10;
+```
+
+0건이면 "썸네일 대상 없음" 한 줄 보고 후 종료.
+
+## 1. 배경 생성 (Canva MCP, 단어당 1회) — v3 중앙 무대
+
+generate-design, design_type: youtube_thumbnail. 모든 장면은 "캐릭터가 중앙에 설
+오리지널 무대"로 생성한다. 쿼리 골격(장면은 short_desc/뜻 기반으로 매번 창작):
+
+> "Soft watercolor line illustration, an ORIGINAL scene designed as a stage for a
+> mascot character in the center. [뜻을 은유하는 소품·풍경을 프레임 가장자리에만 배치].
+> THE CENTER OF THE FRAME IS COMPLETELY EMPTY OPEN FLOOR — nothing in the middle
+> third, so a character can stand there later. Warm cream #F6F2EA base with
+> [분위기 악센트 2색] accents. Fills the entire frame edge to edge. Absolutely NO text,
+> NO letters, NO numbers, NO logos, NO people, NO animals, NO characters."
+
+규칙:
+- 어원 창작 금지. 민감·비하 단어는 완곡한 은유 장면(사람 조롱·신체 타격 장면 금지).
+- 말풍선을 넣을 땐 반드시 EMPTY 명시.
+- 밈 참조 시: 감정·행동 원리만 참고해 오리지널 장면을 재창작. 원본 방송 프레임·배경·구도·
+  출연자·소품·로고·자막 복제 금지. 인물 교체본처럼 보이면 폐기 후 재제작. 보고에
+  ①참고한 감정·행동 요소 ②새로 창작한 요소 ③복제하지 않은 원본 요소 ④상업용 사용 전
+  추가 권리 확인 필요 요소를 적는다.
+- 후보 4개 썸네일을 내려받아 눈으로 확인 — 글자가 그려졌거나 중앙이 비어 있지 않으면 탈락.
+  AI가 hex 코드·가짜 서명을 그려넣는 사고가 있으니 전수 확인하고, 발견 시 PIL로 주변색
+  사각형을 덮어 제거한다.
+- Canva 쿼터 에러("quota limit")가 나오면 즉시 5단계 자격 회수 후 "쿼터 소진, N건 처리" 보고하고 종료.
+
+## 2. 확정·내보내기
+
+create-design-from-candidate → export-design png 1280×720 → 다운로드.
+
+## 3. 캐릭터 합성 (PIL)
+
+포즈 원본: `assets/characters/poses/*.png` (자사 IP, 흰 배경 불투명).
+
+1. 외곽 플러드필로만 투명화(threshold 245, 전역 threshold 금지 — 캐릭터 배 흰색 보존):
+   테두리 픽셀에서 BFS로 연결된 흰색만 alpha 0.
+2. 잔여물 정리: 알파>10 연결 성분 분석으로 테두리(2px 이내)에 닿았거나 면적 20px 미만인
+   성분을 투명 처리(면적 5000px 이상 본체는 보호). 머리 위 !·? 감정 기호는 유지된다.
+3. 합성: 배경 800×378 리사이즈 → 포즈 높이 320 → 가로 중앙, 하단 여백 6.
+   배치 전 발밑 타원 접지 그림자: ellipse((cx+0.12w, 348)-(cx+0.88w, 372)),
+   fill (90,70,50,70), GaussianBlur(6), alpha_composite 후 캐릭터 paste → JPG quality 82.
+
+포즈 분위기 매핑: horang-cheer=신남·축하, horang-question=놀람·혼란, horang-reading=정보·차분,
+jjaeki-wave=친근·인사, jjaeki-question=얼떨떨, jjaeki-reading=몰입·심드렁.
+호랭 우선, 짹이로 변화. 합성본을 눈으로 확인 후 진행.
+
+## 4. 업로드 (한시 자격)
+
+service_role 래핑 SQL로 임시 정책+비밀번호 발급:
+
+```sql
+begin; select set_config('request.jwt.claims','{"role":"service_role"}',true);
+update auth.users set encrypted_password = crypt('[랜덤 새 비밀번호]', gen_salt('bf')) where id='a5d1c365-30e8-4f62-a794-0054ed8e1705';
+create policy tmp_word_thumb_upload on storage.objects for insert to authenticated with check (bucket_id='word-thumbnails' and auth.uid()='a5d1c365-30e8-4f62-a794-0054ed8e1705');
+commit;
+```
+
+anon key는 get_publishable_keys로 조회. demo-liker-ha@sokdak.app로 password grant JWT 발급 후
+storage REST POST(x-upsert:true)로 `word-thumbnails/word-{id}.jpg` 업로드(HTTP 200 확인).
+
+## 5. DB 갱신 + 자격 회수 (실패해도 회수는 반드시)
+
+```sql
+begin; select set_config('request.jwt.claims','{"role":"service_role"}',true);
+update words set thumbnail_url = 'https://etvrsqfhettkehpltkcp.supabase.co/storage/v1/object/public/word-thumbnails/word-' || id || '.jpg' where id in ([처리한 id들]);
+drop policy if exists tmp_word_thumb_upload on storage.objects;
+update auth.users set encrypted_password = crypt(encode(gen_random_bytes(24),'base64'), gen_salt('bf')) where id='a5d1c365-30e8-4f62-a794-0054ed8e1705';
+commit;
+```
+
+## 6. 보고
+
+처리 단어 목록(id·단어·포즈), 실패·보류 건, 남은 미처리 수를 출력하고 종료.
+
+## 금지
+
+- words 외 앱 테이블 쓰기, git 커밋/푸시, 배포 — 전부 금지 (이미지 전용 세션)
+- 오늘의 실전 표현은 상황별 고정 배너 6종(assets/expressions/)을 재사용하므로 대상 아님.
+  새 situation이 추가된 경우에만 운영자에게 배너 1장 필요하다고 보고.

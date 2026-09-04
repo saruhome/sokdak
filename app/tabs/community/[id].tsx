@@ -60,7 +60,7 @@ export default function PostDetailScreen() {
   const commentsYRef = useRef(0);
 
   const load = useCallback(() => {
-    if (!id) return;
+    if (!id || !authStore.isLoggedIn()) return;
     fetchPost(id).then(data => {
       setPost(data);
       if (data) {
@@ -76,12 +76,28 @@ export default function PostDetailScreen() {
   /* 화면 재진입 시(마이페이지 좋아요 해제 등) 최신 상태로 다시 불러옴 */
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
+  /* 게시글 상세는 로그인 회원 전용(운영자 정책) — 로그인 상태를 구독해 로그인 직후 자동 로드 */
+  const [loggedIn, setLoggedIn] = useState(authStore.isLoggedIn());
+  useFocusEffect(useCallback(() => { setLoggedIn(authStore.isLoggedIn()); }, []));
+  useEffect(() => authStore.subscribe(() => setLoggedIn(authStore.isLoggedIn())), []);
+
   useEffect(() => {
     const unsub = authStore.subscribeBookmarks(() => {
       if (post) setSaved(authStore.isPostSaved(post.id));
     });
     return unsub;
   }, [post]);
+
+  if (!loggedIn) {
+    return (
+      <SafeAreaView style={styles.notFound}>
+        <Text style={styles.notFoundText}>{t('loginRequiredPostView')}</Text>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.push('/auth/login')}>
+          <Text style={styles.backBtnText}>{t('goToLogin')}</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   if (post === undefined) {
     return (

@@ -373,4 +373,5 @@ export const vi = {
     timeDays: '{n} ngày',
     deletedUser: 'Người dùng đã rời đi',
     postFallback: 'bài viết',
+    loginRequiredPostView: 'Đăng nhập để xem bài viết cộng đồng.',
 } satisfies Record<TranslationKey, string>;

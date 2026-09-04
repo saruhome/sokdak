@@ -41,6 +41,7 @@ jest.mock('@/constants/authStore', () => ({
     togglePostLiked: jest.fn(),
     togglePostSaved: jest.fn(() => { mockPostSaved = !mockPostSaved; }),
     toggleCommentLiked: jest.fn(),
+    subscribe: () => () => {},
     subscribeBookmarks: () => () => {},
     hasAcceptedCommunityGuidelines: async () => true,
     blockUser: jest.fn(async () => ({ error: null })),

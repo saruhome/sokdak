@@ -373,4 +373,5 @@ export const ko = {
     timeDays: '{n}일',
     deletedUser: '탈퇴한 사용자',
     postFallback: '게시글',
+    loginRequiredPostView: '게시글은 로그인하면 볼 수 있어요.',
 } satisfies Record<TranslationKey, string>;

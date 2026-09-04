@@ -373,4 +373,5 @@ export const en = {
     timeDays: '{n}d',
     deletedUser: 'Deleted user',
     postFallback: 'a post',
+    loginRequiredPostView: 'Log in to view community posts.',
 } satisfies Record<TranslationKey, string>;

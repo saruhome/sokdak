@@ -378,4 +378,5 @@ export const tr = {
     timeDays: '{n} g',
     deletedUser: 'Silinmiş kullanıcı',
     postFallback: 'bir gönderi',
+    loginRequiredPostView: 'Gönderileri görmek için giriş yap.',
 } satisfies Record<TranslationKey, string>;

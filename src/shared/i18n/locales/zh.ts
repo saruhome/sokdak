@@ -379,4 +379,5 @@ export const zh = {
     timeDays: '{n}天',
     deletedUser: '已注销用户',
     postFallback: '帖子',
+    loginRequiredPostView: '登录后即可查看帖子。',
 } satisfies Record<TranslationKey, string>;

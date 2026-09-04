@@ -378,4 +378,5 @@ export type TranslationKey =
   | 'timeHours'
   | 'timeDays'
   | 'deletedUser'
-  | 'postFallback';
+  | 'postFallback'
+  | 'loginRequiredPostView';

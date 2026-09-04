@@ -380,4 +380,5 @@ export const ar = {
     timeDays: '{n} ي',
     deletedUser: 'مستخدم محذوف',
     postFallback: 'منشور',
+    loginRequiredPostView: 'سجّل الدخول لعرض المنشورات.',
 } satisfies Record<TranslationKey, string>;

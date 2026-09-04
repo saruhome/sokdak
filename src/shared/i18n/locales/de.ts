@@ -373,4 +373,5 @@ export const de = {
     timeDays: '{n} T.',
     deletedUser: 'Gelöschter Nutzer',
     postFallback: 'einen Beitrag',
+    loginRequiredPostView: 'Melde dich an, um Beiträge zu sehen.',
 } satisfies Record<TranslationKey, string>;

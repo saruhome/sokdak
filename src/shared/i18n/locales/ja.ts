@@ -373,4 +373,5 @@ export const ja = {
     timeDays: '{n}日',
     deletedUser: '退会したユーザー',
     postFallback: '投稿',
+    loginRequiredPostView: '投稿はログインすると見られます。',
 } satisfies Record<TranslationKey, string>;

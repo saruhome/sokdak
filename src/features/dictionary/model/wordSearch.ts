@@ -1,7 +1,7 @@
 import type { Word } from '../api/wordsApi';
 
 export type WordSearchMatch =
-  | { field: 'word' | 'romanization' | 'shortDesc' | 'category' | 'secondaryCategory' }
+  | { field: 'word' | 'romanization' | 'alias' | 'shortDesc' | 'category' | 'secondaryCategory' }
   | { field: 'translation'; translation: Word['translations'][number] };
 
 /**
@@ -36,6 +36,9 @@ export function getWordSearchMatch(word: Word, query: string): WordSearchMatch |
   const primaryFields: Array<[Exclude<WordSearchMatch['field'], 'translation'>, string]> = [
     ['word', word.word],
     ['romanization', word.romanization],
+    // 'JMT'와 '제이엠티'처럼 한 단어를 알파벳·한글로 함께 쓰는 경우, 표기마다 표제어를 만들지 않고
+    // 별칭만 검색에 태워 결과가 하나로 모이게 한다.
+    ['alias', (word.aliases ?? []).join('|')],
     ['shortDesc', word.shortDesc],
     ['category', word.category],
     ['secondaryCategory', word.secondaryCategory ?? ''],

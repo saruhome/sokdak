@@ -107,3 +107,30 @@ describe('normalizeWordSearchText', () => {
     expect(normalizeWordSearchText(input)).toBe(expected);
   });
 });
+
+// 'TMI'와 '티엠아이'처럼 한 단어를 두 표기로 쓰는 경우, 표제어를 나누지 않고 aliases로만 검색에
+// 태운다. 두 표기 모두 같은 항목 하나에 걸려야 한다.
+describe('별칭(aliases) 검색', () => {
+  const tmi = {
+    ...sampleWord,
+    id: 'tmi',
+    word: 'TMI',
+    romanization: 'Ti-em-a-i',
+    aliases: ['티엠아이'],
+    shortDesc: '너무 많거나 불필요한 정보',
+    translations: [],
+  } as Word;
+
+  it.each(['TMI', 'tmi', '티엠아이'])('표기 %p로 검색해도 같은 항목이 걸린다', query => {
+    expect(wordMatchesSearch(tmi, query)).toBe(true);
+  });
+
+  it('별칭에 없는 표기는 걸리지 않는다', () => {
+    expect(wordMatchesSearch(tmi, '존맛탱')).toBe(false);
+  });
+
+  it('aliases가 없는 단어도 그대로 동작한다', () => {
+    expect(wordMatchesSearch(sampleWord, 'ㄹㅇ')).toBe(true);
+    expect(wordMatchesSearch(sampleWord, '티엠아이')).toBe(false);
+  });
+});

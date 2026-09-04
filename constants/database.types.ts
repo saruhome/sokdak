@@ -603,6 +603,7 @@ export type Database = {
       }
       words: {
         Row: {
+          aliases: string[] | null
           category: string
           created_at: string
           id: string
@@ -630,6 +631,7 @@ export type Database = {
           word: string
         }
         Insert: {
+          aliases?: string[] | null
           category: string
           created_at?: string
           id: string
@@ -657,6 +659,7 @@ export type Database = {
           word: string
         }
         Update: {
+          aliases?: string[] | null
           category?: string
           created_at?: string
           id?: string

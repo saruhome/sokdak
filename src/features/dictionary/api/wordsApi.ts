@@ -14,6 +14,8 @@ export type Word = {
   word: string;
   /** 로마자 표기(국립국어원 Revised Romanization, 음절 단위 하이픈) — 목록에서 단어 옆에 표시 */
   romanization: string;
+  /** 같은 단어의 다른 표기(예: 'JMT'의 '제이엠티'·'존맛탱') — 검색에만 쓰고 화면에는 노출하지 않는다 */
+  aliases?: string[];
   category: string;   // Category slug (주 카테고리)
   /** Figma: 단어가 두 카테고리에 걸치는 경우(예: "오빠" = 감탄사+릴스) 상세 화면에 배지/탭 2개로 표시 */
   secondaryCategory?: string;
@@ -49,13 +51,14 @@ export type Word = {
 };
 
 const WORDS_SELECT =
-  'id, word, romanization, category, secondary_category, short_desc, short_desc_i18n, pronunciation, meanings, origin, origin_en, origin_i18n, usage, usage_en, usage_i18n, related_words, likes, saves, translations, video_url, video_youtube_id, video_start_sec, video_end_sec, thumbnail_url';
+  'id, word, romanization, aliases, category, secondary_category, short_desc, short_desc_i18n, pronunciation, meanings, origin, origin_en, origin_i18n, usage, usage_en, usage_i18n, related_words, likes, saves, translations, video_url, video_youtube_id, video_start_sec, video_end_sec, thumbnail_url';
 
 function mapRow(row: any): Word {
   return {
     id: row.id,
     word: row.word,
     romanization: row.romanization ?? '',
+    aliases: row.aliases ?? [],
     category: row.category,
     secondaryCategory: row.secondary_category ?? undefined,
     shortDesc: row.short_desc,

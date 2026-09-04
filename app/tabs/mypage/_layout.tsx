@@ -12,6 +12,7 @@ export default function MyPageLayout() {
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="saved" />
+      <Stack.Screen name="word/[id]" />
       <Stack.Screen name="my-posts" />
       <Stack.Screen name="profile" />
       <Stack.Screen name="suggest" />

@@ -65,7 +65,7 @@ export default function CategoryDetailScreen() {
         </View>
       </View>
 
-      <WordListView initialCategorySlugs={initialCategorySlugs} />
+      <WordListView initialCategorySlugs={initialCategorySlugs} detailBase="/tabs/category/word" />
     </SafeAreaView>
   );
 }

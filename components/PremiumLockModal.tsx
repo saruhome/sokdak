@@ -9,8 +9,8 @@ import { isLockedWord, type Word } from '@/constants/words';
 /** 잠긴 속어 탭의 공통 분기(사전 목록·검색 공유) —
  * 성인 미확인: 만 19세 확인 대화상자부터. 확인(또는 이미 확인) 후 프리미엄이면 상세로,
  * 비프리미엄이면 캐릭터 팝업(showLockModal)으로 결제 유도. */
-export function gateLockedWord(word: Word, showLockModal: () => void) {
-  const goDetail = () => router.push(`/tabs/dictionary/${word.id}`);
+export function gateLockedWord(word: Word, showLockModal: () => void, detailBase = '/tabs/dictionary') {
+  const goDetail = () => router.push(`${detailBase}/${word.id}` as never);
   if (!isLockedWord(word)) { goDetail(); return; }
   const hasPremium = BETA_UNLIMITED_ENTITLEMENTS || authStore.isPremium();
   if (!authStore.isAdultVerified()) {

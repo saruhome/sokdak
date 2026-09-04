@@ -170,7 +170,7 @@ export default function SavedWordsScreen() {
                 <TouchableOpacity
                   key={word.id}
                   style={styles.wordItem}
-                  onPress={() => router.push(`/tabs/dictionary/${word.id}`)}
+                  onPress={() => router.push(`/tabs/mypage/word/${word.id}` as never)}
                   activeOpacity={0.7}
                 >
                   <View style={styles.wordItemLeft}>

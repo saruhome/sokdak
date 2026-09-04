@@ -326,6 +326,7 @@ export default function WordDetailScreen() {
                     <TouchableOpacity
                       key={rw}
                       style={styles.relatedChip}
+                      /* ponytail: 카테고리/마이페이지 스택에서 연 상세의 관련 단어는 사전 스택으로 넘어감(크로스탭 1회) — 불만 나오면 상대 경로 push로 교체 */
                       onPress={() => target && router.push(`/tabs/dictionary/${target.id}`)}
                       disabled={!target}
                     >

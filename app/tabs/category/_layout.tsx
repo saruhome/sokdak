@@ -13,6 +13,7 @@ export default function CategoryLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="search" />
       <Stack.Screen name="[slug]" />
+      <Stack.Screen name="word/[id]" />
     </Stack>
   );
 }

@@ -57,11 +57,15 @@ export function WordListView({
   showTipCard = true,
   initialSortIndex = 0,
   showScrollToTopButton = false,
+  /* 단어 상세로 push할 스택 경로 — 탭 스택을 넘는 push는 웹 히스토리에 entry가 안 남아
+   * 뒤로가기가 화면을 건너뛰므로, 호출 화면이 자기 스택 안의 상세 라우트를 넘긴다. */
+  detailBase = '/tabs/dictionary',
 }: {
   initialCategorySlugs?: string[];
   showTipCard?: boolean;
   initialSortIndex?: number;
   showScrollToTopButton?: boolean;
+  detailBase?: string;
 }) {
   const listRef = useRef<FlatList<Word>>(null);
   const language = useLanguage();
@@ -81,7 +85,7 @@ export function WordListView({
   /* 속어 단어도 검색·목록에 노출(표제어만) — 행 렌더가 블러, 탭이 팝업 게이트를 담당 */
   useEffect(() => { fetchWords({ includeLocked: true }).then(data => { setWords(data); setLoading(false); }); }, []);
 
-  const openWord = (word: Word) => gateLockedWord(word, () => setLockModalVisible(true));
+  const openWord = (word: Word) => gateLockedWord(word, () => setLockModalVisible(true), detailBase);
 
   /* 카테고리 상세에서 다른 카테고리로 이동하면 필터를 새 slug로 리셋 */
   useEffect(() => { setCategorySlugs(initialCategorySlugs); }, [initialCategorySlugs.join(',')]);
@@ -185,7 +189,7 @@ export function WordListView({
             {showTipCard && tipWord && (
               <TouchableOpacity accessibilityRole="button"
                 style={styles.tipCard}
-                onPress={() => router.push(`/tabs/dictionary/${tipWord.id}`)}
+                onPress={() => router.push(`${detailBase}/${tipWord.id}` as never)}
                 activeOpacity={0.85}
               >
                 {/* 캐릭터 고정, 말풍선은 내용 크기(운영자 규칙). 예전의 고스트 실측 장치는

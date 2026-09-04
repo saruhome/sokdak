@@ -15,7 +15,7 @@ export const ar = {
     mypage: 'صفحتي',
     settings: 'الإعدادات',
     notifications: 'إعدادات الإشعارات',
-    languageSettings: 'تغيير اللغة',
+    languageSettings: 'Change Language',
     activity: 'النشاط',
     savedWords: 'الكلمات المحفوظة',
     likedPosts: 'منشورات أعجبتني',

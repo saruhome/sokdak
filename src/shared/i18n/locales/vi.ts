@@ -8,7 +8,7 @@ export const vi = {
     mypage: 'Trang cá nhân',
     settings: 'Cài đặt',
     notifications: 'Cài đặt thông báo',
-    languageSettings: 'Đổi ngôn ngữ',
+    languageSettings: 'Change Language',
     activity: 'Hoạt động',
     savedWords: 'Từ đã lưu',
     likedPosts: 'Bài viết đã thích',

@@ -8,7 +8,7 @@ export const ko = {
     mypage: '마이페이지',
     settings: '설정',
     notifications: '알림설정',
-    languageSettings: '언어 변경',
+    languageSettings: 'Change Language',
     activity: '활동',
     savedWords: '저장한 단어',
     likedPosts: '좋아요 한 글',

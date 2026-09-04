@@ -8,7 +8,7 @@ export const ja = {
     mypage: 'マイページ',
     settings: '設定',
     notifications: '通知設定',
-    languageSettings: '言語を変更',
+    languageSettings: 'Change Language',
     activity: 'アクティビティ',
     savedWords: '保存した単語',
     likedPosts: 'いいねした投稿',

@@ -8,7 +8,7 @@ export const de = {
     mypage: 'Mein Bereich',
     settings: 'Einstellungen',
     notifications: 'Benachrichtigungen',
-    languageSettings: 'Sprache ändern',
+    languageSettings: 'Change Language',
     activity: 'Aktivitäten',
     savedWords: 'Gespeicherte Wörter',
     likedPosts: 'Gelikte Beiträge',

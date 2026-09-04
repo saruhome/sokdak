@@ -14,7 +14,7 @@ export const zh = {
     mypage: '我的',
     settings: '设置',
     notifications: '通知设置',
-    languageSettings: '更改语言',
+    languageSettings: 'Change Language',
     activity: '动态',
     savedWords: '已保存的单词',
     likedPosts: '点赞的帖子',

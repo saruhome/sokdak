@@ -13,7 +13,7 @@ export const tr = {
     mypage: 'Sayfam',
     settings: 'Ayarlar',
     notifications: 'Bildirim ayarları',
-    languageSettings: 'Dili değiştir',
+    languageSettings: 'Change Language',
     activity: 'Etkinlik',
     savedWords: 'Kaydedilen kelimeler',
     likedPosts: 'Beğenilen gönderiler',

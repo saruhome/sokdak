@@ -7,8 +7,9 @@
 --   https://www.instablank.com/meme/19
 --
 -- 운영자 지시로 이형태 '커터칼퇴근'을 확인했다: 같은 말이고, 오히려 언론은 긴 형태를 표제로 쓴다.
--- 표기마다 표제어를 나누지 않는 규칙대로 표제어는 '커터칼퇴' 하나만 두고 '커터칼퇴근'은 aliases로
--- 검색에 태웠으며, 두 표기가 같은 말이라는 사실은 definition(5개 언어 포함)에 적었다.
+-- 그래서 표제어는 원말 '커터칼퇴근' 하나만 두고 줄임말 '커터칼퇴'는 aliases로 검색에만 태운다
+-- (파일 끝의 후속 update가 이 전환을 담는다). 두 형태가 같은 말이라는 사실은
+-- definition(5개 언어 포함)에 적었다.
 --
 -- NOTE: filename timestamp differs from the production migration version
 -- (MCP apply time becomes the version) — repo-wide convention, see CLAUDE.md.
@@ -18,3 +19,16 @@ insert into public.words select * from jsonb_populate_record(null::public.words,
 update public.words set aliases = '{}' where aliases is null;
 
 -- 적용 후 확인: select count(*) from public.words; → 175
+
+-- 2026-09-04 후속(운영자 지시): 표기 변이와 형태 변이는 다른 규칙으로 다룬다.
+-- TMI/티엠아이·존맛탱/JMT는 문자 체계가 다른 '표기 변이'라 국내에서 더 흔한 표기를 표제어로 두고,
+-- 커터칼퇴근/커터칼퇴는 같은 한글 안의 '형태 변이(원말/줄임말)'라 더 널리 쓰이는 형태를 표제어로
+-- 둔다. 여기서는 언론·밈사전이 쓰는 원말 '커터칼퇴근'이 그에 해당한다(같은 형태 변이라도 '로판'은
+-- 줄임말 쪽이 통용돼 로판이 표제어다 — 기준은 길이가 아니라 통용도).
+-- 규칙 전문은 CLAUDE.md의 '단어 데이터' 절 참고.
+update public.words set
+  word = '커터칼퇴근',
+  romanization = 'Keo-teo-kal-toe-geun',
+  pronunciation = '[커터칼퇴근]',
+  aliases = array['커터칼퇴']
+where id = '249';

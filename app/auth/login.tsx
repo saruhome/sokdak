@@ -6,6 +6,7 @@ import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
 import { BackIcon } from '@/components/icons/SocialIcons';
 import { SokDakLogo } from '@/components/icons/SokDakLogo';
+import { languageStore, useLanguage } from '../../constants/languageStore';
 
 const AVATAR_JJAEKI = require('../../assets/characters/transparent/jjaeki-full.png');
 const AVATAR_HORANG = require('../../assets/characters/transparent/horang-full.png');
@@ -14,6 +15,8 @@ const AVATAR_HORANG = require('../../assets/characters/transparent/horang-full.p
  *  소셜 로그인(Facebook/Google/Apple)은 Supabase 쪽 OAuth 프로바이더 설정(클라이언트 ID·
  *  리다이렉트 URI 등)이 별도로 필요해 이번 백엔드 연동 범위 밖이라 일단 숨김 — 실제 인증은 이메일 로그인으로. */
 export default function LoginScreen() {
+  useLanguage();
+  const t = languageStore.t;
   const handleEmailLogin = () => {
     router.push('/auth/email-login');
   };
@@ -36,7 +39,7 @@ export default function LoginScreen() {
         {/* ── 로고 섹션 ── */}
         <View style={styles.logoSection}>
           <SokDakLogo width={200} color={Colors.navBar} />
-          <Text style={styles.logoTagline}>속닥속닥, 교과서 밖 진짜 한국어를 배우다</Text>
+          <Text style={styles.logoTagline}>{t('authTagline')}</Text>
         </View>
 
         {/* ── 캐릭터 일러스트 ── Figma: Character/짹이/Default + Character/호랭/Default */}
@@ -48,15 +51,15 @@ export default function LoginScreen() {
         {/* 소셜 로그인(Facebook/Google/Apple)은 일단 숨김 — 이메일 로그인만 남긴다 */}
         <View style={styles.socialSection}>
           <TouchableOpacity style={styles.emailLoginBtn} onPress={handleEmailLogin} activeOpacity={0.85}>
-            <Text style={styles.emailLoginText}>이메일로 로그인</Text>
+            <Text style={styles.emailLoginText}>{t('emailLoginBtn')}</Text>
           </TouchableOpacity>
         </View>
 
         {/* ── 회원가입 링크 ── */}
         <View style={styles.signupRow}>
-          <Text style={styles.signupPrompt}>계정이 없으신가요?</Text>
+          <Text style={styles.signupPrompt}>{t('noAccountPrompt')}</Text>
           <TouchableOpacity onPress={() => router.push('/auth/signup')}>
-            <Text style={styles.signupLink}>회원가입</Text>
+            <Text style={styles.signupLink}>{t('signupTitle')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

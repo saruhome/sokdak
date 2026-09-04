@@ -4,6 +4,7 @@
  * 댓글/좋아요가 실제로 insert될 때만 생성되므로 여기서는 조회·읽음 처리만 한다.
  */
 import { supabase } from '../../../shared/api/supabaseClient';
+import { languageStore } from '../../../shared/i18n/languageStore';
 
 export type AppNotification = {
   id: string;
@@ -17,12 +18,13 @@ export type AppNotification = {
 };
 
 function toTimeAgo(iso: string): string {
+  const t = languageStore.t;
   const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
-  if (minutes < 1) return '방금';
-  if (minutes < 60) return `${minutes}분`;
+  if (minutes < 1) return t('timeJustNow');
+  if (minutes < 60) return t('timeMinutes').replace('{n}', String(minutes));
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간`;
-  return `${Math.floor(hours / 24)}일`;
+  if (hours < 24) return t('timeHours').replace('{n}', String(hours));
+  return t('timeDays').replace('{n}', String(Math.floor(hours / 24)));
 }
 
 /* notifications→profiles 경로가 actor_id/recipient_id 두 가지라 FK 이름을 명시해야
@@ -41,17 +43,16 @@ export async function fetchNotifications(): Promise<AppNotification[]> {
     .order('created_at', { ascending: false });
   if (error || !data) return [];
 
+  const t = languageStore.t;
   return data.map(n => {
     const actor = n.profiles as { nickname: string; avatar_emoji: string } | null;
-    const title = (n.posts as { title: string } | null)?.title ?? '게시글';
+    const title = (n.posts as { title: string } | null)?.title ?? t('postFallback');
     return {
       id: n.id,
       type: n.type as 'comment' | 'like',
-      actorName: actor?.nickname ?? '탈퇴한 사용자',
+      actorName: actor?.nickname ?? t('deletedUser'),
       actorEmoji: actor?.avatar_emoji ?? '👤',
-      message: n.type === 'comment'
-        ? `님이 회원님의 글에 댓글을 남겼어요: "${title}"`
-        : `님이 회원님의 글을 좋아합니다: "${title}"`,
+      message: (n.type === 'comment' ? t('notifCommentMsg') : t('notifLikeMsg')).replace('{title}', title),
       timeAgo: toTimeAgo(n.created_at),
       postId: n.post_id,
       read: !!n.read_at,

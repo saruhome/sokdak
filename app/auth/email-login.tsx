@@ -7,6 +7,7 @@ import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
 import { authStore } from '../../constants/authStore';
 import { BackIcon } from '@/components/icons/SocialIcons';
+import { languageStore, useLanguage } from '../../constants/languageStore';
 
 const JJAEKI_AVATAR = require('../../assets/characters/transparent/jjaeki.png');
 
@@ -69,6 +70,8 @@ function validateEmail(v: string) {
 }
 
 export default function EmailLoginScreen() {
+  useLanguage();
+  const t = languageStore.t;
   const [mode, setMode] = useState<'login' | 'forgot'>('login');
 
   /* ── 로그인 폼 상태 ── */
@@ -85,8 +88,8 @@ export default function EmailLoginScreen() {
   const [loginError, setLoginError] = useState<string | null>(null);
 
   const errors = submitted ? {
-    email: !validateEmail(email) ? '올바른 이메일 형식을 입력해주세요.' : undefined,
-    password: password.length < 1 ? '비밀번호를 입력해주세요.' : undefined,
+    email: !validateEmail(email) ? t('errEmailFormat') : undefined,
+    password: password.length < 1 ? t('errPasswordRequired') : undefined,
   } : { email: undefined, password: undefined };
 
   const isValid = validateEmail(email) && password.length >= 1;
@@ -101,9 +104,9 @@ export default function EmailLoginScreen() {
     if (error) {
       setLoginError(
         error === 'Invalid login credentials'
-          ? '이메일 또는 비밀번호가 올바르지 않아요.'
+          ? t('errInvalidCredentials')
           : error === 'Email not confirmed'
-          ? '이메일 인증이 아직 완료되지 않았어요. 받은 메일함을 확인해주세요.'
+          ? t('errEmailNotConfirmed')
           : error,
       );
       return;
@@ -113,7 +116,7 @@ export default function EmailLoginScreen() {
 
   const [resetPending, setResetPending] = useState(false);
   const resetError = resetSubmitted && !validateEmail(resetEmail)
-    ? '올바른 이메일 형식을 입력해주세요.' : undefined;
+    ? t('errEmailFormat') : undefined;
 
   const handleSendReset = async () => {
     setResetSubmitted(true);
@@ -143,7 +146,7 @@ export default function EmailLoginScreen() {
           >
             <BackIcon size={24} color={Colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.topBarTitle}>{mode === 'login' ? '이메일로 로그인' : '비밀번호 찾기'}</Text>
+          <Text style={styles.topBarTitle}>{mode === 'login' ? t('emailLoginBtn') : t('forgotPasswordTitle')}</Text>
           <View style={{ width: 44 }} />
         </View>
 
@@ -157,12 +160,12 @@ export default function EmailLoginScreen() {
             <>
               <View style={[styles.welcomeSection, styles.welcomeRow]}>
                 <Image source={JJAEKI_AVATAR} style={styles.welcomeAvatar} resizeMode="cover" />
-                <Text style={styles.welcomeText}>다시 만나서 반가워요!{'\n'}이메일로 로그인해주세요.</Text>
+                <Text style={styles.welcomeText}>{t('loginWelcome')}</Text>
               </View>
 
               <View style={styles.form}>
                 <FormField
-                  label="이메일"
+                  label={t('emailLabel')}
                   value={email}
                   onChangeText={setEmail}
                   placeholder="example@email.com"
@@ -171,10 +174,10 @@ export default function EmailLoginScreen() {
                   returnKeyType="next"
                 />
                 <FormField
-                  label="비밀번호"
+                  label={t('passwordLabel')}
                   value={password}
                   onChangeText={setPassword}
-                  placeholder="비밀번호를 입력해주세요"
+                  placeholder={t('passwordPlaceholder')}
                   secureTextEntry
                   error={errors.password}
                   returnKeyType="done"
@@ -184,7 +187,7 @@ export default function EmailLoginScreen() {
 
               {/* ── 비밀번호 찾기 링크 ── */}
               <TouchableOpacity style={styles.forgotRow} onPress={() => setMode('forgot')}>
-                <Text style={styles.forgotLink}>비밀번호를 잊으셨나요?</Text>
+                <Text style={styles.forgotLink}>{t('forgotPasswordLink')}</Text>
               </TouchableOpacity>
 
               {loginError ? <Text style={styles.formError}>{loginError}</Text> : null}
@@ -197,14 +200,14 @@ export default function EmailLoginScreen() {
                 disabled={loginPending}
               >
                 <Text style={[styles.submitBtnText, (!isValid || loginPending) && styles.submitBtnTextDisabled]}>
-                  {loginPending ? '로그인 중…' : '로그인'}
+                  {loginPending ? t('loginPendingBtn') : t('login')}
                 </Text>
               </TouchableOpacity>
 
               <View style={styles.signupRow}>
-                <Text style={styles.signupPrompt}>계정이 없으신가요?</Text>
+                <Text style={styles.signupPrompt}>{t('noAccountPrompt')}</Text>
                 <TouchableOpacity onPress={() => router.push('/auth/signup')}>
-                  <Text style={styles.signupLink}>회원가입</Text>
+                  <Text style={styles.signupLink}>{t('signupTitle')}</Text>
                 </TouchableOpacity>
               </View>
             </>
@@ -212,12 +215,12 @@ export default function EmailLoginScreen() {
             /* ── 재설정 메일 발송 완료 ── */
             <View style={styles.doneWrap}>
               <Text style={styles.doneEmoji}>📬</Text>
-              <Text style={styles.doneTitle}>메일을 보냈어요!</Text>
+              <Text style={styles.doneTitle}>{t('resetSentTitle')}</Text>
               <Text style={styles.doneDesc}>
-                '{resetEmail}'로{'\n'}비밀번호 재설정 링크를 보냈어요.{'\n'}메일함을 확인해주세요.
+                {t('resetSentDesc').replace('{email}', resetEmail)}
               </Text>
               <TouchableOpacity style={styles.submitBtn} onPress={goBackToLogin} activeOpacity={0.85}>
-                <Text style={styles.submitBtnText}>로그인으로 돌아가기</Text>
+                <Text style={styles.submitBtnText}>{t('backToLogin')}</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -225,13 +228,13 @@ export default function EmailLoginScreen() {
             <>
               <View style={styles.welcomeSection}>
                 <Text style={styles.welcomeText}>
-                  가입하신 이메일 주소를 입력하시면{'\n'}비밀번호 재설정 링크를 보내드려요.
+                  {t('forgotIntro')}
                 </Text>
               </View>
 
               <View style={styles.form}>
                 <FormField
-                  label="이메일"
+                  label={t('emailLabel')}
                   value={resetEmail}
                   onChangeText={setResetEmail}
                   placeholder="example@email.com"
@@ -249,13 +252,13 @@ export default function EmailLoginScreen() {
                 disabled={resetPending}
               >
                 <Text style={[styles.submitBtnText, (!validateEmail(resetEmail) || resetPending) && styles.submitBtnTextDisabled]}>
-                  {resetPending ? '전송 중…' : '재설정 링크 보내기'}
+                  {resetPending ? t('resetSendingBtn') : t('resetSendBtn')}
                 </Text>
               </TouchableOpacity>
 
               <View style={styles.signupRow}>
                 <TouchableOpacity onPress={goBackToLogin}>
-                  <Text style={styles.signupLink}>로그인으로 돌아가기</Text>
+                  <Text style={styles.signupLink}>{t('backToLogin')}</Text>
                 </TouchableOpacity>
               </View>
             </>

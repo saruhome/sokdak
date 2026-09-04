@@ -10,6 +10,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { User, Mail, Lock, Check, type LucideIcon } from 'lucide-react-native';
 import { authStore } from '../../constants/authStore';
 import { BackIcon } from '@/components/icons/SocialIcons';
+import { languageStore, useLanguage } from '../../constants/languageStore';
 
 const JJAEKI_AVATAR = require('../../assets/characters/transparent/jjaeki.png');
 
@@ -80,7 +81,7 @@ function Checkbox({ checked, onToggle, label, required }: {
         {checked && <AppIcon icon={Check} size={14} color="#fff" />}
       </View>
       <Text style={cb.label}>{label}</Text>
-      {required && <Text style={cb.required}>(필수)</Text>}
+      {required && <Text style={cb.required}>{languageStore.t('requiredMark')}</Text>}
     </TouchableOpacity>
   );
 }
@@ -103,6 +104,8 @@ function validateEmail(v: string) {
 }
 
 export default function SignupScreen() {
+  useLanguage();
+  const t = languageStore.t;
   const [nickname, setNickname] = useState('');
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
@@ -113,10 +116,10 @@ export default function SignupScreen() {
 
   /* 각 필드 오류 메시지 (submit 시도 후에만 표시) */
   const errors = submitted ? {
-    nickname: nickname.trim().length < 2 ? '닉네임은 2자 이상 입력해주세요.' : undefined,
-    email: !validateEmail(email) ? '올바른 이메일 형식을 입력해주세요.' : undefined,
-    password: password.length < 8 ? '비밀번호는 8자 이상이어야 해요.' : undefined,
-    confirm: password !== confirm ? '비밀번호가 일치하지 않아요.' : undefined,
+    nickname: nickname.trim().length < 2 ? t('errNicknameShort') : undefined,
+    email: !validateEmail(email) ? t('errEmailFormat') : undefined,
+    password: password.length < 8 ? t('errPasswordLength') : undefined,
+    confirm: password !== confirm ? t('errPasswordMismatch') : undefined,
   } : { nickname: undefined, email: undefined, password: undefined, confirm: undefined };
 
   const isValid = nickname.trim().length >= 2 && validateEmail(email)
@@ -138,16 +141,16 @@ export default function SignupScreen() {
     if (error) {
       setSignupError(
         error === 'User already registered'
-          ? '이미 가입된 이메일이에요.'
+          ? t('errEmailTaken')
           : error,
       );
       return;
     }
     if (needsEmailConfirmation) {
       Alert.alert(
-        '가입 완료! 🎉',
-        `${nickname}님, 속닥에 오신 걸 환영해요!\n'${email}'로 보낸 인증 메일을 확인한 뒤 로그인해주세요.`,
-        [{ text: '로그인하러 가기', onPress: () => router.replace('/auth/login') }],
+        t('signupDoneTitle'),
+        t('signupDoneBody').replace('{nickname}', nickname).replace('{email}', email),
+        [{ text: t('goToLogin'), onPress: () => router.replace('/auth/login') }],
       );
     } else {
       // Confirm email 설정이 꺼져 있으면 가입 즉시 세션이 생겨 로그인 상태 — 바로 앱으로.
@@ -166,7 +169,7 @@ export default function SignupScreen() {
           <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack('/auth/login')}>
             <BackIcon size={24} color={Colors.navBarIconActive} />
           </TouchableOpacity>
-          <Text style={styles.topBarTitle}>회원가입</Text>
+          <Text style={styles.topBarTitle}>{t('signupTitle')}</Text>
           <View style={{ width: 44 }} />
         </View>
 
@@ -180,7 +183,7 @@ export default function SignupScreen() {
           <View style={[styles.welcomeSection, styles.welcomeRow]}>
             <Image source={JJAEKI_AVATAR} style={styles.welcomeAvatar} resizeMode="cover" />
             <Text style={styles.welcomeText}>
-              반가워요!{'\n'}<Text style={styles.welcomeTextBold}>속닥</Text> 과 함께 진짜 한국어를 배워봐요.
+              {t('signupWelcome')}
             </Text>
           </View>
 
@@ -190,8 +193,8 @@ export default function SignupScreen() {
               icon={User}
               value={nickname}
               onChangeText={setNickname}
-              placeholder="닉네임"
-              helper="다른 사용자에게 표시되는 이름이에요."
+              placeholder={t('nicknameLabel')}
+              helper={t('nicknameHelper')}
               error={errors.nickname}
               returnKeyType="next"
             />
@@ -199,7 +202,7 @@ export default function SignupScreen() {
               icon={Mail}
               value={email}
               onChangeText={setEmail}
-              placeholder="이메일"
+              placeholder={t('emailLabel')}
               keyboardType="email-address"
               error={errors.email}
               returnKeyType="next"
@@ -208,7 +211,7 @@ export default function SignupScreen() {
               icon={Lock}
               value={password}
               onChangeText={setPassword}
-              placeholder="비밀번호"
+              placeholder={t('passwordLabel')}
               secureTextEntry
               error={errors.password}
               returnKeyType="next"
@@ -217,7 +220,7 @@ export default function SignupScreen() {
               icon={Lock}
               value={confirm}
               onChangeText={setConfirm}
-              placeholder="비밀번호 확인"
+              placeholder={t('confirmPasswordPlaceholder')}
               secureTextEntry
               error={errors.confirm}
               returnKeyType="done"
@@ -230,17 +233,17 @@ export default function SignupScreen() {
             <Checkbox
               checked={terms}
               onToggle={() => setTerms(p => !p)}
-              label="이용약관에 동의합니다."
+              label={t('termsAgree')}
               required
             />
             <Checkbox
               checked={privacy}
               onToggle={() => setPrivacy(p => !p)}
-              label="개인정보 처리방침에 동의합니다."
+              label={t('privacyAgree')}
               required
             />
             {submitted && (!terms || !privacy) && (
-              <Text style={styles.termsError}>필수 약관에 모두 동의해주세요.</Text>
+              <Text style={styles.termsError}>{t('termsAllError')}</Text>
             )}
           </View>
 
@@ -254,15 +257,15 @@ export default function SignupScreen() {
             disabled={pending}
           >
             <Text style={[styles.submitBtnText, (!isValid || pending) && styles.submitBtnTextDisabled]}>
-              {pending ? '가입 중…' : '회원가입'}
+              {pending ? t('signupPendingBtn') : t('signupTitle')}
             </Text>
           </TouchableOpacity>
 
           {/* ── 로그인 링크 ── Figma: "이미 계정이 있나요? 로그인" */}
           <View style={styles.loginRow}>
-            <Text style={styles.loginPrompt}>이미 계정이 있나요?</Text>
+            <Text style={styles.loginPrompt}>{t('haveAccountPrompt')}</Text>
             <TouchableOpacity onPress={() => safeGoBack('/auth/login')}>
-              <Text style={styles.loginLink}>로그인</Text>
+              <Text style={styles.loginLink}>{t('login')}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -292,7 +295,6 @@ const styles = StyleSheet.create({
     flexShrink: 1, fontSize: 18, fontWeight: '400', color: Colors.textPrimary,
     lineHeight: 26, letterSpacing: -0.3,
   },
-  welcomeTextBold: { fontWeight: '800' },
 
   /* 폼 */
   form: { gap: 16, marginBottom: 24 },

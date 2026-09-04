@@ -6,12 +6,15 @@ import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { safeGoBack } from '../../constants/navigation';
 import { fetchNotifications, markAllNotificationsRead, type AppNotification } from '../../constants/notifications';
+import { languageStore, useLanguage } from '../../constants/languageStore';
 import { AppIcon } from '@/components/AppIcon';
 import { ChevronLeft } from 'lucide-react-native';
 
 /** Figma: Navigation/알림 — 상단 벨 아이콘에서 진입하는 알림 목록 (댓글·좋아요)
  * notifications 테이블 + DB 트리거(notify_on_comment/notify_on_like)로 실제 생성됨 */
 export default function NotificationsScreen() {
+  useLanguage();
+  const t = languageStore.t;
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
   useFocusEffect(useCallback(() => {
@@ -27,15 +30,15 @@ export default function NotificationsScreen() {
         <TouchableOpacity style={styles.backBtn} onPress={() => safeGoBack()}>
           <AppIcon icon={ChevronLeft} size={22} color={Colors.navBarIconActive} />
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>알림</Text>
+        <Text style={styles.topBarTitle}>{t('notifications')}</Text>
         <View style={styles.backBtn} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionTitle}>알림</Text>
+        <Text style={styles.sectionTitle}>{t('notifications')}</Text>
 
         {notifications.length === 0 && (
-          <Text style={styles.empty}>아직 알림이 없어요</Text>
+          <Text style={styles.empty}>{t('notifEmpty')}</Text>
         )}
 
         {notifications.map((n, i) => (

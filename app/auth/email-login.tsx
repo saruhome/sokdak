@@ -53,7 +53,7 @@ function FormField({
 
 const ff = StyleSheet.create({
   wrap: { gap: 4, marginBottom: 4 },
-  label: { fontSize: 12, fontWeight: '600', color: Colors.textSecondary, paddingHorizontal: 2 },
+  label: { fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textSecondary, paddingHorizontal: 2 },
   input: { fontFamily: 'NotoSerifKR_400Regular',
     height: 48, borderRadius: 10, borderWidth: 1.5, borderColor: Colors.border,
     paddingHorizontal: 14, fontSize: 15, color: Colors.textPrimary,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: Colors.textPrimary },
+  topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
 
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 24, paddingBottom: 48, paddingTop: 4 },
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   submitBtnDisabled: { backgroundColor: Colors.border },
-  submitBtnText: { fontSize: 16, fontWeight: '700', color: Colors.navBarIconActive },
+  submitBtnText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   submitBtnTextDisabled: { color: Colors.textTertiary },
 
   signupRow: {
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', gap: 6,
   },
   signupPrompt: { fontSize: 14, color: Colors.textTertiary },
-  signupLink: { fontSize: 14, fontWeight: '700', color: Colors.navBar },
+  signupLink: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar },
 
   /* 재설정 메일 발송 완료 */
   doneWrap: { alignItems: 'center', paddingTop: 40, gap: 4 },

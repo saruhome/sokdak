@@ -114,5 +114,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center', gap: 6, marginTop: 8,
   },
   signupPrompt: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
-  signupLink: { fontSize: 14, fontWeight: '600', color: Colors.navBar, textDecorationLine: 'underline' },
+  signupLink: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar, textDecorationLine: 'underline' },
 });

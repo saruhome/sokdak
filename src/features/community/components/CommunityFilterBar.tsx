@@ -35,7 +35,7 @@ export function CommunityFilterBar({
               accessibilityState={{ selected }}
               style={[styles.tab, selected && { borderBottomColor: activeColor, borderBottomWidth: 2 }]}
             >
-              <Text style={[styles.tabText, selected && { color: activeColor, fontWeight: '700' }]}>
+              <Text style={[styles.tabText, selected && { color: activeColor, fontFamily: 'NotoSerifKR_600SemiBold' }]}>
                 {tab === '전체' ? tFor(language, 'allLabel') : getBoardLabel(tab as PostBoard, language)}
               </Text>
             </TouchableOpacity>

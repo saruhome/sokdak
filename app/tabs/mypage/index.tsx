@@ -232,14 +232,14 @@ const styles = StyleSheet.create({
   },
   premiumRowActive: { backgroundColor: Colors.premium + '12', borderColor: Colors.premium },
   premiumRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  premiumRowLabel: { fontSize: 14, fontWeight: '700', color: Colors.textSecondary },
+  premiumRowLabel: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textSecondary },
   premiumRowLabelActive: { color: Colors.premiumText },
   streakChip: {
     flexDirection: 'row', alignItems: 'center', gap: 3,
     paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,
     backgroundColor: Colors.point1 + '15',
   },
-  streakChipText: { fontSize: 12, fontWeight: '700', color: Colors.point1 },
+  streakChipText: { fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.point1 },
 
   sectionHeader: {
     fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary,

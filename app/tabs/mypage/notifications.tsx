@@ -170,11 +170,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.navBarIconActive },
+  topBarTitle: { fontSize: 17, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
 
   scroll: { padding: 20, paddingBottom: 40 },
   sectionLabel: {
-    fontSize: 14, fontWeight: '700', color: Colors.textPrimary,
+    fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary,
     marginTop: 24, marginBottom: 10,
   },
   group: {
@@ -187,6 +187,6 @@ const styles = StyleSheet.create({
   },
   rowBorder: { borderBottomWidth: 1, borderBottomColor: Colors.divider },
   rowText: { flex: 1, gap: 4 },
-  rowLabel: { fontSize: 15, fontWeight: '600', color: Colors.textPrimary },
+  rowLabel: { fontSize: 15, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   rowDesc: { fontSize: 12, color: Colors.textTertiary },
 });

@@ -75,7 +75,7 @@ export function PostRichText({
 
 const styles = {
   link: { color: Colors.accent, textDecorationLine: 'underline' as const },
-  bold: { fontWeight: '700' as const },
+  bold: { fontFamily: 'NotoSerifKR_600SemiBold' as const },
   italic: { fontStyle: 'italic' as const },
   image: { borderRadius: 10, marginVertical: 8, backgroundColor: Colors.border },
   blankLine: { height: 8 },

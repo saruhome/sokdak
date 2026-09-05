@@ -434,9 +434,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
+  topBarTitle: { fontSize: 17, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   saveBtn: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 16, backgroundColor: Colors.border, marginRight: 4 },
-  saveBtnText: { fontSize: 14, fontWeight: '700', color: Colors.textTertiary },
+  saveBtnText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textTertiary },
 
   scroll: { paddingHorizontal: 24, paddingVertical: 24, gap: 20 },
 
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
   },
   profileNameBox: { flex: 1, gap: 8 },
 
-  sectionTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
+  sectionTitle: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, marginBottom: 8 },
   cardGroup: { width: '100%', gap: 12 },
   cardItem: {
     width: '100%',
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.surface,
     alignItems: 'center', justifyContent: 'center',
   },
-  photoMenuText: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
+  photoMenuText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   tzValueRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   tzChevron: { fontSize: 18, color: Colors.textTertiary },
   tzModalBackdrop: {
@@ -488,12 +488,12 @@ const styles = StyleSheet.create({
     width: '100%', maxHeight: '75%',
     backgroundColor: Colors.background, borderRadius: 16, padding: 16, gap: 10,
   },
-  tzModalTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  tzModalTitle: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   tzList: { flexGrow: 0 },
   tzRow: { paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: Colors.divider },
   tzRowActive: { backgroundColor: Colors.accent + '15', borderRadius: 8 },
   tzRowText: { fontSize: 14, color: Colors.textPrimary },
-  tzRowTextActive: { color: Colors.accent, fontWeight: '700' },
+  tzRowTextActive: { color: Colors.accent, fontFamily: 'NotoSerifKR_600SemiBold' },
   tzCloseBtn: { height: 44, alignItems: 'center', justifyContent: 'center' },
   tzCloseText: { fontSize: 15, color: Colors.textSecondary },
 
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
   withdrawLink: { alignSelf: 'center', marginTop: 20, paddingVertical: 10, paddingHorizontal: 12 },
   withdrawLinkText: { fontSize: 13, color: Colors.textTertiary, textDecorationLine: 'underline' },
 
-  fieldLabel: { fontSize: 13, fontWeight: '700', color: Colors.textSecondary },
+  fieldLabel: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textSecondary },
   fieldInput: { fontFamily: 'NotoSerifKR_400Regular',
     height: 48, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, paddingHorizontal: 14,
@@ -525,5 +525,5 @@ const styles = StyleSheet.create({
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
   notFoundText: { fontSize: 16, color: Colors.textSecondary },
   notFoundBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8, backgroundColor: Colors.navBar },
-  notFoundBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontWeight: '600' },
+  notFoundBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontFamily: 'NotoSerifKR_600SemiBold' },
 });

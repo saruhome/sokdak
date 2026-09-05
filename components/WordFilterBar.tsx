@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   consonantChipActive: { backgroundColor: Colors.navBar, borderColor: Colors.navBar },
   consonantChipText: { fontSize: 13, color: Colors.textSecondary, fontFamily: undefined },
-  consonantChipTextActive: { color: Colors.navBarIconActive, fontWeight: '700' },
+  consonantChipTextActive: { color: Colors.navBarIconActive, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   /* maxHeight를 '80%'로 두면 BottomSheet의 Animated.View 래퍼가 높이를 못 정해(퍼센트
    * 기준이 되는 부모 높이가 콘텐츠 크기에 따라 달라지는 순환 참조) 시트 아래로 빈 공간이

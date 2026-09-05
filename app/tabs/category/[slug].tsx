@@ -91,5 +91,5 @@ const styles = StyleSheet.create({
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
   notFoundText: { fontSize: 16, color: Colors.textSecondary },
   notFoundBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8, backgroundColor: Colors.navBar },
-  notFoundBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontWeight: '600' },
+  notFoundBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontFamily: 'NotoSerifKR_600SemiBold' },
 });

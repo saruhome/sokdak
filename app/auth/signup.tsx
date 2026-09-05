@@ -95,7 +95,7 @@ const cb = StyleSheet.create({
   },
   boxChecked: { backgroundColor: Colors.navBar, borderColor: Colors.navBar },
   label: { flex: 1, fontSize: 14, color: Colors.textPrimary },
-  required: { fontSize: 12, color: Colors.error, fontWeight: '600' },
+  required: { fontSize: 12, color: Colors.error, fontFamily: 'NotoSerifKR_600SemiBold' },
 });
 
 /* ── 유효성 검사 헬퍼 ── */
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8, backgroundColor: Colors.navBar,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: Colors.navBarIconActive },
+  topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
 
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 24, paddingBottom: 48, paddingTop: 4 },
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   submitBtnDisabled: { backgroundColor: Colors.border },
-  submitBtnText: { fontSize: 16, fontWeight: '700', color: Colors.navBarIconActive },
+  submitBtnText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   submitBtnTextDisabled: { color: Colors.textTertiary },
 
   /* 로그인 링크 */
@@ -321,5 +321,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center', gap: 6,
   },
   loginPrompt: { fontSize: 14, color: Colors.textTertiary },
-  loginLink: { fontSize: 14, fontWeight: '700', color: Colors.navBar },
+  loginLink: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar },
 });

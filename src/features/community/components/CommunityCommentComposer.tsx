@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar + '15',
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
-  replyingText: { flex: 1, fontSize: 12, color: Colors.navBar, fontWeight: '600' },
+  replyingText: { flex: 1, fontSize: 12, color: Colors.navBar, fontFamily: 'NotoSerifKR_600SemiBold' },
   inputRow: {
     flexDirection: 'row', alignItems: 'flex-end',
     paddingHorizontal: 12, paddingVertical: 8, gap: 8,
@@ -105,5 +105,5 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar, borderRadius: 18,
   },
   sendBtnDisabled: { backgroundColor: Colors.border },
-  sendBtnText: { fontSize: 13, fontWeight: '700', color: Colors.navBarIconActive },
+  sendBtnText: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
 });

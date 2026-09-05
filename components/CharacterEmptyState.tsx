@@ -72,5 +72,5 @@ const styles = StyleSheet.create({
     minHeight: 44,
     paddingHorizontal: 18,
   },
-  ctaText: { color: Colors.navBarIconActive, fontSize: 14, fontWeight: '700' },
+  ctaText: { color: Colors.navBarIconActive, fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold' },
 });

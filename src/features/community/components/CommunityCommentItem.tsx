@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   commentBody: { flex: 1, gap: 5 },
   /* paddingRight — commentMenuBtn(절대 위치)이 이 줄과 같은 높이라 날짜와 겹치지 않게 비워둔다 */
   commentAuthorRow: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingRight: 24 },
-  commentAuthor: { fontSize: 12, fontWeight: '700', color: Colors.textPrimary },
+  commentAuthor: { fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   commentDate: { fontSize: 11, color: Colors.textTertiary, marginLeft: 'auto' },
   /* right:17 — topBar 케밥과 아이콘 중심 X가 일치하도록 계산한 값 */
   commentMenuBtn: {
@@ -167,6 +167,6 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.navBar,
   },
-  commentEditSaveText: { fontSize: 12, fontWeight: '700', color: Colors.navBarIconActive },
+  commentEditSaveText: { fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   btnDisabled: { backgroundColor: Colors.border },
 });

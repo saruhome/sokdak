@@ -137,21 +137,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
+  topBarTitle: { fontSize: 17, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
 
   tabs: { flexDirection: 'row', paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: Colors.divider },
   tab: { flex: 1, alignItems: 'center', paddingVertical: 12, borderBottomWidth: 2, borderBottomColor: 'transparent' },
   tabActive: { borderBottomColor: Colors.navBar },
   tabText: { fontSize: 13, color: Colors.textTertiary },
-  tabTextActive: { color: Colors.navBar, fontWeight: '700' },
+  tabTextActive: { color: Colors.navBar, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   postItem: { paddingHorizontal: 20, paddingVertical: 12, gap: 4 },
   postTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
   boardBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
-  boardBadgeText: { fontSize: 10, fontWeight: '600' },
+  boardBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
   postDate: { fontSize: 11, color: Colors.textTertiary, marginLeft: 'auto' },
-  postTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, lineHeight: 20 },
+  postTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, lineHeight: 20 },
   postMetaRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
   postAuthor: { fontSize: 11, color: Colors.textSecondary, flex: 1 },
   postStats: { flexDirection: 'row', gap: 10 },
@@ -165,5 +165,5 @@ const styles = StyleSheet.create({
     marginTop: 8, paddingHorizontal: 18, paddingVertical: 10,
     borderRadius: 20, backgroundColor: Colors.navBar,
   },
-  emptyCtaText: { fontSize: 13, fontWeight: '600', color: Colors.navBarIconActive },
+  emptyCtaText: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
 });

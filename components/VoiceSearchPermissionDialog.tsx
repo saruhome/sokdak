@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: Colors.navBar,
   },
-  secondaryLabel: { color: Colors.textSecondary, fontSize: 14, fontWeight: '600' },
-  primaryLabel: { color: Colors.navBarIconActive, fontSize: 14, fontWeight: '700' },
+  secondaryLabel: { color: Colors.textSecondary, fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold' },
+  primaryLabel: { color: Colors.navBarIconActive, fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold' },
   pressed: { opacity: 0.78 },
 });

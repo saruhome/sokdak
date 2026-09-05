@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   wordText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar, flexShrink: 0 },
   wordReading: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined, flexShrink: 1, minWidth: 0 },
   wordBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12, flexShrink: 0 },
-  wordBadgeText: { fontSize: 10, fontWeight: '600' },
+  wordBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
   wordDesc: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
   wordItemRight: { alignItems: 'center', gap: 4 },
   iconBtn: { width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
@@ -298,5 +298,5 @@ const styles = StyleSheet.create({
     marginTop: 8, paddingHorizontal: 18, paddingVertical: 10,
     borderRadius: 20, backgroundColor: Colors.navBar,
   },
-  emptyCtaText: { fontSize: 13, fontWeight: '600', color: Colors.navBarIconActive },
+  emptyCtaText: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
 });

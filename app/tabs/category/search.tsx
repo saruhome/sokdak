@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.navBarIconActive },
+  topBarTitle: { fontSize: 17, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
 
   searchBarWrap: { paddingHorizontal: 20, paddingVertical: 12 },
   searchBar: {
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   stateScroll: { paddingHorizontal: 20, paddingBottom: 40 },
   section: { marginTop: 12 },
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  sectionTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 12 },
+  sectionTitle: { fontSize: 15, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, marginBottom: 12 },
   sectionAction: { fontSize: 12, color: Colors.textTertiary },
 
   recentRow: {
@@ -219,10 +219,10 @@ const styles = StyleSheet.create({
 
   chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   chip: { paddingHorizontal: 18, paddingVertical: 10, borderRadius: 20 },
-  chipText: { fontSize: 14, fontWeight: '600' },
+  chipText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   noHistoryWrap: { alignItems: 'center', paddingVertical: 24, gap: 10 },
-  noHistoryText: { fontSize: 14, color: Colors.textSecondary, fontWeight: '600' },
+  noHistoryText: { fontSize: 14, color: Colors.textSecondary, fontFamily: 'NotoSerifKR_600SemiBold' },
   noHistorySub: { fontSize: 12, color: Colors.textTertiary },
 
   noResultsWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, paddingHorizontal: 40 },
@@ -234,6 +234,6 @@ const styles = StyleSheet.create({
   resultEmojiWrap: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   resultEmoji: { fontSize: 18 },
   resultText: { flex: 1, gap: 2 },
-  resultName: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  resultName: { fontSize: 15, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   resultDesc: { fontSize: 12, color: Colors.textTertiary },
 });

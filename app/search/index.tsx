@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   stateScroll: { paddingBottom: 40 },
   section: { paddingHorizontal: 20, paddingTop: 20 },
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  sectionTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   sectionAction: { fontSize: 12, color: Colors.textTertiary },
   emptySearchHintWrap: { gap: 4 },
   emptyHint: { fontSize: 13, color: Colors.textTertiary },
@@ -415,8 +415,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   suggestIconWrap: { width: 18, alignItems: 'center' },
-  suggestQueryText: { flex: 1, fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  suggestWord: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
+  suggestQueryText: { flex: 1, fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
+  suggestWord: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   suggestDesc: { flex: 1, fontSize: 12, color: Colors.textTertiary, textAlign: 'right' },
 
   /* 결과 탭 */
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
   resultTab: { flex: 1, alignItems: 'center', paddingVertical: 12, borderBottomWidth: 2, borderBottomColor: 'transparent' },
   resultTabActive: { borderBottomColor: Colors.navBar },
   resultTabText: { fontSize: 13, color: Colors.textTertiary },
-  resultTabTextActive: { color: Colors.navBar, fontWeight: '700' },
+  resultTabTextActive: { color: Colors.navBar, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   /* 카테고리 필터 */
   filterScroll: { flexGrow: 0, borderBottomWidth: 1, borderBottomColor: Colors.divider },
@@ -441,12 +441,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20, backgroundColor: Colors.background,
   },
   wordItemLeft: { flex: 1, gap: 4 },
-  wordText: { fontSize: 15, fontWeight: '600', color: Colors.textPrimary },
+  wordText: { fontSize: 15, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   wordDesc: { fontSize: 12, color: Colors.textSecondary },
   wordRight: { alignItems: 'flex-end', gap: 6 },
   wordCategory: {
-    fontSize: 10, color: Colors.accent, fontWeight: '600',
-    paddingHorizontal: 7, paddingVertical: 2, borderRadius: 8,
+    fontSize: 10, color: Colors.accent, fontFamily: 'NotoSerifKR_600SemiBold',    paddingHorizontal: 7, paddingVertical: 2, borderRadius: 8,
     borderWidth: 1, borderColor: Colors.border,
   },
   wordLikes: { fontSize: 11, color: Colors.textTertiary },
@@ -456,9 +455,9 @@ const styles = StyleSheet.create({
   postTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
   boardBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
-  boardBadgeText: { fontSize: 10, fontWeight: '600' },
+  boardBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
   postDate: { fontSize: 11, color: Colors.textTertiary, marginLeft: 'auto' },
-  postTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, lineHeight: 20 },
+  postTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, lineHeight: 20 },
   postMetaRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
   postAuthor: { fontSize: 11, color: Colors.textSecondary, flex: 1 },
   postStats: { flexDirection: 'row', gap: 10 },
@@ -472,7 +471,7 @@ const styles = StyleSheet.create({
     marginTop: 4, paddingHorizontal: 16, paddingVertical: 10,
     borderRadius: 20, backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
-  didYouMeanText: { fontSize: 14, fontWeight: '600', color: Colors.accent },
-  resultEmptyTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary, textAlign: 'center' },
+  didYouMeanText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.accent },
+  resultEmptyTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, textAlign: 'center' },
   resultEmptyHint: { fontSize: 12, color: Colors.textTertiary },
 });

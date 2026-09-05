@@ -48,5 +48,5 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.navBar, borderRadius: 10,
   },
-  ctaText: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
+  ctaText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
 });

@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar,
   },
   iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { flex: 1, fontSize: 18, fontWeight: '600', color: Colors.navBarIconActive, textAlign: 'center' },
+  topBarTitle: { flex: 1, fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive, textAlign: 'center' },
 
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 32 },
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   tabActive: { backgroundColor: Colors.pageBackground },
   tabInactive: { backgroundColor: Colors.divider },
   tabText: { fontSize: 16, color: Colors.textTertiary },
-  tabTextActive: { fontWeight: '600', color: Colors.navBar },
+  tabTextActive: { fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar },
 
   /* 메인 카드 */
   mainCard: {
@@ -401,23 +401,23 @@ const styles = StyleSheet.create({
   /* 단어 헤더 */
   headerBlock: { gap: 8 },
   wordTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  wordTitle: { fontSize: 26, fontWeight: '700', color: Colors.textPrimary },
+  wordTitle: { fontSize: 26, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   reading: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
   /* 발음 텍스트와 스피커 아이콘은 같은 줄에서 세로 중앙 정렬(운영자 규칙) — 이전의
    * flex-end+paddingBottom 수동 보정이 아이콘을 위로 띄워 보이게 했다 */
   soundBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   badgeRow: { flexDirection: 'row', gap: 8 },
   badge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
-  badgeText: { fontSize: 10, fontWeight: '600' },
+  badgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   /* 섹션 헤더 (의미/대화예시 — 18px 타이틀) */
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'baseline', gap: 8 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: Colors.textPrimary },
+  sectionTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   sectionTitleEn: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
 
   /* 섹션 헤더 (문화적배경/추가정보 카드 내부 — 16px 타이틀) */
   sectionHeaderRowSm: { flexDirection: 'row', alignItems: 'baseline', gap: 4 },
-  sectionTitleSm: { fontSize: 16, fontWeight: '600', color: Colors.textPrimary },
+  sectionTitleSm: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   sectionTitleEnSm: { fontSize: 10, color: Colors.textTertiary, fontFamily: undefined },
 
   /* 의미 */
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     borderRadius: 12, padding: 16, gap: 12,
   },
   tipHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  tipTitle: { fontSize: 16, fontWeight: '600', color: Colors.point1 },
+  tipTitle: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.point1 },
   tipTitleEn: { fontSize: 10, color: Colors.textTertiary, marginLeft: 4, fontFamily: undefined },
 
   /* 관련 단어 */
@@ -482,19 +482,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16,
     backgroundColor: Colors.background, borderWidth: 1, borderColor: Colors.border,
   },
-  relatedChipText: { fontSize: 13, color: Colors.textEmphasis, fontWeight: '500' },
+  relatedChipText: { fontSize: 13, color: Colors.textEmphasis, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   /* 커뮤니티 배너 */
   communityBanner: {
     marginTop: 16, padding: 16,
     backgroundColor: Colors.navBar, borderRadius: 12, gap: 4,
   },
-  communityBannerTitle: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
+  communityBannerTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   communityBannerSub: { fontSize: 12, color: Colors.navBarIconMuted, fontFamily: undefined },
 
   /* Not found */
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
   notFoundText: { fontSize: 16, color: Colors.textSecondary },
   backBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8, backgroundColor: Colors.navBar },
-  backBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontWeight: '600' },
+  backBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontFamily: 'NotoSerifKR_600SemiBold' },
 });

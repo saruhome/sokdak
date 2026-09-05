@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
 
   /* 오늘의 실전 표현 히어로 슬라이드 — 골드 배경 위 텍스트는 textPrimary(≈8.8:1) */
   exprLockedRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  exprLocked: { flexShrink: 1, fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  exprLocked: { flexShrink: 1, fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   exprHeroBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.surface },
   exprHeroBadgeText: { color: Colors.premiumText },
   exprHeroGloss: { fontSize: 14, color: Colors.textPrimary, lineHeight: 18, fontFamily: undefined, opacity: 0.85 },
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, borderRadius: 10,
     paddingHorizontal: 8, paddingVertical: 3,
   },
-  exprWordChipText: { fontSize: 12, fontWeight: '600', color: Colors.premiumText },
+  exprWordChipText: { fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.premiumText },
 
   /* 새로운 신조어 카드 */
   wordCardRow: { gap: 16, paddingRight: 24 },

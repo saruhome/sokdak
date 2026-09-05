@@ -80,6 +80,6 @@ const styles = StyleSheet.create({
   date: { fontSize: 11, color: Colors.textTertiary },
   stats: { flexDirection: 'row', alignItems: 'center', gap: 10, marginLeft: 'auto' },
   commentStat: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  commentStatText: { fontSize: 11, color: Colors.textSecondary, fontWeight: '600' },
+  commentStatText: { fontSize: 11, color: Colors.textSecondary, fontFamily: 'NotoSerifKR_600SemiBold' },
   weakStatText: { fontSize: 11, color: Colors.textTertiary },
 });

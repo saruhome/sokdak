@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10, paddingHorizontal: 16, backgroundColor: Colors.premium + '12',
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
-  pinnedTitle: { flexShrink: 1, fontSize: 12, fontWeight: '600', color: Colors.premiumText },
+  pinnedTitle: { flexShrink: 1, fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.premiumText },
 
   /* Featured */
   featuredSection: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 4, gap: 16 },
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24, paddingVertical: 10,
     borderRadius: 10, backgroundColor: Colors.navBar,
   },
-  retryBtnText: { fontSize: 14, fontWeight: '600', color: Colors.navBarIconActive },
+  retryBtnText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   emptyWrap: { paddingVertical: 40, alignItems: 'center' },
 
   /* FAB */

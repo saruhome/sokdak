@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
+  topBarTitle: { fontSize: 17, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   scroll: { padding: 24, paddingBottom: 40 },
   hero: {
     alignItems: 'center', gap: 8, paddingVertical: 24, paddingHorizontal: 16,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     marginTop: 8, paddingHorizontal: 12, paddingVertical: 6,
     borderRadius: 14, backgroundColor: Colors.premium + '20', borderWidth: 1, borderColor: Colors.premium,
   },
-  activeBadgeText: { fontSize: 12, fontWeight: '700', color: Colors.premiumText },
+  activeBadgeText: { fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.premiumText },
   featureList: { gap: 14, marginBottom: 28 },
   featureRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   featureIconWrap: {
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.premium + '15',
   },
-  featureLabel: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontWeight: '500' },
+  featureLabel: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontFamily: 'NotoSerifKR_600SemiBold' },
   betaCta: {
     // 앱 유일의 골드 CTA — 프리미엄 화면에서만 허용되는 차별화(디자인 크리틱 2026-09-02).
     // 골드 배경 + 진한 텍스트(#1E1D1A)는 대비 약 9:1로 WCAG 통과 — 금색 '텍스트' 금지 규칙과는 별개.
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.premium, marginBottom: 16,
   },
   betaCtaDisabled: { opacity: 0.6 },
-  betaCtaText: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
+  betaCtaText: { fontSize: 15, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   checkoutBackdrop: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center', justifyContent: 'center', padding: 24,
@@ -195,28 +195,28 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4,
     borderRadius: 8, backgroundColor: Colors.error + '18', borderWidth: 1, borderColor: Colors.error,
   },
-  checkoutTestBadgeText: { fontSize: 11, fontWeight: '700', color: Colors.error },
+  checkoutTestBadgeText: { fontSize: 11, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.error },
   checkoutTitle: { fontSize: 17, fontWeight: '800', color: Colors.textPrimary },
   checkoutRow: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     padding: 12, borderRadius: 10, backgroundColor: Colors.background,
   },
-  checkoutProduct: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
-  checkoutPrice: { flexShrink: 1, fontSize: 14, fontWeight: '700', color: Colors.accent },
+  checkoutProduct: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
+  checkoutPrice: { flexShrink: 1, fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.accent },
   checkoutPayBtn: {
     alignItems: 'center', paddingVertical: 13, borderRadius: 10, backgroundColor: Colors.navBar,
   },
-  checkoutPayText: { fontSize: 15, fontWeight: '700', color: Colors.navBarIconActive },
+  checkoutPayText: { fontSize: 15, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   checkoutCancelBtn: { alignItems: 'center', paddingVertical: 8 },
   checkoutCancelText: { fontSize: 13, color: Colors.textSecondary },
   pendingCard: {
     gap: 8, padding: 16, borderRadius: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
-  pendingTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center' },
+  pendingTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, textAlign: 'center' },
   pendingBody: { fontSize: 12, lineHeight: 18, color: Colors.textSecondary, textAlign: 'center' },
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
   notFoundText: { fontSize: 16, color: Colors.textSecondary },
   notFoundBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8, backgroundColor: Colors.navBar },
-  notFoundBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontWeight: '600' },
+  notFoundBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontFamily: 'NotoSerifKR_600SemiBold' },
 });

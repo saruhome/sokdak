@@ -221,13 +221,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
+  topBarTitle: { fontSize: 17, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
 
   scroll: { padding: 24, paddingBottom: 100 },
   introText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20, marginBottom: 24 },
 
   field: { marginBottom: 20, gap: 8 },
-  fieldLabel: { fontSize: 13, fontWeight: '700', color: Colors.textSecondary },
+  fieldLabel: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textSecondary },
   fieldInput: { fontFamily: 'NotoSerifKR_400Regular',
     height: 48, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, paddingHorizontal: 14,
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     height: 52, borderRadius: 12, backgroundColor: Colors.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  submitBtnText: { fontSize: 15, fontWeight: '700', color: Colors.textTertiary },
+  submitBtnText: { fontSize: 15, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textTertiary },
 
   /* 입력 후 */
   doneWrap: { flex: 1, alignItems: 'center', paddingHorizontal: 32, paddingTop: 48 },
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     gap: 8, marginBottom: 32,
   },
   donePreviewTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  donePreviewWord: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
+  donePreviewWord: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   donePreviewCategory: { fontSize: 12, color: Colors.textTertiary },
   donePreviewDefinition: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },
 
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     width: '100%', height: 52, borderRadius: 12, backgroundColor: Colors.navBar,
     alignItems: 'center', justifyContent: 'center', marginBottom: 10,
   },
-  doneCtaPrimaryText: { fontSize: 15, fontWeight: '700', color: Colors.navBarIconActive },
+  doneCtaPrimaryText: { fontSize: 15, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   doneCtaSecondary: { paddingVertical: 10 },
   doneCtaSecondaryText: { fontSize: 13, color: Colors.textTertiary, textDecorationLine: 'underline' },
 });

@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { fontSize: 17, fontWeight: '600', color: Colors.textPrimary },
+  topBarTitle: { fontSize: 17, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
 
   content: { padding: 24, gap: 12 },
   optionRow: {
@@ -72,5 +72,5 @@ const styles = StyleSheet.create({
   },
   optionRowActive: { borderColor: Colors.navBar },
   optionLabel: { fontSize: 15, color: Colors.textPrimary },
-  optionLabelActive: { fontWeight: '700' },
+  optionLabelActive: { fontFamily: 'NotoSerifKR_600SemiBold' },
 });

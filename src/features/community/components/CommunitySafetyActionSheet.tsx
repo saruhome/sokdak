@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   submitBtnDisabled: { opacity: 0.4 },
-  submitBtnText: { fontSize: 14, fontWeight: '600', color: Colors.navBarIconActive },
+  submitBtnText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
 
   pickerSheet: {
     backgroundColor: Colors.background,

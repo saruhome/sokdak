@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
     gap: 10,
   },
-  reportTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  reportTitle: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   reportSub: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17 },
   reportActions: { flexDirection: 'row', gap: 8, marginTop: 4 },
   reportCancelBtn: {
@@ -567,14 +567,14 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.navBar,
   },
-  reportSubmitText: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
+  reportSubmitText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
   boardBadge: {
     paddingHorizontal: 8, paddingVertical: 2,
     borderRadius: 12,
   },
   boardBadgeStandalone: { alignSelf: 'flex-start', marginBottom: 12 },
-  boardBadgeText: { fontSize: 10, fontWeight: '700' },
+  boardBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   scroll: { flex: 1 },
 
@@ -592,7 +592,7 @@ const styles = StyleSheet.create({
   },
   userAvatarEmoji: { fontSize: 20 },
   userInfo: { gap: 2 },
-  userName: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
+  userName: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   userMeta: { fontSize: 11, color: Colors.textTertiary },
 
   postTitle: {
@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
   },
   actionBtnActive: { borderColor: Colors.accent + '60', backgroundColor: Colors.accent + '10' },
-  actionLabel: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500' },
+  actionLabel: { fontSize: 12, color: Colors.textSecondary, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   metaItem: { fontSize: 12, color: Colors.textTertiary },
@@ -625,10 +625,10 @@ const styles = StyleSheet.create({
     borderTopWidth: 1, borderBottomWidth: 1, borderColor: Colors.divider,
     backgroundColor: Colors.surface,
   },
-  commentHeaderTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
+  commentHeaderTitle: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   commentSortRow: { flexDirection: 'row', gap: 12 },
   commentSortText: { fontSize: 11, color: Colors.textTertiary },
-  commentSortTextActive: { color: Colors.textPrimary, fontWeight: '700' },
+  commentSortTextActive: { color: Colors.textPrimary, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   /* 댓글 목록 */
   commentList: {},
@@ -643,5 +643,5 @@ const styles = StyleSheet.create({
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
   notFoundText: { fontSize: 16, color: Colors.textSecondary },
   backBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8, backgroundColor: Colors.navBar },
-  backBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontWeight: '600' },
+  backBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontFamily: 'NotoSerifKR_600SemiBold' },
 });

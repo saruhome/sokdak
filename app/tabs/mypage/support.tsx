@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     marginTop: 10, height: 40, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center',
   },
-  attachBtnText: { fontSize: 14, color: Colors.textSecondary, fontWeight: '600' },
+  attachBtnText: { fontSize: 14, color: Colors.textSecondary, fontFamily: 'NotoSerifKR_600SemiBold' },
   attachPreviewRow: { marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 12 },
   attachPreview: { width: 64, height: 64, borderRadius: 8, backgroundColor: Colors.divider },
   attachRemoveText: { fontSize: 13, color: Colors.error },
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   inquirySubmitBtnDisabled: { opacity: 0.4 },
-  inquirySubmitBtnText: { fontSize: 14, fontWeight: '600', color: Colors.navBarIconActive },
+  inquirySubmitBtnText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   myInquiriesTitle: { marginTop: 12 },
   inquiryEmpty: { fontSize: 13, color: Colors.textTertiary, paddingVertical: 12, textAlign: 'center' },
 
@@ -496,14 +496,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.divider,
   },
   ticketStatusPillAnswered: { backgroundColor: Colors.accent + '20' },
-  ticketStatusText: { fontSize: 11, fontWeight: '600', color: Colors.textSecondary },
+  ticketStatusText: { fontSize: 11, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textSecondary },
   ticketStatusTextAnswered: { color: Colors.accent },
   ticketMessage: { fontSize: 14, color: Colors.textPrimary, lineHeight: 20, fontFamily: undefined },
   ticketReplyBox: {
     padding: 10, borderRadius: 8, gap: 2,
     backgroundColor: Colors.background, borderLeftWidth: 2, borderLeftColor: Colors.accent,
   },
-  ticketReplyLabel: { fontSize: 11, fontWeight: '600', color: Colors.accent },
+  ticketReplyLabel: { fontSize: 11, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.accent },
   ticketReplyText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined },
 
   /* ── 문의하기/유형선택/접수완료 공용 바텀시트 ── */

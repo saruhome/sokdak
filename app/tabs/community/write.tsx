@@ -408,10 +408,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: Colors.textPrimary },
+  topBarTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   submitBtn: { paddingHorizontal: 12, height: 44, alignItems: 'center', justifyContent: 'center' },
-  submitText: { fontSize: 14, fontWeight: '600', color: Colors.textTertiary },
-  submitTextActive: { color: Colors.navBar, fontWeight: '700' },
+  submitText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textTertiary },
+  submitTextActive: { color: Colors.navBar, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   scroll: { flex: 1 },
 
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
   },
   /* 사전 화면 단어 태그(wordBadge)와 동일 크기 */
   boardBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
-  boardBadgeText: { fontSize: 10, fontWeight: '700' },
+  boardBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
   accordionLabel: { flex: 1, fontSize: 14, color: Colors.textSecondary },
   accordionArrow: { fontSize: 12, color: Colors.textTertiary },
 
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
   notFoundText: { fontSize: 16, color: Colors.textSecondary },
   notFoundBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8, backgroundColor: Colors.navBar },
-  notFoundBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontWeight: '600' },
+  notFoundBtnText: { fontSize: 14, color: Colors.navBarIconActive, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   /* 서식/링크 팝업 공용 백드롭 */
   menuBackdrop: { flex: 1, justifyContent: 'flex-end', alignItems: 'center' },
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 24, padding: 20, borderRadius: 14,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, gap: 10,
   },
-  linkSheetTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  linkSheetTitle: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   linkInput: { fontFamily: 'NotoSerifKR_400Regular',
     height: 44, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.background, paddingHorizontal: 12,
@@ -530,6 +530,6 @@ const styles = StyleSheet.create({
   },
   linkCancelText: { fontSize: 14, color: Colors.textSecondary },
   linkSubmitBtn: { flex: 1, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.navBar },
-  linkSubmitText: { fontSize: 14, fontWeight: '700', color: Colors.navBarIconActive },
+  linkSubmitText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
   sendBtnDisabled: { backgroundColor: Colors.border },
 });

@@ -83,5 +83,5 @@ const styles = StyleSheet.create({
     paddingVertical: 10, paddingHorizontal: 16, backgroundColor: Colors.premium + '12',
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
-  premiumBannerText: { flexShrink: 1, fontSize: 12, fontWeight: '600', color: Colors.premiumText },
+  premiumBannerText: { flexShrink: 1, fontSize: 12, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.premiumText },
 });

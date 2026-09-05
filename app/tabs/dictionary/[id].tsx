@@ -342,13 +342,13 @@ export default function WordDetailScreen() {
 
           {/* ── 커뮤니티 연결 ── */}
           <TouchableOpacity style={styles.communityBanner} onPress={() => router.push('/tabs/community')}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <AppIcon icon={MessageCircle} size={15} color={Colors.navBarIconActive} />
+            <AppIcon icon={MessageCircle} size={24} color={Colors.navBarIconActive} />
+            <View style={styles.communityBannerTextCol}>
               <Text style={styles.communityBannerTitle}>{t('askInCommunity')}</Text>
+              <Text style={styles.communityBannerSub}>
+                {language === 'ko' ? `${word.word}에 대해 더 궁금한 점이 있으신가요?` : `"${word.word}"${t('askInCommunityQuestion')}`}
+              </Text>
             </View>
-            <Text style={styles.communityBannerSub}>
-              {language === 'ko' ? `${word.word}에 대해 더 궁금한 점이 있으신가요?` : `"${word.word}"${t('askInCommunityQuestion')}`}
-            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -488,10 +488,13 @@ const styles = StyleSheet.create({
   /* 커뮤니티 배너 */
   communityBanner: {
     marginTop: 16, padding: 16,
-    backgroundColor: Colors.navBar, borderRadius: 12, gap: 4,
+    backgroundColor: Colors.navBar, borderRadius: 12,
+    flexDirection: 'row', alignItems: 'center', gap: 10,
   },
+  communityBannerTextCol: { flex: 1, gap: 4 },
   communityBannerTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
-  communityBannerSub: { fontSize: 12, color: Colors.navBarIconMuted },
+  /* 어두운 배너 위 muted(#948E84)는 대비가 안 나와 안 보임 — 본문색에 투명도로 위계만 남긴다 */
+  communityBannerSub: { fontSize: 12, color: Colors.navBarIconActive, opacity: 0.75 },
 
   /* Not found */
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },

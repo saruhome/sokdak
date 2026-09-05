@@ -21,9 +21,13 @@ export default function LanguageSettingsScreen() {
     return () => unsub();
   }, []);
 
-  const selectLanguage = (value: Language) => {
-    languageStore.setLanguage(value);
-    setLanguage(value);
+  /* 즉시 적용 대신 선택만 보관 — 우측 상단 저장을 눌러야 실제 반영(운영자 지시) */
+  const [pending, setPending] = useState<Language>(languageStore.getLanguage());
+  useEffect(() => { setPending(language); }, [language]);
+  const dirty = pending !== language;
+  const save = () => {
+    languageStore.setLanguage(pending);
+    setLanguage(pending);
   };
 
   return (
@@ -33,21 +37,30 @@ export default function LanguageSettingsScreen() {
           <BackIcon size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{languageStore.t('languageSettings')}</Text>
-        <View style={styles.backBtn} />
+        <TouchableOpacity
+          accessibilityRole="button"
+          style={styles.saveBtn}
+          onPress={save}
+          disabled={!dirty}
+        >
+          <Text style={[styles.saveBtnText, !dirty && styles.saveBtnTextDisabled]}>
+            {languageStore.t('saveLabel')}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.content}>
         {LANGUAGE_OPTIONS.map(option => (
           <TouchableOpacity accessibilityRole="button"
             key={option.value}
-            style={[styles.optionRow, language === option.value && styles.optionRowActive]}
-            onPress={() => selectLanguage(option.value)}
+            style={[styles.optionRow, pending === option.value && styles.optionRowActive]}
+            onPress={() => setPending(option.value)}
             activeOpacity={0.8}
           >
-            <Text style={[styles.optionLabel, language === option.value && styles.optionLabelActive]}>
+            <Text style={[styles.optionLabel, pending === option.value && styles.optionLabelActive]}>
               {option.label}
             </Text>
-            {language === option.value && <AppIcon icon={Check} size={18} color={Colors.navBar} />}
+            {pending === option.value && <AppIcon icon={Check} size={18} color={Colors.navBar} />}
           </TouchableOpacity>
         ))}
       </View>
@@ -62,6 +75,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  saveBtn: { minWidth: 44, height: 44, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
+  saveBtnText: { fontSize: 15, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar },
+  saveBtnTextDisabled: { color: Colors.textTertiary },
   topBarTitle: { fontSize: 17, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
 
   content: { padding: 24, gap: 12 },

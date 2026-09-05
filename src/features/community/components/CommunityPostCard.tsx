@@ -1,5 +1,6 @@
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
+import ProfileAvatar from '@/components/ProfileAvatar';
 import { Colors } from '@/constants/Colors';
 import { BOARD_COLORS, getBoardLabel } from '@/constants/mockPosts';
 import { tFor, type Language } from '@/constants/languageStore';
@@ -52,7 +53,8 @@ export function CommunityPostCard({
       <Text style={styles.title} numberOfLines={2}>{post.title}</Text>
       {preview ? <Text style={styles.preview} numberOfLines={1}>{preview}</Text> : null}
       <View style={styles.metaRow}>
-        <Text style={styles.author} numberOfLines={1}>{post.author.emoji} {post.author.name}</Text>
+        <ProfileAvatar uri={post.author.avatarUrl} emoji={post.author.emoji} size={18} />
+        <Text style={styles.author} numberOfLines={1}>{post.author.name}</Text>
         <Text style={styles.date}>{post.createdAt}</Text>
         <View style={styles.stats}>
           {/* 댓글수가 참여 신호라 조회/좋아요보다 진한 색으로 우선순위를 준다 */}

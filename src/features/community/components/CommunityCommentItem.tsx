@@ -1,5 +1,6 @@
 import { StyleSheet, TextInput, TouchableOpacity, View, type GestureResponderEvent } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
+import ProfileAvatar from '@/components/ProfileAvatar';
 import { Colors } from '@/constants/Colors';
 import { tFor, type Language } from '@/constants/languageStore';
 import type { CommunityComment } from '@/constants/community';
@@ -47,9 +48,7 @@ export function CommunityCommentItem({
 }) {
   return (
     <View style={[styles.commentItem, isReply && styles.commentItemReply]}>
-      <View style={styles.commentAvatar}>
-        <Text style={{ fontSize: isReply ? 14 : 16 }}>{comment.author.emoji}</Text>
-      </View>
+      <ProfileAvatar uri={comment.author.avatarUrl} emoji={comment.author.emoji} size={isReply ? 26 : 30} />
       <View style={styles.commentBody}>
         <View style={styles.commentAuthorRow}>
           <Text style={styles.commentAuthor}>{comment.author.name}</Text>
@@ -128,11 +127,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   commentItemReply: { backgroundColor: Colors.background + 'cc' },
-  commentAvatar: {
-    width: 30, height: 30, borderRadius: 15,
-    backgroundColor: Colors.border,
-    alignItems: 'center', justifyContent: 'center',
-  },
   commentBody: { flex: 1, gap: 5 },
   /* paddingRight — commentMenuBtn(절대 위치)이 이 줄과 같은 높이라 날짜와 겹치지 않게 비워둔다 */
   commentAuthorRow: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingRight: 24 },

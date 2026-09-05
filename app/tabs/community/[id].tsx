@@ -2,6 +2,7 @@ import { StyleSheet, View, ScrollView, Modal, Share, TouchableOpacity, TextInput
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
+import ProfileAvatar from '@/components/ProfileAvatar';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { Colors } from '../../../constants/Colors';
@@ -391,9 +392,7 @@ export default function PostDetailScreen() {
 
             {/* Display/UserInfo (327×40) */}
             <View style={styles.userInfoRow}>
-              <View style={styles.userAvatar}>
-                <Text style={styles.userAvatarEmoji}>{post.author.emoji}</Text>
-              </View>
+              <ProfileAvatar uri={post.author.avatarUrl} emoji={post.author.emoji} size={36} />
               <View style={styles.userInfo}>
                 <Text style={styles.userName}>{post.author.name}</Text>
                 <Text style={styles.userMeta}>{post.author.level} · {post.createdAt}</Text>
@@ -585,12 +584,6 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.divider,
   },
   userInfoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14, gap: 10 },
-  userAvatar: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.border,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  userAvatarEmoji: { fontSize: 20 },
   userInfo: { gap: 2 },
   userName: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   userMeta: { fontSize: 11, color: Colors.textTertiary },

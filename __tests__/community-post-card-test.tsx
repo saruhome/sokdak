@@ -36,7 +36,9 @@ describe('CommunityPostCard', () => {
     expect(title.props.numberOfLines).toBe(2);
     const preview = screen.getByText('너무 어려운 한국어 링크');
     expect(preview.props.numberOfLines).toBe(1);
-    expect(screen.getByText(`${POST.author.emoji} ${POST.author.name}`)).toBeTruthy();
+    // 아바타는 ProfileAvatar(사진 우선, 이모지 폴백)로 분리 렌더 — 이름만 텍스트로 확인
+    expect(screen.getByText(POST.author.name)).toBeTruthy();
+    expect(screen.getByText(POST.author.emoji)).toBeTruthy();
     expect(screen.getByText('2026-08-20')).toBeTruthy();
     /* localized metadata — en에서는 board 라벨이 영어로 나온다 */
     expect(screen.getByText('Curious?')).toBeTruthy();

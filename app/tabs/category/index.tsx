@@ -174,7 +174,9 @@ export default function CategoryScreen() {
           const CardBg: any = item.image ? ImageBackground : View;
           const cardBgProps = item.image
             /* 이미지 로드 실패 시에도 카테고리 색이 placeholder로 남는다 */
-            ? { source: item.image, imageStyle: styles.cardBgImage, style: [styles.cardBg, { backgroundColor: item.colorBg }] }
+            /* 드라마 일러스트는 카메라가 왼쪽 하단이라 라벨에 가림 — 릴스 카드처럼 소품이
+             * 오른쪽에 보이도록 이미지만 오른쪽으로 시프트(운영자 지시) */
+            ? { source: item.image, imageStyle: [styles.cardBgImage, item.slug === 'drama' && { left: '18%' }], style: [styles.cardBg, { backgroundColor: item.colorBg }] }
             : { style: [styles.cardBg, { backgroundColor: item.colorBg }] };
           return (
             <TouchableOpacity

@@ -156,6 +156,7 @@ export default function HomeScreen() {
               >
                 {/* 배너 이미지는 항상 존재(운영자 규칙 2026-09-03) — 상황별 일러스트 */}
                 <Image source={SITUATION_BANNERS[expr.situation]} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
+                <View style={styles.heroScrim} />
                 <View style={styles.heroContent}>
                   <View style={[styles.heroBadge, styles.exprHeroBadge]}>
                     <AppIcon icon={Crown} size={12} color={Colors.premiumText} />

@@ -141,7 +141,6 @@ export default function SavedWordsScreen() {
                         <Text style={styles.categoryName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
                           {getCategoryName(category, language).replace('\n', ' ')}
                         </Text>
-                        <Text style={styles.categoryDesc} numberOfLines={1}>{category.description}</Text>
                       </View>
                     </View>
                   </ImageBackground>
@@ -268,7 +267,6 @@ const styles = StyleSheet.create({
     borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3,
   },
   categoryName: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
-  categoryDesc: { fontSize: 11, color: Colors.textTertiary },
   moreBtn: { alignItems: 'center', paddingTop: 4 },
   moreBtnText: { fontSize: 12, color: Colors.textTertiary },
 

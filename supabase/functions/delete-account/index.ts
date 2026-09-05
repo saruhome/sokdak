@@ -67,7 +67,9 @@ Deno.serve(async (request) => {
     return json({ error: "Account deletion is temporarily unavailable" }, 500);
   }
 
-  // Deleting auth.users cascades to profiles and relational records via existing FKs.
+  // Deleting auth.users cascades to profiles and personal records via existing FKs;
+  // posts/comments survive with author_id set NULL (rendered as "탈퇴한 사용자") — rule-violation
+  // bans that must erase content go through the operator-only admin_ban_user() SQL helper.
   // A duplicate/retried call whose token was still valid when it reached this point can race
   // with an already-completed deletion — GoTrue's "not found" in that case means the caller's
   // desired end-state (deleted) is already true, so it is success, not failure.

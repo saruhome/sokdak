@@ -61,7 +61,7 @@ type ProfileRow = { nickname: string; avatar_emoji: string; avatar_url?: string 
 export function toCommunityAuthor(profile: ProfileRow): CommunityAuthor {
   const avatarUrl = profile?.avatar_url ?? null;
   return {
-    name: profile?.nickname ?? '탈퇴한 사용자',
+    name: profile?.nickname ?? languageStore.t('deletedUser'),
     emoji: profile?.avatar_emoji ?? '👤',
     avatarUrl: isProfileAvatarPath(avatarUrl) ? null : avatarUrl,
     level: profile?.level ?? '초급',

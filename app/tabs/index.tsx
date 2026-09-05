@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
-import { Colors } from '../../constants/Colors';
+import { Colors, getReadableTextColor } from '../../constants/Colors';
 import { cardGloss, fetchWords, localizedText, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
@@ -135,7 +135,7 @@ export default function HomeScreen() {
                   <View style={styles.heroContent}>
                     {category && (
                       <View style={[styles.heroBadge, { backgroundColor: category.colorBg }]}>
-                        <Text style={[styles.heroBadgeText, { color: category.colorFg }]} numberOfLines={1}>{getCategoryName(category, language)}</Text>
+                        <Text style={[styles.heroBadgeText, { color: getReadableTextColor(category.colorBg) }]} numberOfLines={1}>{getCategoryName(category, language)}</Text>
                       </View>
                     )}
                     <Text style={styles.heroWord} numberOfLines={1}>{word.word}</Text>

@@ -43,7 +43,12 @@ export const Colors = {
  * 아니라서(예: 릴스는 두 톤 다 옅은 파랑), 채움 배지에 텍스트를 얹을 때는
  * 배경색 밝기를 계산해 검정/흰 텍스트 중 읽기 쉬운 쪽을 고른다.
  */
+/* 운영자 지정 예외(2026-09-05): 회사/직장 세이지그린(#AFC4B0)은 수치상 밝지만 흰 글자.
+ * threshold(0.6→0.74)로는 초성(#E8A880, 0.716)이 먼저 흰색이 되어 분리 불가 — 예외 목록으로. */
+const FORCE_WHITE_TEXT_BG = new Set(['#AFC4B0']);
+
 export function getReadableTextColor(bgHex: string): string {
+  if (FORCE_WHITE_TEXT_BG.has(bgHex.toUpperCase())) return '#FFFFFF';
   return luminanceOf(bgHex) > 0.6 ? '#1A1A1A' : '#FFFFFF';
 }
 

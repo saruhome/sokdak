@@ -23,7 +23,13 @@ describe('category card label contrast', () => {
   });
 
   it('never yields light-on-light for filled badges', () => {
+    // 회사/직장 세이지그린은 운영자 지정 예외(흰 글자) — 대비 가드에서 제외
+    const OPERATOR_WHITE_TEXT = new Set(['#AFC4B0']);
     for (const category of CATEGORIES) {
+      if (OPERATOR_WHITE_TEXT.has(category.colorBg.toUpperCase())) {
+        expect(getReadableTextColor(category.colorBg)).toBe('#FFFFFF');
+        continue;
+      }
       const text = getReadableTextColor(category.colorBg);
       const bgLum = luminance(category.colorBg);
       const textLum = luminance(text);

@@ -17,8 +17,15 @@ select id, word, category, short_desc from words where thumbnail_url is null ord
 
 ## 1. 배경 생성 (Canva MCP, 단어당 1회) — v3 중앙 무대
 
-generate-design, design_type: youtube_thumbnail. 모든 장면은 "캐릭터가 중앙에 설
-오리지널 무대"로 생성한다. 쿼리 골격(장면은 short_desc/뜻 기반으로 매번 창작):
+generate-design, design_type: youtube_thumbnail.
+
+**캐릭터 사용 판단(운영자 지시 2026-09-05)**: 배경 장면(소품·풍경)이 단어 뜻을 이미
+설명하는 서사형 단어(예: 뇌절=시든 풍선·반복 레코드, 핑프=닫힌 노트북·호출벨)는
+캐릭터 합성을 생략하고 배경을 화면 전체 장면으로 생성한다(중앙 비움 문구 제외,
+"Fills the entire frame" 유지). 캐릭터는 감정 표현이 핵심인 단어(감탄사·기분·리액션,
+예: 무야호·갓생·ㅋㅋ)에만 중앙 무대로 합성한다. 애매하면 배경만.
+
+캐릭터형 쿼리 골격(장면은 short_desc/뜻 기반으로 매번 창작):
 
 > "Soft watercolor line illustration, an ORIGINAL scene designed as a stage for a
 > mascot character in the center. [뜻을 은유하는 소품·풍경을 프레임 가장자리에만 배치].

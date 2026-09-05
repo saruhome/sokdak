@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
 
   /* 댓글 인라인 수정 */
   commentEditWrap: { gap: 8 },
-  commentEditInput: {
+  commentEditInput: { fontFamily: 'NotoSerifKR_400Regular',
     borderRadius: 8, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, paddingHorizontal: 10, paddingVertical: 8,
     fontSize: 14, color: Colors.textPrimary,

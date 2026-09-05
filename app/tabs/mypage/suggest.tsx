@@ -228,12 +228,12 @@ const styles = StyleSheet.create({
 
   field: { marginBottom: 20, gap: 8 },
   fieldLabel: { fontSize: 13, fontWeight: '700', color: Colors.textSecondary },
-  fieldInput: {
+  fieldInput: { fontFamily: 'NotoSerifKR_400Regular',
     height: 48, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, paddingHorizontal: 14,
     fontSize: 15, color: Colors.textPrimary,
   },
-  textArea: {
+  textArea: { fontFamily: 'NotoSerifKR_400Regular',
     minHeight: 88, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, paddingHorizontal: 14, paddingVertical: 12,
     fontSize: 14, color: Colors.textPrimary, lineHeight: 20,

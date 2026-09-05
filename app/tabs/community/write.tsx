@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
   boardOptionDesc: { flex: 1, fontSize: 12, color: Colors.textTertiary },
 
   /* Controls/Text Field/Title_02 (375×44) */
-  titleInput: {
+  titleInput: { fontFamily: 'NotoSerifKR_400Regular',
     height: 52,
     paddingHorizontal: 16,
     fontSize: 16,
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: Colors.divider, marginHorizontal: 16 },
 
   /* 내용 입력 */
-  contentInput: {
+  contentInput: { fontFamily: 'NotoSerifKR_400Regular',
     minHeight: 300,
     paddingHorizontal: 16,
     paddingTop: 16,
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, gap: 10,
   },
   linkSheetTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  linkInput: {
+  linkInput: { fontFamily: 'NotoSerifKR_400Regular',
     height: 44, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.background, paddingHorizontal: 12,
     fontSize: 14, color: Colors.textPrimary,

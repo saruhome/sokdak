@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   typeSelectText: { fontSize: 13, color: Colors.textTertiary, fontFamily: undefined },
   typeSelectTextFilled: { color: Colors.textPrimary },
 
-  detailInput: {
+  detailInput: { fontFamily: 'NotoSerifKR_400Regular',
     minHeight: 88, borderRadius: 10, padding: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
     fontSize: 14, color: Colors.textPrimary, textAlignVertical: 'top',

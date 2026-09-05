@@ -54,7 +54,7 @@ function FormField({
 const ff = StyleSheet.create({
   wrap: { gap: 4, marginBottom: 4 },
   label: { fontSize: 12, fontWeight: '600', color: Colors.textSecondary, paddingHorizontal: 2 },
-  input: {
+  input: { fontFamily: 'NotoSerifKR_400Regular',
     height: 48, borderRadius: 10, borderWidth: 1.5, borderColor: Colors.border,
     paddingHorizontal: 14, fontSize: 15, color: Colors.textPrimary,
     backgroundColor: Colors.surface,

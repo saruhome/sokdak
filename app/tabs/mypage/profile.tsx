@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   cardLabel: { fontSize: 11, color: Colors.textTertiary },
-  cardInput: { fontSize: 15, color: Colors.textPrimary, padding: 0 },
+  cardInput: { fontFamily: 'NotoSerifKR_400Regular', fontSize: 15, color: Colors.textPrimary, padding: 0 },
 
   avatarSection: { gap: 8 },
   noMargin: { marginBottom: 0 },
@@ -515,12 +515,12 @@ const styles = StyleSheet.create({
   withdrawLinkText: { fontSize: 13, color: Colors.textTertiary, textDecorationLine: 'underline' },
 
   fieldLabel: { fontSize: 13, fontWeight: '700', color: Colors.textSecondary },
-  fieldInput: {
+  fieldInput: { fontFamily: 'NotoSerifKR_400Regular',
     height: 48, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, paddingHorizontal: 14,
     fontSize: 15, color: Colors.textPrimary,
   },
-  nameInput: { width: '100%' },
+  nameInput: { fontFamily: 'NotoSerifKR_400Regular', width: '100%' },
 
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
   notFoundText: { fontSize: 16, color: Colors.textSecondary },

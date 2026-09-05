@@ -63,7 +63,7 @@ const ff = StyleSheet.create({
     paddingHorizontal: 14, backgroundColor: Colors.surface,
     flexDirection: 'row', alignItems: 'center', gap: 10,
   },
-  input: { flex: 1, fontSize: 15, color: Colors.textPrimary, padding: 0 },
+  input: { fontFamily: 'NotoSerifKR_400Regular', flex: 1, fontSize: 15, color: Colors.textPrimary, padding: 0 },
   inputFocused: { borderColor: Colors.navBar },
   inputError: { borderColor: Colors.error },
   helper: { fontSize: 11, color: Colors.textTertiary, paddingHorizontal: 2 },

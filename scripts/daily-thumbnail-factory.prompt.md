@@ -62,7 +62,7 @@ knockout·성분 정리 불필요). 기본 6종(*-t2) + 좌우 반전 변주 6�
 
 포즈 분위기 매핑(2026-09-05 확장, 파일명은 poses-clean 기준 — *-t2m는 좌우 반전 변주):
 - 신남·축하: horang-cheer, horang-cheer-sit, horang-yay-stand, horang-idea
-- 놀람·혼란: horang-question, horang-ask-stand, jjaeki-startled, horang-peek-spark(설렘·기대)
+- 놀람·혼란: horang-question, horang-ask-stand, jjaeki-startled, horang-peek-shocked(화들짝), horang-peek-spark(설렘·기대)
 - 화남·짜증: horang-peek-angry, jjaeki-grumpy, jjaeki-smug(새침)
 - 슬픔·허탈·현타: horang-peek-cry, horang-peek-sleepy(졸림·심드렁)
 - 정보·차분·공부: horang-reading, horang-read-front, horang-scroll, horang-study-desk,

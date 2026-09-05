@@ -15,7 +15,7 @@ const JJAEKI_AVATAR = require('../../assets/characters/transparent/jjaeki.png');
 function FormField({
   label, value, onChangeText, placeholder,
   secureTextEntry, keyboardType, helper, error,
-  returnKeyType, onSubmitEditing,
+  returnKeyType, onSubmitEditing, focusColor,
 }: {
   label: string; value: string;
   onChangeText: (v: string) => void;
@@ -25,13 +25,14 @@ function FormField({
   helper?: string; error?: string;
   returnKeyType?: 'next' | 'done';
   onSubmitEditing?: () => void;
+  focusColor?: string;
 }) {
   const [focused, setFocused] = useState(false);
   return (
     <View style={ff.wrap}>
       <Text style={ff.label}>{label}</Text>
       <TextInput
-        style={[ff.input, focused && ff.inputFocused, !!error && ff.inputError]}
+        style={[ff.input, focused && { borderColor: focusColor ?? Colors.navBar }, !!error && ff.inputError]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
@@ -59,7 +60,6 @@ const ff = StyleSheet.create({
     paddingHorizontal: 14, fontSize: 15, color: Colors.textPrimary,
     backgroundColor: Colors.surface,
   },
-  inputFocused: { borderColor: Colors.navBar },
   inputError: { borderColor: Colors.error },
   helper: { fontSize: 11, color: Colors.textTertiary, paddingHorizontal: 2 },
   error: { fontSize: 11, color: Colors.error, paddingHorizontal: 2 },
@@ -172,6 +172,7 @@ export default function EmailLoginScreen() {
                   keyboardType="email-address"
                   error={errors.email}
                   returnKeyType="next"
+                  focusColor={Colors.point1}
                 />
                 <FormField
                   label={t('passwordLabel')}
@@ -182,6 +183,7 @@ export default function EmailLoginScreen() {
                   error={errors.password}
                   returnKeyType="done"
                   onSubmitEditing={handleLogin}
+                  focusColor={Colors.point2}
                 />
               </View>
 
@@ -242,6 +244,7 @@ export default function EmailLoginScreen() {
                   error={resetError}
                   returnKeyType="done"
                   onSubmitEditing={handleSendReset}
+                  focusColor={Colors.point1}
                 />
               </View>
 

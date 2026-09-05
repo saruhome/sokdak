@@ -17,7 +17,7 @@ const JJAEKI_AVATAR = require('../../assets/characters/transparent/jjaeki.png');
 /* ── List/Item/Log up (327×48) 재사용 컴포넌트 — Figma 1293:20263: 라벨 없이 아이콘+플레이스홀더 */
 function FormField({
   icon, value, onChangeText, placeholder,
-  secureTextEntry, keyboardType, helper, error,
+  secureTextEntry, keyboardType, helper, error, focusColor,
   returnKeyType, onSubmitEditing,
 }: {
   icon: LucideIcon; value: string;
@@ -28,11 +28,12 @@ function FormField({
   helper?: string; error?: string;
   returnKeyType?: 'next' | 'done';
   onSubmitEditing?: () => void;
+  focusColor?: string;
 }) {
   const [focused, setFocused] = useState(false);
   return (
     <View style={ff.wrap}>
-      <View style={[ff.inputRow, focused && ff.inputFocused, !!error && ff.inputError]}>
+      <View style={[ff.inputRow, focused && { borderColor: focusColor ?? Colors.navBar }, !!error && ff.inputError]}>
         <AppIcon icon={icon} size={15} />
         <TextInput
           style={ff.input}
@@ -64,7 +65,6 @@ const ff = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 10,
   },
   input: { fontFamily: 'NotoSerifKR_400Regular', flex: 1, fontSize: 15, color: Colors.textPrimary, padding: 0 },
-  inputFocused: { borderColor: Colors.navBar },
   inputError: { borderColor: Colors.error },
   helper: { fontSize: 11, color: Colors.textTertiary, paddingHorizontal: 2 },
   error: { fontSize: 11, color: Colors.error, paddingHorizontal: 2 },
@@ -206,6 +206,7 @@ export default function SignupScreen() {
               keyboardType="email-address"
               error={errors.email}
               returnKeyType="next"
+              focusColor={Colors.point1}
             />
             <FormField
               icon={Lock}
@@ -215,6 +216,7 @@ export default function SignupScreen() {
               secureTextEntry
               error={errors.password}
               returnKeyType="next"
+              focusColor={Colors.point2}
             />
             <FormField
               icon={Lock}
@@ -225,6 +227,7 @@ export default function SignupScreen() {
               error={errors.confirm}
               returnKeyType="done"
               onSubmitEditing={handleSubmit}
+              focusColor={Colors.point2}
             />
           </View>
 

@@ -216,13 +216,14 @@ export default function CategoryScreen() {
                 {/* 이미지 카드 한정 스크림 — 배경 그림이 복잡해도 이름이 항상 읽히게 */}
                 <View style={styles.cardTextWrap}>
                   <View style={item.image ? styles.cardTextScrim : null}>
+                    {/* 카테고리 카드 제목은 축소 대신 데이터의 2줄 줄바꿈으로 해결(운영자 규칙) */}
                     <Text
                       style={[styles.categoryName, { color: labelColor }]}
-                      numberOfLines={1}
+                      numberOfLines={2}
                       adjustsFontSizeToFit
-                      minimumFontScale={0.6}
+                      minimumFontScale={0.8}
                     >
-                      {getCategoryName(item, language).replace('\n', ' ')}
+                      {getCategoryName(item, language)}
                     </Text>
                   </View>
                 </View>

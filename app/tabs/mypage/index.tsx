@@ -122,11 +122,7 @@ export default function MyPageScreen() {
           {ACTIVITY_MENU.map((item, i) => (
             <TouchableOpacity accessibilityRole="button"
               key={item.key}
-              style={[
-                styles.groupRow,
-                i === 0 && styles.groupRowFirst,
-                i === ACTIVITY_MENU.length - 1 && styles.groupRowLast,
-              ]}
+              style={styles.settingRow}
               onPress={() => loggedIn ? router.push(item.route) : router.push('/auth/login')}
               activeOpacity={0.85}
             >
@@ -246,19 +242,10 @@ const styles = StyleSheet.create({
     marginTop: 24, marginBottom: 12,
   },
 
-  /* 활동 3항목 — 하나의 카드로 병합(첫/끝만 라운드, 내부 구분선은 다음 행의 top border) */
-  activityCards: {},
-  groupRow: {
-    height: 48, paddingHorizontal: 16,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: Colors.surface,
-    borderLeftWidth: 1, borderRightWidth: 1, borderTopWidth: 1, borderColor: Colors.border,
-  },
-  groupRowFirst: { borderTopLeftRadius: 10, borderTopRightRadius: 10 },
-  groupRowLast: { borderBottomLeftRadius: 10, borderBottomRightRadius: 10, borderBottomWidth: 1 },
+  /* 활동·설정 공통 — 각각 독립된 카드(운영자 지시로 통일) */
+  activityCards: { gap: 8 },
   groupRowLabel: { fontSize: 16, color: Colors.textSecondary },
 
-  /* 설정 2항목 — 각각 독립된 카드 */
   settingsGroup: { gap: 8 },
   settingRow: {
     height: 48, paddingHorizontal: 16,

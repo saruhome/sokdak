@@ -135,7 +135,7 @@ export const ar = {
 
     hotPosts: 'المنشورات الرائجة',
     guestCalloutTitle: 'سجّل الدخول واطرح سؤالك',
-    guestCalloutBenefit: 'اسأل عن التعبيرات وتعلّم مع الآخرين عبر التعليقات والإعجابات.',
+    guestCalloutBenefit: 'اسأل عن أي تعبير',
     noPostsYet: 'لا توجد منشورات بعد',
     boardQuestion: 'فضول؟',
     boardFree: 'دردشة',

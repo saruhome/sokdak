@@ -128,7 +128,7 @@ export const ko = {
 
     hotPosts: '화제의 글',
     guestCalloutTitle: '로그인하고 질문을 남겨보세요',
-    guestCalloutBenefit: '궁금한 표현을 질문하고, 댓글과 좋아요로 함께 배울 수 있어요.',
+    guestCalloutBenefit: '궁금한 표현을 질문해 보세요',
     noPostsYet: '아직 게시글이 없어요',
     boardQuestion: '궁금해요',
     boardFree: '속닥속닥',

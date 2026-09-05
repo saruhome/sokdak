@@ -128,7 +128,7 @@ export const en = {
 
     hotPosts: 'Trending posts',
     guestCalloutTitle: 'Log in to ask your question',
-    guestCalloutBenefit: 'Ask about expressions and learn together with comments and likes.',
+    guestCalloutBenefit: 'Ask about any expression',
     noPostsYet: 'No posts yet',
     boardQuestion: 'Curious?',
     boardFree: 'Chit-chat',

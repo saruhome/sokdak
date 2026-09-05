@@ -128,7 +128,7 @@ export const es = {
 
     hotPosts: 'Publicaciones destacadas',
     guestCalloutTitle: 'Inicia sesión para preguntar',
-    guestCalloutBenefit: 'Pregunta sobre expresiones y aprende con comentarios y me gusta.',
+    guestCalloutBenefit: 'Pregunta sobre cualquier expresión',
     noPostsYet: 'Aún no hay publicaciones',
     boardQuestion: 'Curiosidad',
     boardFree: 'Charlemos',

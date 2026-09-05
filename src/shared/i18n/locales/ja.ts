@@ -128,7 +128,7 @@ export const ja = {
 
     hotPosts: '話題の投稿',
     guestCalloutTitle: 'ログインして質問してみましょう',
-    guestCalloutBenefit: '気になる表現を質問し、コメントやいいねで一緒に学べます。',
+    guestCalloutBenefit: '気になる表現を質問してみよう',
     noPostsYet: 'まだ投稿がありません',
     boardQuestion: '気になる!',
     boardFree: 'おしゃべり',

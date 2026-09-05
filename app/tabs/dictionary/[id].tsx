@@ -379,20 +379,21 @@ const styles = StyleSheet.create({
   tabsRow: { flexDirection: 'row', gap: 8 },
   tab: {
     height: 45, paddingHorizontal: 16, paddingTop: 14, paddingBottom: 13,
-    borderWidth: 1, borderBottomWidth: 0, borderColor: '#888',
+    borderWidth: 1, borderBottomWidth: 0, borderColor: Colors.divider,
     borderTopLeftRadius: 10, borderTopRightRadius: 10,
     alignItems: 'center', justifyContent: 'center',
   },
-  tabActive: { backgroundColor: Colors.pageBackground },
+  tabActive: { backgroundColor: Colors.surface },
   tabInactive: { backgroundColor: Colors.divider },
   tabText: { fontSize: 16, color: Colors.textTertiary },
   tabTextActive: { fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar },
 
   /* 메인 카드 */
+  /* 카드 3종(메인·추가 정보·관련 단어) 공통 규칙: 흰 면 + divider 선 + radius 12 */
   mainCard: {
-    backgroundColor: Colors.pageBackground,
-    borderWidth: 1, borderColor: '#888',
-    borderRadius: 10,
+    backgroundColor: Colors.surface,
+    borderWidth: 1, borderColor: Colors.divider,
+    borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 24,
     gap: 32,
   },
@@ -477,7 +478,7 @@ const styles = StyleSheet.create({
   relatedCard: {
     marginTop: 16, padding: 16,
     backgroundColor: Colors.surface, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border, gap: 10,
+    borderWidth: 1, borderColor: Colors.divider, gap: 10,
   },
   relatedRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   relatedChip: {

@@ -128,7 +128,7 @@ export const de = {
 
     hotPosts: 'Beliebte Beiträge',
     guestCalloutTitle: 'Melde dich an und stelle deine Frage',
-    guestCalloutBenefit: 'Frage nach Ausdrücken und lerne gemeinsam über Kommentare und Likes.',
+    guestCalloutBenefit: 'Frag nach jedem Ausdruck',
     noPostsYet: 'Noch keine Beiträge',
     boardQuestion: 'Neugierig?',
     boardFree: 'Plauderecke',

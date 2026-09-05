@@ -128,7 +128,7 @@ export const vi = {
 
     hotPosts: 'Bài viết nổi bật',
     guestCalloutTitle: 'Đăng nhập để đặt câu hỏi',
-    guestCalloutBenefit: 'Hỏi về các cách diễn đạt và cùng học qua bình luận và lượt thích.',
+    guestCalloutBenefit: 'Hỏi về cách diễn đạt bạn tò mò',
     noPostsYet: 'Chưa có bài viết nào',
     boardQuestion: 'Tò mò nè',
     boardFree: 'Tám chuyện',

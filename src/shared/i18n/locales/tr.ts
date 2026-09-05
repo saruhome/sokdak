@@ -133,7 +133,7 @@ export const tr = {
 
     hotPosts: 'Gündemdeki gönderiler',
     guestCalloutTitle: 'Giriş yap ve sorunu sor',
-    guestCalloutBenefit: 'İfadeleri sor; yorumlar ve beğenilerle birlikte öğren.',
+    guestCalloutBenefit: 'Merak ettiğin ifadeyi sor',
     noPostsYet: 'Henüz gönderi yok',
     boardQuestion: 'Merak ettim!',
     boardFree: 'Sohbet',

@@ -134,7 +134,7 @@ export const zh = {
 
     hotPosts: '热门帖子',
     guestCalloutTitle: '登录后来提问吧',
-    guestCalloutBenefit: '提问感兴趣的表达，通过评论和点赞一起学习。',
+    guestCalloutBenefit: '提问你感兴趣的表达',
     noPostsYet: '还没有帖子',
     boardQuestion: '好奇哦',
     boardFree: '闲聊区',

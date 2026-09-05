@@ -39,12 +39,12 @@ export default function LanguageSettingsScreen() {
         <Text style={styles.topBarTitle}>{languageStore.t('languageSettings')}</Text>
         <TouchableOpacity
           accessibilityRole="button"
-          style={styles.saveBtn}
+          style={[styles.saveBtn, dirty && { backgroundColor: Colors.navBar }]}
           onPress={save}
           disabled={!dirty}
         >
-          <Text style={[styles.saveBtnText, !dirty && styles.saveBtnTextDisabled]}>
-            {languageStore.t('saveLabel')}
+          <Text style={[styles.saveBtnText, dirty && { color: Colors.navBarIconActive }]}>
+            {languageStore.t('saveBtnLabel')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -75,9 +75,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  saveBtn: { minWidth: 44, height: 44, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
-  saveBtnText: { fontSize: 15, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar },
-  saveBtnTextDisabled: { color: Colors.textTertiary },
+  /* 내 정보 관리(profile.tsx) 저장 버튼과 동일한 알약형 */
+  saveBtn: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 16, backgroundColor: Colors.border, marginRight: 4 },
+  saveBtnText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textTertiary },
   topBarTitle: { fontSize: 17, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
 
   content: { padding: 24, gap: 12 },

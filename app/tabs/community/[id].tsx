@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
 
   /* 대댓글 들여쓰기 */
   replyWrap: { flexDirection: 'row' },
-  replyIndent: { width: 40, borderLeftWidth: 2, borderLeftColor: Colors.border, marginLeft: 20 },
+  replyIndent: { width: 40, marginLeft: 20 },
 
   sendBtnDisabled: { backgroundColor: Colors.border },
 

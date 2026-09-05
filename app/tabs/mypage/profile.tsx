@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
   countrySearchInput: {
     height: 40, borderRadius: 10, borderWidth: 1, borderColor: Colors.border,
     backgroundColor: Colors.surface, paddingHorizontal: 12,
-    fontSize: 14, color: Colors.textPrimary,
+    fontSize: 14, color: Colors.textPrimary, fontFamily: 'NotoSerifKR_400Regular',
   },
   emojiGrid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8 },
   emojiOption: {

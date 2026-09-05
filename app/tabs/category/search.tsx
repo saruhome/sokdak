@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     height: 44, borderRadius: 12, paddingHorizontal: 14,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
-  searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary },
+  searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontFamily: 'NotoSerifKR_400Regular' },
 
   stateScroll: { paddingHorizontal: 20, paddingBottom: 40 },
   section: { marginTop: 12 },

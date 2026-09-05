@@ -387,6 +387,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     fontSize: 14,
     color: Colors.textPrimary,
+    fontFamily: 'NotoSerifKR_400Regular',
   },
 
   /* 빈 상태 */

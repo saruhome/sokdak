@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     height: 36, borderRadius: 8, paddingHorizontal: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
-  searchPlaceholder: { flex: 1, fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
+  searchPlaceholder: { flex: 1, fontSize: 14, color: Colors.textTertiary },
 
   /* Figma: Callout Card/Recommend_호랭 — 실사 이미지 대신 앱 마스코트(호랭)를 꼬리 쪽에 재사용.
    * 가로는 FlatList grid paddingHorizontal:24가 검색바와 동일해 이미 고정 폭 — 세로는 이 화면

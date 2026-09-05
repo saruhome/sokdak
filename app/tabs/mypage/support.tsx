@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     height: 36, borderRadius: 8, paddingHorizontal: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
-  searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary },
+  searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary, fontFamily: 'NotoSerifKR_400Regular' },
 
   categoryRow: { gap: 6, paddingVertical: 16 },
   categoryChip: {

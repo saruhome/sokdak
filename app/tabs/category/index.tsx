@@ -176,7 +176,7 @@ export default function CategoryScreen() {
             /* 이미지 로드 실패 시에도 카테고리 색이 placeholder로 남는다 */
             /* 드라마 일러스트는 카메라가 왼쪽이라 왼쪽 하단 라벨에 가림 — 좌우 반전해
              * 카메라를 오른쪽에 두고 제목은 왼쪽 하단 그대로(운영자 지시) */
-            ? { source: item.image, imageStyle: [styles.cardBgImage, item.slug === 'drama' && { transform: [{ scaleX: -1 }] }], style: [styles.cardBg, { backgroundColor: item.colorBg }] }
+            ? { source: item.image, imageStyle: [styles.cardBgImage, item.slug === 'drama' && { transform: [{ scaleX: -1 }, { translateX: 24 }] }], style: [styles.cardBg, { backgroundColor: item.colorBg }] }
             : { style: [styles.cardBg, { backgroundColor: item.colorBg }] };
           return (
             <TouchableOpacity

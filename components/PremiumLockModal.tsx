@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch', height: 44, borderRadius: 8, marginTop: 8,
     backgroundColor: Colors.premium, alignItems: 'center', justifyContent: 'center',
   },
-  ctaText: { fontSize: 15, fontWeight: '600', color: Colors.textPrimary, fontFamily: undefined },
+  ctaText: { fontSize: 15, fontWeight: '600', color: Colors.textPrimary },
   closeBtn: { minHeight: 44, alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' },
-  closeText: { fontSize: 13, color: Colors.textTertiary, fontFamily: undefined },
+  closeText: { fontSize: 13, color: Colors.textTertiary },
 });

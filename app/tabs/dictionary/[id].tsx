@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
   headerBlock: { gap: 8 },
   wordTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   wordTitle: { fontSize: 26, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
-  reading: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
+  reading: { fontSize: 14, color: Colors.textTertiary },
   /* 발음 텍스트와 스피커 아이콘은 같은 줄에서 세로 중앙 정렬(운영자 규칙) — 이전의
    * flex-end+paddingBottom 수동 보정이 아이콘을 위로 띄워 보이게 했다 */
   soundBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
@@ -413,21 +413,21 @@ const styles = StyleSheet.create({
   /* 섹션 헤더 (의미/대화예시 — 18px 타이틀) */
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'baseline', gap: 8 },
   sectionTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
-  sectionTitleEn: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  sectionTitleEn: { fontSize: 12, color: Colors.textTertiary },
 
   /* 섹션 헤더 (문화적배경/추가정보 카드 내부 — 16px 타이틀) */
   sectionHeaderRowSm: { flexDirection: 'row', alignItems: 'baseline', gap: 4 },
   sectionTitleSm: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
-  sectionTitleEnSm: { fontSize: 10, color: Colors.textTertiary, fontFamily: undefined },
+  sectionTitleEnSm: { fontSize: 10, color: Colors.textTertiary },
 
   /* 의미 */
   meaningBlock: { gap: 6 },
   definitionText: { fontSize: 16, color: Colors.textSecondary, lineHeight: 20 },
-  definitionEng: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16, fontFamily: undefined },
+  definitionEng: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16 },
 
   /* 문화적 배경 / 추가 정보 공통 텍스트 */
-  contextBody: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined },
-  contextBodyEn: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16, marginTop: 4, fontFamily: undefined },
+  contextBody: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18 },
+  contextBodyEn: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16, marginTop: 4 },
 
   /* 문화적 배경 카드 */
   contextCard: {
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
   chatCol: { gap: 6, maxWidth: '90%' },
   chatColRight: { alignItems: 'flex-end' },
   chatRowInner: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
-  chatName: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  chatName: { fontSize: 12, color: Colors.textSecondary },
   chatAvatar: { width: 32, height: 32, borderRadius: 16 },
   /* 버블+간격(8)+아바타(32)가 컬럼 한계 안에 들어야 아바타가 가장자리로 밀리지 않는다
    * (운영자 규칙: 말풍선이 캐릭터를 밀어내지 않기, 좌우 여백 대칭) */
@@ -456,10 +456,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar, borderWidth: 0.5, borderColor: Colors.border,
     borderTopRightRadius: 0,
   },
-  chatKor: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined },
-  chatEng: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16, fontFamily: undefined },
-  chatKorRight: { fontSize: 14, color: Colors.border, lineHeight: 18, textAlign: 'right', fontFamily: undefined },
-  chatEngRight: { fontSize: 12, color: Colors.border, lineHeight: 16, textAlign: 'right', fontFamily: undefined },
+  chatKor: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18 },
+  chatEng: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16 },
+  chatKorRight: { fontSize: 14, color: Colors.border, lineHeight: 18, textAlign: 'right' },
+  chatEngRight: { fontSize: 12, color: Colors.border, lineHeight: 16, textAlign: 'right' },
 
   /* 추가 정보 카드 (메인 카드 밖) */
   tipCard: {
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
   },
   tipHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   tipTitle: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.point1 },
-  tipTitleEn: { fontSize: 10, color: Colors.textTertiary, marginLeft: 4, fontFamily: undefined },
+  tipTitleEn: { fontSize: 10, color: Colors.textTertiary, marginLeft: 4 },
 
   /* 관련 단어 */
   relatedCard: {
@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navBar, borderRadius: 12, gap: 4,
   },
   communityBannerTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBarIconActive },
-  communityBannerSub: { fontSize: 12, color: Colors.navBarIconMuted, fontFamily: undefined },
+  communityBannerSub: { fontSize: 12, color: Colors.navBarIconMuted },
 
   /* Not found */
   notFound: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },

@@ -282,9 +282,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 6, borderBottomWidth: 6, borderLeftWidth: 7,
     borderTopColor: 'transparent', borderBottomColor: 'transparent', borderLeftColor: Colors.surface,
   },
-  recommendLabel: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },
+  recommendLabel: { fontSize: 14, color: Colors.textEmphasis },
   recommendName: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
-  recommendClick: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  recommendClick: { fontSize: 12, color: Colors.textTertiary },
   /* 호랭이 크기/위치는 고정 — 카드가 고정 폭(312)이라 줄어들 필요가 없다.
    * marginRight 없이 카드 우측 끝(검색바 우측 끝과 동일)에 딱 맞춘다 */
   recommendImg: { width: 93, height: 107, flexShrink: 0 },
@@ -293,10 +293,10 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
   },
-  countLabel: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  countNumber: { color: Colors.textPrimary, fontFamily: undefined },
+  countLabel: { fontSize: 12, color: Colors.textSecondary },
+  countNumber: { color: Colors.textPrimary },
   sortBtn: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  sortLabel: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  sortLabel: { fontSize: 12, color: Colors.textSecondary },
 
   grid: { paddingHorizontal: 24, paddingBottom: 24 },
   row: { gap: 12, marginBottom: 12, justifyContent: 'space-between' },

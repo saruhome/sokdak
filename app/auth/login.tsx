@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
 
   /* ── 로고 ── */
   logoSection: { alignItems: 'center', marginTop: -32, gap: 16 }, // 중앙 정렬 기준에서 전체 그룹을 40px 위로
-  logoTagline: { fontSize: 16, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20, fontFamily: undefined },
+  logoTagline: { fontSize: 16, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20 },
 
   /* ── 캐릭터 ── */
   characterSection: {
@@ -106,13 +106,13 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  emailLoginText: { fontSize: 16, fontWeight: '500', color: Colors.navBar, fontFamily: undefined },
+  emailLoginText: { fontSize: 16, fontWeight: '500', color: Colors.navBar },
 
   /* ── 회원가입 링크 ── */
   signupRow: {
     flexDirection: 'row', alignItems: 'center',
     justifyContent: 'center', gap: 6, marginTop: 8,
   },
-  signupPrompt: { fontSize: 14, color: Colors.textTertiary, fontFamily: undefined },
+  signupPrompt: { fontSize: 14, color: Colors.textTertiary },
   signupLink: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar, textDecorationLine: 'underline' },
 });

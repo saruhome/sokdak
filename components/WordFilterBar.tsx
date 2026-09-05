@@ -191,17 +191,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     marginHorizontal: 24, marginTop: 24, marginBottom: 12,
   },
-  totalCount: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  totalCountNumber: { fontSize: 12, color: Colors.textPrimary, fontWeight: '700', fontFamily: undefined },
+  totalCount: { fontSize: 12, color: Colors.textSecondary },
+  totalCountNumber: { fontSize: 12, color: Colors.textPrimary, fontWeight: '700' },
   filterTriggers: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   sortTrigger: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  sortTriggerText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  sortTriggerText: { fontSize: 12, color: Colors.textSecondary },
   categoryTrigger: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     backgroundColor: Colors.divider, borderWidth: 1, borderColor: Colors.border,
     borderRadius: 8, paddingHorizontal: 8, paddingVertical: 6,
   },
-  categoryTriggerText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  categoryTriggerText: { fontSize: 12, color: Colors.textSecondary },
   filterDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: Colors.point1 },
 
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginHorizontal: 24, marginBottom: 12 },
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
-  chipText: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  chipText: { fontSize: 12, color: Colors.textTertiary },
 
   /* width:100%이 없으면 네이티브(Yoga)에서 칩 14개의 내용 너비가 그대로 부모 컬럼의
    * 최소 너비로 계산돼 검색바·배너·단어카드까지 전부 오른쪽으로 늘어난다(웹은 overflow
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
   consonantChipActive: { backgroundColor: Colors.navBar, borderColor: Colors.navBar },
-  consonantChipText: { fontSize: 13, color: Colors.textSecondary, fontFamily: undefined },
+  consonantChipText: { fontSize: 13, color: Colors.textSecondary },
   consonantChipTextActive: { color: Colors.navBarIconActive, fontFamily: 'NotoSerifKR_600SemiBold' },
 
   /* maxHeight를 '80%'로 두면 BottomSheet의 Animated.View 래퍼가 높이를 못 정해(퍼센트
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center',
     borderTopWidth: 1, borderBottomWidth: 1, borderColor: Colors.border,
   },
-  modalHintText: { fontSize: 14, color: Colors.textPrimary, fontFamily: undefined, textAlign: 'center' },
+  modalHintText: { fontSize: 14, color: Colors.textPrimary, textAlign: 'center' },
 
   chipGrid: { paddingHorizontal: 24, paddingTop: 16, gap: 12 },
   chipGridHeader: { flexDirection: 'row', alignItems: 'baseline', gap: 6 },
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', gap: 2,
     backgroundColor: Colors.divider, borderWidth: 1, borderColor: Colors.border,
   },
-  modalResetText: { fontSize: 10, color: Colors.textTertiary, fontFamily: undefined },
+  modalResetText: { fontSize: 10, color: Colors.textTertiary },
   modalApply: {
     flex: 1, height: 48, borderRadius: 10,
     alignItems: 'center', justifyContent: 'center',

@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
   categoryChipActive: { backgroundColor: Colors.navBar, borderColor: Colors.navBar },
-  categoryChipText: { fontSize: 12, color: Colors.textPrimary, fontFamily: undefined },
+  categoryChipText: { fontSize: 12, color: Colors.textPrimary },
   categoryChipTextActive: { color: Colors.navBarIconActive },
 
   faqGroup: { width: '100%', gap: 12 },
@@ -444,14 +444,14 @@ const styles = StyleSheet.create({
     paddingVertical: 14, gap: 12,
     borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
-  faqQuestion: { flex: 1, fontSize: 15, color: Colors.textPrimary, fontFamily: undefined },
+  faqQuestion: { flex: 1, fontSize: 15, color: Colors.textPrimary },
   faqQPrefix: { fontFamily: 'NotoSerifKR_600SemiBold' },
   faqAnswerBox: {
     padding: 16, backgroundColor: Colors.surface,
     borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: Colors.border,
     borderBottomLeftRadius: 10, borderBottomRightRadius: 10,
   },
-  faqAnswer: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20, fontFamily: undefined },
+  faqAnswer: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
 
   /* marginHorizontal 없음 — scroll의 paddingHorizontal:24가 이미 검색창과 동일한 폭을 준다 */
   contactCard: {
@@ -461,8 +461,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   contactTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  contactTitle: { fontSize: 15, color: Colors.textPrimary, fontFamily: undefined, fontWeight: '600' },
-  contactSub: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  contactTitle: { fontSize: 15, color: Colors.textPrimary, fontWeight: '600' },
+  contactSub: { fontSize: 12, color: Colors.textTertiary },
 
   /* 인앱 문의하기 (로그인 사용자) — 폼은 시트로 열리고, 이 행은 그 트리거 */
   inquirySection: { marginTop: 24, gap: 10 },
@@ -498,13 +498,13 @@ const styles = StyleSheet.create({
   ticketStatusPillAnswered: { backgroundColor: Colors.accent + '20' },
   ticketStatusText: { fontSize: 11, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textSecondary },
   ticketStatusTextAnswered: { color: Colors.accent },
-  ticketMessage: { fontSize: 14, color: Colors.textPrimary, lineHeight: 20, fontFamily: undefined },
+  ticketMessage: { fontSize: 14, color: Colors.textPrimary, lineHeight: 20 },
   ticketReplyBox: {
     padding: 10, borderRadius: 8, gap: 2,
     backgroundColor: Colors.background, borderLeftWidth: 2, borderLeftColor: Colors.accent,
   },
   ticketReplyLabel: { fontSize: 11, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.accent },
-  ticketReplyText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined },
+  ticketReplyText: { fontSize: 13, color: Colors.textSecondary, lineHeight: 18 },
 
   /* ── 문의하기/유형선택/접수완료 공용 바텀시트 ── */
   sheetPanel: {
@@ -519,13 +519,13 @@ const styles = StyleSheet.create({
   sheetDivider: { alignSelf: 'stretch', height: 1, backgroundColor: Colors.border },
 
   formField: { alignSelf: 'stretch', gap: 8 },
-  formLabel: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary, fontFamily: undefined },
+  formLabel: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary },
   typeSelect: {
     height: 44, paddingHorizontal: 16, borderRadius: 10,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
   },
-  typeSelectText: { fontSize: 13, color: Colors.textTertiary, fontFamily: undefined },
+  typeSelectText: { fontSize: 13, color: Colors.textTertiary },
   typeSelectTextFilled: { color: Colors.textPrimary },
 
   typePickerSheet: {
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch', paddingVertical: 14,
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
-  typeOptionText: { fontSize: 15, color: Colors.textPrimary, fontFamily: undefined },
+  typeOptionText: { fontSize: 15, color: Colors.textPrimary },
 
   receiptPanel: {
     backgroundColor: Colors.background,
@@ -556,6 +556,6 @@ const styles = StyleSheet.create({
   receiptTitle: { fontSize: 19, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, textAlign: 'center' },
   receiptSub: { fontSize: 12, color: Colors.textSecondary, textAlign: 'center', marginTop: -12 },
   receiptDetails: { alignSelf: 'stretch', gap: 3 },
-  receiptDetailLabel: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
-  receiptDetailValue: { fontSize: 13, color: Colors.textPrimary, fontFamily: undefined, marginBottom: 6 },
+  receiptDetailLabel: { fontSize: 12, color: Colors.textTertiary },
+  receiptDetailValue: { fontSize: 13, color: Colors.textPrimary, marginBottom: 6 },
 });

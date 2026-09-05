@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     fontSize: 24, lineHeight: 36, color: Colors.textEmphasis,
     fontFamily: 'NotoSerifKR_600SemiBold', marginTop: 2,
   },
-  heroDesc: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, fontFamily: undefined, opacity: 0.9 },
+  heroDesc: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, opacity: 0.9 },
 
   dotsRow: {
     flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
@@ -355,16 +355,16 @@ const styles = StyleSheet.create({
   sectionHeader: { gap: 6 },
   sectionTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   sectionSubRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sectionSub: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined, flexShrink: 1 },
+  sectionSub: { fontSize: 12, color: Colors.textSecondary, flexShrink: 1 },
   moreLink: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  moreLinkText: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  moreLinkText: { fontSize: 12, color: Colors.textSecondary },
 
   /* 오늘의 실전 표현 히어로 슬라이드 — 골드 배경 위 텍스트는 textPrimary(≈8.8:1) */
   exprLockedRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   exprLocked: { flexShrink: 1, fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   exprHeroBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.surface },
   exprHeroBadgeText: { color: Colors.premiumText },
-  exprHeroGloss: { fontSize: 14, color: Colors.textPrimary, lineHeight: 18, fontFamily: undefined, opacity: 0.85 },
+  exprHeroGloss: { fontSize: 14, color: Colors.textPrimary, lineHeight: 18, opacity: 0.85 },
   exprGlossRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   exprGlossShrink: { flexShrink: 1 },
   /* 사전 연결 칩 — 골드 배경 위 surface 캡슐(프리미엄 배지와 동일 문법) */
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   },
   wordCardTitle: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
   wordCardTitleOnImage: { color: Colors.white },
-  wordCardDesc: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16, fontFamily: undefined },
+  wordCardDesc: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16 },
   wordCardDescOnImage: { color: 'rgba(255,255,255,0.85)' },
 
   /* 커뮤니티 리스트 */
@@ -416,8 +416,8 @@ const styles = StyleSheet.create({
   postBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
   postTitle: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, lineHeight: 18 },
   postMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  postAuthor: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  postDate: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  postAuthor: { fontSize: 12, color: Colors.textSecondary },
+  postDate: { fontSize: 12, color: Colors.textTertiary },
   postStats: { flexDirection: 'row', gap: 8 },
   postStat: { fontSize: 12, color: Colors.textTertiary },
 });

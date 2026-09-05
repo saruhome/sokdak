@@ -268,9 +268,9 @@ const styles = StyleSheet.create({
     borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3,
   },
   categoryName: { fontSize: 13, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary },
-  categoryDesc: { fontSize: 11, color: Colors.textTertiary, fontFamily: undefined },
+  categoryDesc: { fontSize: 11, color: Colors.textTertiary },
   moreBtn: { alignItems: 'center', paddingTop: 4 },
-  moreBtnText: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  moreBtnText: { fontSize: 12, color: Colors.textTertiary },
 
   /* 저장한 단어 */
   wordList: { gap: 8 },
@@ -285,10 +285,10 @@ const styles = StyleSheet.create({
    * 공간이 부족할 때 먼저 줄어들게(shrink+ellipsis) 해서 카드가 항상 2줄로 고정된다 */
   wordTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   wordText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar, flexShrink: 0 },
-  wordReading: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined, flexShrink: 1, minWidth: 0 },
+  wordReading: { fontSize: 12, color: Colors.textTertiary, flexShrink: 1, minWidth: 0 },
   wordBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12, flexShrink: 0 },
   wordBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
-  wordDesc: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  wordDesc: { fontSize: 12, color: Colors.textSecondary },
   wordItemRight: { alignItems: 'center', gap: 4 },
   iconBtn: { width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
 

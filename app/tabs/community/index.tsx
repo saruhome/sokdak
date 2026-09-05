@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   featuredCardBody: { gap: 8 },
   featuredCardTitle: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, lineHeight: 20 },
-  featuredCardSub: { fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
+  featuredCardSub: { fontSize: 12, color: Colors.textSecondary },
   featuredCardMeta: { flexDirection: 'row', gap: 10 },
 
   /* 게시판 뱃지 — 사전 화면 단어 태그(wordBadge)와 동일 크기 (화제의 글 카드용) */

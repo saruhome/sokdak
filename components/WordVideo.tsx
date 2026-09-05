@@ -143,5 +143,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8,
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-  openLinkText: { fontSize: 11, color: Colors.navBarIconActive, fontFamily: undefined },
+  openLinkText: { fontSize: 11, color: Colors.navBarIconActive },
 });

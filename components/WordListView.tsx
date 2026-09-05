@@ -398,9 +398,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 6, borderBottomWidth: 6, borderLeftWidth: 7,
     borderTopColor: 'transparent', borderBottomColor: 'transparent', borderLeftColor: Colors.surface,
   },
-  tipHint: { fontSize: 14, color: Colors.textEmphasis, fontFamily: undefined },
+  tipHint: { fontSize: 14, color: Colors.textEmphasis },
   tipWord: { fontSize: 18, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textEmphasis },
-  tipClick: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  tipClick: { fontSize: 12, color: Colors.textTertiary },
   /* 짹이 크기/위치는 고정 — 카드가 고정 폭(312)이라 줄어들 필요가 없다.
    * marginRight 없이 카드 우측 끝(검색창 우측 끝과 동일)에 딱 맞춘다 */
   tipImg: { width: 93, height: 107, flexShrink: 0 },
@@ -419,16 +419,16 @@ const styles = StyleSheet.create({
   wordItemLeft: { flex: 1, gap: 8 },
   wordBottomRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   likeRow: { flexDirection: 'row', alignItems: 'center', gap: 3, marginLeft: 'auto' },
-  likeCount: { fontSize: 11, color: Colors.textTertiary, fontFamily: undefined },
+  likeCount: { fontSize: 11, color: Colors.textTertiary },
   /* 태그가 항상 단어 옆 한 줄에 붙어 있도록 줄바꿈을 막고, 대신 로마자 표기가
    * 공간이 부족할 때 먼저 줄어들게(shrink+ellipsis) 해서 카드가 항상 2줄로 고정된다 */
   wordTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   wordText: { fontSize: 16, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.navBar, flexShrink: 0 },
-  wordReading: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined, flexShrink: 1, minWidth: 0 },
+  wordReading: { fontSize: 12, color: Colors.textTertiary, flexShrink: 1, minWidth: 0 },
   wordBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12, flexShrink: 0 },
   wordBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
-  wordDesc: { flexShrink: 1, fontSize: 12, color: Colors.textSecondary, fontFamily: undefined },
-  searchMatchEvidence: { flexShrink: 1, fontSize: 11, color: Colors.point1, fontFamily: undefined, fontWeight: '600' },
+  wordDesc: { flexShrink: 1, fontSize: 12, color: Colors.textSecondary },
+  searchMatchEvidence: { flexShrink: 1, fontSize: 11, color: Colors.point1, fontWeight: '600' },
   wordItemRight: { alignItems: 'center', gap: 4 },
   iconBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
 

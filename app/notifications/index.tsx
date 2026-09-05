@@ -83,5 +83,5 @@ const styles = StyleSheet.create({
   itemText: { gap: 8 },
   message: { fontSize: 14, lineHeight: 18, color: Colors.textPrimary, fontFamily: 'NotoSerifKR_400Regular' },
   actorName: { fontFamily: 'NotoSerifKR_600SemiBold' },
-  timeAgo: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },
+  timeAgo: { fontSize: 12, color: Colors.textTertiary },
 });

@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   groupRowFirst: { borderTopLeftRadius: 10, borderTopRightRadius: 10 },
   groupRowLast: { borderBottomLeftRadius: 10, borderBottomRightRadius: 10, borderBottomWidth: 1 },
-  groupRowLabel: { fontSize: 16, color: Colors.textSecondary, fontFamily: undefined },
+  groupRowLabel: { fontSize: 16, color: Colors.textSecondary },
 
   /* 설정 2항목 — 각각 독립된 카드 */
   settingsGroup: { gap: 8 },
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   },
 
   supportRow: { marginTop: 24, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
-  supportLabel: { fontSize: 16, color: Colors.textSecondary, fontFamily: undefined },
+  supportLabel: { fontSize: 16, color: Colors.textSecondary },
   supportDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.error },
 
   logoutBtn: {
@@ -277,5 +277,5 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 1,
   },
-  logoutText: { fontSize: 16, color: Colors.textSecondary, fontFamily: undefined },
+  logoutText: { fontSize: 16, color: Colors.textSecondary },
 });

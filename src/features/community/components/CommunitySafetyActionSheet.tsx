@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 12,
   },
-  menuItemText: { fontSize: 13, color: Colors.textPrimary, fontFamily: undefined, flexShrink: 0 },
+  menuItemText: { fontSize: 13, color: Colors.textPrimary, flexShrink: 0 },
   menuDivider: { height: 1, backgroundColor: Colors.border },
 
   /* ── 이하 전부 고객센터(support.tsx) 문의 시트와 동일 스펙 ── */
@@ -249,13 +249,13 @@ const styles = StyleSheet.create({
   sheetDivider: { alignSelf: 'stretch', height: 1, backgroundColor: Colors.border },
 
   formField: { alignSelf: 'stretch', gap: 8 },
-  formLabel: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary, fontFamily: undefined },
+  formLabel: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary },
   typeSelect: {
     height: 44, paddingHorizontal: 16, borderRadius: 10,
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
   },
-  typeSelectText: { fontSize: 13, color: Colors.textTertiary, fontFamily: undefined },
+  typeSelectText: { fontSize: 13, color: Colors.textTertiary },
   typeSelectTextFilled: { color: Colors.textPrimary },
 
   detailInput: { fontFamily: 'NotoSerifKR_400Regular',
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch', paddingVertical: 14,
     borderBottomWidth: 1, borderBottomColor: Colors.divider,
   },
-  pickerOptionText: { fontSize: 15, color: Colors.textPrimary, fontFamily: undefined },
+  pickerOptionText: { fontSize: 15, color: Colors.textPrimary },
 
   receiptPanel: {
     backgroundColor: Colors.background,

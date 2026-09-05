@@ -133,7 +133,7 @@ export default function SavedWordsScreen() {
                         icon={Star}
                         size={18}
                         fill={ACTIVE_STAR_COLOR}
-                        color={ACTIVE_STAR_COLOR}
+                        color={Colors.textEmphasis}
                       />
                     </TouchableOpacity>
                     <View style={styles.categoryTextWrap}>

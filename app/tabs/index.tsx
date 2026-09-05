@@ -4,7 +4,7 @@ import { AppText as Text } from '@/components/AppText';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors, getReadableTextColor } from '../../constants/Colors';
-import { cardGloss, fetchWords, localizedText, type Word } from '../../constants/words';
+import { cardGloss, fetchWords, isAdultOnlyWord, localizedText, type Word } from '../../constants/words';
 import { BOARD_COLORS } from '../../constants/mockPosts';
 import { fetchPosts, type CommunityPostSummary } from '../../constants/community';
 import { getCategoryBySlug, getCategoryName } from '../../constants/categories';
@@ -51,7 +51,9 @@ export default function HomeScreen() {
   const todayExpressions = pickDaily(EXPRESSIONS, 1, 'expr-' + new Date().toISOString().slice(0, 10));
 
   useEffect(() => {
-    fetchWords().then(words => {
+    fetchWords().then(fetched => {
+      /* 비속어(slang)는 숨은 기능 — 열람 권한이 있어도 홈에는 어떤 표면에도 노출하지 않는다(운영자 지시) */
+      const words = fetched.filter(w => !isAdultOnlyWord(w));
       /* 히어로는 매주 교체, 인기 순(운영 결정 2026-08-30): 좋아요 상위 10개 풀에서
        * 주 번호를 시드로 5개를 뽑고 인기순으로 표시 — 한 주 동안은 고정, 주가 바뀌면 교체.
        * ponytail: 주 경계는 epoch 7일 단위(UTC 목요일) — 요일 기준이 중요해지면 ISO week로 */

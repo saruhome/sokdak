@@ -63,9 +63,9 @@ export function CommunityCommentComposer({
           accessibilityLabel={tFor(language, 'sendLabel')}
           accessibilityState={{ disabled: !value.trim() || sending }}
         >
-          <Text style={styles.sendBtnText}>
-            {sending ? tFor(language, 'sendingLabel') : tFor(language, 'sendLabel')}
-          </Text>
+          {/* 전송 중에도 라벨을 바꾸지 않는다 — '전송 중…'으로 바뀌면 버튼 폭이 늘어나 입력창이 줄어듦.
+            * 진행 표시는 비활성(회색) 상태로 충분(전송은 보통 1초 미만). */}
+          <Text style={styles.sendBtnText}>{tFor(language, 'sendLabel')}</Text>
         </TouchableOpacity>
       </View>
     </View>

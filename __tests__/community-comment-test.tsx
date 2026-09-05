@@ -59,7 +59,8 @@ describe('CommunityCommentComposer', () => {
     );
     await fireEvent.press(sending.getByLabelText(tFor('ko', 'sendLabel')));
     expect(onSend).not.toHaveBeenCalled();
-    expect(sending.getByText(tFor('ko', 'sendingLabel'))).toBeTruthy();
+    // 전송 중에도 라벨은 그대로 — 라벨 교체가 버튼 폭을 늘리는 문제로 제거됨
+    expect(sending.getByText(tFor('ko', 'sendLabel'))).toBeTruthy();
   });
 });
 

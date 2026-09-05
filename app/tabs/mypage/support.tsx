@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  receiptTitle: { fontSize: 19, fontWeight: '700', fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, textAlign: 'center' },
+  receiptTitle: { fontSize: 19, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.textPrimary, textAlign: 'center' },
   receiptSub: { fontSize: 12, color: Colors.textSecondary, textAlign: 'center', marginTop: -12 },
   receiptDetails: { alignSelf: 'stretch', gap: 3 },
   receiptDetailLabel: { fontSize: 12, color: Colors.textTertiary, fontFamily: undefined },

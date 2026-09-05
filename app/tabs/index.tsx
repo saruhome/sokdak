@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2,
     borderRadius: 12,
   },
-  heroBadgeText: { fontSize: 10, fontWeight: '600', fontFamily: 'NotoSerifKR_600SemiBold' },
+  heroBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
   heroWord: {
     fontSize: 24, lineHeight: 36, color: Colors.textEmphasis,
     fontFamily: 'NotoSerifKR_600SemiBold', marginTop: 2,

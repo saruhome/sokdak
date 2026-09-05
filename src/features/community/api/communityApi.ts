@@ -5,7 +5,7 @@
 import { supabase } from '../../../shared/api/supabaseClient';
 import { authStore } from '../../../../constants/authStore';
 import { languageStore } from '../../../shared/i18n/languageStore';
-import { isProfileAvatarPath } from '../../../../constants/profileAvatarStorage';
+import { isProfileAvatarPath, profileAvatarPublicUrl } from '../../../../constants/profileAvatarStorage';
 import type { PostBoard } from '../model/boards';
 
 /** 차단한 유저의 글은 목록에서 뺀다 — 모든 목록 조회가 이 한 곳을 거치게 해서 한 번만 처리 */
@@ -57,13 +57,13 @@ export const COMMUNITY_POST_PAGE_SIZE = 20;
 
 type ProfileRow = { nickname: string; avatar_emoji: string; avatar_url?: string | null; level: string } | null;
 
-/** 공개 커뮤니티에는 private Storage 객체 경로나 signed URL을 전달하지 않는다. */
+/** 프로필 사진은 public 버킷 공개 URL로 변환해 커뮤니티에도 자동 반영한다(운영자 지시). */
 export function toCommunityAuthor(profile: ProfileRow): CommunityAuthor {
   const avatarUrl = profile?.avatar_url ?? null;
   return {
     name: profile?.nickname ?? languageStore.t('deletedUser'),
     emoji: profile?.avatar_emoji ?? '👤',
-    avatarUrl: isProfileAvatarPath(avatarUrl) ? null : avatarUrl,
+    avatarUrl: isProfileAvatarPath(avatarUrl) ? profileAvatarPublicUrl(avatarUrl) : avatarUrl,
     level: profile?.level ?? '초급',
   };
 }

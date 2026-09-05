@@ -1,10 +1,20 @@
-jest.mock('@/constants/supabase', () => ({ supabase: {} }));
+jest.mock('@/constants/supabase', () => ({
+  supabase: {
+    storage: {
+      from: (bucket: string) => ({
+        getPublicUrl: (path: string) => ({
+          data: { publicUrl: `https://project.supabase.co/storage/v1/object/public/${bucket}/${path}` },
+        }),
+      }),
+    },
+  },
+}));
 jest.mock('@/constants/authStore', () => ({ authStore: { getBlockedUserIds: jest.fn(() => []) } }));
 
 import { toCommunityAuthor } from '@/constants/community';
 
-describe('community private avatar handling', () => {
-  it('never exposes a private profile-avatars Storage path in community data', () => {
+describe('community avatar handling', () => {
+  it('converts a profile-avatars Storage path to its public URL (photos follow you into the community)', () => {
     expect(toCommunityAuthor({
       nickname: '테스트 사용자',
       avatar_emoji: '🐯',
@@ -13,12 +23,12 @@ describe('community private avatar handling', () => {
     })).toEqual({
       name: '테스트 사용자',
       emoji: '🐯',
-      avatarUrl: null,
+      avatarUrl: 'https://project.supabase.co/storage/v1/object/public/profile-avatars/user-123/1720000000000.jpg',
       level: '초급',
     });
   });
 
-  it('keeps a legacy public avatar URL only when it is not a private Storage path', () => {
+  it('keeps a legacy public avatar URL untouched', () => {
     expect(toCommunityAuthor({
       nickname: '테스트 사용자',
       avatar_emoji: '🐦',

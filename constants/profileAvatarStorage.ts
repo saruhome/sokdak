@@ -18,6 +18,12 @@ function storageObjectPath(value: string) {
   return value.slice(`${PROFILE_AVATAR_BUCKET}/`.length);
 }
 
+/** 버킷이 public 읽기라 커뮤니티 등 공개 화면에서는 서명 없이 공개 URL로 그린다. */
+export function profileAvatarPublicUrl(path: string | null | undefined): string | null {
+  if (!isProfileAvatarPath(path)) return null;
+  return supabase.storage.from(PROFILE_AVATAR_BUCKET).getPublicUrl(storageObjectPath(path)).data.publicUrl;
+}
+
 /**
  * 프로필 DB에는 private bucket의 상대 경로만 저장한다. signed URL은 기기에만 짧게 보관해
  * 재로그인·다른 기기에서도 `file://` 경로가 남지 않도록 한다.

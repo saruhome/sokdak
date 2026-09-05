@@ -60,9 +60,18 @@ knockout·성분 정리 불필요). 기본 6종(*-t2) + 좌우 반전 변주 6�
    배치 전 발밑 타원 접지 그림자: ellipse((cx+0.12w, 348)-(cx+0.88w, 372)),
    fill (90,70,50,70), GaussianBlur(6), alpha_composite 후 캐릭터 paste → JPG quality 82.
 
-포즈 분위기 매핑: horang-cheer=신남·축하, horang-question=놀람·혼란, horang-reading=정보·차분,
-jjaeki-wave=친근·인사, jjaeki-question=얼떨떨, jjaeki-reading=몰입·심드렁.
-호랭 우선, 짹이로 변화. 합성본을 눈으로 확인 후 진행.
+포즈 분위기 매핑(2026-09-05 확장, 파일명은 poses-clean 기준 — *-t2m는 좌우 반전 변주):
+- 신남·축하: horang-cheer, horang-cheer-sit, horang-yay-stand, horang-idea
+- 놀람·혼란: horang-question, horang-ask-stand, jjaeki-startled, horang-peek-spark(설렘·기대)
+- 화남·짜증: horang-peek-angry, jjaeki-grumpy, jjaeki-smug(새침)
+- 슬픔·허탈·현타: horang-peek-cry, horang-peek-sleepy(졸림·심드렁)
+- 정보·차분·공부: horang-reading, horang-read-front, horang-scroll, horang-study-desk,
+  horang-night-write(몰입·밤샘), jjaeki-reading, jjaeki-study
+- 친근·인사: jjaeki-wave, horang-hello
+- SNS·폰·하트: horang-phone, jjaeki-phone-heart(애정·금사빠)
+- 외침·공지: jjaeki-megaphone
+- 얼떨떨: jjaeki-question
+호랭 우선, 짹이로 변화. 최근 처리 단어들과 포즈·방향이 겹치지 않게 순환. 합성본을 눈으로 확인 후 진행.
 
 ## 4. 업로드 (한시 자격)
 

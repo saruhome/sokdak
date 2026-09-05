@@ -59,25 +59,42 @@ create-design-from-candidate → export-design png 1280×720 → 다운로드.
 ## 3. 캐릭터 합성 (PIL)
 
 포즈 라이브러리: `assets/characters/poses-clean/*.png` (자사 IP, 투명 배경 정리 완료 —
-knockout·성분 정리 불필요). 기본 6종(*-t2) + 좌우 반전 변주 6종(*-t2m, !·? 기호와 책
-제목은 정방향 보정 완료) = 12종. 반전 변주를 섞어 연속 단어들이 같은 방향·같은 포즈로
-반복되지 않게 순환한다(운영자 지시 2026-09-05: 포즈 다양성).
+knockout·성분 정리 불필요). *-t2 원본 + *-t2m 좌우 반전 변주(!·? 기호와 책 제목은 정방향
+보정 완료). 반전 변주를 섞어 연속 단어들이 같은 방향·같은 포즈로 반복되지 않게 순환한다
+(운영자 지시 2026-09-05: 포즈 다양성). 텍스트 성격 기호가 든 포즈(horang-sleep-zzz,
+horang-dance-notes 등)는 반전 변주가 없다.
 
 합성: 배경 800×378 리사이즈 → 포즈 높이 320 → 가로 중앙, 하단 여백 6.
    배치 전 발밑 타원 접지 그림자: ellipse((cx+0.12w, 348)-(cx+0.88w, 372)),
    fill (90,70,50,70), GaussianBlur(6), alpha_composite 후 캐릭터 paste → JPG quality 82.
 
-포즈 분위기 매핑(2026-09-05 확장, 파일명은 poses-clean 기준 — *-t2m는 좌우 반전 변주):
-- 신남·축하: horang-cheer, horang-cheer-sit, horang-yay-stand, horang-idea
-- 놀람·혼란: horang-question, horang-ask-stand, jjaeki-startled, horang-peek-shocked(화들짝), horang-peek-spark(설렘·기대)
-- 화남·짜증: horang-peek-angry, jjaeki-grumpy, jjaeki-smug(새침)
-- 슬픔·허탈·현타: horang-peek-cry, horang-peek-sleepy(졸림·심드렁)
+포즈 분위기 매핑(2026-09-05 확장 2차 — 호랭 36종 시트 편입, 파일명은 poses-clean 기준,
+*-t2m는 좌우 반전 변주):
+- 신남·축하: horang-cheer, horang-cheer-sit, horang-yay-stand, horang-idea,
+  horang-jump-yay, horang-trophy, horang-dance-notes(춤·음악), horang-clap(박수·환호)
+- 놀람·혼란: horang-question, horang-ask-stand, jjaeki-startled, horang-peek-shocked(화들짝),
+  horang-peek-spark(설렘·기대), horang-shocked2(입 벌린 경악)
+- 화남·짜증: horang-peek-angry, horang-angry-fume(팔짱+김), jjaeki-grumpy, jjaeki-smug(새침),
+  horang-shake-no(절레절레 거절)
+- 슬픔·허탈·현타: horang-peek-cry, horang-peek-sleepy(졸림·심드렁), horang-slump(고개 푹),
+  horang-cry-loud(대성통곡), horang-moved-tears(감동 눈물), horang-sweat(진땀·곤란),
+  horang-yawn(하품·노잼), horang-shiver(오들오들·긴장)
 - 정보·차분·공부: horang-reading, horang-read-front, horang-scroll, horang-study-desk,
   horang-night-write(몰입·밤샘), jjaeki-reading, jjaeki-study
-- 친근·인사: jjaeki-wave, horang-hello
-- SNS·폰·하트: horang-phone, jjaeki-phone-heart(애정·금사빠)
+- 친근·인사: jjaeki-wave, horang-hello, horang-bow(꾸벅 인사·감사·사과),
+  horang-whisper-duo(귓속말·소문·TMI)
+- SNS·폰·하트: horang-phone, jjaeki-phone-heart(애정·금사빠), horang-selfie-v(V 셀카·인생샷),
+  horang-heart-wink(하트 윙크)
 - 외침·공지: jjaeki-megaphone
 - 얼떨떨: jjaeki-question
+- 음식·먹방: horang-eat-chicken, horang-eat-ramen, horang-boba(버블티), horang-coffee
+- 일상·생활: horang-cook(요리), horang-clean-mop(청소), horang-blanket-peek(이불 빼꼼),
+  horang-sleep-zzz(잠·귀찮음)
+- 긍정·인정: horang-thumbsup(엄지척·인정·알잘딱), horang-ok-sign(OK·ㅇㅋ),
+  horang-muscle(힘자랑·갓생), horang-flower-shy(수줍·설렘)
+- 웃음: horang-laugh-tears(눈물 나게 폭소), horang-giggle(킥킥)
+- 돈·플렉스: horang-money-fan(지폐 부채)
+- 날씨·계절: horang-cold-scarf(추위·얼죽아), horang-hot-fan(더위), horang-rain-umbrella(비·우울)
 호랭 우선, 짹이로 변화. 최근 처리 단어들과 포즈·방향이 겹치지 않게 순환. 합성본을 눈으로 확인 후 진행.
 
 ## 4. 업로드 (한시 자격)

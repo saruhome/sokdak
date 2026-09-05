@@ -463,9 +463,10 @@ const styles = StyleSheet.create({
   chatEngRight: { fontSize: 12, color: Colors.border, lineHeight: 16, textAlign: 'right' },
 
   /* 추가 정보 카드 (메인 카드 밖) */
+  /* 회색 채움(divider)+진한 테두리는 크림 배경 위에서 답답함 — 다른 카드처럼 흰 면+옅은 선으로 */
   tipCard: {
     marginTop: 16,
-    backgroundColor: Colors.divider, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.divider,
     borderRadius: 12, padding: 16, gap: 12,
   },
   tipHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },

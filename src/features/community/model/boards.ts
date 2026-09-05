@@ -34,10 +34,9 @@ export type Post = {
 
 /** Figma: Display/게시판 종류 배지 — bg(채움)+fg(글자) 페어 (Point 컬러 조합) */
 export const BOARD_COLORS: Record<PostBoard, { bg: string; fg: string }> = {
-  // 2026-08-31 질문=밝은 오렌지(frequently-used), 자유=밝고 진한 초록(new-slang) 토큰 재사용.
   // bg는 배지 채움 + 필터바 탭 텍스트/밑줄 색으로도 쓰이므로 파스텔 금지(크림 배경 위 가독성).
-  // 2026-09-02 접근성 딥 솔리드(시안 ②-A 승인) — 배지 fg 대비 5.04/4.96:1,
-  // 크림 배경 위 필터 탭 텍스트로 쓸 때 4.79/4.71:1 (모두 WCAG AA 통과)
-  '질문': { bg: '#B34A28', fg: '#FFF7EF' },
-  '자유': { bg: '#2C7A4B', fg: '#FFF7EF' },
+  // 2026-09-05 로고 팔레트로 교체(운영자 지시) — 질문=point1 빨강, 자유=point2 파랑.
+  // 배지 fg 대비 5.48/5.68:1, 크림 배경 위 필터 탭 텍스트 5.21/5.40:1 (모두 WCAG AA 통과)
+  '질문': { bg: '#A4484D', fg: '#FFF7EF' },  // = Colors.point1
+  '자유': { bg: '#526192', fg: '#FFF7EF' },  // = Colors.point2
 };

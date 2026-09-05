@@ -447,7 +447,8 @@ const styles = StyleSheet.create({
   chatAvatar: { width: 32, height: 32, borderRadius: 16 },
   /* 버블+간격(8)+아바타(32)가 컬럼 한계 안에 들어야 아바타가 가장자리로 밀리지 않는다
    * (운영자 규칙: 말풍선이 캐릭터를 밀어내지 않기, 좌우 여백 대칭) */
-  chatBubble: { flexShrink: 1, maxWidth: 208, borderRadius: 12, padding: 12, gap: 2 },
+  /* 말풍선 최대 폭 = 문화 배경 카드와 같은 콘텐츠 폭(아바타 옆 남은 공간 전부) — 고정 208 캡 제거(운영자 지시) */
+  chatBubble: { flexShrink: 1, borderRadius: 12, padding: 12, gap: 2 },
   chatBubbleLeft: {
     backgroundColor: Colors.surface, borderWidth: 0.5, borderColor: Colors.border,
     borderTopLeftRadius: 0,

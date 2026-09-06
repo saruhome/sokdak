@@ -285,7 +285,7 @@ export const EXPRESSIONS: Expression[] = [
     es: "A Hawái vas tú (dialecto de Busan/Gyeongsang, de la película 친구 (2001); hoy es la frase hecha para devolverle a alguien una propuesta que no te apetece: 've tú'. Informal y en broma: solo entre amigos íntimos, nunca con un superior)",
     vi: "Hawaii thì cậu đi đi (phương ngữ Busan/Gyeongsang, thoại phim 친구 (2001); nay thành câu cửa miệng để đẩy ngược lại đề nghị mình không muốn — 'cậu đi trước đi'. Đùa, thân mật — chỉ với bạn thân, tuyệt đối không nói với cấp trên)",
     de: 'Nach Hawaii gehst du selbst (Busan/Gyeongsang-Dialekt, aus dem Film 친구 (2001); heute die Standardantwort, um einen unerwünschten Vorschlag zurückzugeben — „geh doch selbst“. Scherzhaft und salopp — nur unter engen Freunden, nie zum Chef)' },
-  { situation: 'dinner', ko: '뭐랜 고람시니?',
+  { situation: 'sns', ko: '뭐랜 고람시니?',
     en: 'What are you saying? (Jeju dialect for 뭐라고 하는 거예요?; from the boat scene in the 2025 Netflix series 폭싹 속았수다. Jeju speech is close to a separate language — islanders use it among themselves, and trying it on Jeju usually gets a delighted reaction)',
     ja: '何て言ってるの?(済州方言で「뭐라고 하는 거예요?」。2025年Netflix『폭싹 속았수다』の船上の場面の台詞。済州の言葉はほぼ別言語で、島の人同士で使う。済州で言ってみると喜ばれる)',
     es: "¿Qué estás diciendo? (dialecto de Jeju para '뭐라고 하는 거예요?'; aparece en la escena del barco de la serie de Netflix 폭싹 속았수다 (2025). El habla de Jeju es casi otra lengua: los isleños la usan entre ellos y les hace mucha ilusión que un visitante lo intente)",

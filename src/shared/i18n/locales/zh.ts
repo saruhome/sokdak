@@ -344,7 +344,7 @@ export const zh = {
     streakLabel: '连续学习',
     streakDayCount: '第{n}天',
     mascotBubbleCta: '点一下 >',
-    premiumGlossLocked: '解锁释义需要 Premium',
+    premiumGlossLocked: '想知道是什么意思?',
     authTagline: '悄悄话 sokdak——学习课本之外的真实韩语',
     emailLoginBtn: '使用邮箱登录',
     noAccountPrompt: '还没有账号？',

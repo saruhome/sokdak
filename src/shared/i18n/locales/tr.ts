@@ -343,7 +343,7 @@ export const tr = {
     streakLabel: 'Çalışma serisi',
     streakDayCount: '{n}. gün',
     mascotBubbleCta: 'Dokun >',
-    premiumGlossLocked: 'Anlamı Premium ile aç',
+    premiumGlossLocked: 'Anlamını merak ettin mi?',
     authTagline: 'Sokdak sokdak — ders kitabının ötesinde gerçek Korece',
     emailLoginBtn: 'E-posta ile giriş yap',
     noAccountPrompt: 'Hesabın yok mu?',

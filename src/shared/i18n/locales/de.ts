@@ -338,7 +338,7 @@ export const de = {
     streakLabel: 'Lernserie',
     streakDayCount: 'Tag {n}',
     mascotBubbleCta: 'Antippen >',
-    premiumGlossLocked: 'Die Bedeutung gibt\'s mit Premium',
+    premiumGlossLocked: 'Wissen, was es heißt?',
     authTagline: 'Sokdak sokdak — echtes Koreanisch jenseits des Lehrbuchs',
     emailLoginBtn: 'Mit E-Mail anmelden',
     noAccountPrompt: 'Noch kein Konto?',

@@ -338,7 +338,7 @@ export const vi = {
     streakLabel: 'Chuỗi ngày học',
     streakDayCount: 'Ngày {n}',
     mascotBubbleCta: 'Nhấn thử >',
-    premiumGlossLocked: 'Mở khóa phần giải nghĩa với Premium',
+    premiumGlossLocked: 'Muốn biết nghĩa là gì?',
     authTagline: 'Sokdak sokdak — học tiếng Hàn thật ngoài sách giáo khoa',
     emailLoginBtn: 'Đăng nhập bằng email',
     noAccountPrompt: 'Chưa có tài khoản?',

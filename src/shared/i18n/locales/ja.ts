@@ -338,7 +338,7 @@ export const ja = {
     streakLabel: '連続学習',
     streakDayCount: '{n}日目',
     mascotBubbleCta: 'タップ >',
-    premiumGlossLocked: '意味の解説はプレミアムで見られます',
+    premiumGlossLocked: 'どういう意味か知りたい?',
     authTagline: 'ソクダクソクダク、教科書の外のリアルな韓国語を学ぼう',
     emailLoginBtn: 'メールでログイン',
     noAccountPrompt: 'アカウントをお持ちでないですか？',

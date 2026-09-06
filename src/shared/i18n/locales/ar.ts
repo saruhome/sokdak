@@ -345,7 +345,7 @@ export const ar = {
     streakLabel: 'أيام التعلم المتتالية',
     streakDayCount: 'اليوم {n}',
     mascotBubbleCta: 'اضغط >',
-    premiumGlossLocked: 'افتح الشرح مع Premium',
+    premiumGlossLocked: 'هل تريد معرفة المعنى؟',
     authTagline: 'سوكداك سوكداك — تعلّم الكورية الحقيقية خارج الكتب المدرسية',
     emailLoginBtn: 'تسجيل الدخول بالبريد الإلكتروني',
     noAccountPrompt: 'ليس لديك حساب؟',

@@ -338,7 +338,7 @@ export const es = {
     streakLabel: 'Racha de días',
     streakDayCount: 'Día {n}',
     mascotBubbleCta: 'Toca >',
-    premiumGlossLocked: 'Desbloquea el significado con Premium',
+    premiumGlossLocked: '¿Quieres saber qué significa?',
     authTagline: 'Sokdak sokdak — aprende coreano real más allá del libro de texto',
     emailLoginBtn: 'Iniciar sesión con email',
     noAccountPrompt: '¿No tienes cuenta?',

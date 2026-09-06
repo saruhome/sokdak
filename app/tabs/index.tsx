@@ -24,9 +24,9 @@ const SITUATION_BANNERS = {
   cafe: require('../../assets/expressions/cafe.jpg'),
   subway: require('../../assets/expressions/subway.jpg'),
   work: require('../../assets/expressions/work.jpg'),
-  hospital: require('../../assets/expressions/hospital.jpg'),
+  health: require('../../assets/expressions/health.jpg'),
   sns: require('../../assets/expressions/sns.jpg'),
-  dinner: require('../../assets/expressions/dinner.jpg'),
+  meal: require('../../assets/expressions/meal.jpg'),
   // ponytail: argument/daily 전용 일러스트가 아직 없어 sns 배너로 대신한다.
   // 두 상황에 표현을 처음 넣기 전에 assets/expressions/{argument,daily}.jpg를 만들어 교체할 것.
   argument: require('../../assets/expressions/sns.jpg'),

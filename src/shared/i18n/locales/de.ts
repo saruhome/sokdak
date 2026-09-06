@@ -319,7 +319,7 @@ export const de = {
     dictionaryPremiumBannerText: 'Mit Premium alles speichern',
 
     todayExpressionTitle: 'Heutiger Alltagsausdruck',
-    todayDialectTitle: 'Dialekt des Tages',
+    dialectTitle: 'Koreanische Dialekte',
     todayExpressionSub: 'Echtes Koreanisch in 3 Minuten',
     situationCafe: 'Café',
     situationTransit: 'Unterwegs',

@@ -324,7 +324,7 @@ export const tr = {
     dictionaryPremiumBannerText: 'Premium\'a geç, hepsini kaydet',
 
     todayExpressionTitle: 'Günün pratik ifadesi',
-    todayDialectTitle: 'Günün lehçesi',
+    dialectTitle: 'Kore ağızları',
     todayExpressionSub: '3 dakikada gerçek Korece',
     situationCafe: 'Kafe',
     situationTransit: 'Toplu taşıma',

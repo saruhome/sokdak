@@ -326,7 +326,7 @@ export const ar = {
     dictionaryPremiumBannerText: 'ترقَّ إلى Premium واحفظ كل شيء',
 
     todayExpressionTitle: 'تعبير اليوم العملي',
-    todayDialectTitle: 'لهجة اليوم',
+    dialectTitle: 'اللهجات الكورية',
     todayExpressionSub: 'كورية حقيقية في 3 دقائق',
     situationCafe: 'المقهى',
     situationTransit: 'المواصلات العامة',

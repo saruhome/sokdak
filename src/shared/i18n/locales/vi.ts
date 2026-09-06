@@ -319,7 +319,7 @@ export const vi = {
     dictionaryPremiumBannerText: 'Lên Premium, lưu không giới hạn',
 
     todayExpressionTitle: 'Cụm từ thực tế hôm nay',
-    todayDialectTitle: 'Phương ngữ hôm nay',
+    dialectTitle: 'Phương ngữ Hàn Quốc',
     todayExpressionSub: 'Tiếng Hàn thật trong 3 phút',
     situationCafe: 'Quán cà phê',
     situationTransit: 'Giao thông công cộng',

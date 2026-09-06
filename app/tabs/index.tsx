@@ -173,7 +173,7 @@ export default function HomeScreen() {
                   <View style={[styles.heroBadge, styles.exprHeroBadge]}>
                     <AppIcon icon={Crown} size={12} color={Colors.premiumText} />
                     <Text style={[styles.heroBadgeText, styles.exprHeroBadgeText]}>
-                      {t(expr.region ? 'todayDialectTitle' : 'todayExpressionTitle')} · {t(expr.region ? DIALECT_REGION_LABEL_KEY[expr.region] : SITUATION_LABEL_KEY[expr.situation])}
+                      {t(expr.region ? 'dialectTitle' : 'todayExpressionTitle')} · {t(expr.region ? DIALECT_REGION_LABEL_KEY[expr.region] : SITUATION_LABEL_KEY[expr.situation])}
                     </Text>
                   </View>
                   <Text style={styles.heroWord} numberOfLines={1}>{expr.ko}</Text>

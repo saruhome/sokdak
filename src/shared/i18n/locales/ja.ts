@@ -322,7 +322,7 @@ export const ja = {
     todayDialectTitle: '今日の方言',
     todayExpressionSub: '3分で使える本物の韓国語',
     situationCafe: 'カフェ',
-    situationSubway: '地下鉄',
+    situationTransit: '公共交通',
     situationWork: '会社',
     situationHealth: '健康',
     situationSns: 'SNS',

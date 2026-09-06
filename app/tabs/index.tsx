@@ -22,7 +22,7 @@ import { Eye, Heart, MessageCircle, ChevronRight, Crown, Lock, BookOpen } from '
  * 좌하단 여백을 남긴 크림·골드 수채 스타일로 통일, 글자 없는 그림만 사용. */
 const SITUATION_BANNERS = {
   cafe: require('../../assets/expressions/cafe.jpg'),
-  subway: require('../../assets/expressions/subway.jpg'),
+  transit: require('../../assets/expressions/transit.jpg'),
   work: require('../../assets/expressions/work.jpg'),
   health: require('../../assets/expressions/health.jpg'),
   sns: require('../../assets/expressions/sns.jpg'),

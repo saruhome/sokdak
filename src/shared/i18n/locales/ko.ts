@@ -322,7 +322,7 @@ export const ko = {
     todayDialectTitle: '오늘의 사투리',
     todayExpressionSub: '3분이면 충분한 진짜 한국어',
     situationCafe: '카페',
-    situationSubway: '지하철',
+    situationTransit: '대중교통',
     situationWork: '회사',
     situationHealth: '건강',
     situationSns: 'SNS',

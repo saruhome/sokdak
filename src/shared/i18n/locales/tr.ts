@@ -327,7 +327,7 @@ export const tr = {
     todayDialectTitle: 'Günün lehçesi',
     todayExpressionSub: '3 dakikada gerçek Korece',
     situationCafe: 'Kafe',
-    situationSubway: 'Metro',
+    situationTransit: 'Toplu taşıma',
     situationWork: 'İş',
     situationHealth: 'Sağlık',
     situationSns: 'Sosyal medya',

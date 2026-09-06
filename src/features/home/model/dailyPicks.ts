@@ -18,10 +18,10 @@ export function pickDaily<T>(items: T[], count: number, seed: string): T[] {
 /** "오늘의 실전 표현" — 한국 거주 외국인이 바로 써먹는 상황별 표현.
  * 신조어 사전과는 다른 결의 콘텐츠라 별도 로컬 데이터로 관리한다(다른 화면의
  * HORANG_HINTS 등과 동일한 컨벤션 — 아직 사전 콘텐츠처럼 5개 언어로 번역하진 않음). */
-export type Situation = 'cafe' | 'subway' | 'work' | 'health' | 'sns' | 'meal' | 'argument' | 'daily';
+export type Situation = 'cafe' | 'transit' | 'work' | 'health' | 'sns' | 'meal' | 'argument' | 'daily';
 
 export const SITUATION_LABEL_KEY: Record<Situation, TranslationKey> = {
-  cafe: 'situationCafe', subway: 'situationSubway', work: 'situationWork',
+  cafe: 'situationCafe', transit: 'situationTransit', work: 'situationWork',
   health: 'situationHealth', sns: 'situationSns', meal: 'situationMeal',
   argument: 'situationArgument', daily: 'situationDaily',
 };
@@ -54,20 +54,20 @@ export const EXPRESSIONS: Expression[] = [
     vi: 'Mình là hội 얼죽아 (chết cóng vẫn uống americano đá)',
     de: 'Ich bin Team 얼죽아 (Iced Americano, egal wie kalt es ist)',
     wordId: '136', wordLabel: '얼죽아' },
-  { situation: 'subway', ko: '나 이번에 내려, 이따 봐',
+  { situation: 'transit', ko: '나 이번에 내려, 이따 봐',
     en: "I'm getting off here — see you later (texting a friend)",
     ja: 'ここで降りるね、また後で(友達へのメッセージ)',
     es: 'Me bajo aquí, nos vemos luego (mensaje a un amigo)',
     vi: 'Tớ xuống trạm này, gặp sau nhé (nhắn cho bạn bè)',
     de: 'Ich steige hier aus — bis später (an Freunde)' },
-  { situation: 'subway', ko: '지금 지옥철이야, 숨도 못 쉬어',
+  { situation: 'transit', ko: '지금 지옥철이야, 숨도 못 쉬어',
     en: "I'm stuck in hell-train, can't even breathe (지옥철 = 지옥 hell + 지하철 subway, rush-hour crush)",
     ja: '今地獄鉄なんだけど、息もできない(지옥철=地獄+地下鉄、ラッシュのすし詰め)',
     es: 'Voy en el metro-infierno, no puedo ni respirar (지옥철 = infierno + metro en hora punta)',
     vi: 'Đang kẹt trong tàu-địa-ngục, thở không nổi (지옥철 = địa ngục + tàu điện giờ cao điểm)',
     de: 'Ich stecke in der Höllenbahn, kriege keine Luft (지옥철 = Hölle + U-Bahn zur Rushhour)',
     wordId: '217', wordLabel: '지옥철' },
-  { situation: 'subway', dialect: true, ko: '언제 오노? 퍼뜩 온나',
+  { situation: 'transit', dialect: true, ko: '언제 오노? 퍼뜩 온나',
     en: 'When are you coming? Hurry up! (Busan/Gyeongsang dialect, close friends only)',
     ja: 'いつ来るの?早く来い!(釜山・慶尚道の方言、親しい友達だけ)',
     es: '¿Cuándo vienes? ¡Date prisa! (dialecto de Busan/Gyeongsang, solo entre amigos íntimos)',
@@ -161,7 +161,7 @@ export const EXPRESSIONS: Expression[] = [
     es: 'Esto está crujiente por fuera y jugoso por dentro (겉바속촉 = abreviatura de esa idea; el piropo gastronómico por excelencia)',
     vi: 'Món này đúng chuẩn ngoài giòn trong mềm (겉바속촉 = viết tắt của "ngoài giòn trong ẩm", lời khen món ăn quen thuộc nhất)',
     de: 'Das ist außen knusprig, innen saftig (겉바속촉 = Kurzwort dafür, das Standard-Foodkompliment)' },
-  { situation: 'subway', ko: '막차 끊기기 전에 가야 돼',
+  { situation: 'transit', ko: '막차 끊기기 전에 가야 돼',
     en: 'I have to go before the last train stops running (막차 끊기다 = the last train/bus is gone — the classic Korean exit line from a night out)',
     ja: '終電がなくなる前に行かなきゃ(막차 끊기다=終電・終バスがなくなる。飲み会を抜ける時の定番)',
     es: 'Tengo que irme antes de que se acabe el último metro (막차 끊기다 = ya no hay último tren/bus; la excusa clásica para irse de una quedada)',
@@ -185,7 +185,7 @@ export const EXPRESSIONS: Expression[] = [
     es: "Soy 'eoljukah': tomo americano con hielo hasta en invierno (얼죽아 = 'aunque me muera de frío, americano helado')",
     vi: "Mình là 'eoljukah', mùa đông vẫn uống americano đá (얼죽아 = 'chết cóng cũng phải americano đá')",
     de: 'Ich bin ein „Eoljukah“ — ich trinke selbst im Winter Iced Americano (얼죽아 = „lieber erfrieren als heißer Kaffee“)' },
-  { situation: 'subway', ko: '출근길 진짜 지옥철이야',
+  { situation: 'transit', ko: '출근길 진짜 지옥철이야',
     en: "The morning commute is a total hell-train (지옥철 = 지옥 'hell' + 전철 'subway'; the crush-packed rush-hour train, esp. Seoul Line 9. Banmal — to friends)",
     ja: '通勤ラッシュ、まじで地獄鉄だよ(지옥철=地獄+電車、超満員のラッシュ時の電車。特にソウル地下鉄9号線。タメ口なので友達に)',
     es: "El viaje al trabajo es un tren infernal (지옥철 = 'infierno' + 'metro'; el vagón repleto en hora punta, sobre todo la línea 9 de Seúl. Informal, entre amigos)",

@@ -329,7 +329,7 @@ export const ar = {
     todayDialectTitle: 'لهجة اليوم',
     todayExpressionSub: 'كورية حقيقية في 3 دقائق',
     situationCafe: 'المقهى',
-    situationSubway: 'المترو',
+    situationTransit: 'المواصلات العامة',
     situationWork: 'العمل',
     situationHealth: 'الصحة',
     situationSns: 'وسائل التواصل',

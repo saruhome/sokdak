@@ -328,7 +328,7 @@ export type TranslationKey =
   | 'todayDialectTitle'
   | 'todayExpressionSub'
   | 'situationCafe'
-  | 'situationSubway'
+  | 'situationTransit'
   | 'situationWork'
   | 'situationHealth'
   | 'situationSns'

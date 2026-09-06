@@ -322,7 +322,7 @@ export const es = {
     todayDialectTitle: 'Dialecto del día',
     todayExpressionSub: 'Coreano real en 3 minutos',
     situationCafe: 'Cafetería',
-    situationSubway: 'Metro',
+    situationTransit: 'Transporte público',
     situationWork: 'Oficina',
     situationHealth: 'Salud',
     situationSns: 'Redes sociales',

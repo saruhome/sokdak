@@ -328,7 +328,7 @@ export const zh = {
     todayDialectTitle: '今日方言',
     todayExpressionSub: '3 分钟学会地道韩语',
     situationCafe: '咖啡店',
-    situationSubway: '地铁',
+    situationTransit: '公共交通',
     situationWork: '公司',
     situationHealth: '健康',
     situationSns: '社交媒体',

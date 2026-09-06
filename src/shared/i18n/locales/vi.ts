@@ -322,7 +322,7 @@ export const vi = {
     todayDialectTitle: 'Phương ngữ hôm nay',
     todayExpressionSub: 'Tiếng Hàn thật trong 3 phút',
     situationCafe: 'Quán cà phê',
-    situationSubway: 'Tàu điện ngầm',
+    situationTransit: 'Giao thông công cộng',
     situationWork: 'Công ty',
     situationHealth: 'Sức khỏe',
     situationSns: 'Mạng xã hội',

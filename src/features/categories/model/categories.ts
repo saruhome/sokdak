@@ -37,7 +37,10 @@ export const CATEGORIES: Category[] = [
   { slug: 'reels',           name: '릴스',            nameEn: 'Reels',           nameJa: 'リール',                nameVi: 'Reels',                 nameEs: 'Reels',                 nameDe: 'Reels',                   nameTr: 'Reels', emoji: '📱',  description: '쇼트폼 영상 문화에서 탄생한 말',          colorBg: '#6B85B8', colorFg: '#DCEDFF', image: require('../../../../assets/categories/reels.jpg') },
   /* 운영 규칙: 새 단어는 등록 시 new-slang에 넣고, 등록 후 3개월 안에 재분류한다 —
    * 유행이 지났다는 피드백이나 온라인 증거가 있으면 다른 카테고리(outdated-slang 등)로,
-   * 계속 널리 쓰이면 frequently-used로 옮긴다. */
+   * 계속 널리 쓰이면 frequently-used로 옮긴다.
+   * outdated-slang 입장 기준(운영자 지시 2026-09-06): 지금은 잘 쓰이지 않거나
+   * 30대 후반 이상이 주로 쓰는 신조어만 — 정착해서 전 연령이 쓰는 말(예: 훈남)은
+   * outdated가 아니라 해당 주제 카테고리로 보낸다. */
   { slug: 'new-slang',       name: '새로운\n신조어',  nameEn: 'New\nSlang',      nameJa: '新しい\n新造語',         nameVi: 'Từ lóng\nmới',          nameEs: 'Jerga\nnueva',          nameDe: 'Neuer\nSlang',            nameTr: 'Yeni\nargo', emoji: '✨',  description: '최근 등록된 신조어 — 유행이 검증되면 재분류',  colorBg: '#D97060', colorFg: '#720000', image: require('../../../../assets/categories/new-slang.jpg') },
   { slug: 'frequently-used', name: '자주 쓰는\n신조어', nameEn: 'Frequently\nUsed', nameJa: 'よく使う\n新造語',     nameVi: 'Từ lóng\nthường dùng',  nameEs: 'Jerga\nfrecuente',      nameDe: 'Häufiger\nSlang',         nameTr: 'Sık kullanılan\nargo', emoji: '🔥', description: '매일 대화에서 빠지지 않는 필수 신조어',   colorBg: '#E8D88A', colorFg: '#7C2929', image: require('../../../../assets/categories/frequently-used.jpg') },
   { slug: 'consonant',       name: '초성',            nameEn: 'Consonant\nSlang', nameJa: '子音字\nコレクション', nameVi: 'Bộ sưu tập\nphụ âm',    nameEs: 'Colección de\nconsonantes', nameDe: 'Konsonanten', nameTr: 'Ünsüz\nkısaltmaları', emoji: '🔤', description: 'ㅋㅋ, ㅠㅠ 같은 초성 줄임말 모음',        colorBg: '#E8A880', colorFg: '#C85107', image: require('../../../../assets/categories/consonant.jpg') },

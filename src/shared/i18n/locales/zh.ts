@@ -332,6 +332,8 @@ export const zh = {
     situationHospital: '医院',
     situationSns: '社交媒体',
     situationDinner: '公司聚餐',
+    situationArgument: '吵架',
+    situationDaily: '日常',
     streakLabel: '连续学习',
     streakDayCount: '第{n}天',
     mascotBubbleCta: '点一下 >',

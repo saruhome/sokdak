@@ -27,6 +27,10 @@ const SITUATION_BANNERS = {
   hospital: require('../../assets/expressions/hospital.jpg'),
   sns: require('../../assets/expressions/sns.jpg'),
   dinner: require('../../assets/expressions/dinner.jpg'),
+  // ponytail: argument/daily 전용 일러스트가 아직 없어 sns 배너로 대신한다.
+  // 두 상황에 표현을 처음 넣기 전에 assets/expressions/{argument,daily}.jpg를 만들어 교체할 것.
+  argument: require('../../assets/expressions/sns.jpg'),
+  daily: require('../../assets/expressions/sns.jpg'),
 } as const;
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */

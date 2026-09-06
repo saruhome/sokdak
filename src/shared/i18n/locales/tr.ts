@@ -331,6 +331,8 @@ export const tr = {
     situationHospital: 'Hastane',
     situationSns: 'Sosyal medya',
     situationDinner: 'Şirket yemeği',
+    situationArgument: 'Tartışma',
+    situationDaily: 'Günlük',
     streakLabel: 'Çalışma serisi',
     streakDayCount: '{n}. gün',
     mascotBubbleCta: 'Dokun >',

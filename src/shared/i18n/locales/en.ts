@@ -326,6 +326,8 @@ export const en = {
     situationHospital: 'Hospital',
     situationSns: 'Social media',
     situationDinner: 'Company dinner',
+    situationArgument: 'Arguing',
+    situationDaily: 'Everyday',
     streakLabel: 'Day Streak',
     streakDayCount: 'Day {n}',
     mascotBubbleCta: 'Tap >',

@@ -18,11 +18,12 @@ export function pickDaily<T>(items: T[], count: number, seed: string): T[] {
 /** "오늘의 실전 표현" — 한국 거주 외국인이 바로 써먹는 상황별 표현.
  * 신조어 사전과는 다른 결의 콘텐츠라 별도 로컬 데이터로 관리한다(다른 화면의
  * HORANG_HINTS 등과 동일한 컨벤션 — 아직 사전 콘텐츠처럼 5개 언어로 번역하진 않음). */
-export type Situation = 'cafe' | 'subway' | 'work' | 'hospital' | 'sns' | 'dinner';
+export type Situation = 'cafe' | 'subway' | 'work' | 'hospital' | 'sns' | 'dinner' | 'argument' | 'daily';
 
 export const SITUATION_LABEL_KEY: Record<Situation, TranslationKey> = {
   cafe: 'situationCafe', subway: 'situationSubway', work: 'situationWork',
   hospital: 'situationHospital', sns: 'situationSns', dinner: 'situationDinner',
+  argument: 'situationArgument', daily: 'situationDaily',
 };
 
 /** 교과서 문장 금지 — 10~20대가 실제로 쓰는 말투로, 사투리도 간간이 섞는다(운영자 지시).

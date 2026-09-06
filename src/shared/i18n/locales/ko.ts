@@ -326,6 +326,8 @@ export const ko = {
     situationHospital: '병원',
     situationSns: 'SNS',
     situationDinner: '회식',
+    situationArgument: '말다툼',
+    situationDaily: '일상',
     streakLabel: '연속 학습',
     streakDayCount: '{n}일째',
     mascotBubbleCta: '눌러봐요 >',

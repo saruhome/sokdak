@@ -326,6 +326,8 @@ export const ja = {
     situationHospital: '病院',
     situationSns: 'SNS',
     situationDinner: '飲み会',
+    situationArgument: '口げんか',
+    situationDaily: '日常',
     streakLabel: '連続学習',
     streakDayCount: '{n}日目',
     mascotBubbleCta: 'タップ >',

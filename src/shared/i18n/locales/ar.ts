@@ -333,6 +333,8 @@ export const ar = {
     situationHospital: 'المستشفى',
     situationSns: 'وسائل التواصل',
     situationDinner: 'عشاء العمل',
+    situationArgument: 'مشاجرة',
+    situationDaily: 'الحياة اليومية',
     streakLabel: 'أيام التعلم المتتالية',
     streakDayCount: 'اليوم {n}',
     mascotBubbleCta: 'اضغط >',

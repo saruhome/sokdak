@@ -326,6 +326,8 @@ export const vi = {
     situationHospital: 'Bệnh viện',
     situationSns: 'Mạng xã hội',
     situationDinner: 'Liên hoan',
+    situationArgument: 'Cãi nhau',
+    situationDaily: 'Đời thường',
     streakLabel: 'Chuỗi ngày học',
     streakDayCount: 'Ngày {n}',
     mascotBubbleCta: 'Nhấn thử >',

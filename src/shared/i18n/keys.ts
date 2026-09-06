@@ -332,6 +332,8 @@ export type TranslationKey =
   | 'situationHospital'
   | 'situationSns'
   | 'situationDinner'
+  | 'situationArgument'
+  | 'situationDaily'
   | 'streakLabel'
   | 'streakDayCount'
   | 'mascotBubbleCta'

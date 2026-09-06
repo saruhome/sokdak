@@ -15,6 +15,12 @@
 --  * 동결건조 → '가슴에 국밥 쏟음' (검수 대기 상태, 승격되면 자동으로 연결됨)
 --  * 톤망진창 → '톤그로' (미등록)
 --
+-- 적용 방식 메모: production에는 같은 draft_payload를 slang_candidates에서 직접 읽어
+-- 옮기는 형태(insert ... select from slang_candidates)로 적용했다 — 42KB JSON을 손으로
+-- 옮겨 적다 조용히 어긋나는 것을 피하기 위해서다. 아래 리터럴 INSERT는 그 draft_payload에서
+-- 생성한 것이고, 적용 후 9행 전부 meanings/origin/usage/related_words 길이를 대조해
+-- 일치를 확인했다. 신규 DB에 재생할 때는 아래 리터럴이 정본이다.
+--
 -- NOTE: filename timestamp differs from the production migration version
 -- (MCP apply time becomes the version) — repo-wide convention, see CLAUDE.md.
 

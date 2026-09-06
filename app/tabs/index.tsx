@@ -51,19 +51,24 @@ export default function HomeScreen() {
   const heroScrollRef = useRef<ScrollView>(null);
   const heroPausedRef = useRef(false);
   const [isPremium, setIsPremium] = useState(authStore.isPremium());
-  /** 오늘의 실전 표현 2개 — 날짜 시드로 결정적 선택(자정 지나면 갱신) */
-  const todayExpressions = pickDaily(EXPRESSIONS, 1, 'expr-' + new Date().toISOString().slice(0, 10));
+  /** 오늘의 실전 표현 1개 + 사투리 1개 — 날짜 시드로 결정적 선택(자정 지나면 갱신) */
+  const today = new Date().toISOString().slice(0, 10);
+  const todayExpressions = [
+    ...pickDaily(EXPRESSIONS.filter(e => !e.dialect), 1, 'expr-' + today),
+    ...pickDaily(EXPRESSIONS.filter(e => e.dialect), 1, 'dialect-' + today),
+  ];
 
   useEffect(() => {
     fetchWords().then(fetched => {
       /* 비속어(slang)는 숨은 기능 — 열람 권한이 있어도 홈에는 어떤 표면에도 노출하지 않는다(운영자 지시) */
       const words = fetched.filter(w => !isAdultOnlyWord(w));
-      /* 히어로는 매주 교체, 인기 순(운영 결정 2026-08-30): 좋아요 상위 10개 풀에서
-       * 주 번호를 시드로 5개를 뽑고 인기순으로 표시 — 한 주 동안은 고정, 주가 바뀌면 교체.
-       * ponytail: 주 경계는 epoch 7일 단위(UTC 목요일) — 요일 기준이 중요해지면 ISO week로 */
+      /* 히어로는 매주 교체, 인기 순(운영 결정 2026-08-30, 2026-09-06 3개로 축소):
+       * 좋아요 상위 10개 풀에서 주 번호를 시드로 3개를 뽑고 인기순으로 표시.
+       * ponytail: 검색 횟수 추적이 없어 좋아요를 "많이 검색됨"의 대리 지표로 씀 —
+       * 검색 로그가 생기면 그 데이터로 교체. 주 경계는 epoch 7일 단위(UTC 목요일). */
       const week = Math.floor(Date.now() / 604800000);
       const topPool = sortWords(words, 0).slice(0, 10);
-      setHeroWords(sortWords(pickDaily(topPool, 5, 'hero-w' + week), 0));
+      setHeroWords(sortWords(pickDaily(topPool, 3, 'hero-w' + week), 0));
       /* 사전 화면의 최신순(SORT_TABS[1])과 동일한 순서 */
       setNewSlangWords(sortWords(words.filter(w => w.category === 'new-slang'), 1));
     });
@@ -167,7 +172,7 @@ export default function HomeScreen() {
                   <View style={[styles.heroBadge, styles.exprHeroBadge]}>
                     <AppIcon icon={Crown} size={12} color={Colors.premiumText} />
                     <Text style={[styles.heroBadgeText, styles.exprHeroBadgeText]}>
-                      {t('todayExpressionTitle')} · {t(SITUATION_LABEL_KEY[expr.situation])}
+                      {t(expr.dialect ? 'todayDialectTitle' : 'todayExpressionTitle')} · {t(SITUATION_LABEL_KEY[expr.situation])}
                     </Text>
                   </View>
                   <Text style={styles.heroWord} numberOfLines={1}>{expr.ko}</Text>

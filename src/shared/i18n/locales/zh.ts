@@ -325,6 +325,7 @@ export const zh = {
     dictionaryPremiumBannerText: '升级 Premium，全部保存',
 
     todayExpressionTitle: '今日实用表达',
+    todayDialectTitle: '今日方言',
     todayExpressionSub: '3 分钟学会地道韩语',
     situationCafe: '咖啡店',
     situationSubway: '地铁',

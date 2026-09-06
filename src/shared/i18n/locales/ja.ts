@@ -319,6 +319,7 @@ export const ja = {
     dictionaryPremiumBannerText: 'プレミアムで全部保存しよう',
 
     todayExpressionTitle: '今日の実践表現',
+    todayDialectTitle: '今日の方言',
     todayExpressionSub: '3分で使える本物の韓国語',
     situationCafe: 'カフェ',
     situationSubway: '地下鉄',

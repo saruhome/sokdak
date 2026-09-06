@@ -319,6 +319,7 @@ export const en = {
     dictionaryPremiumBannerText: 'Go Premium — save it all',
 
     todayExpressionTitle: "Today's Real-Life Expression",
+    todayDialectTitle: "Today's Dialect",
     todayExpressionSub: 'Real Korean in 3 minutes',
     situationCafe: 'Café',
     situationSubway: 'Subway',

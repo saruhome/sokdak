@@ -319,6 +319,7 @@ export const ko = {
     dictionaryPremiumBannerText: '프리미엄으로 전부 저장하세요',
 
     todayExpressionTitle: '오늘의 실전 표현',
+    todayDialectTitle: '오늘의 사투리',
     todayExpressionSub: '3분이면 충분한 진짜 한국어',
     situationCafe: '카페',
     situationSubway: '지하철',

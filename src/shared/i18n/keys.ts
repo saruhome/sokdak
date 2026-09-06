@@ -325,6 +325,7 @@ export type TranslationKey =
   | 'dictionaryPremiumBannerText'
   // 오늘의 실전 표현 / streak
   | 'todayExpressionTitle'
+  | 'todayDialectTitle'
   | 'todayExpressionSub'
   | 'situationCafe'
   | 'situationSubway'

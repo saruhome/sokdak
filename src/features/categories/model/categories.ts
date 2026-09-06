@@ -43,7 +43,10 @@ export const CATEGORIES: Category[] = [
   { slug: 'consonant',       name: '초성',            nameEn: 'Consonant\nSlang', nameJa: '子音字\nコレクション', nameVi: 'Bộ sưu tập\nphụ âm',    nameEs: 'Colección de\nconsonantes', nameDe: 'Konsonanten', nameTr: 'Ünsüz\nkısaltmaları', emoji: '🔤', description: 'ㅋㅋ, ㅠㅠ 같은 초성 줄임말 모음',        colorBg: '#E8A880', colorFg: '#C85107', image: require('../../../../assets/categories/consonant.jpg') },
   { slug: 'outdated-slang',  name: '한물 간\n신조어',  nameEn: 'Outdated\nSlang',  nameJa: '古い\n新造語',          nameVi: 'Từ lóng\nlỗi thời',     nameEs: 'Jerga\npasada de moda', nameDe: 'Veralteter\nSlang',        nameTr: 'Modası geçmiş\nargo', emoji: '🕰️', description: '한때 유행했지만 지금은 잘 안 쓰는 말',    colorBg: '#C8B898', colorFg: '#AF5B23', image: require('../../../../assets/categories/outdated-slang.jpg') },
   { slug: 'work',            name: '회사/\n직장',     nameEn: 'Work\nLife',      nameJa: '会社/\n職場',           nameVi: 'Công sở',               nameEs: 'Trabajo',               nameDe: 'Arbeit',                  nameTr: 'İş\nhayatı', emoji: '💼',  description: '회사·직장 생활에서 쓰는 신조어',          colorBg: '#AFC4B0', colorFg: '#1F4A2C', image: require('../../../../assets/categories/work.jpg') },
-  { slug: 'slang',           name: '비속어',            nameEn: 'Slang',           nameJa: '俗語',                  nameVi: 'Tiếng lóng',            nameEs: 'Jerga',                 nameDe: 'Umgangssprache',         nameTr: 'Kaba dil', emoji: '🔥',  description: '거친 표현·비속어 등 실제 대화에서 쓰이는 속어', colorBg: '#3A3A3A', colorFg: '#E2B55D', image: require('../../../../assets/categories/slang.jpg'), premiumOnly: true },
+  /* 라벨 주의: slug는 'slang'이지만 실제 내용은 욕설·비속어(19금 게이트)다. 영어 slang은 그냥
+   * '구어체'라 이 뜻이 안 되고, New Slang / Outdated Slang / Frequently Used Slang과도 겹친다.
+   * 각 언어에서 '욕설'에 해당하는 말로 적는다 — slug는 DB `words.category` 값이라 그대로 둔다. */
+  { slug: 'slang',           name: '비속어',            nameEn: 'Profanity',       nameJa: '卑語・悪口',            nameVi: 'Từ thô tục',            nameEs: 'Palabrotas',            nameDe: 'Schimpfwörter',          nameTr: 'Kaba dil', emoji: '🔥',  description: '거친 표현·비속어 등 실제 대화에서 쓰이는 속어', colorBg: '#3A3A3A', colorFg: '#E2B55D', image: require('../../../../assets/categories/slang.jpg'), premiumOnly: true },
 ];
 
 export function getCategoryBySlug(slug: string): Category | undefined {

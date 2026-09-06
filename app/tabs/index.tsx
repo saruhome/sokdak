@@ -14,7 +14,7 @@ import { SCREEN_WIDTH } from '../../constants/layout';
 import { languageStore, useLanguage } from '../../constants/languageStore';
 import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStore';
 import { TopAppBar } from '@/components/navigation/TopAppBar';
-import { EXPRESSIONS, SITUATION_LABEL_KEY, expressionGloss, pickDaily } from '@/src/features/home/model/dailyPicks';
+import { DIALECT_REGION_LABEL_KEY, EXPRESSIONS, SITUATION_LABEL_KEY, expressionGloss, pickDaily } from '@/src/features/home/model/dailyPicks';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle, ChevronRight, Crown, Lock, BookOpen } from 'lucide-react-native';
 
@@ -27,10 +27,11 @@ const SITUATION_BANNERS = {
   health: require('../../assets/expressions/health.jpg'),
   sns: require('../../assets/expressions/sns.jpg'),
   meal: require('../../assets/expressions/meal.jpg'),
-  // ponytail: argument/daily 전용 일러스트가 아직 없어 sns 배너로 대신한다.
-  // 두 상황에 표현을 처음 넣기 전에 assets/expressions/{argument,daily}.jpg를 만들어 교체할 것.
+  // ponytail: argument/daily/dialect 전용 일러스트가 아직 없어 sns 배너로 대신한다.
+  // assets/expressions/{argument,daily,dialect}.jpg를 만들어 교체할 것 — dialect는 이미 노출 중이라 우선순위 높음.
   argument: require('../../assets/expressions/sns.jpg'),
   daily: require('../../assets/expressions/sns.jpg'),
+  dialect: require('../../assets/expressions/sns.jpg'),
 } as const;
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */
@@ -54,8 +55,8 @@ export default function HomeScreen() {
   /** 오늘의 실전 표현 1개 + 사투리 1개 — 날짜 시드로 결정적 선택(자정 지나면 갱신) */
   const today = new Date().toISOString().slice(0, 10);
   const todayExpressions = [
-    ...pickDaily(EXPRESSIONS.filter(e => !e.dialect), 1, 'expr-' + today),
-    ...pickDaily(EXPRESSIONS.filter(e => e.dialect), 1, 'dialect-' + today),
+    ...pickDaily(EXPRESSIONS.filter(e => e.situation !== 'dialect'), 1, 'expr-' + today),
+    ...pickDaily(EXPRESSIONS.filter(e => e.situation === 'dialect'), 1, 'dialect-' + today),
   ];
 
   useEffect(() => {
@@ -172,7 +173,7 @@ export default function HomeScreen() {
                   <View style={[styles.heroBadge, styles.exprHeroBadge]}>
                     <AppIcon icon={Crown} size={12} color={Colors.premiumText} />
                     <Text style={[styles.heroBadgeText, styles.exprHeroBadgeText]}>
-                      {t(expr.dialect ? 'todayDialectTitle' : 'todayExpressionTitle')} · {t(SITUATION_LABEL_KEY[expr.situation])}
+                      {t(expr.region ? 'todayDialectTitle' : 'todayExpressionTitle')} · {t(expr.region ? DIALECT_REGION_LABEL_KEY[expr.region] : SITUATION_LABEL_KEY[expr.situation])}
                     </Text>
                   </View>
                   <Text style={styles.heroWord} numberOfLines={1}>{expr.ko}</Text>

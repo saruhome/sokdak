@@ -18,20 +18,30 @@ export function pickDaily<T>(items: T[], count: number, seed: string): T[] {
 /** "오늘의 실전 표현" — 한국 거주 외국인이 바로 써먹는 상황별 표현.
  * 신조어 사전과는 다른 결의 콘텐츠라 별도 로컬 데이터로 관리한다(다른 화면의
  * HORANG_HINTS 등과 동일한 컨벤션 — 아직 사전 콘텐츠처럼 5개 언어로 번역하진 않음). */
-export type Situation = 'cafe' | 'transit' | 'work' | 'health' | 'sns' | 'meal' | 'argument' | 'daily';
+export type Situation = 'cafe' | 'transit' | 'work' | 'health' | 'sns' | 'meal' | 'argument' | 'daily' | 'dialect';
 
 export const SITUATION_LABEL_KEY: Record<Situation, TranslationKey> = {
   cafe: 'situationCafe', transit: 'situationTransit', work: 'situationWork',
   health: 'situationHealth', sns: 'situationSns', meal: 'situationMeal',
-  argument: 'situationArgument', daily: 'situationDaily',
+  argument: 'situationArgument', daily: 'situationDaily', dialect: 'situationDialect',
+};
+
+/** 사투리 문장이 어느 지역 말인지 — 카드 배지에 "오늘의 사투리 · 경상"처럼 지역을 노출한다.
+ * 글로스 안에만 적어두면 배지에서 지역을 알 수 없어 잘못 쓰기 쉽다(운영자 지시 2026-09-06). */
+export type DialectRegion = 'gyeongsang' | 'jeolla' | 'chungcheong' | 'gangwon' | 'jeju';
+
+export const DIALECT_REGION_LABEL_KEY: Record<DialectRegion, TranslationKey> = {
+  gyeongsang: 'regionGyeongsang', jeolla: 'regionJeolla', chungcheong: 'regionChungcheong',
+  gangwon: 'regionGangwon', jeju: 'regionJeju',
 };
 
 /** 교과서 문장 금지 — 10~20대가 실제로 쓰는 말투로, 사투리도 간간이 섞는다(운영자 지시).
  * 사투리 항목은 글로스에 지역·상대(친구끼리 등)를 반드시 표기해 잘못 쓰는 일을 막는다. */
 export type Expression = {
   situation: Situation; ko: string; en: string; ja: string; es: string; vi: string; de: string;
-  /** 사투리 문장 — 히어로 배너가 매일 1개를 별도 슬롯으로 뽑는다(운영자 지시 2026-09-06) */
-  dialect?: true;
+  /** 사투리 문장의 지역 — situation이 'dialect'이면 반드시 채운다.
+   * 히어로 배너가 매일 1개를 별도 슬롯으로 뽑는다(운영자 지시 2026-09-06) */
+  region?: DialectRegion;
   /** 문장 속 신조어가 사전에 있으면 그 단어 상세로 연결(표제어, words.id) */
   wordId?: string; wordLabel?: string;
 };
@@ -67,7 +77,7 @@ export const EXPRESSIONS: Expression[] = [
     vi: 'Đang kẹt trong tàu-địa-ngục, thở không nổi (지옥철 = địa ngục + tàu điện giờ cao điểm)',
     de: 'Ich stecke in der Höllenbahn, kriege keine Luft (지옥철 = Hölle + U-Bahn zur Rushhour)',
     wordId: '217', wordLabel: '지옥철' },
-  { situation: 'transit', dialect: true, ko: '언제 오노? 퍼뜩 온나',
+  { situation: 'dialect', region: 'gyeongsang', ko: '언제 오노? 퍼뜩 온나',
     en: 'When are you coming? Hurry up! (Busan/Gyeongsang dialect, close friends only)',
     ja: 'いつ来るの?早く来い!(釜山・慶尚道の方言、親しい友達だけ)',
     es: '¿Cuándo vienes? ¡Date prisa! (dialecto de Busan/Gyeongsang, solo entre amigos íntimos)',
@@ -131,13 +141,13 @@ export const EXPRESSIONS: Expression[] = [
     es: 'No bebo mucho alcohol, tomaré una cola (forma natural de declinar)',
     vi: 'Mình không uống được rượu, cho mình cola nhé (cách từ chối tự nhiên)',
     de: 'Ich vertrage Alkohol nicht gut — ich nehme eine Cola (natürliches Ablehnen)' },
-  { situation: 'meal', dialect: true, ko: '겁나 맛있어요',
+  { situation: 'dialect', region: 'jeolla', ko: '겁나 맛있어요',
     en: 'This is crazy good (겁나 = Jeolla-dialect "super", now used nationwide)',
     ja: 'めちゃくちゃおいしいです(겁나=全羅道方言の「すごく」、今は全国区)',
     es: 'Está buenísimo (겁나 = "súper" del dialecto de Jeolla, hoy usado en todo el país)',
     vi: 'Ngon dã man (겁나 = "cực kỳ" gốc phương ngữ Jeolla, giờ dùng khắp nơi)',
     de: 'Das schmeckt wahnsinnig gut (겁나 = Jeolla-Dialekt für „mega“, heute überall üblich)' },
-  { situation: 'meal', dialect: true, ko: '마이 무라!',
+  { situation: 'dialect', region: 'gyeongsang', ko: '마이 무라!',
     en: 'Dig in! (Busan/Gyeongsang dialect, banmal — close friends only)',
     ja: 'たくさん食べな!(釜山・慶尚道の方言でタメ口 — 親しい友達だけ)',
     es: '¡Come mucho! (dialecto de Busan/Gyeongsang, informal — solo amigos íntimos)',
@@ -198,13 +208,13 @@ export const EXPRESSIONS: Expression[] = [
     es: 'Trabajando y de repente me da el bajón de realidad (현타 = el momento en que aterrizas en la realidad y todo te parece absurdo. Informal, entre amigos/colegas)',
     vi: 'Đang làm việc tự dưng thấy hụt hẫng, tỉnh cả người (현타 = khoảnh khắc bừng tỉnh về thực tại và thấy trống rỗng. Thân mật, với bạn bè/đồng nghiệp)',
     de: 'Mitten in der Arbeit trifft mich plötzlich der Realitäts-Schock (현타 = der Moment, in dem du in der Realität landest und alles sinnlos wirkt. Salopp, unter Freunden/Kollegen)' },
-  { situation: 'meal', dialect: true, ko: '우리가 남이가',
+  { situation: 'dialect', region: 'gyeongsang', ko: '우리가 남이가',
     en: "Come on, we're not strangers (Busan/Gyeongsang dialect for '우리가 남이냐'; said when treating someone or doing them a favour. Made famous by the 2001 film 친구. Banmal — close friends only)",
     ja: '水くさいこと言うなよ、俺らの仲だろ(釜山・慶尚道の方言で「우리가 남이냐」。おごる時や頼まれ事を引き受ける時に。2001年の映画『友へ チング』で有名に。タメ口なので親しい友達だけ)',
     es: "Anda ya, que no somos extraños (dialecto de Busan/Gyeongsang de '우리가 남이냐'; se dice al invitar a alguien o hacerle un favor. Lo popularizó la película 친구 (2001). Informal, solo entre amigos íntimos)",
     vi: "Bọn mình đâu phải người dưng (phương ngữ Busan/Gyeongsang của '우리가 남이냐'; nói khi bao bạn hoặc giúp bạn một việc. Nổi tiếng nhờ phim 친구 (2001). Suồng sã, chỉ với bạn thân)",
     de: 'Ach was, wir sind doch keine Fremden (Busan/Gyeongsang-Dialekt für „우리가 남이냐“; sagt man, wenn man jemanden einlädt oder ihm einen Gefallen tut. Bekannt durch den Film 친구 (2001). Salopp — nur unter engen Freunden)' },
-  { situation: 'work', dialect: true, ko: '살아있네',
+  { situation: 'dialect', region: 'gyeongsang', ko: '살아있네',
     en: "Still got it! (Busan-accented '살아 있네', lit. 'it's alive'; an admiring 'you've still got the touch' when someone surprises you with their skill. From the 2012 film 범죄와의 전쟁. Banmal — peers and friends)",
     ja: '腕は衰えてないな(釜山なまりの「살아 있네」、直訳「生きてるな」。相手が予想以上の腕前を見せた時の感嘆。2012年の映画『悪いやつら』から。タメ口で同僚・友達に)',
     es: "¡Sigues en forma! (con acento de Busan, '살아 있네', lit. 'está vivo'; admiración cuando alguien te sorprende con su habilidad. De la película 범죄와의 전쟁 (2012). Informal, entre iguales y amigos)",
@@ -240,19 +250,19 @@ export const EXPRESSIONS: Expression[] = [
     es: 'Fui a que me pusieran suero (수액 = suero intravenoso; en Corea los jóvenes van a la clínica a ponérselo por un resfriado fuerte, gastroenteritis o puro agotamiento)',
     vi: 'Em vừa đi truyền nước về (수액 = truyền dịch; giới trẻ Hàn hay ra phòng khám truyền nước khi cảm nặng, đau bụng hay kiệt sức)',
     de: 'Ich war eine Infusion bekommen (수액 = Infusion; junge Koreaner lassen sich bei schwerer Erkältung, Magen-Darm-Infekt oder Erschöpfung ganz selbstverständlich eine legen)' },
-  { situation: 'work', dialect: true, ko: '폭싹 속았수다',
+  { situation: 'dialect', region: 'jeju', ko: '폭싹 속았수다',
     en: "Thank you, you've worked so hard (Jeju dialect for 정말 수고하셨습니다 — NOT '속다/to be fooled'. Title of the 2025 Netflix series. Polite, fine to say to anyone)",
     ja: '本当にお疲れさまでした(済州方言。「騙された」という意味ではない。2025年Netflixドラマの題名。丁寧な言い方で誰にでも使える)',
     es: "Muchas gracias por su esfuerzo (dialecto de Jeju para '정말 수고하셨습니다'; no significa 'ser engañado'. Título de la serie de Netflix de 2025. Es cortés, se puede decir a cualquiera)",
     vi: "Anh/chị đã vất vả nhiều rồi (phương ngữ Jeju của '정말 수고하셨습니다'; không phải nghĩa 'bị lừa'. Tên phim Netflix 2025. Lịch sự, nói với ai cũng được)",
     de: 'Vielen Dank für Ihre Mühe (Jeju-Dialekt für „정말 수고하셨습니다“; heißt NICHT „getäuscht werden“. Titel der Netflix-Serie von 2025. Höflich, gegenüber jedem sagbar)' },
-  { situation: 'sns', dialect: true, ko: '뭣이 중헌디',
+  { situation: 'dialect', region: 'jeolla', ko: '뭣이 중헌디',
     en: "What even matters here? (Jeolla dialect for '뭐가 중요한데'; the 2016 film 곡성 turned it into a national catchphrase for 'you're missing the whole point'. Banmal — friends, or as a comment/meme)",
     ja: '何が大事なんだよ(全羅道方言で「뭐가 중요한데」。2016年の映画『哭声/コクソン』で全国的な流行語に。「話の本質を外している」と突っ込む言い方。タメ口で友達に、またはコメント・ミームとして)',
     es: "¿Qué es lo importante aquí? (dialecto de Jeolla de '뭐가 중요한데'; la película 곡성 (2016) lo convirtió en frase nacional para decir 'te estás perdiendo lo esencial'. Informal, entre amigos o como meme)",
     vi: "Rốt cuộc cái gì mới quan trọng? (phương ngữ Jeolla của '뭐가 중요한데'; phim 곡성 (2016) biến nó thành câu cửa miệng toàn quốc để nói 'bạn đang lạc đề rồi'. Thân mật, với bạn bè hoặc dùng làm bình luận/meme)",
     de: 'Was ist denn hier überhaupt wichtig? (Jeolla-Dialekt für „뭐가 중요한데“; der Film 곡성 (2016) machte es landesweit zum Spruch für „du verfehlst den Punkt“. Salopp — unter Freunden oder als Kommentar/Meme)' },
-  { situation: 'cafe', dialect: true, ko: '워뗘? 환장하쥬?',
+  { situation: 'dialect', region: 'chungcheong', ko: '워뗘? 환장하쥬?',
     en: "How is it? Drives you crazy, right? (Chungcheong dialect: 워뗘 = 어때, 환장하쥬 = 환장하겠죠 'it's crazy good'. The 용식 character's signature style in the 2019 drama 동백꽃 필 무렵. Playful — friends or people you're close to)",
     ja: 'どう?たまんないでしょ?(忠清道方言。워뗘=어때、환장하쥬=たまらないでしょ。2019年ドラマ『椿の花咲く頃』のヨンシク流の言い回し。おどけた言い方なので友達や親しい相手に)',
     es: "¿Qué tal? Es una locura, ¿a que sí? (dialecto de Chungcheong: 워뗘 = 어때, 환장하쥬 = 'te vuelve loco', en buen sentido. El estilo del personaje 용식 en la serie de 2019 동백꽃 필 무렵. Es juguetón: con amigos o gente de confianza)",
@@ -282,13 +292,13 @@ export const EXPRESSIONS: Expression[] = [
     es: 'Vamos a dividirlo entre todos (N빵 = dividir la cuenta entre N; así lo dicen los de 20-30 años en vez de 더치페이. Ojo: N빵 reparte el total a partes iguales; 더치페이 es que cada uno pague lo suyo. Informal, entre amigos)',
     vi: 'Mình chia đều tiền đi (N빵 = chia hóa đơn cho N người; giới 20-30 tuổi dùng thay cho 더치페이. Lưu ý: N빵 là chia đều tổng tiền, còn 더치페이 là ai ăn gì trả nấy. Thân mật, với bạn bè)',
     de: 'Lass uns einfach durch alle teilen (N빵 = die Rechnung durch N teilen; so sagen es 20- bis 30-Jährige statt 더치페이. Achtung: Bei N빵 wird die Gesamtsumme gleich geteilt, bei 더치페이 zahlt jeder das Eigene. Salopp — unter Freunden)' },
-  { situation: 'work', dialect: true, ko: '니가 가라 하와이',
+  { situation: 'dialect', region: 'gyeongsang', ko: '니가 가라 하와이',
     en: "You go to Hawaii yourself (Busan/Gyeongsang dialect, from the 2001 film 친구; now the stock way to bounce back a suggestion you don't want — 'after you'. Joking banmal — close friends only, never to a boss)",
     ja: 'ハワイにはお前が行けよ(釜山・慶尚道方言。2001年の映画『友へ チング』の名台詞で、今は自分がやりたくない提案を相手に投げ返す決まり文句。ふざけたタメ口なので親しい友達だけ、上司には厳禁)',
     es: "A Hawái vas tú (dialecto de Busan/Gyeongsang, de la película 친구 (2001); hoy es la frase hecha para devolverle a alguien una propuesta que no te apetece: 've tú'. Informal y en broma: solo entre amigos íntimos, nunca con un superior)",
     vi: "Hawaii thì cậu đi đi (phương ngữ Busan/Gyeongsang, thoại phim 친구 (2001); nay thành câu cửa miệng để đẩy ngược lại đề nghị mình không muốn — 'cậu đi trước đi'. Đùa, thân mật — chỉ với bạn thân, tuyệt đối không nói với cấp trên)",
     de: 'Nach Hawaii gehst du selbst (Busan/Gyeongsang-Dialekt, aus dem Film 친구 (2001); heute die Standardantwort, um einen unerwünschten Vorschlag zurückzugeben — „geh doch selbst“. Scherzhaft und salopp — nur unter engen Freunden, nie zum Chef)' },
-  { situation: 'sns', dialect: true, ko: '뭐랜 고람시니?',
+  { situation: 'dialect', region: 'jeju', ko: '뭐랜 고람시니?',
     en: 'What are you saying? (Jeju dialect for 뭐라고 하는 거예요?; from the boat scene in the 2025 Netflix series 폭싹 속았수다. Jeju speech is close to a separate language — islanders use it among themselves, and trying it on Jeju usually gets a delighted reaction)',
     ja: '何て言ってるの?(済州方言で「뭐라고 하는 거예요?」。2025年Netflix『폭싹 속았수다』の船上の場面の台詞。済州の言葉はほぼ別言語で、島の人同士で使う。済州で言ってみると喜ばれる)',
     es: "¿Qué estás diciendo? (dialecto de Jeju para '뭐라고 하는 거예요?'; aparece en la escena del barco de la serie de Netflix 폭싹 속았수다 (2025). El habla de Jeju es casi otra lengua: los isleños la usan entre ellos y les hace mucha ilusión que un visitante lo intente)",

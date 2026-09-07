@@ -35,15 +35,14 @@ const SITUATION_BANNERS = {
   dialect: require('../../assets/expressions/sns.jpg'),
 } as const;
 
-/** 사투리 카드는 지역 그림을 먼저 쓰고, 아직 없는 지역만 위 dialect 배너로 떨어진다.
- * ponytail: 제주는 생성 쿼터가 한 번에 한 장만 허용해 아직 미제작 —
- * assets/expressions/dialect-jeju.jpg를 같은 크림/앰버 라인아트로 그려
- * 여기 추가하면 바로 붙는다. */
+/** 사투리 카드의 지역별 그림. DialectRegion 5개를 모두 채웠으므로 위 dialect 배너로
+ * 떨어지는 일은 없지만, 지역이 늘면 그림이 붙기 전까지 폴백이 받아준다. */
 const DIALECT_REGION_BANNERS: Partial<Record<DialectRegion, ImageSourcePropType>> = {
   gyeongsang: require('../../assets/expressions/dialect-gyeongsang.jpg'),
   jeolla: require('../../assets/expressions/dialect-jeolla.jpg'),
   chungcheong: require('../../assets/expressions/dialect-chungcheong.jpg'),
   gangwon: require('../../assets/expressions/dialect-gangwon.jpg'),
+  jeju: require('../../assets/expressions/dialect-jeju.jpg'),
 };
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */

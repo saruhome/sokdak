@@ -1,4 +1,4 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity, Platform, Image, type NativeSyntheticEvent, type NativeScrollEvent } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Platform, Image, type NativeSyntheticEvent, type NativeScrollEvent, type ImageSourcePropType } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -14,6 +14,7 @@ import { SCREEN_WIDTH } from '../../constants/layout';
 import { languageStore, useLanguage } from '../../constants/languageStore';
 import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStore';
 import { TopAppBar } from '@/components/navigation/TopAppBar';
+import type { DialectRegion } from '../../src/features/home/model/dailyPicks';
 import { DIALECT_REGION_LABEL_KEY, EXPRESSIONS, SITUATION_LABEL_KEY, expressionGloss, pickDaily } from '@/src/features/home/model/dailyPicks';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Eye, Heart, MessageCircle, ChevronRight, Crown, Lock, BookOpen } from 'lucide-react-native';
@@ -28,11 +29,18 @@ const SITUATION_BANNERS = {
   sns: require('../../assets/expressions/sns.jpg'),
   meal: require('../../assets/expressions/meal.jpg'),
   // ponytail: argument/daily/dialect 전용 일러스트가 아직 없어 sns 배너로 대신한다.
-  // assets/expressions/{argument,daily,dialect}.jpg를 만들어 교체할 것 — dialect는 이미 노출 중이라 우선순위 높음.
+  // assets/expressions/{argument,daily,dialect}.jpg를 만들어 교체할 것.
   argument: require('../../assets/expressions/sns.jpg'),
   daily: require('../../assets/expressions/sns.jpg'),
   dialect: require('../../assets/expressions/sns.jpg'),
 } as const;
+
+/** 사투리 카드는 지역 그림을 먼저 쓰고, 아직 없는 지역만 위 dialect 배너로 떨어진다.
+ * ponytail: 경상 외 4개는 생성 쿼터가 막혀 미제작 — assets/expressions/dialect-{jeolla,
+ * chungcheong,gangwon,jeju}.jpg를 같은 크림/앰버 라인아트로 그려 여기 추가하면 바로 붙는다. */
+const DIALECT_REGION_BANNERS: Partial<Record<DialectRegion, ImageSourcePropType>> = {
+  gyeongsang: require('../../assets/expressions/dialect-gyeongsang.jpg'),
+};
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */
 const HERO_AUTOPLAY_INTERVAL = 4000;
@@ -167,7 +175,7 @@ export default function HomeScreen() {
                 testID="hero-expression-slide"
               >
                 {/* 배너 이미지는 항상 존재(운영자 규칙 2026-09-03) — 상황별 일러스트 */}
-                <Image source={SITUATION_BANNERS[expr.situation]} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
+                <Image source={(expr.region && DIALECT_REGION_BANNERS[expr.region]) || SITUATION_BANNERS[expr.situation]} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
                 <View style={styles.heroScrim} />
                 <View style={styles.heroContent}>
                   <View style={[styles.heroBadge, styles.exprHeroBadge]}>

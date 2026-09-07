@@ -23,7 +23,14 @@ sokdak 앱 홈의 "오늘의 실전 표현"에 들어갈 문장. 한국 10~20대
 2. 중복 제거: `EXPRESSIONS` 배열의 `ko` 값, 그리고 `select normalized_ko from expression_candidates` 에
    이미 있거나 의미가 거의 같으면 건너뛴다.
 3. 각 문장을 `Expression` 형식의 완성 초안으로 만든다:
-   - situation: 'cafe' | 'subway' | 'work' | 'hospital' | 'sns' | 'dinner' 중 가장 맞는 것
+   - situation: 값 목록을 여기 적어두지 않는다. `src/features/home/model/dailyPicks.ts` 의 `Situation`
+     타입을 열어 거기 있는 값 중에서 고른다(이름이 바뀌어도 이 프롬프트가 낡지 않도록).
+     기준은 **그 말이 나오는 장면**이지 문장의 화제가 아니다 — 밥 먹는 자리에서 하는 말은 'meal',
+     온라인에 올리거나 던지는 말은 'sns'(저녁 메뉴 얘기여도 SNS에 물으면 'sns').
+     장소·상황이 특정되지 않는 감탄·다짐·자기 평가는 'daily' 다.
+     **빈 칸을 채우려고 장면을 지어내지 않는다** — 어느 칸에도 자연스럽게 안 붙으면 'daily' 로 둔다.
+   - 사투리 문장은 situation을 'dialect' 로 하고 `region` 을 함께 채운다
+     (`DialectRegion` 타입: gyeongsang | jeolla | chungcheong | gangwon | jeju).
    - ko: 수집한 문장 그대로
    - en: 영어 글로스 — 뜻 + 괄호로 뉘앙스·사용 상황 (기존 항목과 동일한 방식)
    - ja, es, vi, de: 같은 내용의 각 언어 번역 + 괄호 설명

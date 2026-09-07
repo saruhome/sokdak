@@ -36,12 +36,13 @@ const SITUATION_BANNERS = {
 } as const;
 
 /** 사투리 카드는 지역 그림을 먼저 쓰고, 아직 없는 지역만 위 dialect 배너로 떨어진다.
- * ponytail: 충청·강원·제주는 생성 쿼터가 한 번에 한 장만 허용해 아직 미제작 —
- * assets/expressions/dialect-{chungcheong,gangwon,jeju}.jpg를 같은 크림/앰버 라인아트로
- * 그려 여기 추가하면 바로 붙는다. */
+ * ponytail: 강원·제주는 생성 쿼터가 한 번에 한 장만 허용해 아직 미제작 —
+ * assets/expressions/dialect-{gangwon,jeju}.jpg를 같은 크림/앰버 라인아트로 그려
+ * 여기 추가하면 바로 붙는다. */
 const DIALECT_REGION_BANNERS: Partial<Record<DialectRegion, ImageSourcePropType>> = {
   gyeongsang: require('../../assets/expressions/dialect-gyeongsang.jpg'),
   jeolla: require('../../assets/expressions/dialect-jeolla.jpg'),
+  chungcheong: require('../../assets/expressions/dialect-chungcheong.jpg'),
 };
 
 /** 히어로 캐러셀 자동 재생 간격(ms) */

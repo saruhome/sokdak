@@ -339,6 +339,7 @@ export const vi = {
     streakDayCount: 'Ngày {n}',
     mascotBubbleCta: 'Nhấn thử >',
     premiumGlossLocked: 'Muốn biết nghĩa là gì?',
+    adultMeaningLocked: 'Nghĩa này hiện sau khi xác minh độ tuổi',
     authTagline: 'Sokdak sokdak — học tiếng Hàn thật ngoài sách giáo khoa',
     emailLoginBtn: 'Đăng nhập bằng email',
     noAccountPrompt: 'Chưa có tài khoản?',

@@ -29,6 +29,9 @@ export type Word = {
     definition_i18n?: BodyI18n;
     /** kor 원문 + 언어별 번역. eng는 항상 존재(폴백), ja/es/vi/de는 다국어화 이후 추가 */
     examples: Array<{ kor: string; eng: string; ja?: string; es?: string; vi?: string; de?: string; tr?: string }>;
+    /** 이 뜻만 성인 전용 — 단어 자체는 전체 공개인데 특정 뜻만 19금인 경우(예: 자만추의 '자보고 만남 추구').
+     * DB meanings jsonb의 adult_only 키 그대로. 단어 전체를 잠그는 category='slang'과는 층이 다르다. */
+    adult_only?: boolean;
   }>;
   origin?: string;
   originEn?: string;
@@ -95,6 +98,13 @@ export const isLockedWord = (w: Word) =>
 /** 성인 확인 전에는 속어의 표제어까지 블러 — 확인 후엔 표제어는 보이고 뜻만 잠긴다. */
 export const isWordTitleBlurred = (w: Word) =>
   isAdultOnlyWord(w) && !entitlementStore.isAdultVerified();
+
+/** 뜻 하나만 성인 전용인 경우 — 단어는 열려 있고 그 뜻만 가린다.
+ * 프리미엄이 아니라 성인 확인만 따진다: 나이 문제지 결제 문제가 아니다.
+ * 상세 화면은 이 뜻의 정의와 **예문까지** 함께 가려야 한다 — 예문은 모든 뜻을 하나로 합쳐 그리므로
+ * 정의만 가리면 예문으로 그대로 새어 나간다. */
+export const isMeaningHidden = (m: Word['meanings'][number]) =>
+  !!m.adult_only && !entitlementStore.isAdultVerified();
 
 /* 목록 계열에서 성인 전용 단어를 걸러낸다 — 잠금 UI가 없는 화면(홈 히어로·저장 목록)의 관문.
  * 사전 목록·검색은 includeLocked로 남겨서 표제어만 보이는 블러 행 + 프리미엄 팝업을 그린다.

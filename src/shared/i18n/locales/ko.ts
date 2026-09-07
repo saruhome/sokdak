@@ -339,6 +339,7 @@ export const ko = {
     streakDayCount: '{n}일째',
     mascotBubbleCta: '눌러봐요 >',
     premiumGlossLocked: '무슨 뜻인지 알고 싶다면?',
+    adultMeaningLocked: '성인 인증 후 볼 수 있는 뜻이에요',
     authTagline: '속닥속닥, 교과서 밖 진짜 한국어를 배우다',
     emailLoginBtn: '이메일로 로그인',
     noAccountPrompt: '계정이 없으신가요?',

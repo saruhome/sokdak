@@ -105,3 +105,28 @@ it('production 프리미엄 + 성인 확인이면 열람 가능', async () => {
   const words = await m.wordsApi.fetchWords();
   expect(words).toHaveLength(3);
 });
+
+/* 뜻 단위 성인 게이트 — 단어는 전체 공개인데 특정 뜻만 19금인 경우(자만추의 '자보고 만남 추구').
+ * 단어 전체를 잠그는 category='slang'과 달리 나이만 따진다(프리미엄과 무관). */
+const MIXED_MEANINGS = [
+  { type: '명사', definition: '자연스러운 만남 추구', examples: [{ kor: '나는 자만추야', eng: 'I go for natural meetings' }] },
+  { type: '명사', definition: '자보고 만남 추구', adult_only: true, examples: [{ kor: '(성인 예문)', eng: '(adult example)' }] },
+];
+
+it('성인 미확인이면 adult_only 뜻만 가려지고 나머지 뜻은 그대로 보인다', async () => {
+  const m = await loadWithStage(undefined);
+  expect(m.wordsApi.isMeaningHidden(MIXED_MEANINGS[0])).toBe(false);
+  expect(m.wordsApi.isMeaningHidden(MIXED_MEANINGS[1])).toBe(true);
+});
+
+it('성인 확인 후에는 adult_only 뜻도 열린다 — 프리미엄과 무관하게 나이만 따진다', async () => {
+  const m = await loadWithStage('production', { premium: false, adultVerifiedAt: new Date().toISOString() });
+  expect(m.wordsApi.isMeaningHidden(MIXED_MEANINGS[1])).toBe(false);
+});
+
+it('가려진 뜻의 예문은 대화 예시로 새어 나가지 않는다', async () => {
+  const m = await loadWithStage(undefined);
+  /* 상세 화면이 예문을 모으는 방식 그대로 — 정의만 가리고 예문을 안 거르면 여기서 샌다 */
+  const shown = MIXED_MEANINGS.filter((x: object) => !m.wordsApi.isMeaningHidden(x)).flatMap((x: any) => x.examples);
+  expect(shown.map((e: { kor: string }) => e.kor)).toEqual(['나는 자만추야']);
+});

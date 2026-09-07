@@ -339,6 +339,7 @@ export const en = {
     streakDayCount: 'Day {n}',
     mascotBubbleCta: 'Tap >',
     premiumGlossLocked: 'Want to know what it means?',
+    adultMeaningLocked: 'This meaning appears after age verification',
     authTagline: 'Sokdak sokdak — learn real Korean beyond the textbook',
     emailLoginBtn: 'Log in with email',
     noAccountPrompt: 'Don\'t have an account?',

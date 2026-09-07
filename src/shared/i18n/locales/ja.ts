@@ -339,6 +339,7 @@ export const ja = {
     streakDayCount: '{n}日目',
     mascotBubbleCta: 'タップ >',
     premiumGlossLocked: 'どういう意味か知りたい?',
+    adultMeaningLocked: '成人認証後に見られる意味です',
     authTagline: 'ソクダクソクダク、教科書の外のリアルな韓国語を学ぼう',
     emailLoginBtn: 'メールでログイン',
     noAccountPrompt: 'アカウントをお持ちでないですか？',

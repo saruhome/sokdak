@@ -345,6 +345,7 @@ export type TranslationKey =
   | 'streakDayCount'
   | 'mascotBubbleCta'
   | 'premiumGlossLocked'
+  | 'adultMeaningLocked'
   | 'authTagline'
   | 'emailLoginBtn'
   | 'noAccountPrompt'

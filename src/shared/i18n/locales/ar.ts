@@ -346,6 +346,7 @@ export const ar = {
     streakDayCount: 'اليوم {n}',
     mascotBubbleCta: 'اضغط >',
     premiumGlossLocked: 'هل تريد معرفة المعنى؟',
+    adultMeaningLocked: 'يظهر هذا المعنى بعد التحقق من العمر',
     authTagline: 'سوكداك سوكداك — تعلّم الكورية الحقيقية خارج الكتب المدرسية',
     emailLoginBtn: 'تسجيل الدخول بالبريد الإلكتروني',
     noAccountPrompt: 'ليس لديك حساب؟',

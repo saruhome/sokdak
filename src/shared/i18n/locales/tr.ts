@@ -344,6 +344,7 @@ export const tr = {
     streakDayCount: '{n}. gün',
     mascotBubbleCta: 'Dokun >',
     premiumGlossLocked: 'Anlamını merak ettin mi?',
+    adultMeaningLocked: 'Bu anlam yaş doğrulamasından sonra görünür',
     authTagline: 'Sokdak sokdak — ders kitabının ötesinde gerçek Korece',
     emailLoginBtn: 'E-posta ile giriş yap',
     noAccountPrompt: 'Hesabın yok mu?',

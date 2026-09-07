@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Alert } from '@/constants/alert';
 import { Colors, getReadableTextColor } from '../../../constants/Colors';
 import { safeGoBack } from '../../../constants/navigation';
-import { fetchWordById, fetchWords, localizedText, type Word } from '../../../constants/words';
+import { fetchWordById, fetchWords, isMeaningHidden, localizedText, type Word } from '../../../constants/words';
 import { getCategoryBySlug, getCategoryName, type Category } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../../constants/authStore';
@@ -117,7 +117,9 @@ export default function WordDetailScreen() {
   const hasTabs = categories.length > 1;
 
   const englishGloss = word.translations.find(t => t.lang.includes('EN'))?.text;
-  const examples = word.meanings.flatMap(m => m.examples);
+  /* 성인 전용 뜻은 정의와 예문을 함께 가린다 — 예문은 모든 뜻을 하나로 합쳐 그리므로
+   * 정의만 가리면 그 뜻의 예문이 대화 예시 섹션으로 그대로 새어 나간다. */
+  const examples = word.meanings.filter(m => !isMeaningHidden(m)).flatMap(m => m.examples);
   /* 예문 번역은 UI 언어를 따른다 — ko UI는 학습 목적상 영어 대역, 그 외 언어는 해당 번역,
    * 번역이 없는 데이터는 eng로 폴백 */
   const exampleGloss = (ex: (typeof examples)[number]) =>
@@ -238,9 +240,14 @@ export default function WordDetailScreen() {
               </View>
               {/* 다의어(오빠 등)는 정의를 전부 번호로 나열 — 이전엔 첫 정의만 보였다 */}
               {word.meanings.map((m, i) => (
-                <Text key={i} style={styles.definitionText}>
+                <Text
+                  key={i}
+                  style={[styles.definitionText, isMeaningHidden(m) && styles.definitionLocked]}
+                >
                   {word.meanings.length > 1 ? `${i + 1}. ` : ''}
-                  {localizedText(m.definition, m.definition_i18n, language)}
+                  {isMeaningHidden(m)
+                    ? t('adultMeaningLocked')
+                    : localizedText(m.definition, m.definition_i18n, language)}
                 </Text>
               ))}
               {(language === 'ko' || language === 'en') && englishGloss && <Text style={styles.definitionEng}>{englishGloss}</Text>}
@@ -424,6 +431,8 @@ const styles = StyleSheet.create({
   /* 의미 */
   meaningBlock: { gap: 6 },
   definitionText: { fontSize: 16, color: Colors.textSecondary, lineHeight: 20 },
+  /* 성인 전용 뜻의 잠금 문구 — 흐릿한 안내 톤으로 정의와 구분한다 */
+  definitionLocked: { fontStyle: 'italic', opacity: 0.55 },
   definitionEng: { fontSize: 12, color: Colors.textTertiary, lineHeight: 16 },
 
   /* 문화적 배경 / 추가 정보 공통 텍스트 */

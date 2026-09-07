@@ -339,6 +339,7 @@ export const de = {
     streakDayCount: 'Tag {n}',
     mascotBubbleCta: 'Antippen >',
     premiumGlossLocked: 'Wissen, was es heißt?',
+    adultMeaningLocked: 'Diese Bedeutung erscheint nach der Altersverifizierung',
     authTagline: 'Sokdak sokdak — echtes Koreanisch jenseits des Lehrbuchs',
     emailLoginBtn: 'Mit E-Mail anmelden',
     noAccountPrompt: 'Noch kein Konto?',

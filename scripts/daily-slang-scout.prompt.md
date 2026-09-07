@@ -7,7 +7,31 @@ Supabase project_id는 `etvrsqfhettkehpltkcp` 고정 — list_projects 호출 �
 
 ## 절차
 
-1. 웹 검색으로 한국 신조어/유행어 후보를 10개 발굴한다. 대상 기간은 **2000년~오늘(수집일)**
+0. **오늘의 타깃 카테고리를 정한다 (카테고리 병렬 스카우트, 운영자 지시 2026-09-08).**
+   출시 기준은 words 1000개이고 카테고리는 13개라 카테고리당 약 77개가 목표다. 아래 쿼리로
+   가장 적게 찬 카테고리를 오늘의 타깃으로 잡는다 (동률이면 그중 무작위로 하나):
+
+   ```sql
+   select c.slug, count(w.id) as n from (values
+    ('daily'),('kpop'),('drama'),('variety'),('exclamation'),('reels'),('new-slang'),
+    ('frequently-used'),('consonant'),('outdated-slang'),('work'),('love'),('slang')) c(slug)
+   left join words w on w.category = c.slug or w.secondary_category = c.slug
+   group by c.slug order by n limit 3;
+   ```
+
+   오늘 수집하는 10개는 **전부 그 카테고리**로 모으고, draft_payload의 category도 그 슬러그로 넣는다.
+   ('new-slang'을 기본값으로 쓰던 예전 방식은 폐기 — new-slang만 계속 불어난다.)
+
+   카테고리별 검색 방향:
+   - `daily` 일상 대화 / `work` 회사·직장 / `love` 썸·연애·이별 / `kpop` 팬덤·덕질
+   - `drama` 드라마·영화 명대사 / `variety` 예능 유행어 / `reels` 숏폼·틱톡 밈
+   - `exclamation` 감탄사·리액션 / `consonant` 초성 줄임말(ㅇㅈ, ㄱㅅ 등)
+   - `outdated-slang` 한때 유행했다 지금은 안 쓰는 말 / `slang` 욕설·비속어(성인 게이트)
+   - `frequently-used` 매일 쓰는 필수 신조어 / `new-slang` 위 어디에도 안 맞는 최신 유행어
+
+   단어가 두 카테고리에 걸치면 타깃을 category에, 다른 하나를 secondary_category에 넣는다.
+
+1. 웹 검색으로 **오늘의 타깃 카테고리에 해당하는** 한국 신조어/유행어 후보를 10개 발굴한다. 대상 기간은 **2000년~오늘(수집일)**
    — 최신 유행어뿐 아니라 2000년대 이후 생겨나 지금도 쓰이는 신조어도 포함한다
    (검색 예: "2026 신조어", "요즘 유행어 뜻", "2010년대 신조어", 최근 밈·챌린지). 나무위키·복수 블로그 등
    **서로 독립적인 출처 2개 이상**으로 뜻과 유래를 교차 확인한다.
@@ -31,7 +55,8 @@ Supabase project_id는 `etvrsqfhettkehpltkcp` 고정 — list_projects 호출 �
      review_note에 미검증 사유(출처 수, 뜻이 갈리는 지점)를 적는다. 판단은 운영자가 아침 검수에서 한다.
 4. 각 후보의 **완성 초안**을 words 테이블 형태 JSON으로 작성해 draft_payload에 담는다.
    기존 컨벤션(supabase/migrations/20260830220000_add_yareu_syagal.sql 참고)을 그대로 따른다:
-   - word, romanization(국립국어원 RR, 음절 하이픈), category('new-slang' 기본, 속어는 'slang'),
+   - word, romanization(국립국어원 RR, 음절 하이픈), category(**0에서 정한 오늘의 타깃 슬러그**;
+     욕설·19금이면 타깃과 무관하게 'slang'),
      pronunciation([한글] 형식, 완성형 한글 단어는 생략 가능)
    - short_desc + short_desc_i18n{en,ja,es,vi,de}
    - meanings: [{type, definition, definition_i18n{5개 언어}, examples:[{kor,eng,ja,es,vi,de}]}]
@@ -42,7 +67,7 @@ Supabase project_id는 `etvrsqfhettkehpltkcp` 고정 — list_projects 호출 �
    - term/normalized_term(lower·trim)/meaning_ko/meaning_en_draft/example: draft에서 발췌
    - sources: 검증 출처 URL 배열, draft_payload: 4의 JSON
    - status: 'native_review_pending'
-6. 마지막으로 오늘 적재한 후보 수와 단어 목록을 출력하고 종료한다.
+6. 마지막으로 **오늘의 타깃 카테고리**, 적재한 후보 수, 단어 목록을 출력하고 종료한다.
 
 ## 금지
 

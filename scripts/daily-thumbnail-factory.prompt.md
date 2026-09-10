@@ -98,25 +98,22 @@ horang-dance-notes 등)는 반전 변주가 없다.
 - 신남·축하: horang-cheer, horang-cheer-sit, horang-yay-stand, horang-idea,
   horang-jump-yay, horang-trophy, horang-dance-notes(춤·음악), horang-clap(박수·환호),
   jjaeki-jump-yay, jjaeki-trophy, jjaeki-dance-notes, jjaeki-clap
-- 놀람·혼란·설렘: horang-question, horang-ask-stand, jjaeki-startled, horang-peek-shocked(화들짝),
+- 놀람·혼란·설렘: horang-question, horang-ask-stand, horang-peek-shocked(화들짝),
   horang-peek-spark(설렘·기대), horang-shocked2(입 벌린 경악), jjaeki-shocked,
   jjaeki-sparkle-eyes(반짝 감동)
-- 화남·짜증: horang-peek-angry, horang-angry-fume(팔짱+김), jjaeki-grumpy, jjaeki-smug(새침),
-  horang-shake-no(절레절레 거절), jjaeki-angry-fume, jjaeki-shake-no
+- 화남·짜증: horang-peek-angry, horang-angry-fume(팔짱+김), horang-shake-no(절레절레 거절), jjaeki-angry-fume, jjaeki-shake-no
 - 슬픔·허탈·현타: horang-peek-cry, horang-peek-sleepy(졸림·심드렁), horang-slump(고개 푹),
   horang-cry-loud(대성통곡), horang-moved-tears(감동 눈물), horang-sweat(진땀·곤란),
   horang-yawn(하품·노잼), horang-shiver(오들오들·긴장), jjaeki-slump,
   jjaeki-despair-floor(엎드려 좌절), jjaeki-cry-loud, jjaeki-sweat, jjaeki-yawn,
   jjaeki-tired-walk(지친 걸음)
 - 정보·차분·공부: horang-reading, horang-read-front, horang-scroll, horang-study-desk,
-  horang-night-write(몰입·밤샘), jjaeki-reading, jjaeki-study
-- 친근·인사: jjaeki-wave, horang-hello, horang-bow(꾸벅 인사·감사·사과),
+  horang-night-write(몰입·밤샘)
+- 친근·인사: horang-hello, horang-bow(꾸벅 인사·감사·사과),
   horang-whisper-duo(귓속말·소문·TMI), jjaeki-whisper-duo,
   jjaeki-highfive-duo(하이파이브·우정·성공)
-- SNS·폰·하트: horang-phone, jjaeki-phone-heart(애정·금사빠), horang-selfie-v(V 셀카·인생샷),
+- SNS·폰·하트: horang-phone, horang-selfie-v(V 셀카·인생샷),
   horang-heart-wink(하트 윙크), jjaeki-selfie-v, jjaeki-heart-wink
-- 외침·공지: jjaeki-megaphone
-- 얼떨떨: jjaeki-question
 - 음식·먹방: horang-eat-chicken, horang-eat-ramen, horang-boba(버블티), horang-coffee,
   jjaeki-eat-cookie, jjaeki-eat-ramen, jjaeki-boba, jjaeki-coffee
 - 일상·생활: horang-cook(요리), horang-clean-mop(청소), horang-blanket-peek(이불 빼꼼),

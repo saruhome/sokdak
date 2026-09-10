@@ -119,6 +119,23 @@ horang-dance-notes 등)는 반전 변주가 없다.
 - 웃음: horang-laugh-tears(눈물 나게 폭소), horang-giggle(킥킥)
 - 돈·플렉스: horang-money-fan(지폐 부채)
 - 날씨·계절: horang-cold-scarf(추위·얼죽아), horang-hot-fan(더위), horang-rain-umbrella(비·우울)
+
+짹이 36종 확장(2026-09-10 편입, 유건 수정본 — 같은 그룹 규칙으로 순환에 포함):
+- 신남·축하: jjaeki-jump-yay, jjaeki-trophy, jjaeki-dance-notes, jjaeki-clap
+- 놀람·설렘: jjaeki-shocked, jjaeki-sparkle-eyes(반짝 감동)
+- 화남·짜증: jjaeki-angry-fume, jjaeki-shake-no
+- 슬픔·허탈·현타: jjaeki-slump, jjaeki-despair-floor(엎드려 좌절), jjaeki-cry-loud,
+  jjaeki-sweat, jjaeki-yawn, jjaeki-tired-walk(지친 걸음)
+- 친근·인사: jjaeki-whisper-duo, jjaeki-highfive-duo(하이파이브·우정·성공)
+- SNS·폰·하트: jjaeki-selfie-v, jjaeki-heart-wink
+- 긍정·인정: jjaeki-thumbsup, jjaeki-ok-sign, jjaeki-muscle, jjaeki-flower-shy,
+  jjaeki-giggle-shy(입 가리고 수줍)
+- 웃음: jjaeki-laugh-loud
+- 음식·먹방: jjaeki-eat-cookie, jjaeki-eat-ramen, jjaeki-boba, jjaeki-coffee
+- 일상·생활: jjaeki-cook, jjaeki-clean-broom, jjaeki-blanket-peek, jjaeki-sleep-zzz
+- 돈·플렉스: jjaeki-money-fan
+- 날씨·계절: jjaeki-cold-scarf, jjaeki-hot-fan, jjaeki-rain-umbrella
+
 호랭 우선, 짹이로 변화. 최근 처리 단어들과 포즈·방향이 겹치지 않게 순환. 합성본을 눈으로 확인 후 진행.
 
 ## 4. 업로드 (한시 자격)

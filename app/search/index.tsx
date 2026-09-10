@@ -15,6 +15,7 @@ import { PremiumLockModal, gateLockedWord, lockedTextStyle } from '@/components/
 import { tFor, useLanguage } from '../../constants/languageStore';
 import { filterPostResults, filterWordResults, suggestWords } from '@/src/features/search/model/searchResults';
 import { suggestSimilarWord } from '@/src/features/dictionary/model/wordSearch';
+import { logSearch } from '@/src/shared/api/wordEvents';
 import { AppIcon, IconStat } from '@/components/AppIcon';
 import { Search, BookOpen, Heart, Star, Eye, MessageCircle, X } from 'lucide-react-native';
 import { BackIcon } from '@/components/icons/SocialIcons';
@@ -50,7 +51,7 @@ export default function SearchScreen() {
   }, []);
 
   const [lockModalVisible, setLockModalVisible] = useState(false);
-  const openWord = (word: Word) => gateLockedWord(word, () => setLockModalVisible(true));
+  const openWord = (word: Word) => gateLockedWord(word, () => setLockModalVisible(true), '/tabs/dictionary', 'search');
 
   const toggleSave = (id: string) => {
     if (!authStore.isLoggedIn()) {
@@ -81,6 +82,7 @@ export default function SearchScreen() {
     setResultTab('word');
     setCategoryFilter(null);
     setRecent(prev => [term, ...prev.filter(t => t !== term)].slice(0, 8));
+    logSearch(term, filterWordResults(allWords, term, null).map(w => w.id));
   };
 
   const removeRecent = (term: string) => {

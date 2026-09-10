@@ -15,6 +15,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { Star, Volume2, MessageCircle } from 'lucide-react-native';
 import { WordVideo } from '@/components/WordVideo';
 import { PremiumLockModal } from '@/components/PremiumLockModal';
+import { logWordView } from '@/src/shared/api/wordEvents';
 import { FocusIcon } from '@/components/icons/FocusIcon';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
@@ -25,7 +26,7 @@ const AVATAR_JJAEKI = require('../../../assets/characters/transparent/jjaeki.png
 export default function WordDetailScreen() {
   const language = useLanguage();
   const t = languageStore.t;
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, src } = useLocalSearchParams<{ id: string; src?: string }>();
   const [word, setWord] = useState<Word | null | undefined>(undefined);
   /* 관련 단어 칩이 다른 단어로 이동할 때 word.word → id를 찾기 위한 전체 목록 */
   const [allWords, setAllWords] = useState<Word[]>([]);
@@ -36,6 +37,7 @@ export default function WordDetailScreen() {
 
   useEffect(() => {
     if (!id) return;
+    logWordView(id, src);
     fetchWordById(id).then(data => {
       setWord(data);
       if (data) {

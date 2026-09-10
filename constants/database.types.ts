@@ -601,6 +601,48 @@ export type Database = {
           },
         ]
       }
+      word_views: {
+        Row: {
+          created_at: string
+          id: number
+          source: string
+          word_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          source?: string
+          word_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          source?: string
+          word_id?: string
+        }
+        Relationships: []
+      }
+      search_events: {
+        Row: {
+          created_at: string
+          id: number
+          query: string
+          result_ids: string[]
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          query: string
+          result_ids?: string[]
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          query?: string
+          result_ids?: string[]
+        }
+        Relationships: []
+      }
       words: {
         Row: {
           aliases: string[] | null

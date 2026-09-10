@@ -31,6 +31,11 @@ Supabase project_id는 `etvrsqfhettkehpltkcp` 고정 — list_projects 호출 �
 
    단어가 두 카테고리에 걸치면 타깃을 category에, 다른 하나를 secondary_category에 넣는다.
 
+   **야민정음 태그(운영자 지시 2026-09-10):** 글자 모양이 닮은 한글로 바꿔 쓴 표기(야민정음 —
+   멍멍이→댕댕이, 귀엽다→커엽다, 명곡→띵곡 등)면 타깃과 무관하게 draft의 secondary_category를
+   `'yaminjeongeum'`으로 넣는다(이미 다른 secondary가 있으면 yaminjeongeum 우선). 10개가 모이면
+   아침 검수가 전용 카테고리를 자동으로 만든다.
+
 1. 웹 검색으로 **오늘의 타깃 카테고리에 해당하는** 한국 신조어/유행어 후보를 10개 발굴한다. 대상 기간은 **2000년~오늘(수집일)**
    — 최신 유행어뿐 아니라 2000년대 이후 생겨나 지금도 쓰이는 신조어도 포함한다
    (검색 예: "2026 신조어", "요즘 유행어 뜻", "2010년대 신조어", 최근 밈·챌린지). 나무위키·복수 블로그 등
@@ -62,6 +67,7 @@ Supabase project_id는 `etvrsqfhettkehpltkcp` 고정 — list_projects 호출 �
    - meanings: [{type, definition, definition_i18n{5개 언어}, examples:[{kor,eng,ja,es,vi,de}]}]
      — 예문은 10~20대 실제 말투로 1개 이상
    - origin + origin_i18n, usage + usage_i18n, related_words, translations(국기 lang 한 줄 대응어 6개)
+   - secondary_category(해당할 때만 — 위 0의 규칙, 특히 야민정음 태그)
 5. slang_candidates에 insert:
    - run_id: 이 세션에서 gen_random_uuid() 하나를 모든 후보에 공유
    - term/normalized_term(lower·trim)/meaning_ko/meaning_en_draft/example: draft에서 발췌

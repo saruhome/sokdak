@@ -10,7 +10,15 @@ Supabase project_id는 `etvrsqfhettkehpltkcp` 고정. 실행 전 1시간 상한 
 ## 0. 대상 조회
 
 ```sql
-select id, word, category, short_desc from words where thumbnail_url is null order by id::int asc limit 10;
+-- 인기순(저장 수 내림차순, 동률은 id 오름차순) — 운영자 지시 2026-09-10:
+-- Canva 쿼터로 하루 처리량이 적으니 많이 저장된 단어부터 커버한다.
+select w.id, w.word, w.category, w.short_desc
+from words w
+left join saved_words s on s.word_id = w.id
+where w.thumbnail_url is null
+group by w.id, w.word, w.category, w.short_desc
+order by count(s.*) desc, w.id::int asc
+limit 10;
 ```
 
 0건이면 "썸네일 대상 없음" 한 줄 보고 후 종료.

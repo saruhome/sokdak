@@ -127,6 +127,10 @@ horang-dance-notes 등)는 반전 변주가 없다.
 - 돈·플렉스: horang-money-fan(지폐 부채), jjaeki-money-fan
 - 날씨·계절: horang-cold-scarf(추위·얼죽아), horang-hot-fan(더위), horang-rain-umbrella(비·우울),
   jjaeki-cold-scarf, jjaeki-hot-fan, jjaeki-rain-umbrella
+- K-POP·팬덤: horang-idol-stage(무대 아이돌+팬 군중), horang-fansign(사인회·팬미팅),
+  horang-lightstick(응원봉·덕질·콘서트)
+- 연애·커플(투샷): horang-couple-heart(하트·고백·커플), horang-couple-walk(손잡기·데이트),
+  horang-couple-angry(싸움·삐짐·잠수·이별)
 
 호랭 우선, 짹이로 변화. 최근 처리 단어들과 포즈·방향이 겹치지 않게 순환. 합성본을 눈으로 확인 후 진행.
 

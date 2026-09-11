@@ -333,6 +333,7 @@ export const tr = {
     situationSns: 'Sosyal medya',
     situationMeal: 'Yemek',
     situationArgument: 'Tartışma',
+    situationRelationship: 'İlişkiler',
     situationDaily: 'Günlük',
     situationDialect: 'Ağız',
     regionGyeongsang: 'Gyeongsang',

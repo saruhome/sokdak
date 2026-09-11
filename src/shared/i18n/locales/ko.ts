@@ -328,6 +328,7 @@ export const ko = {
     situationSns: 'SNS',
     situationMeal: '밥자리',
     situationArgument: '말다툼',
+    situationRelationship: '인간관계',
     situationDaily: '일상',
     situationDialect: '사투리',
     regionGyeongsang: '경상',

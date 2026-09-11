@@ -28,9 +28,10 @@ const SITUATION_BANNERS = {
   health: require('../../assets/expressions/health.jpg'),
   sns: require('../../assets/expressions/sns.jpg'),
   meal: require('../../assets/expressions/meal.jpg'),
-  // ponytail: argument/daily/dialect 전용 일러스트가 아직 없어 sns 배너로 대신한다.
-  // assets/expressions/{argument,daily,dialect}.jpg를 만들어 교체할 것.
+  // ponytail: argument/relationship/daily/dialect 전용 일러스트가 아직 없어 sns 배너로 대신한다.
+  // assets/expressions/{argument,relationship,daily,dialect}.jpg를 만들어 교체할 것.
   argument: require('../../assets/expressions/sns.jpg'),
+  relationship: require('../../assets/expressions/sns.jpg'),
   daily: require('../../assets/expressions/sns.jpg'),
   dialect: require('../../assets/expressions/sns.jpg'),
 } as const;

@@ -334,6 +334,7 @@ export const zh = {
     situationSns: '社交媒体',
     situationMeal: '聚餐',
     situationArgument: '吵架',
+    situationRelationship: '人际关系',
     situationDaily: '日常',
     situationDialect: '方言',
     regionGyeongsang: '庆尚',

@@ -328,6 +328,7 @@ export const ja = {
     situationSns: 'SNS',
     situationMeal: '食事の席',
     situationArgument: '口げんか',
+    situationRelationship: '人間関係',
     situationDaily: '日常',
     situationDialect: '方言',
     regionGyeongsang: '慶尚',

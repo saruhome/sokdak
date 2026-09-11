@@ -18,12 +18,13 @@ export function pickDaily<T>(items: T[], count: number, seed: string): T[] {
 /** "오늘의 실전 표현" — 한국 거주 외국인이 바로 써먹는 상황별 표현.
  * 신조어 사전과는 다른 결의 콘텐츠라 별도 로컬 데이터로 관리한다(다른 화면의
  * HORANG_HINTS 등과 동일한 컨벤션 — 아직 사전 콘텐츠처럼 5개 언어로 번역하진 않음). */
-export type Situation = 'cafe' | 'transit' | 'work' | 'health' | 'sns' | 'meal' | 'argument' | 'daily' | 'dialect';
+export type Situation = 'cafe' | 'transit' | 'work' | 'health' | 'sns' | 'meal' | 'argument' | 'relationship' | 'daily' | 'dialect';
 
 export const SITUATION_LABEL_KEY: Record<Situation, TranslationKey> = {
   cafe: 'situationCafe', transit: 'situationTransit', work: 'situationWork',
   health: 'situationHealth', sns: 'situationSns', meal: 'situationMeal',
-  argument: 'situationArgument', daily: 'situationDaily', dialect: 'situationDialect',
+  argument: 'situationArgument', relationship: 'situationRelationship',
+  daily: 'situationDaily', dialect: 'situationDialect',
 };
 
 /** 사투리 문장이 어느 지역 말인지 — 카드 배지에 "오늘의 사투리 · 경상"처럼 지역을 노출한다.
@@ -580,4 +581,46 @@ export const EXPRESSIONS: Expression[] = [
     es: 'Esta caja organizadora es superingeniosa, ¿dónde la compraste? (신박하다 = nuevo y sorprendentemente ingenioso. Parece una palabra sinocoreana, pero no lo es: jugadores de World of Warcraft en DC Inside cambiaban 기 por 박 en broma, y así 신기하다 "asombroso" se volvió 신박하다. Elogio para objetos, trucos e ideas más que para personas. Aquí va informal; no es coreano estándar, evítalo en informes)',
     vi: 'Cái hộp đựng đồ này độc thật, mua ở đâu vậy? (신박하다 = mới lạ và khéo bất ngờ. Trông như từ Hán Hàn nhưng không phải: game thủ World of Warcraft trên DC Inside đùa đổi 기 thành 박, nên 신기하다 "thần kỳ" thành 신박하다. Dùng để khen đồ vật, mẹo, ý tưởng hơn là con người. Ở đây là nói thân mật; không phải từ chuẩn nên đừng dùng trong báo cáo)',
     de: 'Diese Aufbewahrungsbox ist echt genial — wo hast du die her? (신박하다 = neu und überraschend clever. Sieht sinokoreanisch aus, ist es aber nicht: World-of-Warcraft-Spieler auf DC Inside tauschten zum Spaß 기 gegen 박, so wurde aus 신기하다 „erstaunlich“ 신박하다. Ein Lob für Dinge, Tricks und Ideen eher als für Menschen. Hier salopp; kein Standardkoreanisch, also nicht in Berichten)' },
+  { situation: 'sns', ko: '이거 광고 아니고 내돈내산이야',
+    en: "This isn't an ad — I paid for it myself (내돈내산 = 내 돈 주고 내가 산 것; the tag Korean reviewers add to prove a post isn't sponsored. Banmal — friends or a casual post)",
+    ja: 'これ広告じゃなくて自腹で買ったやつ(내돈내산=自分のお金で自分が買った。案件ではないと示すために付ける定番タグ。タメ口なので友達やカジュアルな投稿に)',
+    es: "Esto no es publicidad, lo compré con mi propio dinero (내돈내산 = 'lo pagué yo'; la etiqueta que ponen los reseñadores coreanos para demostrar que no es contenido patrocinado. Informal, entre amigos o en un post casual)",
+    vi: "Cái này không phải quảng cáo, tự tiền mình mua đấy (내돈내산 = 'tiền mình, mình mua'; hashtag người Hàn gắn vào review để chứng minh không phải bài PR. Thân mật — với bạn bè hoặc bài đăng thoải mái)",
+    de: "Das ist keine Werbung — ich hab's selbst bezahlt (내돈내산 = „mein Geld, mein Kauf“; der Hashtag, mit dem koreanische Rezensenten zeigen, dass ein Beitrag nicht gesponsert ist. Salopp — unter Freunden oder in einem lockeren Post)" },
+  { situation: 'relationship', ko: '나 걔랑 손절했어',
+    en: "I cut them out of my life (손절 < 손절매, the stock-market 'cut your losses' sale; now used for ending a friendship before it costs you more. Banmal — friends only)",
+    ja: 'あの子とはもう縁切ったよ(손절=株の損切り。これ以上傷つく前に人間関係を断つ、という意味で使う。タメ口なので友達だけに)',
+    es: 'Ya corté con esa persona (손절 viene de 손절매, vender acciones para cortar pérdidas; se usa para terminar una amistad antes de que cueste más. Informal, solo entre amigos)',
+    vi: 'Tớ cắt đứt với nó rồi (손절 bắt nguồn từ 손절매 — bán cắt lỗ chứng khoán; nay dùng cho việc dứt một mối quan hệ trước khi tổn thất thêm. Thân mật, chỉ với bạn bè)',
+    de: 'Ich habe den Kontakt abgebrochen (손절 kommt von 손절매, dem Verkauf mit Verlustbegrenzung an der Börse; heute für das Beenden einer Freundschaft, bevor sie mehr kostet. Salopp — nur unter Freunden)' },
+  { situation: 'meal', ko: '이거 완전 단짠단짠이다',
+    en: "This is the perfect sweet-and-salty loop (단짠 = 단맛 sweet + 짠맛 salty; eating them in turn is what makes you unable to stop. Banmal — friends; '단짠단짠이네요' for elders)",
+    ja: 'これ完全に甘じょっぱい無限ループだ(단짠=甘い+しょっぱい。交互に食べると止まらなくなる、というおなじみの表現。タメ口なので友達に)',
+    es: 'Esto es dulce-salado perfecto (단짠 = 단맛 dulce + 짠맛 salado; alternarlos es lo que hace que no puedas parar. Informal, entre amigos)',
+    vi: 'Món này ngọt-mặn đúng bài luôn (단짠 = 단맛 ngọt + 짠맛 mặn; ăn xen kẽ nên không dừng lại được. Thân mật, với bạn bè)',
+    de: 'Das ist die perfekte süß-salzige Endlosschleife (단짠 = 단맛 süß + 짠맛 salzig; im Wechsel gegessen hört man nicht mehr auf. Salopp — unter Freunden)' },
+  { situation: 'work', ko: '그건 좀 억까 아니야?',
+    en: "Isn't that an unfair dig? (억까 = 억지로 까다, tearing someone down on a nonsense pretext. Banmal — friends or same-level coworkers; never use it to push back at a boss)",
+    ja: 'それはちょっと言いがかりじゃない?(억까=억지로 까다、無理やりけなすこと。こじつけの理由で叩く行為を指す。タメ口なので友達や同僚に。上司への反論には使わない)',
+    es: '¿Eso no es criticar por criticar? (억까 = 억지로 까다, atacar a alguien con un pretexto absurdo. Informal, entre amigos o colegas del mismo nivel; nunca para replicarle a un superior)',
+    vi: 'Cái đó hơi bới móc vô lý đúng không? (억까 = 억지로 까다, chê bai bằng lý do gượng ép. Thân mật — với bạn bè, đồng nghiệp ngang hàng; đừng dùng để cãi lại cấp trên)',
+    de: 'Ist das nicht unfair hingedreht? (억까 = 억지로 까다, jemanden mit einem an den Haaren herbeigezogenen Vorwand niedermachen. Salopp — unter Freunden oder gleichgestellten Kollegen, nie gegenüber Vorgesetzten)' },
+  { situation: 'transit', ko: '나 뚜벅이라 지하철로 갈게',
+    en: "I don't have a car, so I'll take the subway (뚜벅이 = from 뚜벅뚜벅, the sound of footsteps; someone who gets around on public transport. Banmal — friends; '뚜벅이라 지하철로 갈게요' for others)",
+    ja: '私は車がないから地下鉄で行くね(뚜벅이=てくてく歩く擬態語から。車を持たず公共交通で移動する人。タメ口なので友達に)',
+    es: 'No tengo coche, así que voy en metro (뚜벅이 viene de 뚜벅뚜벅, el sonido de los pasos; alguien que se mueve en transporte público. Informal, entre amigos)',
+    vi: 'Tớ không có xe nên đi tàu điện nhé (뚜벅이 từ 뚜벅뚜벅 — tiếng bước chân; chỉ người không có ô tô, đi lại bằng phương tiện công cộng. Thân mật, với bạn bè)',
+    de: 'Ich habe kein Auto, ich nehme die U-Bahn (뚜벅이 von 뚜벅뚜벅, dem Geräusch von Schritten; jemand, der mit Öffis unterwegs ist. Salopp — unter Freunden)' },
+  { situation: 'dialect', region: 'gyeongsang', ko: '단디 들어라',
+    en: "Listen up properly (Busan/Gyeongsang dialect: 단디 = 단단히, 'firmly, carefully'. The mother's line to her two sons in the 2004 film 우리 형. A blunt command in banmal — only to people younger than you or very close)",
+    ja: 'しっかり聞きや(釜山・慶尚道の方言。단디=단단히「しっかり」。2004年の映画『ウリ兄弟(우리 형)』で母が息子二人に言う台詞。命令形のタメ口なので年下や親しい相手にだけ)',
+    es: "Escúchame bien (dialecto de Busan/Gyeongsang: 단디 = 단단히, 'con firmeza, con atención'. Lo dice la madre a sus dos hijos en la película 우리 형 (2004). Es una orden informal: solo a menores o gente de mucha confianza)",
+    vi: "Nghe cho kỹ đây (phương ngữ Busan/Gyeongsang: 단디 = 단단히 'cho chắc, cho kỹ'. Lời người mẹ nói với hai con trai trong phim 우리 형 (2004). Là câu mệnh lệnh thân mật — chỉ nói với người nhỏ tuổi hơn hoặc rất thân)",
+    de: 'Hör mir gut zu (Busan/Gyeongsang-Dialekt: 단디 = 단단히, „gründlich, aufmerksam“. Der Satz der Mutter an ihre beiden Söhne im Film 우리 형 (2004). Barsche Befehlsform im Salopp-Ton — nur zu Jüngeren oder sehr Vertrauten)' },
+  { situation: 'dialect', region: 'jeju', ko: '맨도롱 또똣할 때 후루룩 들이쌉서',
+    en: "Slurp it down while it's still nicely warm (Jeju dialect: 맨도롱 또똣 = warm just right to drink, 들이쌉서 = please drink it up. The line the 2015 MBC drama 맨도롱 또똣 took its title from. -ㅂ서 is the polite Jeju ending, so it's fine to say to anyone)",
+    ja: 'あったかいうちにズズッと飲んでください(済州方言。맨도롱 또똣=飲むのにちょうどいい温かさ、들이쌉서=飲み干してください。2015年のMBCドラマ『マンドロン・ットゥットゥッ』の題名の由来になった台詞。-ㅂ서は済州の丁寧な語尾なので誰にでも使える)',
+    es: 'Bébaselo de un sorbo mientras está calentito (dialecto de Jeju: 맨도롱 또똣 = tibio en su punto justo, 들이쌉서 = bébaselo. De este verso sale el título de la serie de MBC 맨도롱 또똣 (2015). La terminación -ㅂ서 es la forma cortés de Jeju, así que sirve con cualquiera)',
+    vi: 'Còn ấm thì húp một hơi đi ạ (phương ngữ Jeju: 맨도롱 또똣 = ấm vừa đủ để uống, 들이쌉서 = xin mời uống cạn. Câu này là nguồn gốc tên phim MBC 맨도롱 또똣 (2015). Đuôi -ㅂ서 là kính ngữ Jeju nên nói với ai cũng được)',
+    de: 'Trink es schlürfend, solange es schön warm ist (Jeju-Dialekt: 맨도롱 또똣 = genau richtig warm zum Trinken, 들이쌉서 = bitte trink es aus. Von diesem Satz hat die MBC-Serie 맨도롱 또똣 (2015) ihren Titel. Die Endung -ㅂ서 ist die höfliche Jeju-Form und passt damit gegenüber jedem)' },
 ];

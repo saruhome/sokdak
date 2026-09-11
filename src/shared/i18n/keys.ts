@@ -334,6 +334,7 @@ export type TranslationKey =
   | 'situationSns'
   | 'situationMeal'
   | 'situationArgument'
+  | 'situationRelationship'
   | 'situationDaily'
   | 'situationDialect'
   | 'regionGyeongsang'

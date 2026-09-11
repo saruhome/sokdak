@@ -328,6 +328,7 @@ export const de = {
     situationSns: 'Soziale Medien',
     situationMeal: 'Beim Essen',
     situationArgument: 'Streit',
+    situationRelationship: 'Beziehungen',
     situationDaily: 'Alltag',
     situationDialect: 'Dialekt',
     regionGyeongsang: 'Gyeongsang',

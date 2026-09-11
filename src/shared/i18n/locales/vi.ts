@@ -328,6 +328,7 @@ export const vi = {
     situationSns: 'Mạng xã hội',
     situationMeal: 'Bữa ăn',
     situationArgument: 'Cãi nhau',
+    situationRelationship: 'Quan hệ',
     situationDaily: 'Đời thường',
     situationDialect: 'Phương ngữ',
     regionGyeongsang: 'Gyeongsang',

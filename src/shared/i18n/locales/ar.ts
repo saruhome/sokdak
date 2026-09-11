@@ -335,6 +335,7 @@ export const ar = {
     situationSns: 'وسائل التواصل',
     situationMeal: 'وقت الطعام',
     situationArgument: 'مشاجرة',
+    situationRelationship: 'العلاقات',
     situationDaily: 'الحياة اليومية',
     situationDialect: 'لهجة',
     regionGyeongsang: 'جيونغسانغ',

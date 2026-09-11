@@ -5,7 +5,7 @@ v3 스타일(캐릭터 중앙 무대) 썸네일을 만들어 업로드합니다.
 `words.thumbnail_url`만 세팅하면 상세·홈·히어로가 자동 반영됩니다.
 
 Supabase project_id는 `etvrsqfhettkehpltkcp` 고정. 실행 전 1시간 상한 — 초과 전에
-5단계의 자격 회수를 반드시 마치고 체크포인트 보고 후 종료합니다.
+처리한 만큼 체크포인트 보고 후 종료합니다.
 
 ## 0. 대상 조회
 
@@ -75,7 +75,7 @@ generate-design, design_type: youtube_thumbnail.
 - 후보 4개 썸네일을 내려받아 눈으로 확인 — 글자가 그려졌거나 중앙이 비어 있지 않으면 탈락.
   AI가 hex 코드·가짜 서명을 그려넣는 사고가 있으니 전수 확인하고, 발견 시 PIL로 주변색
   사각형을 덮어 제거한다.
-- Canva 쿼터 에러("quota limit")가 나오면 즉시 5단계 자격 회수 후 "쿼터 소진, N건 처리" 보고하고 종료.
+- Canva 쿼터 에러("quota limit")가 나오면 즉시 "쿼터 소진, N건 처리" 보고하고 종료.
 
 ## 2. 확정·내보내기
 
@@ -133,31 +133,17 @@ horang-dance-notes 등)는 반전 변주가 없다.
 
 호랭 우선, 짹이로 변화. 최근 처리 단어들과 포즈·방향이 겹치지 않게 순환. 합성본을 눈으로 확인 후 진행.
 
-## 4. 업로드 (한시 자격)
+## 4. 업로드 + DB 갱신
 
-service_role 래핑 SQL로 임시 정책+비밀번호 발급:
-
-```sql
-begin; select set_config('request.jwt.claims','{"role":"service_role"}',true);
-update auth.users set encrypted_password = crypt('[랜덤 새 비밀번호]', gen_salt('bf')) where id='a5d1c365-30e8-4f62-a794-0054ed8e1705';
-create policy tmp_word_thumb_upload on storage.objects for insert to authenticated with check (bucket_id='word-thumbnails' and auth.uid()='a5d1c365-30e8-4f62-a794-0054ed8e1705');
-commit;
+```bash
+scripts/upload-thumbnail.sh [id] [파일.jpg] [id] [파일.jpg] ...
 ```
 
-anon key는 get_publishable_keys로 조회. demo-liker-ha@sokdak.app로 password grant JWT 발급 후
-storage REST POST(x-upsert:true)로 `word-thumbnails/word-{id}.jpg` 업로드(HTTP 200 확인).
+`word-thumbnails/word-{id}.jpg` 업로드(upsert)와 `words.thumbnail_url` 세팅을 한 번에 한다.
+키는 맥 키체인(`sokdak-supabase-secret`)에서 읽는다 — 임시 정책·데모 계정 비밀번호 발급/회수는
+더 이상 하지 않는다. 키체인에 키가 없어 실패하면 운영자에게 저장을 요청하고 보고 후 종료.
 
-## 5. DB 갱신 + 자격 회수 (실패해도 회수는 반드시)
-
-```sql
-begin; select set_config('request.jwt.claims','{"role":"service_role"}',true);
-update words set thumbnail_url = 'https://etvrsqfhettkehpltkcp.supabase.co/storage/v1/object/public/word-thumbnails/word-' || id || '.jpg' where id in ([처리한 id들]);
-drop policy if exists tmp_word_thumb_upload on storage.objects;
-update auth.users set encrypted_password = crypt(encode(gen_random_bytes(24),'base64'), gen_salt('bf')) where id='a5d1c365-30e8-4f62-a794-0054ed8e1705';
-commit;
-```
-
-## 6. 보고
+## 5. 보고
 
 처리 단어 목록(id·단어·포즈), 실패·보류 건, 남은 미처리 수를 출력하고 종료.
 

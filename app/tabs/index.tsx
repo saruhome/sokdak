@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
   heroScrim: {
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
     backgroundColor: Colors.pageBackground,
-    opacity: 0.55,
+    opacity: 0.2,
   },
   heroThumbnail: {
     // require() 에셋은 RN Web이 래퍼에 원본 픽셀 크기를 인라인으로 박아 inset:0을 무시한다 —
@@ -352,7 +352,14 @@ const styles = StyleSheet.create({
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%',
   },
   /* 태그→제목→소제목 간격을 오늘의 실전 표현 카드(exprRow)와 동일하게: gap 6 + 제목에 marginTop 2 */
-  heroContent: { gap: 6, marginBottom: 20 }, // heroCard는 justifyContent:'flex-end'라 marginBottom만큼 문구가 위로 올라감
+  /* 문구 뒤에만 크림 패널을 깔아 썸네일은 살리고 글자 대비를 확보한다 (전면 스크림 강화 대신).
+   * paddingHorizontal 12 = marginLeft -12 상쇄로 글 시작점은 기존과 동일. */
+  heroContent: {
+    gap: 6, marginBottom: 20, // heroCard는 justifyContent:'flex-end'라 marginBottom만큼 문구가 위로 올라감
+    alignSelf: 'flex-start', marginLeft: -12,
+    paddingHorizontal: 12, paddingVertical: 10,
+    borderRadius: 14, backgroundColor: `${Colors.background}F0`, // 크림 #F6F2EA, 94% 불투명
+  },
   heroBadge: {
     alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2,
     borderRadius: 12,

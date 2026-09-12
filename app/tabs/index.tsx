@@ -149,19 +149,21 @@ export default function HomeScreen() {
                   onPress={() => router.push(`/tabs/dictionary/${word.id}`)}
                   activeOpacity={0.9}
                 >
-                  {word.thumbnailUrl ? (
-                    <Image source={{ uri: word.thumbnailUrl }} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
-                  ) : category?.image ? (
-                    /* 영상 썸네일이 없는 단어는 카테고리 일러스트가 배경을 채운다 — 단색 카드 방지 */
-                    <Image source={category.image} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
-                  ) : null}
-                  <View style={styles.heroScrim} />
-                  <View style={styles.heroContent}>
+                  {/* 이미지는 원본 비율(800×378) 그대로 위에, 문구는 아래 크림 띠에 — 겹침 없음 */}
+                  <View style={styles.heroImageArea}>
+                    {word.thumbnailUrl ? (
+                      <Image source={{ uri: word.thumbnailUrl }} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
+                    ) : category?.image ? (
+                      /* 영상 썸네일이 없는 단어는 카테고리 일러스트가 배경을 채운다 — 단색 카드 방지 */
+                      <Image source={category.image} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
+                    ) : null}
                     {category && (
                       <View style={[styles.heroBadge, { backgroundColor: category.colorBg }]}>
                         <Text style={[styles.heroBadgeText, { color: getReadableTextColor(category.colorBg) }]} numberOfLines={1}>{getCategoryName(category, language)}</Text>
                       </View>
                     )}
+                  </View>
+                  <View style={styles.heroContent}>
                     <Text style={styles.heroWord} numberOfLines={1}>{word.word}</Text>
                     <Text style={styles.heroDesc} numberOfLines={1}>{cardGloss(word, language)}</Text>
                   </View>
@@ -179,15 +181,16 @@ export default function HomeScreen() {
                 testID="hero-expression-slide"
               >
                 {/* 배너 이미지는 항상 존재(운영자 규칙 2026-09-03) — 상황별 일러스트 */}
-                <Image source={(expr.region && DIALECT_REGION_BANNERS[expr.region]) || SITUATION_BANNERS[expr.situation]} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
-                <View style={styles.heroScrim} />
-                <View style={styles.heroContent}>
+                <View style={styles.heroImageArea}>
+                  <Image source={(expr.region && DIALECT_REGION_BANNERS[expr.region]) || SITUATION_BANNERS[expr.situation]} style={styles.heroThumbnail} resizeMode="cover" accessible={false} />
                   <View style={[styles.heroBadge, styles.exprHeroBadge]}>
                     <AppIcon icon={Crown} size={12} color={Colors.premiumText} />
                     <Text style={[styles.heroBadgeText, styles.exprHeroBadgeText]}>
                       {t(expr.region ? 'dialectTitle' : 'todayExpressionTitle')} · {t(expr.region ? DIALECT_REGION_LABEL_KEY[expr.region] : SITUATION_LABEL_KEY[expr.situation])}
                     </Text>
                   </View>
+                </View>
+                <View style={styles.heroContent}>
                   <Text style={styles.heroWord} numberOfLines={1}>{expr.ko}</Text>
                   {/* 뜻/해석은 프리미엄 전용 — 한국어 원문은 공개해 궁금증(전환 훅)을 남긴다 */}
                   {BETA_UNLIMITED_ENTITLEMENTS || isPremium ? (
@@ -334,40 +337,31 @@ const styles = StyleSheet.create({
   content: { paddingBottom: 24 },
 
   /* 히어로 캐러셀 */
+  /* 이미지(원본 800×378 비율) 위 + 문구 크림 띠 아래 2단 구조 — 스크림/패널 없이 겹침 자체를 없앰 */
   heroCard: {
     width: SCREEN_WIDTH, height: 250,
-    paddingHorizontal: 24, paddingVertical: 10,
-    justifyContent: 'flex-end',
     borderBottomWidth: 1, borderBottomColor: Colors.border,
     overflow: 'hidden',
   },
-  heroScrim: {
-    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: Colors.pageBackground,
-    opacity: 0.2,
-  },
+  heroImageArea: { width: '100%', aspectRatio: 800 / 378 },
   heroThumbnail: {
     // require() 에셋은 RN Web이 래퍼에 원본 픽셀 크기를 인라인으로 박아 inset:0을 무시한다 —
     // 폭·높이를 명시해야 카드에 맞춰 줄고 resizeMode="cover"가 동작한다(안 그러면 좌상단만 확대돼 보임).
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%',
   },
-  /* 태그→제목→소제목 간격을 오늘의 실전 표현 카드(exprRow)와 동일하게: gap 6 + 제목에 marginTop 2 */
-  /* 문구 뒤에만 크림 패널을 깔아 썸네일은 살리고 글자 대비를 확보한다 (전면 스크림 강화 대신).
-   * paddingHorizontal 12 = marginLeft -12 상쇄로 글 시작점은 기존과 동일. */
   heroContent: {
-    gap: 6, marginBottom: 20, // heroCard는 justifyContent:'flex-end'라 marginBottom만큼 문구가 위로 올라감
-    alignSelf: 'flex-start', marginLeft: -12,
-    paddingHorizontal: 12, paddingVertical: 10,
-    borderRadius: 14, backgroundColor: `${Colors.background}F0`, // 크림 #F6F2EA, 94% 불투명
+    flex: 1, paddingHorizontal: 24, justifyContent: 'center',
+    backgroundColor: Colors.background,
   },
   heroBadge: {
-    alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2,
+    position: 'absolute', top: 12, left: 16,
+    paddingHorizontal: 8, paddingVertical: 2,
     borderRadius: 12,
   },
   heroBadgeText: { fontSize: 10, fontFamily: 'NotoSerifKR_600SemiBold' },
   heroWord: {
-    fontSize: 24, lineHeight: 36, color: Colors.textEmphasis,
-    fontFamily: 'NotoSerifKR_600SemiBold', marginTop: 2,
+    fontSize: 22, lineHeight: 30, color: Colors.textEmphasis,
+    fontFamily: 'NotoSerifKR_600SemiBold',
   },
   heroDesc: { fontSize: 14, color: Colors.textSecondary, lineHeight: 18, opacity: 0.9 },
 

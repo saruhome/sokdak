@@ -406,10 +406,10 @@ const styles = StyleSheet.create({
   /* 새로운 신조어 카드 */
   wordCardRow: { gap: 16, paddingRight: 24 },
   wordCard: {
-    width: 256, height: 144,
+    width: 220, height: 112, // 타이포 카드 내용(제목+뜻)에 맞춘 크기 — 상단 빈 공간 제거
     backgroundColor: Colors.pageBackground,
     borderWidth: 1, borderColor: Colors.border, borderRadius: 10,
-    padding: 16, justifyContent: 'flex-end', gap: 8,
+    padding: 14, justifyContent: 'flex-end', gap: 6,
     shadowColor: '#8B8B8B', shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 0.15, shadowRadius: 2.5, elevation: 3,
     overflow: 'hidden',
@@ -418,11 +418,11 @@ const styles = StyleSheet.create({
    * 이미지 에셋 없이 단어마다 다른 카드가 된다(단어 자체가 콘텐츠). */
   wordCardTypo: { backgroundColor: `${NEW_SLANG_COLORS.colorBg}14` },
   wordCardWatermark: {
-    position: 'absolute', top: -30, right: 10,
-    fontSize: 110, lineHeight: 120, fontFamily: 'NotoSerifKR_600SemiBold',
+    position: 'absolute', top: -22, right: 10,
+    fontSize: 84, lineHeight: 92, fontFamily: 'NotoSerifKR_600SemiBold',
     color: `${NEW_SLANG_COLORS.colorBg}4D`,
   },
-  wordCardTitleTypo: { fontSize: 30, lineHeight: 40 },
+  wordCardTitleTypo: { fontSize: 26, lineHeight: 34 },
   wordCardDescTypo: { color: Colors.textSecondary },
   wordCardThumbnail: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   wordCardScrim: {

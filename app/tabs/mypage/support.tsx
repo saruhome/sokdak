@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
 
   categoryRow: { gap: 6, paddingVertical: 16 },
   categoryChip: {
-    paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12,
+    paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, // 알약 모양
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
   },
   categoryChipActive: { backgroundColor: Colors.navBar, borderColor: Colors.navBar },

@@ -351,7 +351,8 @@ const styles = StyleSheet.create({
   },
   heroContent: {
     flex: 1, paddingHorizontal: 24, justifyContent: 'center',
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.surface,
+    borderTopWidth: 1, borderTopColor: Colors.divider,
   },
   heroBadge: {
     position: 'absolute', top: 12, left: 16,

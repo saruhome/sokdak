@@ -12,7 +12,7 @@ import { getBoardLabel } from '../../constants/mockPosts';
 import { sortWords } from '@/components/WordFilterBar';
 import { SCREEN_WIDTH } from '../../constants/layout';
 import { languageStore, useLanguage } from '../../constants/languageStore';
-import { authStore, BETA_UNLIMITED_ENTITLEMENTS } from '../../constants/authStore';
+import { authStore } from '../../constants/authStore';
 import { TopAppBar } from '@/components/navigation/TopAppBar';
 import type { DialectRegion } from '../../src/features/home/model/dailyPicks';
 import { DIALECT_REGION_LABEL_KEY, EXPRESSIONS, SITUATION_LABEL_KEY, expressionGloss, pickDaily } from '@/src/features/home/model/dailyPicks';
@@ -176,7 +176,7 @@ export default function HomeScreen() {
               <TouchableOpacity
                 key={`expr-${i}`}
                 style={[styles.heroCard, { backgroundColor: Colors.premium }]}
-                onPress={() => { if (!BETA_UNLIMITED_ENTITLEMENTS && !isPremium) router.push('/tabs/mypage/premium'); }}
+                onPress={() => { if (!isPremium) router.push('/tabs/mypage/premium'); }}
                 activeOpacity={0.9}
                 testID="hero-expression-slide"
               >
@@ -193,7 +193,8 @@ export default function HomeScreen() {
                 <View style={styles.heroContent}>
                   <Text style={styles.heroWord} numberOfLines={1}>{expr.ko}</Text>
                   {/* 뜻/해석은 프리미엄 전용 — 한국어 원문은 공개해 궁금증(전환 훅)을 남긴다 */}
-                  {BETA_UNLIMITED_ENTITLEMENTS || isPremium ? (
+                  {/* 실전 표현 뜻은 베타에서도 프리미엄 전용(운영자 지시 2026-09-12) — 전환 훅 유지 */}
+                  {isPremium ? (
                     <View style={styles.exprGlossRow}>
                       <Text style={[styles.exprHeroGloss, styles.exprGlossShrink]} numberOfLines={1}>{expressionGloss(expr, language)}</Text>
                       {/* 문장 속 신조어가 사전에 있으면 표제어 칩으로 상세 연결 */}
@@ -350,7 +351,7 @@ const styles = StyleSheet.create({
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%',
   },
   heroContent: {
-    flex: 1, paddingHorizontal: 24, justifyContent: 'center',
+    flex: 1, paddingHorizontal: 24, justifyContent: 'center', // 상하 여백 균등(운영자 지시)
     backgroundColor: Colors.surface,
     borderTopWidth: 1, borderTopColor: Colors.divider,
   },

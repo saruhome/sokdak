@@ -47,6 +47,9 @@ export const CATEGORIES: Category[] = [
   { slug: 'outdated-slang',  name: '한물 간\n신조어',  nameEn: 'Outdated\nSlang',  nameJa: '古い\n新造語',          nameVi: 'Từ lóng\nlỗi thời',     nameEs: 'Jerga\npasada de moda', nameDe: 'Veralteter\nSlang',        nameTr: 'Modası geçmiş\nargo', emoji: '🕰️', description: '한때 유행했지만 지금은 잘 안 쓰는 말',    colorBg: '#C8B898', colorFg: '#AF5B23', image: require('../../../../assets/categories/outdated-slang.jpg') },
   { slug: 'work',            name: '회사\n생활',     nameEn: 'Office\nLife',    nameJa: '会社生活',              nameVi: 'Đời sống\ncông sở',    nameEs: 'Vida de\noficina',     nameDe: 'Büroalltag',              nameTr: 'Ofis\nhayatı', emoji: '💼',  description: '회사·직장 생활에서 쓰는 신조어',          colorBg: '#AFC4B0', colorFg: '#1F4A2C', image: require('../../../../assets/categories/work.jpg') },
   { slug: 'love',            name: '연애',            nameEn: 'Dating',          nameJa: '恋愛',                  nameVi: 'Tình yêu',              nameEs: 'Amor',                  nameDe: 'Liebe',                   nameTr: 'Aşk', emoji: '💕',  description: '썸·연애·이별에서 쓰는 신조어',            colorBg: '#E8B8C8', colorFg: '#7A2440', image: require('../../../../assets/categories/love.jpg') },
+  /* ponytail: 운영자 지시(2026-09-13)로 추가 — 색은 가이드라인 값이 아닌 임시값이고 카드 일러스트가 없어
+   * colorBg 단색 카드로 뜬다. Figma "Catogory/Beauty" 톤과 카드 에셋이 오면 교체. */
+  { slug: 'beauty',          name: '미용',            nameEn: 'Beauty',          nameJa: '美容',                  nameVi: 'Làm đẹp',               nameEs: 'Belleza',               nameDe: 'Beauty',                  nameTr: 'Güzellik', emoji: '💄',  description: '피부·화장품·뷰티 커뮤니티에서 쓰는 신조어',  colorBg: '#EBCFC0', colorFg: '#8C3E1F' },
   /* 라벨 주의: slug는 'slang'이지만 실제 내용은 욕설·비속어(19금 게이트)다. 영어 slang은 그냥
    * '구어체'라 이 뜻이 안 되고, New Slang / Outdated Slang / Frequently Used Slang과도 겹친다.
    * 각 언어에서 '욕설'에 해당하는 말로 적는다 — slug는 DB `words.category` 값이라 그대로 둔다. */

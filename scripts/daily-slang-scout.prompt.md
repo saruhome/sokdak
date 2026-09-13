@@ -8,13 +8,13 @@ Supabase project_id는 `etvrsqfhettkehpltkcp` 고정 — list_projects 호출 �
 ## 절차
 
 0. **오늘의 타깃 카테고리를 정한다 (카테고리 병렬 스카우트, 운영자 지시 2026-09-08).**
-   출시 기준은 words 1000개이고 카테고리는 13개라 카테고리당 약 77개가 목표다. 아래 쿼리로
+   출시 기준은 words 1000개이고 카테고리는 14개라 카테고리당 약 71개가 목표다. 아래 쿼리로
    가장 적게 찬 카테고리를 오늘의 타깃으로 잡는다 (동률이면 그중 무작위로 하나):
 
    ```sql
    select c.slug, count(w.id) as n from (values
     ('daily'),('kpop'),('drama'),('variety'),('exclamation'),('reels'),('new-slang'),
-    ('frequently-used'),('consonant'),('outdated-slang'),('work'),('love'),('slang')) c(slug)
+    ('frequently-used'),('consonant'),('outdated-slang'),('work'),('love'),('beauty'),('slang')) c(slug)
    left join words w on w.category = c.slug or w.secondary_category = c.slug
    group by c.slug order by n limit 3;
    ```
@@ -28,6 +28,7 @@ Supabase project_id는 `etvrsqfhettkehpltkcp` 고정 — list_projects 호출 �
    - `exclamation` 감탄사·리액션 / `consonant` 초성 줄임말(ㅇㅈ, ㄱㅅ 등)
    - `outdated-slang` 한때 유행했다 지금은 안 쓰는 말 / `slang` 욕설·비속어(성인 게이트)
    - `frequently-used` 매일 쓰는 필수 신조어 / `new-slang` 위 어디에도 안 맞는 최신 유행어
+   - `beauty` 피부 타입·스킨케어 루틴·화장품 커뮤니티 용어(수부지, 닦토 같은 줄임말)
 
    단어가 두 카테고리에 걸치면 타깃을 category에, 다른 하나를 secondary_category에 넣는다.
 

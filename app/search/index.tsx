@@ -132,7 +132,7 @@ export default function SearchScreen() {
         />
         <VoiceSearchButton
           onTranscript={handleSubmit}
-          contextualStrings={allWords.map(w => w.word).filter(Boolean).slice(0, 100)}
+          contextualStrings={allWords.map(w => w.word).filter(Boolean)}
         />
       </View>
 

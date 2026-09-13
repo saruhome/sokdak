@@ -29,3 +29,24 @@ it("모음 오타도 추천한다 — 외국인이 '야르'를 '야루'로 검�
   expect(suggestSimilarWord(words, '야루')?.word).toBe('야르');
   expect(suggestSimilarWord(words, 'yaru')?.word).toBe('야르');
 });
+
+describe('snapTranscriptToWord — 음성 전사 스냅 (외국인 발음 보정)', () => {
+  const { snapTranscriptToWord } = require('../src/features/dictionary/model/wordSearch');
+  const CANDIDATES = ['야르', '킹받다', '갑분싸'];
+
+  it('정규화 완전 일치 대안이 있으면 그 표제어를 고른다', () => {
+    expect(snapTranscriptToWord(['킹 받다'], CANDIDATES)).toBe('킹받다');
+  });
+
+  it("부정확한 발음은 가장 가까운 표제어로 스냅한다 ('야루' → '야르')", () => {
+    expect(snapTranscriptToWord(['야루'], CANDIDATES)).toBe('야르');
+  });
+
+  it('뒤쪽 대안이 사전 단어와 일치하면 그 대안을 쓴다', () => {
+    expect(snapTranscriptToWord(['카브サ', '갑분싸'], CANDIDATES)).toBe('갑분싸');
+  });
+
+  it('사전과 동떨어진 전사는 원문 그대로 돌려준다', () => {
+    expect(snapTranscriptToWord(['안녕하세요 반갑습니다'], CANDIDATES)).toBe('안녕하세요 반갑습니다');
+  });
+});

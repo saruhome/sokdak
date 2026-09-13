@@ -81,6 +81,39 @@ function editDistance(a: string, b: string): number {
  * 표제어(한글 음절 단위)와 로마자(정규화) 양쪽에서 편집 거리가 가장 가까운 단어를
  * 길이 비례 허용치(짧은 검색어 1, 긴 검색어 2) 안에서 반환한다. 없으면 null.
  */
+/**
+ * 음성 인식 결과를 사전 표제어에 스냅한다 — 외국인 발음이 부정확해도 가장 가까운
+ * 실제 단어로 보정하기 위한 함수(운영자 요구 2026-09-13: 음성 검색은 핵심 기능).
+ * 후보들(인식 대안 포함) 중 ① 정규화 완전 일치가 있으면 그 표제어, ② 없으면 자모
+ * 편집 거리가 허용치(suggestSimilarWord와 동일 규칙) 안에서 최소인 표제어, ③ 다
+ * 실패하면 첫 전사(transcript)를 그대로 돌려준다.
+ */
+export function snapTranscriptToWord(transcripts: string[], candidates: string[]): string {
+  const cleaned = transcripts.map(t => t.trim()).filter(Boolean);
+  if (cleaned.length === 0 || candidates.length === 0) return cleaned[0] ?? '';
+
+  const normalizedCandidates = candidates.map(c => [c, normalizeWordSearchText(c)] as const);
+  for (const transcript of cleaned) {
+    const normalized = normalizeWordSearchText(transcript);
+    const exact = normalizedCandidates.find(([, n]) => n === normalized);
+    if (exact) return exact[0];
+  }
+
+  let best: { candidate: string; distance: number } | null = null;
+  for (const transcript of cleaned) {
+    const normalized = normalizeWordSearchText(transcript);
+    if (normalized.length < 2) continue;
+    for (const [candidate, normalizedCandidate] of normalizedCandidates) {
+      if (!normalizedCandidate) continue;
+      const allowed = Math.min(normalizedCandidate.length, normalized.length) <= 4 ? 1 : 2;
+      const distance = editDistance(normalizedCandidate, normalized);
+      if (distance > allowed) continue;
+      if (!best || distance < best.distance) best = { candidate, distance };
+    }
+  }
+  return best?.candidate ?? cleaned[0];
+}
+
 export function suggestSimilarWord(words: Word[], query: string): Word | null {
   const normalized = normalizeWordSearchText(query);
   if (normalized.length < 2) return null;

@@ -9,6 +9,7 @@ import { AppText as Text } from '@/components/AppText';
 import { AppIcon } from '@/components/AppIcon';
 import { VoiceSearchPermissionDialog } from '@/components/VoiceSearchPermissionDialog';
 import { Alert } from '@/constants/alert';
+import { snapTranscriptToWord } from '@/constants/wordSearch';
 import { Colors } from '@/constants/Colors';
 import { languageStore, useLanguage } from '@/constants/languageStore';
 import { Mic, Square } from 'lucide-react-native';
@@ -56,12 +57,14 @@ export function VoiceSearchButton({
   useSpeechRecognitionEvent('nomatch', showNoMatch);
   useSpeechRecognitionEvent('result', event => {
     if (!event.isFinal) return;
-    const transcript = event.results[0]?.transcript.trim();
-    if (!transcript) {
+    /* 인식 대안 전부를 사전 표제어에 스냅 — 외국인 발음 오차 보정(운영자 요구 2026-09-13) */
+    const transcripts = event.results.map(r => r.transcript);
+    const snapped = snapTranscriptToWord(transcripts, contextualStrings);
+    if (!snapped) {
       showNoMatch();
       return;
     }
-    onTranscript(transcript);
+    onTranscript(snapped);
   });
   useSpeechRecognitionEvent('error', event => {
     setRecognizing(false);
@@ -92,8 +95,9 @@ export function VoiceSearchButton({
     recognition.onstart = () => setRecognizing(true);
     recognition.onend = () => { setRecognizing(false); webRecognitionRef.current = null; };
     recognition.onresult = (event: any) => {
-      const transcript = event.results?.[0]?.[0]?.transcript?.trim();
-      if (transcript) onTranscript(transcript);
+      const alternatives: string[] = Array.from(event.results?.[0] ?? [], (r: any) => r?.transcript ?? '');
+      const snapped = snapTranscriptToWord(alternatives, contextualStrings);
+      if (snapped) onTranscript(snapped);
       else showNoMatch();
     };
     recognition.onerror = (event: any) => {
@@ -105,7 +109,7 @@ export function VoiceSearchButton({
     };
     webRecognitionRef.current = recognition;
     recognition.start();
-  }, [onTranscript, showNoMatch, showPermissionDialog, t]);
+  }, [onTranscript, contextualStrings, showNoMatch, showPermissionDialog, t]);
 
   const startRecognition = useCallback(async () => {
     if (Platform.OS === 'web') {

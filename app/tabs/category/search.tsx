@@ -88,7 +88,10 @@ export default function CategorySearchScreen() {
               accessibilityLabel={t('clearCategorySearch')}
             />
           )}
-          <VoiceSearchButton onTranscript={text => { handleChangeText(text); handleSubmit(text); }} />
+          <VoiceSearchButton
+            onTranscript={text => { handleChangeText(text); handleSubmit(text); }}
+            contextualStrings={CATEGORIES.flatMap(c => [c.name, getCategoryName(c, language)])}
+          />
         </View>
       </View>
 

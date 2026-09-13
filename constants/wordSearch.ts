@@ -2,6 +2,7 @@
 export {
   normalizeWordSearchText,
   getWordSearchMatch,
+  snapTranscriptToWord,
   suggestSimilarWord,
   wordMatchesSearch,
   type WordSearchMatch,

@@ -117,7 +117,7 @@ export function WordListView({
   }, [words, sortIndex, query, categorySlugs]);
 
   const voiceSearchContext = useMemo(
-    () => words.map(word => word.word).filter(Boolean).slice(0, 100),
+    () => words.map(word => word.word).filter(Boolean), // 스냅 보정용 전체 표제어(엔진 바이어싱은 버튼이 100개로 컷)
     [words],
   );
 

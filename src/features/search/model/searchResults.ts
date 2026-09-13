@@ -2,7 +2,7 @@
  * (wordSearch)가 소유하고, 여기서는 검색 화면의 조합(자동완성 상한/카테고리 필터/커뮤니티
  * 텍스트 매칭)만 담당한다. */
 import type { Word } from '../../dictionary/api/wordsApi';
-import { wordMatchesSearch } from '../../dictionary/model/wordSearch';
+import { normalizeWordSearchText, wordMatchesSearch } from '../../dictionary/model/wordSearch';
 import type { CommunityPostSummary } from '../../../../constants/community';
 
 /** 입력 중 자동완성 — 상위 N개만 (Figma: 229:2723) */
@@ -20,8 +20,9 @@ export function filterWordResults(words: Word[], query: string, categorySlug: st
   return base;
 }
 
-/** 커뮤니티 결과 — 제목/본문 대소문자 무시 부분 일치 (Figma: 229:2808) */
+/** 커뮤니티 결과 — 제목/본문 부분 일치. 단어 검색과 같은 정규화를 써서 대소문자·띄어쓰기
+ * 차이('월급 루팡'/'월급루팡')에도 두 탭 결과가 같게 나온다 (Figma: 229:2808) */
 export function filterPostResults(posts: CommunityPostSummary[], query: string): CommunityPostSummary[] {
-  const q = query.trim().toLowerCase();
-  return posts.filter(p => p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q));
+  const q = normalizeWordSearchText(query);
+  return posts.filter(p => normalizeWordSearchText(p.title).includes(q) || normalizeWordSearchText(p.content).includes(q));
 }

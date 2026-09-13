@@ -34,3 +34,17 @@ it('filterPostResults matches title or content case-insensitively', () => {
   ] as CommunityPostSummary[];
   expect(filterPostResults(posts, 'bts')).toHaveLength(2);
 });
+
+it('filterPostResults ignores spacing so 월급 루팡 and 월급루팡 return the same posts', () => {
+  const posts = [
+    { title: '우리 팀 월급 루팡', content: '' },
+    { title: '오늘도 월급루팡', content: '' },
+    { title: '무관', content: '월급날' },
+  ] as CommunityPostSummary[];
+  expect(filterPostResults(posts, '월급 루팡')).toEqual(filterPostResults(posts, '월급루팡'));
+  expect(filterPostResults(posts, '월급루팡')).toHaveLength(2);
+
+  const words = [word({ id: '244', word: '월급 루팡', aliases: ['월급루팡'] }), word({ id: '9', word: '칼퇴' })];
+  expect(filterWordResults(words, '월급 루팡', null).map(w => w.id)).toEqual(['244']);
+  expect(filterWordResults(words, '월급루팡', null).map(w => w.id)).toEqual(['244']);
+});

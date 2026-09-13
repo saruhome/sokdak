@@ -687,4 +687,10 @@ export const EXPRESSIONS: Expression[] = [
     es: 'Si sigues viviendo, saldrás adelante (dialecto de Jeju = 살다 보면 살아진다. La frase por la que se recuerda la serie de Netflix 폭싹 속았수다 (2025); se dice para consolar a alguien agotado)',
     vi: 'Cứ sống tiếp rồi sẽ sống được thôi (phương ngữ Jeju = 살다 보면 살아진다. Câu thoại làm nên tên tuổi của phim Netflix 폭싹 속았수다 (2025), dùng để an ủi người đang mệt mỏi)',
     de: 'Leb einfach weiter, dann schaffst du es (Jeju-Dialekt = 살다 보면 살아진다. Der Satz, für den die Netflix-Serie 폭싹 속았수다 (2025) in Erinnerung blieb — Trost für jemanden, der erschöpft ist)' },
+  { situation: 'dialect', region: 'gyeongsang', ko: '고마해라, 마이 무웃다 아이가',
+    en: "Cut it out — you've had plenty already (Busan/Gyeongsang; a 2001 film line, now quoted jokingly to mean 'that's enough, stop'; blunt, friends only)",
+    ja: 'もうやめろ、十分食っただろ(釜山・慶尚道。2001年の映画の台詞で、今は「もういい加減にして」と冗談で引用される。ぶっきらぼうなので友達だけ)',
+    es: "Ya para, que ya has comido bastante (Busan/Gyeongsang; frase de una película de 2001 que hoy se cita en broma como '¡ya basta!'; brusca, solo entre amigos)",
+    vi: "Thôi đi, ăn nhiều rồi còn gì (Busan/Gyeongsang; câu thoại phim năm 2001, nay được trích đùa với nghĩa 'đủ rồi đấy'; cộc lốc, chỉ với bạn bè)",
+    de: "Hör auf, du hast doch schon genug gehabt (Busan/Gyeongsang; Filmzitat von 2001, heute scherzhaft für 'jetzt reicht es aber'; schroff, nur unter Freunden)" },
 ];

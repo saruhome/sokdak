@@ -16,7 +16,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { VoiceSearchButton } from '@/components/VoiceSearchButton';
 import { CharacterEmptyState } from '@/components/CharacterEmptyState';
 import { CharacterSuccessFeedback } from '@/components/CharacterSuccessFeedback';
-import { getWordSearchMatch, wordMatchesSearch } from '@/constants/wordSearch';
+import { getWordSearchMatch, suggestSimilarWord, wordMatchesSearch } from '@/constants/wordSearch';
 import { Alert } from '@/constants/alert';
 import {
   WordFilterBar, SORT_TABS, sortWords, matchesCategories, getInitialConsonant,
@@ -126,6 +126,14 @@ export function WordListView({
     if (!showConsonantRow || consonant === '전체') return filtered;
     return filtered.filter(w => getInitialConsonant(w.word) === consonant);
   }, [filtered, showConsonantRow, consonant]);
+
+  /* 결과가 없을 때만 오타 후보 — 글로벌 검색과 동일한 "혹시 ...인가요?" (야루 → 야르) */
+  const didYouMean = useMemo(
+    () => (query && visible.length === 0
+      ? suggestSimilarWord(words.filter(w => matchesCategories(w, categorySlugs)), query)
+      : null),
+    [words, query, visible.length, categorySlugs],
+  );
 
   /* 단어 저장은 회원 전용(무료 회원 최대 FREE_WORD_SAVE_LIMIT개, 프리미엄 무제한).
    * 저장 해제는 한도와 무관하게 항상 허용, 새로 저장할 때만 로그인·한도 체크. */
@@ -312,6 +320,17 @@ export function WordListView({
                 title={t('noSearchResults')}
                 testID="dictionary-search-empty-state"
               />
+              {didYouMean && (
+                <TouchableOpacity
+                  style={styles.didYouMeanBtn}
+                  testID="dictionary-did-you-mean"
+                  onPress={() => setQuery(didYouMean.word)}
+                >
+                  <Text style={styles.didYouMeanText}>
+                    {t('globalSearchDidYouMean').replace('{word}', didYouMean.word)}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           )
         }
@@ -432,7 +451,12 @@ const styles = StyleSheet.create({
   wordItemRight: { alignItems: 'center', gap: 4 },
   iconBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
 
-  emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 40 },
+  emptyWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 40, gap: 8 },
+  didYouMeanBtn: {
+    marginTop: 4, paddingHorizontal: 16, paddingVertical: 10,
+    borderRadius: 20, backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+  },
+  didYouMeanText: { fontSize: 14, fontFamily: 'NotoSerifKR_600SemiBold', color: Colors.accent },
 
   /* 카테고리 선택 모달 */
 });

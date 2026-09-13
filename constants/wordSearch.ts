@@ -2,6 +2,7 @@
 export {
   normalizeWordSearchText,
   getWordSearchMatch,
+  suggestSimilarWord,
   wordMatchesSearch,
   type WordSearchMatch,
 } from '../src/features/dictionary/model/wordSearch';

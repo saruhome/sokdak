@@ -23,3 +23,9 @@ it('정확히 일치(부분 일치로 이미 검색됨)나 동떨어진 검색�
   expect(suggestSimilarWord(WORDS, '전혀다른말')).toBeNull();
   expect(suggestSimilarWord(WORDS, 'ㅋ')).toBeNull(); // 너무 짧은 검색어
 });
+
+it("모음 오타도 추천한다 — 외국인이 '야르'를 '야루'로 검색 (운영자 사례 2026-09-13)", () => {
+  const words = [...WORDS, w('야르', 'Ya-Reu')];
+  expect(suggestSimilarWord(words, '야루')?.word).toBe('야르');
+  expect(suggestSimilarWord(words, 'yaru')?.word).toBe('야르');
+});

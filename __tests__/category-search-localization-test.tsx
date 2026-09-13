@@ -33,6 +33,7 @@ jest.mock('@/components/icons/JjaekiQuestion', () => ({
   JjaekiQuestion: () => null,
 }));
 
+jest.mock('@/components/VoiceSearchButton', () => ({ VoiceSearchButton: () => null }));
 jest.mock('@/components/icons/SocialIcons', () => ({
   BackIcon: () => null,
 }));

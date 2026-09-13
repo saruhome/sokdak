@@ -21,6 +21,8 @@ jest.mock('@/components/AppIcon', () => {
     IconStat: ({ value }: { value: number }) => <Text>{String(value)}</Text>,
   };
 });
+jest.mock('@/src/shared/api/wordEvents', () => ({ logSearch: jest.fn(), logWordView: jest.fn() }));
+jest.mock('@/components/VoiceSearchButton', () => ({ VoiceSearchButton: () => null }));
 jest.mock('@/components/icons/SocialIcons', () => ({ BackIcon: () => null }));
 jest.mock('@/components/CharacterEmptyState', () => {
   const { Text, View } = require('react-native');

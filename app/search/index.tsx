@@ -1,4 +1,5 @@
 import { StyleSheet, View, TextInput, FlatList, ScrollView, TouchableOpacity } from 'react-native';
+import { VoiceSearchButton } from '@/components/VoiceSearchButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from '@/constants/alert';
 import { AppText as Text } from '@/components/AppText';
@@ -128,6 +129,10 @@ export default function SearchScreen() {
           autoFocus
           clearButtonMode="while-editing"
           accessibilityLabel={tr('wordSearchPlaceholder')}
+        />
+        <VoiceSearchButton
+          onTranscript={handleSubmit}
+          contextualStrings={allWords.map(w => w.word).filter(Boolean).slice(0, 100)}
         />
       </View>
 

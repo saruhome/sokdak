@@ -8,8 +8,9 @@ import { safeGoBack } from '../../../constants/navigation';
 import { CATEGORIES, categoryMatchesSearch, getCategoryName } from '../../../constants/categories';
 import { languageStore, useLanguage } from '../../../constants/languageStore';
 import { JjaekiQuestion } from '@/components/icons/JjaekiQuestion';
+import { VoiceSearchButton } from '@/components/VoiceSearchButton';
 import { AppIcon } from '@/components/AppIcon';
-import { Search, Mic, Clock, ChevronRight, X } from 'lucide-react-native';
+import { Search, Clock, ChevronRight, X } from 'lucide-react-native';
 import { BackIcon } from '@/components/icons/SocialIcons';
 
 const RECOMMENDED_SLUGS = ['consonant', 'kpop', 'exclamation'];
@@ -87,7 +88,7 @@ export default function CategorySearchScreen() {
               accessibilityLabel={t('clearCategorySearch')}
             />
           )}
-          <AppIcon icon={Mic} size={15} />
+          <VoiceSearchButton onTranscript={text => { handleChangeText(text); handleSubmit(text); }} />
         </View>
       </View>
 

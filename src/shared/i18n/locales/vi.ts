@@ -60,7 +60,7 @@ export const vi = {
     inquiryTypePlaceholder: 'Chọn loại yêu cầu',
     inquiryContentLabel: 'Nội dung yêu cầu',
     inquirySubmittedTitle: 'Yêu cầu của bạn đã được gửi!',
-    inquirySubmittedSub: 'Chúng tôi sẽ trả lời qua email trong 1-2 ngày làm việc.',
+    inquirySubmittedSub: 'Chúng tôi sẽ trả lời trong 1-2 ngày làm việc ngay tại mục Yêu cầu của tôi trên màn hình này. Khi có trả lời, Trang cá nhân > Trung tâm hỗ trợ sẽ hiển thị thông báo.',
     inquiryReceiptTypeLabel: 'Loại',
     inquiryReceiptNumberLabel: 'Mã yêu cầu',
     inquiryReceiptEtaLabel: 'Thời gian phản hồi dự kiến',

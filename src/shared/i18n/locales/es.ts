@@ -60,7 +60,7 @@ export const es = {
     inquiryTypePlaceholder: 'Selecciona un tipo',
     inquiryContentLabel: 'Detalles de la consulta',
     inquirySubmittedTitle: '¡Tu consulta fue enviada!',
-    inquirySubmittedSub: 'Te responderemos por correo en 1-2 días hábiles.',
+    inquirySubmittedSub: 'Te responderemos en 1-2 días hábiles aquí mismo, en Mis consultas. Cuando haya respuesta, lo verás indicado en Mi página > Atención al cliente.',
     inquiryReceiptTypeLabel: 'Tipo',
     inquiryReceiptNumberLabel: 'N.º de referencia',
     inquiryReceiptEtaLabel: 'Respuesta estimada',

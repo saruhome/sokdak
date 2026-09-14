@@ -60,7 +60,7 @@ export const de = {
     inquiryTypePlaceholder: 'Typ auswählen',
     inquiryContentLabel: 'Details',
     inquirySubmittedTitle: 'Deine Anfrage wurde gesendet!',
-    inquirySubmittedSub: 'Wir antworten innerhalb von 1–2 Werktagen per E-Mail.',
+    inquirySubmittedSub: 'Wir antworten innerhalb von 1–2 Werktagen direkt hier unter Meine Anfragen. Sobald die Antwort da ist, siehst du es unter Mein Bereich > Kundenservice.',
     inquiryReceiptTypeLabel: 'Typ',
     inquiryReceiptNumberLabel: 'Referenznummer',
     inquiryReceiptEtaLabel: 'Voraussichtliche Antwort',

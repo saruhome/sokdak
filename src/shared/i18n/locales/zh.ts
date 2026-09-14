@@ -66,7 +66,7 @@ export const zh = {
     inquiryTypePlaceholder: '请选择类型',
     inquiryContentLabel: '咨询内容',
     inquirySubmittedTitle: '咨询已提交！',
-    inquirySubmittedSub: '我们会在 1-2 个工作日内通过邮件回复。',
+    inquirySubmittedSub: '我们会在 1-2 个工作日内直接在本页面的“我的咨询”中回复。有回复时，我的页面 > 客服中心会显示提示。',
     inquiryReceiptTypeLabel: '类型',
     inquiryReceiptNumberLabel: '受理编号',
     inquiryReceiptEtaLabel: '预计回复时间',

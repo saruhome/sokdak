@@ -60,7 +60,7 @@ export const ja = {
     inquiryTypePlaceholder: '種類を選択してください',
     inquiryContentLabel: '問い合わせ内容',
     inquirySubmittedTitle: 'お問い合わせを受け付けました！',
-    inquirySubmittedSub: '1〜2営業日以内にメールで回答いたします。',
+    inquirySubmittedSub: '1〜2営業日以内に、この画面の問い合わせ履歴に回答を残します。回答が届くとマイページのカスタマーセンターに表示されます。',
     inquiryReceiptTypeLabel: '種類',
     inquiryReceiptNumberLabel: '受付番号',
     inquiryReceiptEtaLabel: '回答予定',

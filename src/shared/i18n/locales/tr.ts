@@ -65,7 +65,7 @@ export const tr = {
     inquiryTypePlaceholder: 'Bir tür seç',
     inquiryContentLabel: 'Talep detayı',
     inquirySubmittedTitle: 'Talebin gönderildi!',
-    inquirySubmittedSub: '1-2 iş günü içinde e-postayla yanıt vereceğiz.',
+    inquirySubmittedSub: '1-2 iş günü içinde bu ekrandaki Taleplerim bölümünde yanıt vereceğiz. Yanıt gelince Sayfam > Destek bölümünde işaret görünür.',
     inquiryReceiptTypeLabel: 'Tür',
     inquiryReceiptNumberLabel: 'Referans no',
     inquiryReceiptEtaLabel: 'Tahmini yanıt',

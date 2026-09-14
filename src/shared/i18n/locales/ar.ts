@@ -67,7 +67,7 @@ export const ar = {
     inquiryTypePlaceholder: 'اختر النوع',
     inquiryContentLabel: 'تفاصيل الاستفسار',
     inquirySubmittedTitle: 'تم إرسال استفسارك!',
-    inquirySubmittedSub: 'سنرد عليك عبر البريد الإلكتروني خلال يوم إلى يومي عمل.',
+    inquirySubmittedSub: 'سنرد خلال يوم إلى يومي عمل هنا مباشرة في قسم استفساراتي. عند وصول الرد ستظهر إشارة في صفحتي > مركز الدعم.',
     inquiryReceiptTypeLabel: 'النوع',
     inquiryReceiptNumberLabel: 'رقم المرجع',
     inquiryReceiptEtaLabel: 'الرد المتوقع',

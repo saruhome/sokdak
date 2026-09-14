@@ -60,7 +60,7 @@ export const ko = {
     inquiryTypePlaceholder: '유형을 선택하세요',
     inquiryContentLabel: '문의 내용',
     inquirySubmittedTitle: '문의가 접수됐어요!',
-    inquirySubmittedSub: '영업일 기준 1~2일 내에 이메일로 답변 드릴게요.',
+    inquirySubmittedSub: '영업일 기준 1~2일 내에 이 화면의 내 문의 내역에 답변을 남겨 드릴게요. 답변이 오면 마이페이지 고객센터에 표시돼요.',
     inquiryReceiptTypeLabel: '유형',
     inquiryReceiptNumberLabel: '접수번호',
     inquiryReceiptEtaLabel: '예상 답변',

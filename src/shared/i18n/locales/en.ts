@@ -60,7 +60,7 @@ export const en = {
     inquiryTypePlaceholder: 'Select a type',
     inquiryContentLabel: 'Details',
     inquirySubmittedTitle: 'Your inquiry is in!',
-    inquirySubmittedSub: "We'll reply by email within 1–2 business days.",
+    inquirySubmittedSub: "We'll reply within 1–2 business days right here under My inquiries. A badge on My Page > Support shows when it's ready.",
     inquiryReceiptTypeLabel: 'Type',
     inquiryReceiptNumberLabel: 'Reference #',
     inquiryReceiptEtaLabel: 'Expected reply',

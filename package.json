@@ -20,6 +20,7 @@
     "expo-status-bar": "~57.0.1",
     "expo-video": "~57.0.4",
     "lucide-react-native": "^1.25.0",
+    "posthog-react-native": "^4.72.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-error-boundary": "^6.1.3",

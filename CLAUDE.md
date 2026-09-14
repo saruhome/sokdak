@@ -80,6 +80,7 @@ constants/
   words.ts             # ✅ 단어 — Supabase `words` 테이블 실데이터 (개수는 DB가 진실원, 2026-09-14 기준 414개)
   mockPosts.ts         # ✅ 게시판 색·라벨 facade (게시글은 Supabase 실데이터)
   authStore.ts         # ✅ 세션 인증 스토어
+  analytics.ts         # ✅ PostHog (EXPO_PUBLIC_POSTHOG_KEY 없으면 no-op; $screen 자동, identify는 user id만)
 ```
 
 ---

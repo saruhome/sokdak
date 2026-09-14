@@ -15,6 +15,7 @@ import { languageStore } from '../constants/languageStore';
 import { reportAppError } from '../constants/errorReporting';
 import { RouteAwareAppErrorBoundary } from '@/components/AppErrorBoundary';
 import { useRefreshPrivateSignedMediaUrls } from '@/hooks/useRefreshPrivateSignedMediaUrls';
+import { useAnalytics } from '../constants/analytics';
 
 const SPLASH = require('../assets/splash-screen.png');
 
@@ -51,6 +52,7 @@ const frameStyles = StyleSheet.create({
 
 export default function RootLayout() {
   useRefreshPrivateSignedMediaUrls();
+  useAnalytics();
   const [fontsLoaded] = useFonts({
     NotoSerifKR_400Regular,
     NotoSerifKR_600SemiBold,

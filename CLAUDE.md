@@ -55,7 +55,7 @@ app/
       my-posts.tsx       # ✅ 내 활동 게시물 (쓴 글/댓글 단 글/좋아요 한 글)
       profile.tsx        # ✅ 내 정보 관리
       suggest.tsx        # ✅ 신조어 제안하기
-      support.tsx        # ✅ 고객센터
+      support.tsx        # ✅ 고객센터 (FAQ 문구는 src/features/mypage/model/supportFaq.ts)
       notifications.tsx  # ✅ 알림설정
     dictionary/
       _layout.tsx
@@ -256,7 +256,7 @@ mypage.tsx를 mypage/index.tsx + Stack(_layout.tsx)으로 전환하고 6개 서�
   항상 실패했음. 버킷 생성 + RLS(공개 읽기, 본인 폴더 업로드/삭제) 추가.
 - ✅ Freemium/프리미엄 구조 도입 — 안드로이드 앱스토어 출시 및 수익화를 위한 최소 범위 구현.
   `profiles.is_premium`/`streak_count`/`last_active_date` 컬럼 추가, `authStore.setPremiumStatus`/
-  `isPremium`/`canSaveMoreWords`(무료 15개 저장 한도)/`getStreakCount`. 마이페이지 프리미엄
+  `isPremium`/`canSaveMoreWords`(무료 저장 한도는 entitlementStore의 FREE_WORD_SAVE_LIMIT이 진실원)/`getStreakCount`. 마이페이지 프리미엄
   업그레이드 행 + 스트릭 칩, `app/tabs/mypage/premium.tsx`(체험 시작/종료 토글 — 실결제 SDK 없이
   테스트 가능, 나중에 Stripe/Google Play 웹훅이 같은 `is_premium` 컬럼을 갱신하도록 교체 가능한
   구조), 홈 화면 "오늘의 실전 표현" 카드(상황별 표현 12개, ko/en만 — 사전 콘텐츠와 동일 컨벤션)

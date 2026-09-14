@@ -1,0 +1,121 @@
+import type { Language } from '@/constants/languageStore';
+
+/**
+ * 고객센터 FAQ (Figma 229:3352). 2026-09-14 재정비 — 문의 유형(로그인/계정·오류·베타·제안)과
+ * 실제 기능 한도(entitlementStore)에 맞춰 항목 추가. 숫자는 entitlementStore 상수가 진실원:
+ * 무료 저장 FREE_WORD_SAVE_LIMIT=3, 발음 듣기 FREE_TTS_DAILY_LIMIT=3/일, 베타 빌드는 무제한.
+ * vi/es/de/tr 문구는 네이티브 검수 전(ja는 2026-09-10 통과) — 검수 시 이 파일만 고치면 된다.
+ */
+export type FaqCategorySlug = 'all' | 'howTo' | 'account' | 'premium' | 'suggest' | 'community';
+export const FAQ_CATEGORY_SLUGS: FaqCategorySlug[] = ['all', 'howTo', 'account', 'premium', 'suggest', 'community'];
+export const FAQ_CATEGORY_LABELS: Record<Language, Record<FaqCategorySlug, string>> = {
+  ko: { all: '전체', howTo: '이용 방법', account: '회원정보', premium: '베타·프리미엄', suggest: '제안하기', community: '커뮤니티' },
+  en: { all: 'All', howTo: 'How to use', account: 'Account', premium: 'Beta & Premium', suggest: 'Suggestions', community: 'Community' },
+  ja: { all: 'すべて', howTo: '使い方', account: 'アカウント', premium: 'ベータ・プレミアム', suggest: '提案する', community: 'コミュニティ' },
+  vi: { all: 'Tất cả', howTo: 'Cách dùng', account: 'Tài khoản', premium: 'Beta & Premium', suggest: 'Đề xuất', community: 'Cộng đồng' },
+  es: { all: 'Todos', howTo: 'Cómo usar', account: 'Cuenta', premium: 'Beta y Premium', suggest: 'Sugerencias', community: 'Comunidad' },
+  de: { all: 'Alle', howTo: 'So funktioniert es', account: 'Konto', premium: 'Beta & Premium', suggest: 'Vorschläge', community: 'Community' },
+  tr: { all: 'Tümü', howTo: 'Nasıl kullanılır', account: 'Hesap', premium: 'Beta ve Premium', suggest: 'Öneriler', community: 'Topluluk' },
+};
+
+export type FaqItem = { category: Exclude<FaqCategorySlug, 'all'>; q: string; a: string };
+export const FAQ_ITEMS: Record<Language, FaqItem[]> = {
+  ko: [
+    { category: 'howTo', q: '속닥은 어떤 앱인가요?', a: '한국 거주 외국인 중·고급 학습자를 위한 한국어 신조어 학습 앱이에요. 교과서에는 없는 진짜 생활 한국어를 배울 수 있어요.' },
+    { category: 'howTo', q: '단어는 어떻게 저장하나요?', a: "단어 상세 화면에서 '저장' 버튼을 누르면 마이페이지 > 저장한 단어에서 모아볼 수 있어요. 무료 회원은 3개까지, 프리미엄은 무제한이에요. 베타 빌드에서는 한도 없이 저장할 수 있어요." },
+    { category: 'howTo', q: '발음 듣기는 몇 번까지 되나요?', a: '단어 상세의 발음 듣기는 무료 회원이 하루 3회까지 쓸 수 있고, 프리미엄은 제한이 없어요. 베타 빌드에서는 한도가 없어요.' },
+    { category: 'howTo', q: "홈의 '오늘의 실전 표현'은 뭔가요?", a: '한국 10~20대가 실제로 쓰는 문장을 상황별로 하루 하나씩 보여주는 카드예요. 사전 단어와 별개로 매일 바뀌고, 자정이 지나면 새 표현으로 갱신돼요.' },
+    { category: 'account', q: '로그인 없이도 이용할 수 있나요?', a: '사전 검색과 카테고리 탐색은 로그인 없이 가능해요. 단어 저장과 커뮤니티 게시글 열람·참여는 로그인한 회원만 이용할 수 있어요.' },
+    { category: 'account', q: '앱 언어를 바꾸고 싶어요.', a: '마이페이지의 언어 설정에서 한국어·영어·일본어·베트남어·스페인어·독일어·터키어 중 선택할 수 있어요. 단어 뜻과 예문도 함께 바뀌고, 아직 번역이 없는 내용은 영어로 보여요.' },
+    { category: 'account', q: '계정을 삭제하려면 어떻게 하나요?', a: '마이페이지 > 내 정보 관리 맨 아래의 계정 삭제를 누르면 돼요. 저장한 단어·게시글·문의 내역이 함께 삭제되고 복구할 수 없어요.' },
+    { category: 'premium', q: '프리미엄은 뭐고 얼마인가요?', a: '단어 저장·발음 듣기 무제한과 속어 카테고리 열람이 포함된 유료 요금제로, 정식 출시 때 월 4,900원으로 열릴 예정이에요. 지금은 베타 기간이라 결제가 열리지 않았고 청구되는 금액도 없어요.' },
+    { category: 'premium', q: '속어(비속어) 카테고리가 안 보여요.', a: '속어 카테고리는 프리미엄 회원이 만 19세 이상 자기 확인을 마친 뒤에만 열려요. 홈 화면에는 노출되지 않고 카테고리와 검색에서만 볼 수 있어요.' },
+    { category: 'suggest', q: '신조어를 제안하고 싶어요.', a: '마이페이지 > 신조어 제안하기 메뉴에서 원하는 단어와 뜻을 제안할 수 있어요. 검토 후 사전에 반영돼요.' },
+    { category: 'suggest', q: '단어 뜻이나 예문이 틀린 것 같아요.', a: "고객센터 문의에서 '오류 신고' 유형을 골라 어느 단어의 어느 부분이 어떻게 틀렸는지 알려 주세요. 스크린샷을 함께 첨부하면 더 빨리 고칠 수 있어요." },
+    { category: 'community', q: '커뮤니티 이용 규칙이 궁금해요.', a: '서로 존중하는 학습 커뮤니티를 지향해요. 욕설, 광고, 혐오 표현은 제재될 수 있어요. 첫 글을 쓰기 전에 가이드라인 동의가 필요해요.' },
+  ],
+  en: [
+    { category: 'howTo', q: 'What kind of app is SokDak?', a: 'A Korean slang-learning app for intermediate-advanced foreign residents of Korea. Learn real, everyday Korean you won’t find in textbooks.' },
+    { category: 'howTo', q: 'How do I save a word?', a: "Tap 'Save' on a word's detail screen — saved words show up under My Page > Saved Words. Free members can save 3 words; Premium is unlimited. Beta builds have no limit." },
+    { category: 'howTo', q: 'How many times can I play pronunciation?', a: 'Free members get 3 pronunciation plays per day; Premium is unlimited. Beta builds have no limit.' },
+    { category: 'howTo', q: "What is 'Today's Expression' on the home screen?", a: 'A daily card with a sentence Koreans in their teens and twenties actually use, sorted by situation. It changes every day at midnight, separately from dictionary words.' },
+    { category: 'account', q: 'Can I use the app without logging in?', a: 'You can search the dictionary and browse categories without logging in. Saving words and viewing or joining community posts require a logged-in account.' },
+    { category: 'account', q: 'How do I change the app language?', a: 'Open the language setting on My Page and pick Korean, English, Japanese, Vietnamese, Spanish, German or Turkish. Definitions and examples switch too; anything not yet translated shows in English.' },
+    { category: 'account', q: 'How do I delete my account?', a: 'Go to My Page > Profile and tap Delete account at the bottom. Saved words, posts and support tickets are deleted with it and cannot be recovered.' },
+    { category: 'premium', q: 'What is Premium and how much is it?', a: 'A paid plan with unlimited saves and pronunciation plays plus access to the slang category. It will open at launch for ₩4,900 a month. During the beta, payments are not open and nothing is charged.' },
+    { category: 'premium', q: "I can't see the slang (profanity) category.", a: 'The slang category opens only for Premium members who have confirmed they are 19 or older. It never appears on the home screen — only in categories and search.' },
+    { category: 'suggest', q: 'I want to suggest a new slang word.', a: "Use My Page > Suggest New Slang to submit a word and its meaning. It'll be added to the dictionary after review." },
+    { category: 'suggest', q: 'A definition or example looks wrong.', a: "Send a support ticket with the 'Bug report' type and tell us which word, which part, and what is wrong. A screenshot helps us fix it faster." },
+    { category: 'community', q: 'What are the community rules?', a: 'We aim for a respectful learning community. Profanity, ads, and hate speech may be moderated. You agree to the guidelines before your first post.' },
+  ],
+  ja: [
+    { category: 'howTo', q: 'ソクダクはどんなアプリですか？', a: '韓国在住の中〜上級外国人学習者向けの韓国語新造語学習アプリです。教科書にはないリアルな生活韓国語が学べます。' },
+    { category: 'howTo', q: '単語はどうやって保存しますか？', a: '単語詳細画面で「保存」ボタンを押すと、マイページ＞保存した単語でまとめて見られます。無料会員は3個まで、プレミアムは無制限です。ベータ版では制限がありません。' },
+    { category: 'howTo', q: '発音は何回まで聞けますか？', a: '無料会員は1日3回まで、プレミアムは無制限です。ベータ版では制限がありません。' },
+    { category: 'howTo', q: 'ホームの「今日の実践表現」とは？', a: '韓国の10〜20代が実際に使う文を状況別に1日1つ紹介するカードです。辞書の単語とは別に毎日変わり、深夜0時を過ぎると新しい表現に更新されます。' },
+    { category: 'account', q: 'ログインなしでも利用できますか？', a: '辞書検索とカテゴリーの閲覧はログインなしでも利用できます。単語の保存とコミュニティ投稿の閲覧・参加にはログインが必要です。' },
+    { category: 'account', q: 'アプリの言語を変えたいです。', a: 'マイページの言語設定で韓国語・英語・日本語・ベトナム語・スペイン語・ドイツ語・トルコ語から選べます。単語の意味と例文も切り替わり、まだ翻訳がない内容は英語で表示されます。' },
+    { category: 'account', q: 'アカウントを削除するには？', a: 'マイページ＞プロフィール管理の一番下にあるアカウント削除を押してください。保存した単語・投稿・問い合わせ履歴も一緒に削除され、復元できません。' },
+    { category: 'premium', q: 'プレミアムとは何で、いくらですか？', a: '単語保存と発音再生が無制限になり、俗語カテゴリーも閲覧できる有料プランです。正式リリース時に月4,900ウォンで開始予定です。現在はベータ期間のため決済は開いておらず、料金は発生しません。' },
+    { category: 'premium', q: '俗語（卑語）カテゴリーが見えません。', a: '俗語カテゴリーは、プレミアム会員が19歳以上であることを自己確認した後にだけ開きます。ホーム画面には表示されず、カテゴリーと検索からのみ見られます。' },
+    { category: 'suggest', q: '新造語を提案したいです。', a: 'マイページ＞新造語を提案するメニューで、単語と意味を提案できます。検討のうえ辞書に反映されます。' },
+    { category: 'suggest', q: '単語の意味や例文が間違っているようです。', a: 'カスタマーセンターの問い合わせで「不具合報告」を選び、どの単語のどの部分がどう違うかを教えてください。スクリーンショットを添えていただくと早く修正できます。' },
+    { category: 'community', q: 'コミュニティの利用ルールを知りたいです。', a: 'お互いを尊重する学習コミュニティを目指しています。暴言、広告、ヘイト表現は制限の対象になることがあります。初投稿の前にガイドラインへの同意が必要です。' },
+  ],
+  vi: [
+    { category: 'howTo', q: 'SokDak là ứng dụng gì?', a: 'Ứng dụng học từ lóng tiếng Hàn dành cho người nước ngoài trình độ trung-cao cấp đang sống tại Hàn Quốc. Bạn có thể học tiếng Hàn đời thường thực sự không có trong sách giáo khoa.' },
+    { category: 'howTo', q: 'Làm sao để lưu từ?', a: "Nhấn nút 'Lưu' ở màn hình chi tiết từ, bạn có thể xem lại ở Trang cá nhân > Từ đã lưu. Thành viên miễn phí lưu được 3 từ, Premium không giới hạn. Bản beta không có giới hạn." },
+    { category: 'howTo', q: 'Nghe phát âm được bao nhiêu lần?', a: 'Thành viên miễn phí nghe được 3 lần mỗi ngày, Premium không giới hạn. Bản beta không có giới hạn.' },
+    { category: 'howTo', q: "'Câu nói thực tế hôm nay' ở trang chủ là gì?", a: 'Thẻ mỗi ngày giới thiệu một câu mà người Hàn tuổi 10-20 thực sự dùng, theo từng tình huống. Thẻ đổi mỗi ngày sau nửa đêm, tách riêng với từ trong từ điển.' },
+    { category: 'account', q: 'Tôi có thể dùng ứng dụng mà không cần đăng nhập không?', a: 'Bạn có thể tìm kiếm từ điển và xem danh mục mà không cần đăng nhập. Việc lưu từ, xem và tham gia bài viết cộng đồng yêu cầu đăng nhập.' },
+    { category: 'account', q: 'Tôi muốn đổi ngôn ngữ ứng dụng.', a: 'Vào cài đặt ngôn ngữ ở Trang cá nhân và chọn tiếng Hàn, Anh, Nhật, Việt, Tây Ban Nha, Đức hoặc Thổ Nhĩ Kỳ. Nghĩa và ví dụ cũng đổi theo; nội dung chưa dịch sẽ hiển thị bằng tiếng Anh.' },
+    { category: 'account', q: 'Làm sao để xóa tài khoản?', a: 'Vào Trang cá nhân > Quản lý thông tin và nhấn Xóa tài khoản ở cuối trang. Từ đã lưu, bài viết và lịch sử hỗ trợ sẽ bị xóa cùng và không thể khôi phục.' },
+    { category: 'premium', q: 'Premium là gì và giá bao nhiêu?', a: 'Gói trả phí cho phép lưu từ và nghe phát âm không giới hạn, cùng quyền xem danh mục từ lóng thô tục. Dự kiến mở khi ra mắt chính thức với giá 4.900 won/tháng. Hiện đang là giai đoạn beta nên chưa mở thanh toán và không thu phí.' },
+    { category: 'premium', q: 'Tôi không thấy danh mục từ lóng thô tục.', a: 'Danh mục này chỉ mở cho thành viên Premium đã tự xác nhận từ 19 tuổi trở lên. Nó không hiện ở trang chủ, chỉ xem được trong danh mục và tìm kiếm.' },
+    { category: 'suggest', q: 'Tôi muốn đề xuất một từ lóng mới.', a: 'Vào Trang cá nhân > Đề xuất từ mới để gửi từ và ý nghĩa bạn muốn. Từ sẽ được thêm vào từ điển sau khi xem xét.' },
+    { category: 'suggest', q: 'Nghĩa hoặc ví dụ có vẻ sai.', a: "Gửi yêu cầu hỗ trợ với loại 'Báo lỗi' và cho chúng tôi biết từ nào, phần nào, sai thế nào. Kèm ảnh chụp màn hình sẽ giúp sửa nhanh hơn." },
+    { category: 'community', q: 'Quy tắc sử dụng cộng đồng là gì?', a: 'Chúng tôi hướng đến một cộng đồng học tập tôn trọng lẫn nhau. Ngôn từ thô tục, quảng cáo và phát ngôn thù ghét có thể bị xử lý. Bạn cần đồng ý hướng dẫn trước bài viết đầu tiên.' },
+  ],
+  es: [
+    { category: 'howTo', q: '¿Qué tipo de app es SokDak?', a: 'Una app para aprender jerga coreana pensada para residentes extranjeros de nivel intermedio-avanzado en Corea. Aprende coreano real y cotidiano que no encontrarás en los libros de texto.' },
+    { category: 'howTo', q: '¿Cómo guardo una palabra?', a: "Toca 'Guardar' en la pantalla de detalle de la palabra; podrás verlas en Mi página > Palabras guardadas. Las cuentas gratuitas guardan 3 palabras; Premium es ilimitado. En la beta no hay límite." },
+    { category: 'howTo', q: '¿Cuántas veces puedo escuchar la pronunciación?', a: 'Las cuentas gratuitas tienen 3 reproducciones al día; Premium es ilimitado. En la beta no hay límite.' },
+    { category: 'howTo', q: "¿Qué es la 'Expresión de hoy' de la pantalla de inicio?", a: 'Una tarjeta diaria con una frase que los coreanos de 10 a 20 años usan de verdad, ordenada por situación. Cambia cada día a medianoche, aparte de las palabras del diccionario.' },
+    { category: 'account', q: '¿Puedo usar la app sin iniciar sesión?', a: 'Puedes buscar en el diccionario y explorar categorías sin iniciar sesión. Guardar palabras y ver o participar en las publicaciones de la comunidad requiere una cuenta iniciada.' },
+    { category: 'account', q: 'Quiero cambiar el idioma de la app.', a: 'Abre el ajuste de idioma en Mi página y elige coreano, inglés, japonés, vietnamita, español, alemán o turco. Las definiciones y ejemplos también cambian; lo que aún no está traducido se muestra en inglés.' },
+    { category: 'account', q: '¿Cómo elimino mi cuenta?', a: 'Ve a Mi página > Gestionar perfil y toca Eliminar cuenta al final. Se borran también las palabras guardadas, publicaciones y consultas, y no se pueden recuperar.' },
+    { category: 'premium', q: '¿Qué es Premium y cuánto cuesta?', a: 'Un plan de pago con guardado y pronunciación ilimitados y acceso a la categoría de jerga vulgar. Se abrirá en el lanzamiento por 4.900 wones al mes. Durante la beta el pago no está abierto y no se cobra nada.' },
+    { category: 'premium', q: 'No veo la categoría de jerga vulgar.', a: 'Esa categoría solo se abre para miembros Premium que hayan confirmado tener 19 años o más. Nunca aparece en la pantalla de inicio, solo en categorías y búsqueda.' },
+    { category: 'suggest', q: 'Quiero sugerir una palabra de jerga nueva.', a: 'Ve a Mi página > Sugerir jerga nueva para enviar la palabra y su significado. Se añadirá al diccionario tras la revisión.' },
+    { category: 'suggest', q: 'Una definición o ejemplo parece incorrecto.', a: "Envía una consulta con el tipo 'Informe de error' e indica qué palabra, qué parte y qué está mal. Una captura de pantalla nos ayuda a corregirlo antes." },
+    { category: 'community', q: '¿Cuáles son las normas de la comunidad?', a: 'Buscamos una comunidad de aprendizaje respetuosa. El lenguaje ofensivo, la publicidad y el discurso de odio pueden ser moderados. Antes de tu primera publicación debes aceptar las normas.' },
+  ],
+  de: [
+    { category: 'howTo', q: 'Was für eine App ist SokDak?', a: 'SokDak ist eine App zum Lernen koreanischen Slangs für fortgeschrittene ausländische Einwohnerinnen und Einwohner Koreas. Hier lernst du echtes Alltagskoreanisch, das nicht in Lehrbüchern steht.' },
+    { category: 'howTo', q: 'Wie speichere ich ein Wort?', a: 'Tippe in der Wortdetailansicht auf „Speichern“. Deine Wörter findest du unter Mein Bereich > Gespeicherte Wörter. Kostenlose Konten speichern 3 Wörter, Premium unbegrenzt. In der Beta gibt es kein Limit.' },
+    { category: 'howTo', q: 'Wie oft kann ich die Aussprache anhören?', a: 'Kostenlose Konten haben 3 Wiedergaben pro Tag, Premium unbegrenzt. In der Beta gibt es kein Limit.' },
+    { category: 'howTo', q: 'Was ist der „Ausdruck des Tages“ auf der Startseite?', a: 'Eine tägliche Karte mit einem Satz, den Koreanerinnen und Koreaner zwischen 10 und 29 wirklich benutzen, nach Situation sortiert. Sie wechselt jeden Tag um Mitternacht, unabhängig von den Wörterbuchwörtern.' },
+    { category: 'account', q: 'Kann ich die App ohne Anmeldung verwenden?', a: 'Du kannst im Wörterbuch suchen und Kategorien ohne Anmeldung durchsuchen. Zum Speichern von Wörtern sowie zum Ansehen und Mitmachen bei Community-Beiträgen brauchst du ein angemeldetes Konto.' },
+    { category: 'account', q: 'Ich möchte die App-Sprache ändern.', a: 'Öffne die Spracheinstellung unter Mein Bereich und wähle Koreanisch, Englisch, Japanisch, Vietnamesisch, Spanisch, Deutsch oder Türkisch. Bedeutungen und Beispiele wechseln mit; noch nicht Übersetztes erscheint auf Englisch.' },
+    { category: 'account', q: 'Wie lösche ich mein Konto?', a: 'Gehe zu Mein Bereich > Profil verwalten und tippe ganz unten auf Konto löschen. Gespeicherte Wörter, Beiträge und Anfragen werden mitgelöscht und können nicht wiederhergestellt werden.' },
+    { category: 'premium', q: 'Was ist Premium und was kostet es?', a: 'Ein Bezahlplan mit unbegrenztem Speichern und Anhören sowie Zugang zur Kategorie für vulgären Slang. Er startet zum offiziellen Release für 4.900 Won pro Monat. Während der Beta ist die Zahlung nicht geöffnet und es wird nichts berechnet.' },
+    { category: 'premium', q: 'Ich sehe die Kategorie für vulgären Slang nicht.', a: 'Diese Kategorie öffnet sich nur für Premium-Mitglieder, die bestätigt haben, mindestens 19 zu sein. Sie erscheint nie auf der Startseite, nur in Kategorien und Suche.' },
+    { category: 'suggest', q: 'Ich möchte einen neuen Slangbegriff vorschlagen.', a: 'Unter Mein Bereich > Neuen Slang vorschlagen kannst du ein Wort und seine Bedeutung einreichen. Nach der Prüfung kann es ins Wörterbuch aufgenommen werden.' },
+    { category: 'suggest', q: 'Eine Bedeutung oder ein Beispiel scheint falsch zu sein.', a: 'Schick eine Anfrage vom Typ „Fehler melden“ und nenne uns Wort, Stelle und Fehler. Ein Screenshot hilft uns, es schneller zu korrigieren.' },
+    { category: 'community', q: 'Welche Regeln gelten in der Community?', a: 'Wir möchten eine respektvolle Lern-Community schaffen. Beleidigungen, Werbung und Hassrede können moderiert werden. Vor deinem ersten Beitrag stimmst du den Richtlinien zu.' },
+  ],
+  tr: [
+    { category: 'howTo', q: 'SokDak nasıl bir uygulama?', a: "Kore'de yaşayan orta-ileri seviye yabancı öğrenciler için Korece argo öğrenme uygulaması. Ders kitaplarında olmayan gerçek günlük Koreceyi öğrenebilirsin." },
+    { category: 'howTo', q: 'Kelimeleri nasıl kaydederim?', a: "Kelime detay ekranında 'Kaydet' düğmesine bas; kaydettiklerin Sayfam > Kaydedilen kelimeler altında toplanır. Ücretsiz üyeler 3 kelime kaydedebilir, Premium sınırsızdır. Beta sürümünde sınır yoktur." },
+    { category: 'howTo', q: 'Telaffuzu kaç kez dinleyebilirim?', a: 'Ücretsiz üyeler günde 3 kez dinleyebilir, Premium sınırsızdır. Beta sürümünde sınır yoktur.' },
+    { category: 'howTo', q: "Ana sayfadaki 'Günün ifadesi' nedir?", a: "Korelilerin 10-20'li yaşlarda gerçekten kullandığı bir cümleyi duruma göre gösteren günlük kart. Sözlük kelimelerinden ayrı olarak her gün gece yarısı değişir." },
+    { category: 'account', q: 'Giriş yapmadan kullanabilir miyim?', a: 'Sözlükte arama ve kategorilere göz atma giriş gerektirmez. Kelime kaydetmek, topluluk gönderilerini görmek ve katılmak için giriş yapman gerekir.' },
+    { category: 'account', q: 'Uygulama dilini değiştirmek istiyorum.', a: 'Sayfam içindeki dil ayarından Korece, İngilizce, Japonca, Vietnamca, İspanyolca, Almanca veya Türkçe seçebilirsin. Anlamlar ve örnekler de değişir; henüz çevrilmemiş içerik İngilizce görünür.' },
+    { category: 'account', q: 'Hesabımı nasıl silerim?', a: 'Sayfam > Profil yönetimi ekranının en altındaki Hesabı sil düğmesine bas. Kaydedilen kelimeler, gönderiler ve destek talepleri de silinir ve geri alınamaz.' },
+    { category: 'premium', q: 'Premium nedir ve ne kadar?', a: 'Sınırsız kaydetme ve telaffuz dinleme ile kaba argo kategorisine erişim içeren ücretli plan. Resmi çıkışta aylık 4.900 won ile açılacak. Beta döneminde ödeme kapalı ve hiçbir ücret alınmıyor.' },
+    { category: 'premium', q: 'Kaba argo kategorisini göremiyorum.', a: 'Bu kategori yalnızca 19 yaş ve üzeri olduğunu onaylayan Premium üyelere açılır. Ana sayfada asla görünmez; sadece kategoriler ve aramada bulunur.' },
+    { category: 'suggest', q: 'Yeni bir argo önermek istiyorum.', a: 'Sayfam > Yeni argo öner menüsünden kelimeyi ve anlamını gönderebilirsin. İncelemeden sonra sözlüğe eklenir.' },
+    { category: 'suggest', q: 'Bir anlam veya örnek yanlış görünüyor.', a: "'Hata bildirimi' türünde bir destek talebi gönder; hangi kelime, hangi bölüm ve neyin yanlış olduğunu yaz. Ekran görüntüsü eklersen daha hızlı düzeltiriz." },
+    { category: 'community', q: 'Topluluk kuralları neler?', a: 'Birbirine saygılı bir öğrenme topluluğu hedefliyoruz. Küfür, reklam ve nefret söylemi yaptırıma tabi olabilir. İlk gönderinden önce kurallara onay vermen gerekir.' },
+  ],
+};

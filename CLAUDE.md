@@ -1,5 +1,12 @@
 # SOK-DAK (속닥) — Claude Code 전체 구현 가이드
 
+## 문서 동기화 규칙 (운영자 지시 2026-09-14)
+
+이 문서는 코워크·원격 세션이 프로젝트 현황을 파악하는 1차 소스다. **작업 중 문서와 실제
+(코드·DB)가 다른 것을 발견하면 그 자리에서 문서를 고쳐 같은 커밋/후속 커밋으로 푸시한다.**
+개수처럼 계속 변하는 값은 숫자를 박지 말고 진실원(파일·DB 쿼리)을 가리키게 쓴다.
+아래 구현 로그(Phase 1~4)는 당시 기록이므로 소급 수정하지 않는다 — 현황 섹션만 유지 대상.
+
 ## 프로젝트 개요
 한국어 신조어 특화 모바일 학습 앱. 한국 거주 외국인 중·고급 학습자 타깃.
 - **저장소**: https://github.com/saruhome/sokdak (private)
@@ -69,9 +76,9 @@ app/
 
 constants/
   Colors.ts            # ✅ 디자인 토큰
-  categories.ts        # ✅ 10개 카테고리 마스터
-  words.ts             # ✅ 단어 — Supabase `words` 테이블 실데이터 (31개)
-  mockPosts.ts         # ✅ 게시글 8개 mock
+  categories.ts        # ✅ 카테고리 마스터 (개수·목록은 src/features/categories/model/categories.ts가 진실원)
+  words.ts             # ✅ 단어 — Supabase `words` 테이블 실데이터 (개수는 DB가 진실원, 2026-09-14 기준 414개)
+  mockPosts.ts         # ✅ 게시판 색·라벨 facade (게시글은 Supabase 실데이터)
   authStore.ts         # ✅ 세션 인증 스토어
 ```
 
@@ -341,7 +348,7 @@ router.push('/search')                // 검색
 ### 단어 데이터
 - `constants/words.ts` — Supabase `words` 테이블 실데이터 접근 계층(`fetchWords`/`fetchWordById`).
   단어 추가/수정은 Supabase 대시보드에서 직접(word_suggestions 검토 후 반영도 동일).
-- `constants/mockPosts.ts` — 게시글 (Post 타입, 아직 mock)
+- `constants/mockPosts.ts` — 게시판 색·라벨·타입 facade (게시글 데이터는 Supabase 실데이터 — 파일명만 mock 시절 이름)
 
 #### 표제어 규칙 — 같은 말이 두 형태로 쓰일 때
 한 단어가 두 가지로 표기되면 표제어는 **항상 하나만** 만들고 나머지는 `words.aliases`에 넣는다

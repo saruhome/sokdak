@@ -9,7 +9,7 @@ set -euo pipefail
 (( $# == 3 )) || { echo "usage: $0 <horang|jjaeki|voice-id> \"text\" out.mp3" >&2; exit 1; }
 
 HORANG=""   # TODO: Fish Audio voice id for 호랭
-JJAEKI=""   # TODO: Fish Audio voice id for 짹이
+JJAEKI="7be0ffc91afa45b5b5bffb90c0eac128"   # 짹이 (Fish Audio, 대표 선택 2026-09-14)
 case $1 in horang) ref=$HORANG ;; jjaeki) ref=$JJAEKI ;; *) ref=$1 ;; esac
 [[ -n $ref ]] || { echo "voice id for '$1' not set — edit HORANG/JJAEKI in $0" >&2; exit 1; }
 [[ -n $2 ]] || { echo "empty text" >&2; exit 1; }

@@ -57,9 +57,9 @@ export const CATEGORIES: Category[] = [
  * 이미 이 slug로 등록된 단어의 배지·상세는 getCategoryBySlug로 계속 보인다.
  * 아침 검수가 단어 수 10 이상을 확인하면 항목을 CATEGORIES로 옮겨 오픈한다. */
 export const PENDING_CATEGORIES: Category[] = [
-  /* ponytail: 운영자 지시(2026-09-13)로 추가 — 색은 가이드라인 값이 아닌 임시값이고 카드 일러스트가 없어
-   * colorBg 단색 카드로 뜬다. Figma "Catogory/Beauty" 톤과 카드 에셋이 오면 교체. */
-  { slug: 'beauty',          name: '미용',            nameEn: 'Beauty',          nameJa: '美容',                  nameVi: 'Làm đẹp',               nameEs: 'Belleza',               nameDe: 'Beauty',                  nameTr: 'Güzellik', emoji: '💄',  description: '피부·화장품·뷰티 커뮤니티에서 쓰는 신조어',  colorBg: '#EBCFC0', colorFg: '#8C3E1F' },
+  /* ponytail: 운영자 지시(2026-09-13)로 추가 — 색은 가이드라인 값이 아닌 임시값, 카드 일러스트는
+   * Canva 생성본(2026-09-16). Figma "Catogory/Beauty" 톤·정식 에셋이 오면 교체. */
+  { slug: 'beauty',          name: '미용',            nameEn: 'Beauty',          nameJa: '美容',                  nameVi: 'Làm đẹp',               nameEs: 'Belleza',               nameDe: 'Beauty',                  nameTr: 'Güzellik', emoji: '💄',  description: '피부·화장품·뷰티 커뮤니티에서 쓰는 신조어',  colorBg: '#EBCFC0', colorFg: '#8C3E1F', image: require('../../../../assets/categories/beauty.jpg') },
 ];
 
 export function getCategoryBySlug(slug: string): Category | undefined {

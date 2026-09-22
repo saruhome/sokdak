@@ -61,13 +61,13 @@ export default function CategoryScreen() {
   useEffect(() => {
     fetchWords().then(data => {
       setWords(data);
-      const counts = Object.fromEntries(CATEGORIES.map(c => [c.slug, data.filter(w => w.category === c.slug).length]));
+      const counts = Object.fromEntries(CATEGORIES.map(c => [c.slug, data.filter(w => w.category === c.slug || w.secondaryCategory === c.slug).length]));
       setTopCategory(pickLeastPopular(CATEGORIES, c => counts[c.slug] ?? 0));
     });
   }, []);
 
   const countBySlug = Object.fromEntries(
-    CATEGORIES.map(c => [c.slug, words.filter(w => w.category === c.slug).length])
+    CATEGORIES.map(c => [c.slug, words.filter(w => w.category === c.slug || w.secondaryCategory === c.slug).length])
   );
   /* 대사도 방문마다 랜덤 — 인덱스만 고정해 두고 언어 전환 시엔 같은 인덱스의 다른 언어 문장을 보여준다 */
   const [hintIndex] = useState(() => Math.floor(Math.random() * HORANG_HINTS.ko.length));

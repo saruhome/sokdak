@@ -133,13 +133,15 @@ horang-dance-notes 등)는 반전 변주가 없다.
 
 호랭 우선, 짹이로 변화. 최근 처리 단어들과 포즈·방향이 겹치지 않게 순환. 합성본을 눈으로 확인 후 진행.
 
-## 4. 업로드 + DB 갱신
+## 4. 업로드 (대표 결재함 대기)
 
 ```bash
 scripts/upload-thumbnail.sh [id] [파일.jpg] [id] [파일.jpg] ...
 ```
 
-`word-thumbnails/word-{id}.jpg` 업로드(upsert)와 `words.thumbnail_url` 세팅을 한 번에 한다.
+`word-thumbnails/pending/word-{id}.jpg`에 올리기만 한다 — `thumbnail_url`은 건드리지 않는다. 대표가
+픽셀 오피스 결재함에서 이미지를 보고 승인하면 그때 `thumbnail_url`이 세팅되고, 반려하면 객체가 삭제된다
+(2026-09-23 대표 지시: 이미지도 오피스에서 컨펌). 보고에는 "결재함 대기 N장"으로 적는다.
 키는 맥 키체인(`sokdak-supabase-secret`)에서 읽는다 — 임시 정책·데모 계정 비밀번호 발급/회수는
 더 이상 하지 않는다. 키체인에 키가 없어 실패하면 운영자에게 저장을 요청하고 보고 후 종료.
 

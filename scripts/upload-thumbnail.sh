@@ -1,5 +1,7 @@
 #!/bin/bash
-# Upload word thumbnails to the word-thumbnails bucket and set words.thumbnail_url.
+# Stage word thumbnails for CEO approval in the pixel office (2026-09-23):
+# uploads to word-thumbnails/pending/word-{id}.jpg and does NOT touch words.thumbnail_url.
+# The office inbox shows the image; 승인 sets thumbnail_url to this URL, 반려 deletes the object.
 #   scripts/upload-thumbnail.sh <word-id> <file.jpg> [<word-id> <file.jpg> ...]
 # Reads the Supabase secret (service_role) key from the macOS keychain; store it once with:
 #   security add-generic-password -s sokdak-supabase-secret -a sokdak -w
@@ -17,11 +19,8 @@ while (( $# >= 2 )); do
   id=$1 file=$2; shift 2
   [[ $id =~ ^[0-9]+$ ]] || { echo "bad word id: $id" >&2; exit 1; }
   [[ -f $file ]] || { echo "missing file: $file" >&2; exit 1; }
-  curl -sSf -X POST "$URL/storage/v1/object/word-thumbnails/word-$id.jpg" "${AUTH[@]}" \
+  [[ $(curl -sSf "$URL/rest/v1/words?id=eq.$id&select=id" "${AUTH[@]}") != "[]" ]] || { echo "no word with id $id" >&2; exit 1; }
+  curl -sSf -X POST "$URL/storage/v1/object/word-thumbnails/pending/word-$id.jpg" "${AUTH[@]}" \
     -H "x-upsert: true" -H "Content-Type: image/jpeg" --data-binary "@$file" >/dev/null
-  rows=$(curl -sSf -X PATCH "$URL/rest/v1/words?id=eq.$id&select=id" "${AUTH[@]}" \
-    -H "Content-Type: application/json" -H "Prefer: return=representation" \
-    -d "{\"thumbnail_url\":\"$URL/storage/v1/object/public/word-thumbnails/word-$id.jpg\"}")
-  [[ $rows != "[]" ]] || { echo "no word with id $id (image uploaded, url not set)" >&2; exit 1; }
-  echo "ok word-$id"
+  echo "staged word-$id (대표 결재함 대기)"
 done

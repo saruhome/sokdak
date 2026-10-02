@@ -1107,4 +1107,10 @@ export const EXPRESSIONS: Expression[] = [
     es: "Esto no acaba de cuajar (dialecto de Chungcheong; 개갈 안 나다 = 'no queda limpio', es decir: soso, chapucero, sin garra. 개갈 era originalmente arreglar los caballones del arrozal). Queja informal sobre una cosa, no algo que se le dice a alguien a la cara",
     vi: "Cái này chẳng ra đâu vào đâu (tiếng Chungcheong; 개갈 안 나다 = 'không gọn ra hồn' → nhạt nhẽo, cẩu thả, không đã. 개갈 vốn chỉ việc đắp bờ ruộng). Lời càu nhàu thân mật về sự việc, không phải câu nói thẳng vào mặt ai",
     de: 'Das ist irgendwie halbgar (Chungcheong-Dialekt; 개갈 안 나다 = es wird nicht sauber → unbefriedigend, schludrig, ohne Biss. 개갈 bezeichnete ursprünglich das Herrichten der Reisfeldränder). Saloppes Gemecker über eine Sache, nichts, was man jemandem ins Gesicht sagt' },
+  { situation: 'meal', ko: '난 무조건 찍먹이지',
+    en: "I am strictly team dip-it (찍먹 = dipping sweet-and-sour pork in the sauce, vs 부먹 = pouring it over — Korea's endless food debate)",
+    ja: '俺は絶対タレは付けて食べる派(찍먹=酢豚のタレを付けて食べる派、부먹=かけて食べる派との論争は定番ネタ)',
+    es: 'Yo soy 100% del equipo mojar (찍먹 = mojar el cerdo agridulce en la salsa, frente a 부먹, echársela por encima)',
+    vi: 'Tớ nhất định thuộc hội chấm sốt (찍먹 = chấm thịt vào sốt, đối lại 부먹 = chan sốt lên — cuộc tranh luận ẩm thực kinh điển)',
+    de: 'Ich bin klar Team Dippen (찍먹 = die Soße zum süß-sauren Schweinefleisch dippen, Gegenteil 부먹 = drübergießen)' },
 ];
